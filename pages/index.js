@@ -1,4 +1,5 @@
 import Head from "next/head";
+import NavBar_Home from "../components/navbar/home";
 
 function HomePage() {
     return (
@@ -6,6 +7,8 @@ function HomePage() {
             <Head>
                 <title>Kastel</title>
             </Head>
+
+            <NavBar_Home/>
         </>
     )
 }
