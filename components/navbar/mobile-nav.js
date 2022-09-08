@@ -5,7 +5,7 @@ import {
     CloseButton,
     Flex,
     Grid,
-    GridItem,
+    GridItem, Heading,
     HStack,
     IconButton,
     IconButtonProps,
@@ -104,7 +104,7 @@ export function MobileNavContent(props) {
                         >
                             <Box>
                                 <Flex justify='space-between' px='6' pt='5' pb='4'>
-                                    <Logo sx={{ rect: { fill: 'teal.300' } }} />
+                                    <Heading  size='md' >Kastel</Heading>
                                     <HStack spacing='5'>
                                         <LoginButton display='flex' />
                                         <CloseButton ref={closeBtnRef} onClick={onClose} />
@@ -141,11 +141,9 @@ export function MobileNavContent(props) {
     )
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const ScrollView = ( { props,onScroll }) => {
+const ScrollView = ( { props }) => {
     const { onScroll, ...rest } = props
     const [y, setY] = useState(0)
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const elRef = useRef()
     const { scrollY } = useElementScroll(elRef)
     useEffect(() => {
@@ -169,7 +167,7 @@ const ScrollView = ( { props,onScroll }) => {
     )
 }
 
-export const MobileNavButton = forwardRef(
+/*export const MobileNavButton = forwardRef(
     (props, ref) => {
         return (
             <IconButton
@@ -184,4 +182,4 @@ export const MobileNavButton = forwardRef(
             />
         )
     },
-)
+)*/
