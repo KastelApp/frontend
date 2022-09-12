@@ -17,8 +17,6 @@ const LoginButton = (props) => (
         borderRadius='md'
         fontSize='sm'
         color='gray.800'
-        outline='0'
-        transition='all 0.3s'
         _hover={{
             bg: 'gray.100',
             borderColor: 'gray.300',
@@ -33,7 +31,7 @@ const LoginButton = (props) => (
     >
 
         <Box as='strong' lineHeight='inherit' fontWeight='semibold'>
-            Login Button
+            Login
         </Box>
     </Box>
 )

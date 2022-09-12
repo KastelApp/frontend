@@ -20,7 +20,7 @@ import { forwardRef, ReactNode, Ref, useEffect, useRef, useState } from 'react'
 import { AiOutlineMenu } from 'react-icons/ai'
 import { RemoveScroll } from 'react-remove-scroll'
 import LoginButton from './login-button'
-import useRouteChanged from 'hooks/use-route-changed'
+import useRouteChanged from '../../hooks/use-route-changed'
 
 function NavLink({ href, children }) {
     const router = useRouter()
@@ -79,6 +79,11 @@ export function MobileNavContent(props) {
     }, [isOpen])
 
     const [shadow, setShadow] = useState()
+    let mainNavLinks = [
+        { href: '/', label: 'Home' },
+        { href: '/github', label: 'Github' },
+        { href: '/discord', label: 'Discord' },
+    ]
 
     return (
         <AnimatePresence>
@@ -104,9 +109,8 @@ export function MobileNavContent(props) {
                         >
                             <Box>
                                 <Flex justify='space-between' px='6' pt='5' pb='4'>
-                                    <Heading  size='md' >Kastel</Heading>
+                                    <Heading size='md' >Kastel</Heading>
                                     <HStack spacing='5'>
-                                        <LoginButton display='flex' />
                                         <CloseButton ref={closeBtnRef} onClick={onClose} />
                                     </HStack>
                                 </Flex>
@@ -125,14 +129,6 @@ export function MobileNavContent(props) {
                                     ))}
                                 </Grid>
                             </Box>
-
-                            <ScrollView
-                                onScroll={(scrolled) => {
-                                    setShadow(scrolled ? 'md' : undefined)
-                                }}
-                            >
-
-                            </ScrollView>
                         </Flex>
                     </motion.div>
                 </RemoveScroll>
@@ -141,33 +137,7 @@ export function MobileNavContent(props) {
     )
 }
 
-const ScrollView = ( { props }) => {
-    const { onScroll, ...rest } = props
-    const [y, setY] = useState(0)
-    const elRef = useRef()
-    const { scrollY } = useElementScroll(elRef)
-    useEffect(() => {
-        return scrollY.onChange(() => setY(scrollY.get()))
-    }, [scrollY])
-
-    useUpdateEffect(() => {
-        onScroll?.(y > 5 ? true : false)
-    }, [y])
-
-    return (
-        <Box
-            ref={elRef}
-            flex='1'
-            id='routes'
-            overflow='auto'
-            px='6'
-            pb='6'
-            {...rest}
-        />
-    )
-}
-
-/*export const MobileNavButton = forwardRef(
+export const MobileNavButton = forwardRef(
     (props, ref) => {
         return (
             <IconButton
@@ -182,4 +152,4 @@ const ScrollView = ( { props }) => {
             />
         )
     },
-)*/
+)

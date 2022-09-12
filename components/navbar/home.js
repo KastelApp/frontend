@@ -1,4 +1,15 @@
-import {chakra, Flex, Heading, HStack, Icon, IconButton, Link, useColorMode, useColorModeValue,} from '@chakra-ui/react'
+import {
+    chakra,
+    Flex,
+    Heading,
+    HStack,
+    Icon,
+    IconButton,
+    Link,
+    useColorMode,
+    useColorModeValue, useDisclosure,
+    useUpdateEffect,
+} from '@chakra-ui/react'
 import {useViewportScroll} from 'framer-motion'
 import NextLink from 'next/link'
 import {useEffect, useRef, useState} from "react";
@@ -6,17 +17,24 @@ import DiscordIcon from "../icons/discord";
 import GithubIcon from "../icons/github";
 import {FaMoon, FaSun} from 'react-icons/fa'
 import LoginButton from "./login-button";
+import {MobileNavButton, MobileNavContent} from "./mobile-nav";
 
 const Content = (props) => {
+    const mobileNav = useDisclosure()
     const {toggleColorMode: toggleMode} = useColorMode()
     const text = useColorModeValue('dark', 'light')
     const SwitchIcon = useColorModeValue(FaMoon, FaSun)
+    const mobileNavBtnRef = useRef()
+
+    useUpdateEffect(() => {
+        mobileNavBtnRef.current?.focus()
+    }, [mobileNav.isOpen])
     return (
         <>
             <Flex w='100%' h='100%' px='6' align='center' justify='space-between'>
                 <Flex align='center'>
                     <NextLink href='/' passHref>
-                        <Heading  size='md' >Kastel</Heading>
+                        <Heading size='md' >Kastel</Heading>
                     </NextLink>
                 </Flex>
 
@@ -67,9 +85,15 @@ const Content = (props) => {
                             icon={<SwitchIcon/>}
                         />
                         <LoginButton ml='5' />
+                        <MobileNavButton
+                            ref={mobileNavBtnRef}
+                            aria-label='Open Menu'
+                            onClick={mobileNav.onOpen}
+                        />
                     </HStack>
                 </Flex>
             </Flex>
+            <MobileNavContent isOpen={mobileNav.isOpen} onClose={mobileNav.onClose} />
         </>
     )
 }
