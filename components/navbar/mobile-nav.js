@@ -137,6 +137,7 @@ export function MobileNavContent(props) {
     )
 }
 
+/* eslint-disable react/display-name */
 export const MobileNavButton = forwardRef(
     (props, ref) => {
         return (
