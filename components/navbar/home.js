@@ -7,7 +7,8 @@ import {
     IconButton,
     Link,
     useColorMode,
-    useColorModeValue, useDisclosure,
+    useColorModeValue,
+    useDisclosure,
     useUpdateEffect,
 } from '@chakra-ui/react'
 import {useViewportScroll} from 'framer-motion'
@@ -34,7 +35,7 @@ const Content = (props) => {
             <Flex w='100%' h='100%' px='6' align='center' justify='space-between'>
                 <Flex align='center'>
                     <NextLink href='/' passHref>
-                        <Heading size='md' >Kastel</Heading>
+                        <Heading size='md'>Kastel</Heading>
                     </NextLink>
                 </Flex>
 
@@ -84,7 +85,7 @@ const Content = (props) => {
                             onClick={toggleMode}
                             icon={<SwitchIcon/>}
                         />
-                        <LoginButton ml='5' />
+                        <LoginButton ml='5'/>
                         <MobileNavButton
                             ref={mobileNavBtnRef}
                             aria-label='Open Menu'
@@ -93,7 +94,7 @@ const Content = (props) => {
                     </HStack>
                 </Flex>
             </Flex>
-            <MobileNavContent isOpen={mobileNav.isOpen} onClose={mobileNav.onClose} />
+            <MobileNavContent isOpen={mobileNav.isOpen} onClose={mobileNav.onClose}/>
         </>
     )
 }

@@ -1,4 +1,4 @@
-export default function DiscordIcon (props) {
+export default function DiscordIcon(props) {
     return (
         <svg viewBox='0 0 146 146' {...props}>
             <path

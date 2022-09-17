@@ -1,28 +1,26 @@
 import {
     Box,
-    BoxProps,
     Center,
     CloseButton,
     Flex,
     Grid,
-    GridItem, Heading,
+    GridItem,
+    Heading,
     HStack,
     IconButton,
-    IconButtonProps,
     useBreakpointValue,
     useColorModeValue,
     useUpdateEffect,
 } from '@chakra-ui/react'
-import { AnimatePresence, motion, useElementScroll } from 'framer-motion'
+import {AnimatePresence, motion} from 'framer-motion'
 import NextLink from 'next/link'
-import { useRouter } from 'next/router'
-import { forwardRef, ReactNode, Ref, useEffect, useRef, useState } from 'react'
-import { AiOutlineMenu } from 'react-icons/ai'
-import { RemoveScroll } from 'react-remove-scroll'
-import LoginButton from './login-button'
-import useRouteChanged from '../../hooks/use-route-changed'
+import {useRouter} from 'next/router'
+import {forwardRef, useEffect, useRef, useState} from 'react'
+import {AiOutlineMenu} from 'react-icons/ai'
+import {RemoveScroll} from 'react-remove-scroll'
+import RouterEvents from "../../utils/router-events";
 
-function NavLink({ href, children }) {
+function NavLink({href, children}) {
     const router = useRouter()
     const bgActiveHoverColor = useColorModeValue('gray.100', 'whiteAlpha.100')
 
@@ -51,18 +49,20 @@ function NavLink({ href, children }) {
 }
 
 export function MobileNavContent(props) {
-    const { isOpen, onClose } = props
+    const {isOpen, onClose} = props
     const closeBtnRef = useRef()
-    const { pathname, asPath } = useRouter()
+    const {pathname, asPath} = useRouter()
     const bgColor = useColorModeValue('white', 'gray.800')
 
-    useRouteChanged(onClose)
+    RouterEvents.on('routeChangeComplete', (url) => {
+        onClose()
+    })
 
     /**
      * Scenario: Menu is open on mobile, and user resizes to desktop/tablet viewport.
      * Result: We'll close the menu
      */
-    const showOnBreakpoint = useBreakpointValue({ base: true, lg: false })
+    const showOnBreakpoint = useBreakpointValue({base: true, lg: false})
 
     useEffect(() => {
         if (showOnBreakpoint == false) {
@@ -80,9 +80,9 @@ export function MobileNavContent(props) {
 
     const [shadow, setShadow] = useState()
     let mainNavLinks = [
-        { href: '/', label: 'Home' },
-        { href: '/github', label: 'Github' },
-        { href: '/discord', label: 'Discord' },
+        {href: '/', label: 'Home'},
+        {href: '/github', label: 'Github'},
+        {href: '/discord', label: 'Discord'},
     ]
 
     return (
@@ -90,10 +90,10 @@ export function MobileNavContent(props) {
             {isOpen && (
                 <RemoveScroll forwardProps>
                     <motion.div
-                        transition={{ duration: 0.08 }}
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
+                        transition={{duration: 0.08}}
+                        initial={{opacity: 0}}
+                        animate={{opacity: 1}}
+                        exit={{opacity: 0}}
                     >
                         <Flex
                             direction='column'
@@ -109,9 +109,9 @@ export function MobileNavContent(props) {
                         >
                             <Box>
                                 <Flex justify='space-between' px='6' pt='5' pb='4'>
-                                    <Heading size='md' >Kastel</Heading>
+                                    <Heading size='md'>Kastel</Heading>
                                     <HStack spacing='5'>
-                                        <CloseButton ref={closeBtnRef} onClick={onClose} />
+                                        <CloseButton ref={closeBtnRef} onClick={onClose}/>
                                     </HStack>
                                 </Flex>
                                 <Grid
@@ -143,12 +143,12 @@ export const MobileNavButton = forwardRef(
         return (
             <IconButton
                 ref={ref}
-                display={{ base: 'flex', md: 'none' }}
+                display={{base: 'flex', md: 'none'}}
                 aria-label='Open menu'
                 fontSize='20px'
                 color={useColorModeValue('gray.800', 'inherit')}
                 variant='ghost'
-                icon={<AiOutlineMenu />}
+                icon={<AiOutlineMenu/>}
                 {...props}
             />
         )
