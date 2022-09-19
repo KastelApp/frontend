@@ -20,6 +20,7 @@ const LoginButton = (props) => (
             _hover={{
                 bg: 'gray.100',
                 borderColor: 'gray.300',
+                pointer: 'cursor',
             }}
             _active={{
                 borderColor: 'gray.200',
