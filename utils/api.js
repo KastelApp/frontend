@@ -1,4 +1,4 @@
-const API_URL = process.env.TEMP_API_ENDPOINT;
+const API_URL = process.env.API_ENDPOINT;
 const Version = process.env.API_VERSION;
 
 async function fetcher(url, options) {
