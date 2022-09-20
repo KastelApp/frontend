@@ -154,12 +154,7 @@ function RegisterPage() {
                         form
                     </Stack>
                 </Container>
-                <Blur
-                    position={'absolute'}
-                    top={-10}
-                    left={-10}
-                    style={{filter: 'blur(70px)'}}
-                />
+                <Blur/>
             </Box>
 
         </>
@@ -169,8 +164,15 @@ function RegisterPage() {
 export const Blur = (props) => {
     return (
         <Icon
-            width={useBreakpointValue({base: '100%', md: '40vw', lg: '30vw'})}
-            zIndex={useBreakpointValue({base: -1, md: -1, lg: 0})}
+            position={'absolute'}
+            top={-10}
+            left={-10}
+            style={{filter: 'blur(70px)'}}
+            css={{pointerEvents: "none"}}
+            width={useBreakpointValue({base: '100%', md: '40vw', lg: '30vw'},
+                { ssr: true })}
+            zIndex={useBreakpointValue({base: -1, md: -1, lg: 0},
+                { ssr: true })}
             height="560px"
             viewBox="0 0 528 560"
             fill="none"

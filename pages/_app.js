@@ -5,6 +5,7 @@ import {debounce} from 'lodash';
 import RouterEvents from "../utils/router-events";
 import {useEffect} from "react";
 import '../styles/globals.css';
+import Head from 'next/head';
 
 const start = debounce(NProgress.start, 100);
 RouterEvents.on('routeChangeStart', start);
@@ -44,6 +45,10 @@ function MyApp({Component, pageProps}) {
 
     return (
         <ChakraProvider theme={theme}>
+            <Head>
+                <meta name="viewport" content="width=device-width, initial-scale=1" />
+                <link rel="shortcut icon" type="image/x-icon" href="/favicon.png" />
+            </Head>
             <Component {...pageProps} />
         </ChakraProvider>
     )

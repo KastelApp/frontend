@@ -1,6 +1,17 @@
 import Head from "next/head";
 import NavBar_Home from "../components/navbar/home";
-import {Box, Button, Container, Heading, Icon, Input, Stack, Text, useBreakpointValue,} from '@chakra-ui/react';
+import {
+    Box,
+    Button,
+    Container,
+    Heading,
+    Icon,
+    Input,
+    Stack,
+    Text,
+    useBreakpointValue,
+    useColorModeValue,
+} from '@chakra-ui/react';
 import NextLink from 'next/link'
 import {useRouter} from "next/router";
 import {useEffect} from "react";
@@ -47,29 +58,31 @@ function LoginPage() {
 
                         <Box
                             mt={5}
-                            bg={'gray.50'}
+                            bg={useColorModeValue('gray.100', 'gray.700')}
                             rounded={'xl'}
                             p={{base: 4, sm: 6, md: 8}}
                             spacing={{base: 8}}
                             maxW={{lg: 'lg'}}>
-                            <Box as={'form'} mt={5}>
+                            <Box mt={5}>
                                 <Stack spacing={4}>
                                     <Input
+                                        type={'email'}
                                         placeholder="hello@example.com"
-                                        bg={'gray.100'}
+                                        bg={useColorModeValue('gray.200', 'gray.600')}
                                         border={0}
-                                        color={'gray.500'}
+                                        color={useColorModeValue('gray.900', 'gray.100')}
                                         _placeholder={{
-                                            color: 'gray.500',
+                                            color: useColorModeValue('gray.500', 'gray.100'),
                                         }}
                                     />
                                     <Input
+                                        type={'password'}
                                         placeholder="CoolPassword123!"
-                                        bg={'gray.100'}
+                                        bg={useColorModeValue('gray.200', 'gray.600')}
                                         border={0}
-                                        color={'gray.500'}
+                                        color={useColorModeValue('gray.900', 'gray.100')}
                                         _placeholder={{
-                                            color: 'gray.500',
+                                            color: useColorModeValue('gray.500', 'gray.100'),
                                         }}
                                     />
                                 </Stack>
@@ -122,12 +135,7 @@ function LoginPage() {
 
                     </>
                 </Container>
-                <Blur
-                    position={'absolute'}
-                    top={-10}
-                    left={-10}
-                    style={{filter: 'blur(70px)'}}
-                />
+                <Blur/>
             </Box>
         </>
     )
@@ -136,8 +144,15 @@ function LoginPage() {
 export const Blur = (props) => {
     return (
         <Icon
-            width={useBreakpointValue({base: '100%', md: '40vw', lg: '30vw'})}
-            zIndex={useBreakpointValue({base: -1, md: -1, lg: 0})}
+            position={'absolute'}
+            top={-10}
+            left={-10}
+            style={{filter: 'blur(70px)'}}
+            css={{pointerEvents: "none"}}
+            width={useBreakpointValue({base: '100%', md: '40vw', lg: '30vw'},
+                { ssr: true })}
+            zIndex={useBreakpointValue({base: -1, md: -1, lg: 0},
+                { ssr: true })}
             height="560px"
             viewBox="0 0 528 560"
             fill="none"

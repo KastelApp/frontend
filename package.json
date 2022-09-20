@@ -11,8 +11,8 @@
   "author": "",
   "license": "GPL-3.0-or-later",
   "dependencies": {
-    "@chakra-ui/icons": "^2.0.9",
-    "@chakra-ui/react": "^2.3.2",
+    "@chakra-ui/icons": "^2.0.10",
+    "@chakra-ui/react": "^2.3.4",
     "@chakra-ui/theme-tools": "^2.0.11",
     "@emotion/react": "^11.10.4",
     "@emotion/styled": "^11.10.4",

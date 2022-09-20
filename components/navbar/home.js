@@ -120,7 +120,7 @@ const NavBar = (props) => {
             top='0'
             zIndex='3'
             bg='white'
-            _dark={{bg: '#171923'}}
+            _dark={{bg: 'transparent'}}
             left='0'
             right='0'
             width='full'
