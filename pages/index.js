@@ -7,8 +7,8 @@ function HomePage() {
     const router = useRouter();
 
     useEffect(() => {
-      router.prefetch('/login')
-    },[])
+        router.prefetch('/login')
+    }, [])
 
     return (
         <>

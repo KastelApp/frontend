@@ -13,7 +13,7 @@ function LoginPage() {
         router.prefetch('/app')
         router.prefetch('/reset-password')
         router.prefetch('/register')
-    },[])
+    }, [])
 
     return (
         <>
@@ -74,18 +74,18 @@ function LoginPage() {
                                     />
                                 </Stack>
 
-                                    <Button
-                                        fontFamily={'heading'}
-                                        mt={8}
-                                        w={'full'}
-                                        bgGradient="linear(to-r, red.400,pink.400)"
-                                        color={'white'}
-                                        _hover={{
-                                            bgGradient: 'linear(to-r, red.400,pink.400)',
-                                            boxShadow: 'xl',
-                                        }}>
-                                        Submit
-                                    </Button>
+                                <Button
+                                    fontFamily={'heading'}
+                                    mt={8}
+                                    w={'full'}
+                                    bgGradient="linear(to-r, red.400,pink.400)"
+                                    color={'white'}
+                                    _hover={{
+                                        bgGradient: 'linear(to-r, red.400,pink.400)',
+                                        boxShadow: 'xl',
+                                    }}>
+                                    Submit
+                                </Button>
                                 <Stack justify={'center'} mt={2} direction={['column', 'row']}>
                                     <NextLink href={'/register'}>
                                         <Button
