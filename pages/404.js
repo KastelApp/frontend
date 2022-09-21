@@ -22,7 +22,7 @@ function NotFoundPage() {
                 textAlign='center'
             >
                 <Heading>404 | Page Not Found</Heading>
-                <Text fontSize={{ md: 'xl' }}>You just hit a route that doesn't exist... the sadness.😢</Text>
+                <Text fontSize={{ md: 'xl' }}>You just hit a route that doesn&apos;t exist... the sadness.😢</Text>
                 <NextLink href='/' passHref>
                     <Button
                         as='a'

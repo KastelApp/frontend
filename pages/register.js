@@ -178,7 +178,7 @@ function RegisterPage() {
                                         })}
                                     </Text>
                                 ) : (
-                                    <Text color={useColorModeValue('gray.500', 'gray.200')}
+                                    <Text _dark={{color: "gray.200"}} color={'gray.500'}
                                           fontSize={{base: 'sm', sm: 'md'}}>
                                         We are a platform for everyone! Want to know more?{' '} ...
                                     </Text>
