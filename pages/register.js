@@ -11,10 +11,82 @@ import {
     SimpleGrid,
     Stack,
     Text,
-    useBreakpointValue
+    useBreakpointValue,
+    useColorModeValue
 } from "@chakra-ui/react";
+import {useRouter} from "next/router";
+import {useEffect, useState} from "react";
+import * as api from "../utils/api";
 
 function RegisterPage() {
+    const router = useRouter();
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
+
+    useEffect(() => {
+        router.prefetch('/app')
+        router.prefetch('/reset-password')
+        router.prefetch('/login')
+    }, [])
+
+    const submit = async event => {
+        event.preventDefault();
+        setLoading(true);
+
+        let username = event.target.username.value;
+        let email = event.target.email.value;
+        let password = event.target.password.value;
+        let dob = event.target.dob.value;
+
+        if (!username) {
+            setLoading(false);
+            setError([
+                {code: "MISSING_USERNAME", message: "Please enter a username."}
+            ])
+        } else if (!email) {
+            setLoading(false);
+            setError([
+                {code: "MISSING_EMAIL", message: "Please enter your email address."}
+            ])
+        } else if (!password) {
+            setLoading(false);
+            setError([
+                {code: "MISSING_PASSWORD", message: "Please enter your account password."}
+            ])
+        } else if (!dob) {
+            setLoading(false);
+            setError([
+                {code: "MISSING_PASSWORD", message: "Please enter your a date of birth for your account."}
+            ])
+        } else {
+            try {
+                let response = await api.register({username, email, password, date_of_birth: dob});
+                console.log(response);
+
+                if (response?.responses[0]?.code === 'ACCOUNT_CREATED') {
+                    setLoading(false);
+                    router.push('/login');
+                } else if (response.errors) {
+                    setLoading(false);
+                    setError(response?.errors || [{code: "UNKNOWN", message: "An unknown error occurred."}])
+                } else {
+                    setLoading(false);
+                    setError([
+                        {code: "UNKNOWN", message: "An unknown error occurred, check logs."}
+                    ])
+                }
+
+                // continue here
+            } catch (error) {
+                console.log(error)
+                setLoading(false);
+                setError([
+                    {code: "UNKNOWN", message: "An unknown error occurred, check logs."}
+                ])
+            }
+        }
+    }
+
     return (
         <>
             <Head>
@@ -23,140 +95,184 @@ function RegisterPage() {
 
             <NavBar_Home/>
 
-            <Box position={'relative'}>
-                <Container
-                    as={SimpleGrid}
-                    maxW={'7xl'}
-                    columns={{base: 1, md: 2}}
-                    spacing={{base: 10, lg: 32}}
-                    py={{base: 10, sm: 20, lg: 32}}>
-                    <Stack spacing={{base: 10, md: 20}}>
-                        <Heading
-                            lineHeight={1.1}
-                            fontSize={{base: '3xl', sm: '4xl', md: '5xl', lg: '6xl'}}>
-                            Welcome to{' '}
-                            <Text
-                                as={'span'}
-                                bgGradient="linear(to-r, red.400,pink.400)"
-                                bgClip="text">
-                                Kastel!
-                            </Text>
-                        </Heading>
-                        <Stack direction={'row'} spacing={2} align={'center'}>
-                            <Text fontFamily={'heading'} fontSize={{base: '3xl', md: '4xl'}}>
-                                A new chat platform for everyone.
-                            </Text>
-                            <Text fontFamily={'heading'} fontSize={{base: '4xl', md: '6xl'}}>
-                                +
-                            </Text>
-                            <Flex
-                                align={'center'}
-                                justify={'center'}
-                                fontFamily={'heading'}
-                                fontSize={{base: 'sm', md: 'lg'}}
-                                bg={'gray.800'}
-                                color={'white'}
-                                rounded={'full'}
-                                width={useBreakpointValue({base: '45px', md: '65px'})}
-                                height={useBreakpointValue({base: '45px', md: '65px'})}
-                                position={'relative'}
-                                _before={{
-                                    content: '""',
-                                    width: 'full',
-                                    height: 'full',
-                                    rounded: 'full',
-                                    transform: 'scale(1.125)',
-                                    bgGradient: 'linear(to-bl, orange.400,yellow.400)',
-                                    position: 'absolute',
-                                    zIndex: -1,
-                                    top: 0,
-                                    left: 0,
-                                }}>
-                                YOU
-                            </Flex>
-                        </Stack>
-                    </Stack>
-                    <Stack
-                        bg={'gray.50'}
-                        rounded={'xl'}
-                        p={{base: 4, sm: 6, md: 8}}
-                        spacing={{base: 8}}
-                        maxW={{lg: 'lg'}}>
-                        <Stack spacing={4}>
+            <form onSubmit={submit}>
+                <Box position={'relative'}>
+                    <Container
+                        as={SimpleGrid}
+                        maxW={'7xl'}
+                        columns={{base: 1, md: 2}}
+                        spacing={{base: 10, lg: 32}}
+                        py={{base: 10, sm: 20, lg: 32}}>
+                        <Stack spacing={{base: 10, md: 20}}>
                             <Heading
-                                color={'gray.800'}
                                 lineHeight={1.1}
-                                fontSize={{base: '2xl', sm: '3xl', md: '4xl'}}>
-                                Join our platform
+                                fontSize={{base: '3xl', sm: '4xl', md: '5xl', lg: '6xl'}}>
+                                Welcome to{' '}
                                 <Text
                                     as={'span'}
                                     bgGradient="linear(to-r, red.400,pink.400)"
                                     bgClip="text">
-                                    !
+                                    Kastel!
                                 </Text>
                             </Heading>
-                            <Text color={'gray.500'} fontSize={{base: 'sm', sm: 'md'}}>
-                                We are a platform for everyone! Want to know more?{' '} ...
-                            </Text>
-                        </Stack>
-                        <Box as={'form'} mt={10}>
-                            <Stack spacing={4}>
-                                <Input
-                                    placeholder="Username"
-                                    bg={'gray.100'}
-                                    border={0}
-                                    color={'gray.500'}
-                                    _placeholder={{
-                                        color: 'gray.500',
-                                    }}
-                                />
-                                <Input
-                                    placeholder="hello@example.com"
-                                    bg={'gray.100'}
-                                    border={0}
-                                    color={'gray.500'}
-                                    _placeholder={{
-                                        color: 'gray.500',
-                                    }}
-                                />
-                                <Input
-                                    placeholder="CoolPassword123!"
-                                    bg={'gray.100'}
-                                    border={0}
-                                    color={'gray.500'}
-                                    _placeholder={{
-                                        color: 'gray.500',
-                                    }}
-                                />
-                                <Input
-                                    placeholder="Age"
-                                    bg={'gray.100'}
-                                    border={0}
-                                    color={'gray.500'}
-                                    _placeholder={{
-                                        color: 'gray.500',
-                                    }}
-                                />
+                            <Stack direction={'row'} spacing={2} align={'center'}>
+                                <Text fontFamily={'heading'} fontSize={{base: '3xl', md: '4xl'}}>
+                                    A new chat platform for everyone.
+                                </Text>
+                                <Text fontFamily={'heading'} fontSize={{base: '4xl', md: '6xl'}}>
+                                    +
+                                </Text>
+                                <Flex
+                                    align={'center'}
+                                    justify={'center'}
+                                    fontFamily={'heading'}
+                                    fontSize={{base: 'sm', md: 'lg'}}
+                                    bg={'gray.800'}
+                                    color={'white'}
+                                    rounded={'full'}
+                                    width={useBreakpointValue({base: '45px', md: '65px'})}
+                                    height={useBreakpointValue({base: '45px', md: '65px'})}
+                                    position={'relative'}
+                                    _before={{
+                                        content: '""',
+                                        width: 'full',
+                                        height: 'full',
+                                        rounded: 'full',
+                                        transform: 'scale(1.125)',
+                                        bgGradient: 'linear(to-bl, orange.400,yellow.400)',
+                                        position: 'absolute',
+                                        zIndex: -1,
+                                        top: 0,
+                                        left: 0,
+                                    }}>
+                                    YOU
+                                </Flex>
                             </Stack>
-                            <Button
-                                fontFamily={'heading'}
-                                mt={8}
-                                w={'full'}
-                                bgGradient="linear(to-r, red.400,pink.400)"
-                                color={'white'}
-                                _hover={{
-                                    bgGradient: 'linear(to-r, red.400,pink.400)',
-                                    boxShadow: 'xl',
-                                }}>
-                                Submit
-                            </Button>
-                        </Box>
-                        form
-                    </Stack>
-                </Container>
-                <Blur/>
-            </Box>
+                        </Stack>
+                        <Stack
+                            bg={useColorModeValue('gray.50', 'gray.700')}
+                            rounded={'xl'}
+                            p={{base: 4, sm: 6, md: 8}}
+                            spacing={{base: 8}}
+                            maxW={{lg: 'lg'}}>
+                            <Stack spacing={4}>
+                                <Heading
+                                    color={useColorModeValue('gray.800', 'gray.100')}
+                                    lineHeight={1.1}
+                                    fontSize={{base: '2xl', sm: '3xl', md: '4xl'}}>
+                                    Join our platform
+                                    <Text
+                                        as={'span'}
+                                        bgGradient="linear(to-r, red.400,pink.400)"
+                                        bgClip="text">
+                                        !
+                                    </Text>
+                                </Heading>
 
+                                {error ? (
+                                    <Text bgGradient="linear(to-r, red.400,pink.400)"
+                                          bgClip="text"
+                                          fontSize={{base: 'sm', sm: 'md'}}>
+                                        {error.map(err => {
+                                            return err.message
+                                        })}
+                                    </Text>
+                                ) : (
+                                    <Text color={useColorModeValue('gray.500', 'gray.200')}
+                                          fontSize={{base: 'sm', sm: 'md'}}>
+                                        We are a platform for everyone! Want to know more?{' '} ...
+                                    </Text>
+                                )}
+                            </Stack>
+                            <Box mt={10}>
+                                <Stack spacing={4}>
+                                    <Input
+                                        id={'username'}
+                                        required={true}
+                                        type={'text'}
+                                        bg={useColorModeValue('gray.200', 'gray.600')}
+                                        placeholder="Username"
+                                        border={0}
+                                        color={useColorModeValue('gray.900', 'gray.100')}
+                                        _placeholder={{
+                                            color: useColorModeValue('gray.500', 'gray.100'),
+                                        }}
+                                    />
+                                    <Input
+                                        id={'email'}
+                                        required={true}
+                                        type={'email'}
+                                        placeholder="hello@example.com"
+                                        bg={useColorModeValue('gray.200', 'gray.600')}
+                                        border={0}
+                                        color={useColorModeValue('gray.900', 'gray.100')}
+                                        _placeholder={{
+                                            color: useColorModeValue('gray.500', 'gray.100'),
+                                        }}
+                                    />
+                                    <Input
+                                        id={'password'}
+                                        required={true}
+                                        type={'password'}
+                                        placeholder="CoolPassword123!"
+                                        bg={useColorModeValue('gray.200', 'gray.600')}
+                                        border={0}
+                                        color={useColorModeValue('gray.900', 'gray.100')}
+                                        _placeholder={{
+                                            color: useColorModeValue('gray.500', 'gray.100'),
+                                        }}
+                                    />
+                                    <Input
+                                        id={'dob'}
+                                        required={true}
+                                        type={'date'}
+                                        placeholder="Age"
+                                        bg={useColorModeValue('gray.200', 'gray.600')}
+                                        border={0}
+                                        color={useColorModeValue('gray.900', 'gray.100')}
+                                        _placeholder={{
+                                            color: useColorModeValue('gray.500', 'gray.100'),
+                                        }}
+                                    />
+                                </Stack>
+
+                                {loading ?
+                                    <Button
+                                        isLoading
+                                        fontFamily={'heading'}
+                                        mt={8}
+                                        w={'full'}
+                                        _hover={{
+                                            bgGradient: 'linear(to-r, red.400,pink.400)',
+                                            boxShadow: 'xl',
+                                        }}
+                                        bgGradient="linear(to-r, red.400,pink.400)"
+                                        color={'white'}>
+                                        Registering
+                                    </Button>
+                                    :
+                                    <Button
+                                        type={'submit'}
+                                        fontFamily={'heading'}
+                                        mt={8}
+                                        w={'full'}
+                                        _hover={{
+                                            bgGradient: 'linear(to-r, red.400,pink.400)',
+                                            boxShadow: 'xl',
+                                        }}
+                                        bgGradient="linear(to-r, red.400,pink.400)"
+                                        color={'white'}>
+                                        Register
+                                    </Button>
+                                }
+
+                            </Box>
+                            form
+                        </Stack>
+                    </Container>
+                    <Blur/>
+                </Box>
+            </form>
         </>
     )
 }
@@ -170,9 +286,9 @@ export const Blur = (props) => {
             style={{filter: 'blur(70px)'}}
             css={{pointerEvents: "none"}}
             width={useBreakpointValue({base: '100%', md: '40vw', lg: '30vw'},
-                { ssr: true })}
+                {ssr: true})}
             zIndex={useBreakpointValue({base: -1, md: -1, lg: 0},
-                { ssr: true })}
+                {ssr: true})}
             height="560px"
             viewBox="0 0 528 560"
             fill="none"
