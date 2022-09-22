@@ -21,6 +21,7 @@ import {
     VStack,
 } from '@chakra-ui/react';
 import {FiBell, FiChevronDown, FiHome, FiMenu,} from 'react-icons/fi';
+import NextLink from 'next/link'
 
 const LinkItems = [
     {name: 'Home', icon: FiHome, url: '/app'},
@@ -178,15 +179,23 @@ const MobileNav = ({userInfo, onOpen, ...rest}) => {
                         <MenuList
                             bg={useColorModeValue('white', 'gray.900')}
                             borderColor={useColorModeValue('gray.200', 'gray.700')}>
-                            <MenuItem href={'/app/@me'}>Profile</MenuItem>
-                            <MenuItem href={'/app/settings'}>Settings</MenuItem>
+                            <MenuItemLink href={'/app/@me'}>Profile</MenuItemLink>
+                            <MenuItemLink href={'/app/settings'}>Settings</MenuItemLink>
                             <MenuItem>Billing</MenuItem>
                             <MenuDivider/>
-                            <MenuItem href={'/app/logout'}>Sign out</MenuItem>
+                            <MenuItemLink href={'/app/logout'}>Sign out</MenuItemLink>
                         </MenuList>
                     </Menu>
                 </Flex>
             </HStack>
         </Flex>
+    );
+};
+
+const MenuItemLink = ({href, icon, children, ...rest}) => {
+    return (
+        <NextLink href={href} style={{textDecoration: 'none'}} _focus={{boxShadow: 'none'}}>
+            <MenuItem>{children}</MenuItem>
+        </NextLink>
     );
 };
