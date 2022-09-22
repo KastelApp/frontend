@@ -1,25 +1,46 @@
 import Head from "next/head";
 import {useRouter} from "next/router";
-import AppNav from "../../components/navbar/app";
-import {useEffect} from "react";
+import {useEffect, useState} from "react";
 import * as api from "../../utils/api";
 import {getCookie} from 'cookies-next';
+import {Flex, Heading, Stack, Text} from "@chakra-ui/react";
+import quotes from '../../data/quotes.js';
 
 function HomePage({token, user}) {
     const router = useRouter();
+    const [quote, setQuote] = useState('');
 
     useEffect(() => {
         (async () => {
-            let userInfo = await api.fetchUser(token);
-            console.log(userInfo);
-            if (userInfo.errors) {
-                // something here
-            }
+            setTimeout(async () => {
+                let userInfo = await api.fetchUser(token);
+                console.log(userInfo);
+                if (userInfo.errors) {
+                    // something here
+                }
 
-            if (userInfo.data) {
-                // something here
-            }
+                if (userInfo.data) {
+                    // something here
+                    router.push('/app/@me');
+                }
+            }, 3000);
         })();
+    }, [])
+
+    useEffect(() => {
+        console.log('Want to add your quote? Go to: https://github.com/Kastelll/frontend/');
+        setQuote(quotes[Math.floor(Math.random() * quotes.length)])
+
+        let second = setInterval(() => {
+
+            setQuote(quotes[Math.floor(Math.random() * quotes.length)])
+
+        }, 3000);
+
+        return () => {
+            clearInterval(second)
+        }
+
     }, [])
 
     return (
@@ -28,7 +49,24 @@ function HomePage({token, user}) {
                 <title>Kastel App</title>
             </Head>
 
-            <AppNav user={user}/>
+            {/* Loading Page */}
+
+            <Flex
+                minH={'100vh'}
+                align={'center'}
+                justify={'center'}>
+
+                <Stack spacing={8} mx={'auto'} maxW={'lg'} py={12} px={6}>
+                    <Stack align={'center'}>
+                        <Heading bgGradient="linear(to-r, red.400,pink.400)"
+                                 bgClip="text" fontSize={'5xl'}>Kastel</Heading>
+                        <Text fontSize={'2xl'} color={'gray.600'}>
+                            {quote}
+                        </Text>
+                    </Stack>
+                </Stack>
+
+            </Flex>
 
         </>
     )
