@@ -123,7 +123,9 @@ export function MobileNavContent(props) {
                                     gap='2'
                                 >
                                     {mainNavLinks.map((item) => (
-                                        <NavLink href={item.href} key={item.label}>
+                                        <NavLink _hover={{
+                                            pointer: 'cursor',
+                                        }} href={item.href} key={item.label}>
                                             {item.label}
                                         </NavLink>
                                     ))}

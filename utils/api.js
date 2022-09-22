@@ -35,10 +35,17 @@ const register = async function (body) {
     });
 };
 
+const fetchUser = async function () {
+    return await fetcher(`/${Version}/users/@me`, {
+        method: "GET",
+    });
+}
+
 export {
     API,
     fetcher,
     healthCheck,
     login,
     register,
+    fetchUser
 }

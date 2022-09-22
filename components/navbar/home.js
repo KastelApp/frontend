@@ -33,7 +33,9 @@ const Content = (props) => {
     return (
         <>
             <Flex w='100%' h='100%' px='6' align='center' justify='space-between'>
-                <Flex align='center'>
+                <Flex _hover={{
+                    pointer: 'cursor',
+                }} align='center'>
                     <NextLink href='/' passHref>
                         <Heading size='md'>Kastel</Heading>
                     </NextLink>
