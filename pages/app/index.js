@@ -28,7 +28,7 @@ function HomePage({token, user}) {
     }, [])
 
     useEffect(() => {
-        console.log('Want to add your quote? Go to: https://github.com/Kastelll/frontend/');
+        console.log('Want to add your quote? Go to: https://github.com/Kastelll/frontend/blob/master/data/quotes.js');
         setQuote(quotes[Math.floor(Math.random() * quotes.length)])
 
         let second = setInterval(() => {
