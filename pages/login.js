@@ -16,8 +16,9 @@ import NextLink from 'next/link'
 import {useRouter} from "next/router";
 import {useEffect, useState} from "react";
 import * as api from "../utils/api";
+import {getCookie, setCookie} from 'cookies-next';
 
-function LoginPage() {
+function LoginPage({user}) {
     const router = useRouter();
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
@@ -50,8 +51,25 @@ function LoginPage() {
                 let response = await api.login({email, password});
 
                 if (response?.responses[0]?.code === 'LOGGED_IN') {
-                    setLoading(false);
-                    router.push('/app');
+                    if (response?.data) {
+                        let token = response?.data?.token;
+                        let user = response?.data?.user;
+                        if (!user || !token) {
+                            setLoading(false);
+                            setError([
+                                {code: "UNKNOWN_ERROR", message: "An unknown error occurred. Please try again.",}
+                            ])
+                        } else {
+                            setLoading(false);
+                            setCookie('token', token);
+                            setCookie('user', JSON.stringify(user));
+
+                            router.push('/app');
+                        }
+                    } else {
+                        setLoading(false);
+                        setError(response?.errors || [{code: "UNKNOWN", message: "An unknown error occurred."}])
+                    }
                 } else if (response.errors) {
                     setLoading(false);
                     setError(response?.errors || [{code: "UNKNOWN", message: "An unknown error occurred."}])
@@ -79,7 +97,7 @@ function LoginPage() {
                 <title>Kastel - Login</title>
             </Head>
 
-            <NavBar_Home/>
+            <NavBar_Home user={user}/>
 
             <form onSubmit={login}>
 
@@ -248,6 +266,25 @@ export const Blur = (props) => {
             <circle cx="426.5" cy="-0.5" r="101.5" fill="#4299E1"/>
         </Icon>
     );
+};
+
+export const getServerSideProps = ({req, res}) => {
+    let user = getCookie('user', {req, res}) || null;
+
+    if (user) {
+        return {
+            redirect: {
+                destination: '/app',
+                permanent: false,
+            },
+        }
+    }
+
+    return {
+        props: {
+            user: getCookie('user', {req, res}) || null,
+        }
+    };
 };
 
 export default LoginPage;

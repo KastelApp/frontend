@@ -20,7 +20,7 @@ import {FaMoon, FaSun} from 'react-icons/fa'
 import LoginButton from "./login-button";
 import {MobileNavButton, MobileNavContent} from "./mobile-nav";
 
-const Content = (props) => {
+const Content = ({user}, props) => {
     const mobileNav = useDisclosure()
     const {toggleColorMode: toggleMode} = useColorMode()
     const text = useColorModeValue('dark', 'light')
@@ -87,7 +87,7 @@ const Content = (props) => {
                             onClick={toggleMode}
                             icon={<SwitchIcon/>}
                         />
-                        <LoginButton ml='5'/>
+                        <LoginButton user={user} ml='5'/>
                         <MobileNavButton
                             ref={mobileNavBtnRef}
                             aria-label='Open Menu'
@@ -102,7 +102,7 @@ const Content = (props) => {
 }
 
 
-const NavBar = (props) => {
+const NavBar = ({user}, props) => {
     const {maxW = '8xl', maxWidth = '8xl'} = props
     const ref = useRef()
     const [y, setY] = useState(0)
@@ -129,7 +129,7 @@ const NavBar = (props) => {
             {...props}
         >
             <chakra.div height='4.5rem' mx='auto' maxW={maxW} maxWidth={maxWidth}>
-                <Content/>
+                <Content user={user}/>
             </chakra.div>
         </chakra.header>
     )

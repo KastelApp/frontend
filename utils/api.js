@@ -35,9 +35,13 @@ const register = async function (body) {
     });
 };
 
-const fetchUser = async function () {
+const fetchUser = async function (Token) {
     return await fetcher(`/${Version}/users/@me`, {
         method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": Token || null,
+        },
     });
 }
 

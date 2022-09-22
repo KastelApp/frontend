@@ -17,8 +17,9 @@ import {
 import {useRouter} from "next/router";
 import {useEffect, useState} from "react";
 import * as api from "../utils/api";
+import {getCookie} from "cookies-next";
 
-function RegisterPage() {
+function RegisterPage({user}) {
     const router = useRouter();
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
@@ -75,8 +76,6 @@ function RegisterPage() {
                         {code: "UNKNOWN", message: "An unknown error occurred, check logs."}
                     ])
                 }
-
-                // continue here
             } catch (error) {
                 console.log(error)
                 setLoading(false);
@@ -93,7 +92,7 @@ function RegisterPage() {
                 <title>Kastel - Register</title>
             </Head>
 
-            <NavBar_Home/>
+            <NavBar_Home user={user}/>
 
             <form onSubmit={submit}>
                 <Box position={'relative'}>
@@ -303,6 +302,25 @@ export const Blur = (props) => {
             <circle cx="426.5" cy="-0.5" r="101.5" fill="#4299E1"/>
         </Icon>
     );
+};
+
+export const getServerSideProps = ({req, res}) => {
+    let user = getCookie('user', {req, res}) || null;
+
+    if (user) {
+        return {
+            redirect: {
+                destination: '/app',
+                permanent: false,
+            },
+        }
+    }
+
+    return {
+        props: {
+            user: getCookie('user', {req, res}) || null,
+        }
+    };
 };
 
 export default RegisterPage;

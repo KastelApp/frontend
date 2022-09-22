@@ -20,16 +20,17 @@ import {
     useDisclosure,
     VStack,
 } from '@chakra-ui/react';
-import {FiBell, FiChevronDown, FiCompass, FiHome, FiMenu, FiSettings, FiStar, FiTrendingUp,} from 'react-icons/fi';
+import {FiBell, FiChevronDown, FiHome, FiMenu,} from 'react-icons/fi';
 
 const LinkItems = [
     {name: 'Home', icon: FiHome, url: '/app'},
 ];
 
-export default function AppNav({
-                                              children,
-                                          }) {
+export default function AppNav({user, children}) {
     const {isOpen, onOpen, onClose} = useDisclosure();
+
+    let userInfo = JSON.parse(user);
+
     return (
         <Box minH="100vh" bg={useColorModeValue('gray.100', 'gray.900')}>
             <SidebarContent
@@ -49,7 +50,7 @@ export default function AppNav({
                 </DrawerContent>
             </Drawer>
             {/* mobilenav */}
-            <MobileNav onOpen={onOpen}/>
+            <MobileNav userInfo={userInfo} onOpen={onOpen}/>
             <Box ml={{base: 0, md: 60}} p="4">
                 {children}
             </Box>
@@ -114,7 +115,7 @@ const NavItem = ({url, icon, children, ...rest}) => {
     );
 };
 
-const MobileNav = ({onOpen, ...rest}) => {
+const MobileNav = ({userInfo, onOpen, ...rest}) => {
     return (
         <Flex
             ml={{base: 0, md: 40}}
@@ -164,7 +165,7 @@ const MobileNav = ({onOpen, ...rest}) => {
                                     alignItems="flex-start"
                                     spacing="1px"
                                     ml="2">
-                                    <Text fontSize="sm">User</Text>
+                                    <Text fontSize="sm">{userInfo?.username || "Loading"}</Text>
                                     <Text fontSize="xs" color="gray.600">
                                         Online
                                     </Text>
