@@ -194,8 +194,8 @@ const MobileNav = ({userInfo, onOpen, ...rest}) => {
 
 const MenuItemLink = ({href, icon, children, ...rest}) => {
     return (
-        <NextLink href={href} style={{textDecoration: 'none'}} _focus={{boxShadow: 'none'}}>
+        <Link as={NextLink} href={href} style={{textDecoration: 'none'}} _focus={{boxShadow: 'none'}}>
             <MenuItem>{children}</MenuItem>
-        </NextLink>
+        </Link>
     );
 };
