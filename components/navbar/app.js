@@ -1,8 +1,8 @@
 import React from 'react';
 import {
     Avatar,
-    Box,
-    CloseButton,
+    Box, Center, Circle,
+    CloseButton, Divider,
     Drawer,
     DrawerContent,
     Flex,
@@ -14,14 +14,15 @@ import {
     MenuButton,
     MenuDivider,
     MenuItem,
-    MenuList,
+    MenuList, Stack,
     Text,
     useColorModeValue,
     useDisclosure,
     VStack,
 } from '@chakra-ui/react';
-import {FiBell, FiChevronDown, FiHome, FiMenu,} from 'react-icons/fi';
+import {FiBell, FiChevronDown, FiHome, FiMenu,FiPlus} from 'react-icons/fi';
 import NextLink from 'next/link'
+import NewServer from "../app/new-server";
 
 const LinkItems = [
     {name: 'Home', icon: FiHome, url: '/app'},
@@ -66,7 +67,7 @@ const SidebarContent = ({onClose, ...rest}) => {
             bg={useColorModeValue('white', 'gray.900')}
             borderRight="1px"
             borderRightColor={useColorModeValue('gray.200', 'gray.700')}
-            w={{base: 'full', md: 60}}
+            w={{base: 'full', md: 40}}
             pos="fixed"
             h="full"
             {...rest}>
@@ -81,6 +82,24 @@ const SidebarContent = ({onClose, ...rest}) => {
                     {link.name}
                 </NavItem>
             ))}
+
+            <Divider />
+            {/* Guild Listing */}
+
+
+            <Stack h="20" mt={5} alignItems="center" mx="8" justifyContent="space-between">
+
+
+                {/*<Box marginBottom={5}>
+                    <Circle size='30px' bg='tomato' color='white'>
+                        Server Name
+                    </Circle>
+                </Box>*/}
+
+                   <NewServer/>
+
+            </Stack>
+
         </Box>
     );
 };
