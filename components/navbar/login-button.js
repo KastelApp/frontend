@@ -6,6 +6,7 @@ const LoginButton = ({user}, props) => {
     return (
         <NextLink href={user ? '/app' : '/login'} passHref>
             <Box
+                as='a'
                 display={{base: 'none', lg: 'flex'}}
                 alignItems='center'
                 aria-label='Login to Kastel'
