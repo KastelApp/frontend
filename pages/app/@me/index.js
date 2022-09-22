@@ -19,6 +19,16 @@ function AtMe_Index({token, user}) {
             if (userInfo.data) {
                 // something here
             }
+
+            let userGuilds = await api.fetchGuilds(token);
+            console.log(userGuilds);
+            if (userGuilds.errors) {
+                // something here
+            }
+
+            if (userGuilds.data) {
+                // something here
+            }
         })();
     }, [])
 

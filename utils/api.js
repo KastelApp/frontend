@@ -45,6 +45,17 @@ const fetchUser = async function (Token) {
     });
 }
 
+const fetchGuilds = async function (Token) {
+    return await fetcher(`/${Version}/guilds/fetch`, {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": Token || null,
+        },
+    });
+}
+
+
 const newGuild = async function (Token, body) {
     return await fetcher(`/${Version}/guilds/new`, {
         method: "POST",
@@ -63,5 +74,6 @@ export {
     login,
     register,
     fetchUser,
+    fetchGuilds,
     newGuild,
 }
