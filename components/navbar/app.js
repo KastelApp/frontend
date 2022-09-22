@@ -36,6 +36,7 @@ export default function AppNav({user, children}) {
     return (
         <Box minH="100vh" bg={useColorModeValue('gray.100', 'gray.900')}>
             <SidebarContent
+                userInfo={userInfo}
                 onClose={() => onClose}
                 display={{base: 'none', md: 'block'}}
             />
@@ -48,7 +49,7 @@ export default function AppNav({user, children}) {
                 onOverlayClick={onClose}
                 size="full">
                 <DrawerContent>
-                    <SidebarContent onClose={onClose}/>
+                    <SidebarContent userInfo={userInfo} onClose={onClose}/>
                 </DrawerContent>
             </Drawer>
             {/* mobilenav */}
@@ -60,7 +61,7 @@ export default function AppNav({user, children}) {
     );
 }
 
-const SidebarContent = ({onClose, ...rest}) => {
+const SidebarContent = ({userInfo, onClose, ...rest}) => {
     return (
         <Box
             transition="3s ease"
@@ -96,7 +97,7 @@ const SidebarContent = ({onClose, ...rest}) => {
                     </Circle>
                 </Box>*/}
 
-                   <NewServer/>
+                   <NewServer userInfo={userInfo}/>
 
             </Stack>
 
