@@ -3,7 +3,7 @@ import theme from "../utils/theme";
 import NProgress from 'nprogress';
 import {debounce} from 'lodash';
 import RouterEvents from "../utils/router-events";
-import {useEffect} from "react";
+import {useEffect, useState} from "react";
 import '../styles/globals.css';
 import Head from 'next/head';
 
@@ -43,13 +43,38 @@ function MyApp({Component, pageProps}) {
         };
     })
 
+    // Requires
+    const needsUserAuth = [
+        '/app'
+    ]
+
+    function checkIfNeed(array, url) {
+        let result = false
+        for (const path of array) {
+            if (url.includes(path)) {
+                result = true
+                break;
+            }
+        }
+        return result
+    }
+
+    const [appReady, setAppReady] = useState(false)
+
+    const dataProps = {
+        appReady: {
+            state: appReady,
+            stateSetter: setAppReady
+        }
+    }
+
     return (
         <ChakraProvider theme={theme}>
             <Head>
                 <meta name="viewport" content="width=device-width, initial-scale=1"/>
                 <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico"/>
             </Head>
-            <Component {...pageProps} />
+            <Component {...pageProps} dataProps={dataProps}/>
         </ChakraProvider>
     )
 }
