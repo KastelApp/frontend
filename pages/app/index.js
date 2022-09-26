@@ -9,19 +9,26 @@ import quotes from '../../data/quotes.js';
 function HomePage({token, user}) {
     const router = useRouter();
     const [quote, setQuote] = useState('');
+    const [error, setError] = useState(false);
 
     useEffect(() => {
         (async () => {
             setTimeout(async () => {
-                let userInfo = await api.fetchUser(token);
-                console.log(userInfo);
-                if (userInfo.errors) {
-                    // something here
-                }
+                try {
+                    let userInfo = await api.fetchUser(token);
+                    console.log(userInfo);
+                    if (userInfo.errors) {
+                        // something here
+                    }
 
-                if (userInfo.data) {
-                    // something here
-                    router.push('/app/@me');
+                    if (userInfo.data) {
+                        // something here
+                        router.push('/app/@me');
+                    }
+
+                } catch (e) {
+                    console.log("API Error: " + e);
+                   setError(true)
                 }
             }, 3000);
         })();
