@@ -30,6 +30,7 @@ function HomePage({token, user, dataProps}) {
 
                 } catch (e) {
                     console.log("API Error: " + e);
+                    setAppReady(false);
                     setError(true)
                 }
             }, 3000);

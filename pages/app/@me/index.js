@@ -12,25 +12,30 @@ function AtMe_Index({token, user, dataProps}) {
 
     useEffect(() => {
         (async () => {
-            let userInfo = await api.fetchUser(token);
-            console.log(userInfo);
-            if (userInfo.errors) {
+            try {
+                let userInfo = await api.fetchUser(token);
+                console.log(userInfo);
+                if (userInfo.errors) {
+                    setAppReady(false);
+                }
+
+                if (userInfo.data) {
+                    // something here
+                    setAppReady(true);
+                }
+
+                let userGuilds = await api.fetchGuilds(token);
+                console.log(userGuilds);
+                if (userGuilds.errors) {
+                    // something here
+                }
+
+                if (userGuilds.data) {
+                    // something here
+                }
+            } catch (e) {
+                console.log("API Error: " + e);
                 setAppReady(false);
-            }
-
-            if (userInfo.data) {
-                // something here
-                setAppReady(true);
-            }
-
-            let userGuilds = await api.fetchGuilds(token);
-            console.log(userGuilds);
-            if (userGuilds.errors) {
-                // something here
-            }
-
-            if (userGuilds.data) {
-                // something here
             }
         })();
     }, [])
