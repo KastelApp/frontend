@@ -1,8 +1,9 @@
 import React from 'react';
 import {
     Avatar,
-    Box, Center, Circle,
-    CloseButton, Divider,
+    Box,
+    CloseButton,
+    Divider,
     Drawer,
     DrawerContent,
     Flex,
@@ -14,13 +15,14 @@ import {
     MenuButton,
     MenuDivider,
     MenuItem,
-    MenuList, Stack,
+    MenuList,
+    Stack,
     Text,
     useColorModeValue,
     useDisclosure,
     VStack,
 } from '@chakra-ui/react';
-import {FiBell, FiChevronDown, FiHome, FiMenu,FiPlus} from 'react-icons/fi';
+import {FiBell, FiChevronDown, FiHome, FiMenu} from 'react-icons/fi';
 import NextLink from 'next/link'
 import NewServer from "../app/new-server";
 
@@ -84,7 +86,7 @@ const SidebarContent = ({userInfo, onClose, ...rest}) => {
                 </NavItem>
             ))}
 
-            <Divider />
+            <Divider/>
             {/* Guild Listing */}
 
 
@@ -97,7 +99,7 @@ const SidebarContent = ({userInfo, onClose, ...rest}) => {
                     </Circle>
                 </Box>*/}
 
-                   <NewServer userInfo={userInfo}/>
+                <NewServer userInfo={userInfo}/>
 
             </Stack>
 

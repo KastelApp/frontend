@@ -1,23 +1,26 @@
 import Head from "next/head";
 import {useRouter} from "next/router";
 import AppNav from "../../../components/navbar/app";
-import {useEffect, useState} from "react";
+import {useEffect} from "react";
 import * as api from "../../../utils/api";
 import {getCookie} from 'cookies-next';
+import LoadingPage from "../../../components/app/loading-page";
 
-function AtMe_Index({token, user}) {
+function AtMe_Index({token, user, dataProps}) {
     const router = useRouter();
+    const {state: appReady, stateSetter: setAppReady} = dataProps.appReady
 
     useEffect(() => {
         (async () => {
             let userInfo = await api.fetchUser(token);
             console.log(userInfo);
             if (userInfo.errors) {
-                // something here
+                setAppReady(false);
             }
 
             if (userInfo.data) {
                 // something here
+                setAppReady(true);
             }
 
             let userGuilds = await api.fetchGuilds(token);
@@ -38,7 +41,13 @@ function AtMe_Index({token, user}) {
                 <title>Kastel App</title>
             </Head>
 
-            <AppNav user={user}/>
+            {appReady ? (
+                <>
+                    <AppNav user={user}/>
+                </>
+            ) : (
+                <LoadingPage user={user} token={token} appReady={appReady}/>
+            )}
 
         </>
     )
