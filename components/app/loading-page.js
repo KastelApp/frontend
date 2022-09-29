@@ -1,9 +1,11 @@
 import quotes from "../../data/quotes";
 import {Flex, Heading, Stack, Text} from "@chakra-ui/react";
 import {useEffect, useState} from "react";
+import {motion, useAnimation} from 'framer-motion'
 
 export default function LoadingPage({token, user, appReady}) {
     const [quote, setQuote] = useState('');
+    const loadingAnimationControl = useAnimation()
 
     useEffect(() => {
         console.log('Want to add your quote? Go to: https://github.com/Kastelll/frontend/blob/master/data/quotes.js');
@@ -24,24 +26,25 @@ export default function LoadingPage({token, user, appReady}) {
     return (
         <>
             {/* Loading Page */}
+            <motion.div
+                animate={loadingAnimationControl}>
+                <Flex
+                    minH={'100vh'}
+                    align={'center'}
+                    justify={'center'}>
 
-            <Flex
-                minH={'100vh'}
-                align={'center'}
-                justify={'center'}>
-
-                <Stack spacing={8} mx={'auto'} maxW={'lg'} py={12} px={6}>
-                    <Stack align={'center'}>
-                        <Heading bgGradient="linear(to-r, red.400,pink.400)"
-                                 bgClip="text" fontSize={'5xl'}>Kastel</Heading>
-                        <Text fontSize={'2xl'} color={'gray.600'}>
-                            {quote}
-                        </Text>
+                    <Stack spacing={8} mx={'auto'} maxW={'lg'} py={12} px={6}>
+                        <Stack align={'center'}>
+                            <Heading bgGradient="linear(to-r, red.400,pink.400)"
+                                     bgClip="text" fontSize={'5xl'}>Kastel</Heading>
+                            <Text fontSize={'2xl'} color={'gray.600'}>
+                                {quote}
+                            </Text>
+                        </Stack>
                     </Stack>
-                </Stack>
 
-            </Flex>
-
+                </Flex>
+            </motion.div>
         </>
     )
 }

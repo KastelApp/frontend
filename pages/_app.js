@@ -61,12 +61,17 @@ function MyApp({Component, pageProps}) {
     }
 
     const [appReady, setAppReady] = useState(false)
+    const [userData, setUserData] = useState(null)
 
     const dataProps = {
         appReady: {
             state: appReady,
             stateSetter: setAppReady
-        }
+        },
+        userData: {
+            state: userData,
+            stateSetter: setUserData
+        },
     }
 
     return (

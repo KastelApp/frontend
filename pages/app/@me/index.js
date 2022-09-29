@@ -14,9 +14,12 @@ function AtMe_Index({token, user, dataProps}) {
         (async () => {
             try {
                 let userInfo = await api.fetchUser(token);
-                console.log(userInfo);
+                // console.log(userInfo);
                 if (userInfo.errors) {
                     setAppReady(false);
+                    if (userInfo.errors.some(item => item.code === 'LOGIN_REQUIRED')) {
+                        router.push('/app/logout')
+                    }
                 }
 
                 if (userInfo.data) {
@@ -27,11 +30,12 @@ function AtMe_Index({token, user, dataProps}) {
                 let userGuilds = await api.fetchGuilds(token);
                 console.log(userGuilds);
                 if (userGuilds.errors) {
-                    // something here
+                    // someting here
                 }
 
                 if (userGuilds.data) {
                     // something here
+                    setAppReady(true);
                 }
             } catch (e) {
                 console.log("API Error: " + e);

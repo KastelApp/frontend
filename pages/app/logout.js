@@ -1,8 +1,8 @@
 import Head from "next/head";
 import {useRouter} from "next/router";
-import AppNav from "../../components/navbar/app";
 import {useEffect} from "react";
 import {deleteCookie, getCookie} from 'cookies-next';
+import LoadingPage from "../../components/app/loading-page";
 
 function HomePage({token, user}) {
     const router = useRouter();
@@ -19,7 +19,7 @@ function HomePage({token, user}) {
                 <title>Kastel App</title>
             </Head>
 
-            <AppNav user={user}/>
+            <LoadingPage user={user} token={token} appReady={false}/>
 
         </>
     )
