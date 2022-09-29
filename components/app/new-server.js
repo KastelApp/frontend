@@ -19,9 +19,11 @@ import {FiPlus} from "react-icons/fi";
 import React, {useState} from "react";
 import * as api from "../../utils/api";
 import {getCookie} from "cookies-next";
+import {useRouter} from "next/router";
 
 const NewServer = ({userInfo, onClose, ...rest}) => {
     const modal = useDisclosure()
+    const router = useRouter();
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     let token = getCookie('token') || null;
@@ -48,12 +50,16 @@ const NewServer = ({userInfo, onClose, ...rest}) => {
             setError(null);
             try {
                 let response = await api.newGuild(`${token}`, {name});
-
+                console.log(response);
                 if (response?.responses[0]?.code === 'GUILD_CREATED') {
                     setLoading(false);
-
-                    // temporary
-                    window.location.reload(false);
+                    modal.onClose();
+                    let GUILD_DATA = response?.responses[0]?.data;
+                    if (GUILD_DATA) {
+                        router.push(`/app/channels/${GUILD_DATA._id}/${GUILD_DATA.channels[0]}`)
+                    } else {
+                        router.push(`/app/@me`)
+                    }
                 } else if (response.errors) {
                     setLoading(false);
                     setError(response?.errors || [{code: "UNKNOWN", message: "An unknown error occurred."}])
