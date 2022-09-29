@@ -13,6 +13,9 @@ function HomePage({token, user, dataProps}) {
     useEffect(() => {
         (async () => {
             setTimeout(async () => {
+
+                {/* in the near futures (once the websocket is up and running) this will be removed and we will use a ws response */}
+
                 try {
                     let userInfo = await api.fetchUser(token);
                     console.log(userInfo);

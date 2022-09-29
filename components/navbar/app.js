@@ -16,6 +16,10 @@ import {
     MenuDivider,
     MenuItem,
     MenuList,
+    Popover,
+    PopoverBody,
+    PopoverContent,
+    PopoverTrigger,
     Stack,
     Text,
     useColorModeValue,
@@ -141,6 +145,7 @@ const NavItem = ({url, icon, children, ...rest}) => {
 };
 
 const MobileNav = ({userInfo, onOpen, ...rest}) => {
+    const initialFocusRef = React.useRef()
     return (
         <Flex
             ml={{base: 0, md: 40}}
@@ -169,12 +174,28 @@ const MobileNav = ({userInfo, onOpen, ...rest}) => {
             </Text>
 
             <HStack spacing={{base: '0', md: '6'}}>
-                <IconButton
-                    size="lg"
-                    variant="ghost"
-                    aria-label="open menu"
-                    icon={<FiBell/>}
-                />
+
+                <Popover>
+
+                    <PopoverTrigger>
+                        <IconButton
+                            size="lg"
+                            variant="ghost"
+                            aria-label="open menu"
+                            icon={<FiBell/>}
+                        />
+
+                    </PopoverTrigger>
+
+
+                    <PopoverContent color='white' bg='blue.800' borderColor='blue.800'>
+                        {/* notification listing */}
+                        <PopoverBody>
+                            No New Notifications
+                        </PopoverBody>
+                    </PopoverContent>
+
+                </Popover>
                 <Flex alignItems={'center'}>
                     <Menu>
                         <MenuButton
