@@ -204,7 +204,7 @@ const MobileNav = ({userInfo, onOpen, ...rest}) => {
                             bg={useColorModeValue('white', 'gray.900')}
                             borderColor={useColorModeValue('gray.200', 'gray.700')}>
                             <MenuItemLink href={'/app/@me'}>Profile</MenuItemLink>
-                            <MenuItemLink href={'/app/settings'}>Settings</MenuItemLink>
+                            <MenuItemLink href={'/app/@me/settings'}>Settings</MenuItemLink>
                             <MenuItem>Billing</MenuItem>
                             <MenuDivider/>
                             <MenuItemLink href={'/app/logout'}>Sign out</MenuItemLink>
