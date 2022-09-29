@@ -21,14 +21,18 @@ function NotFoundPage() {
                 mt={['20', null, '40']}
                 textAlign='center'
             >
-                <Heading>404 | Page Not Found</Heading>
-                <Text fontSize={{md: 'xl'}}>You just hit a route that doesn&apos;t exist... the sadness.😢</Text>
+                <Heading>Page Not Found</Heading>
+                <Text fontSize={{md: 'xl'}}>You just hit a route that doesn&apos;t exist...</Text>
                 <NextLink href='/' passHref>
                     <Button
                         as='a'
                         aria-label='Back to Home'
                         leftIcon={<FaHome/>}
-                        colorScheme='teal'
+                        bgGradient="linear(to-r, red.400,pink.400)"
+                        _hover={{
+                            bgGradient: 'linear(to-r, red.400,pink.400)',
+                            boxShadow: 'xl',
+                        }}
                         size='lg'
                     >
                         Back to Home
