@@ -37,7 +37,7 @@ const Content = ({user}, props) => {
                     pointer: 'cursor',
                 }} align='center'>
                     <NextLink href='/' passHref>
-                        <Heading size='md'>Kastel</Heading>
+                        <Heading as={'a'} size='md'>Kastel</Heading>
                     </NextLink>
                 </Flex>
 
@@ -121,8 +121,7 @@ const NavBar = ({user}, props) => {
             pos='sticky'
             top='0'
             zIndex='3'
-            bg='white'
-            _dark={{bg: 'transparent'}}
+            bg='transparent'
             left='0'
             right='0'
             width='full'

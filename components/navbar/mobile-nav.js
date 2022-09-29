@@ -81,6 +81,7 @@ export function MobileNavContent(props) {
     const [shadow, setShadow] = useState()
     let mainNavLinks = [
         {href: '/', label: 'Home'},
+        {href: '/branding', label: 'Branding'},
         {href: '/github', label: 'Github'},
         {href: '/discord', label: 'Discord'},
     ]
