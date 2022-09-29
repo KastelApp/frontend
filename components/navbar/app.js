@@ -27,7 +27,7 @@ import NextLink from 'next/link'
 import NewServer from "../app/new-server";
 
 const LinkItems = [
-    {name: 'Home', icon: FiHome, url: '/app'},
+    {name: 'Home', icon: FiHome, url: '/app/@me'},
 ];
 
 export default function AppNav({user, children}) {
@@ -81,9 +81,11 @@ const SidebarContent = ({userInfo, onClose, ...rest}) => {
                 <CloseButton display={{base: 'flex', md: 'none'}} onClick={onClose}/>
             </Flex>
             {LinkItems.map((link) => (
-                <NavItem url={link.url} key={link.name} icon={link.icon}>
-                    {link.name}
-                </NavItem>
+                <NextLink href={link.url} key={link.name}>
+                    <NavItem key={link.name} icon={link.icon}>
+                        {link.name}
+                    </NavItem>
+                </NextLink>
             ))}
 
             <Divider/>
