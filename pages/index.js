@@ -3,9 +3,8 @@ import NavBar_Home from "../components/navbar/home";
 import {useEffect} from "react";
 import {useRouter} from "next/router";
 import {getCookie} from "cookies-next";
-import {Box, Button, Container, Stack, Text, chakra, Divider} from "@chakra-ui/react";
+import {Box, Button, chakra, Container, Stack, Text} from "@chakra-ui/react";
 import NextLink from "next/link";
-import {DiGithubBadge} from "react-icons/di";
 import {FaArrowRight} from "react-icons/fa";
 
 function HomePage({user}) {
@@ -28,13 +27,13 @@ function HomePage({user}) {
 
                 {/* welcome content */}
 
-                <Box as='section' pt='6rem' pb={{ base: '0', md: '5rem' }}>
+                <Box as='section' pt='6rem' pb={{base: '0', md: '5rem'}}>
                     <Container>
                         <Box textAlign='center'>
                             <chakra.h1
                                 maxW='16ch'
                                 mx='auto'
-                                fontSize={{ base: '2.25rem', sm: '3rem', lg: '4rem' }}
+                                fontSize={{base: '2.25rem', sm: '3rem', lg: '4rem'}}
                                 fontFamily='heading'
                                 letterSpacing='tighter'
                                 fontWeight='extrabold'
@@ -53,8 +52,8 @@ function HomePage({user}) {
                                 maxW='560px'
                                 mx='auto'
                                 color='gray.500'
-                                _dark={{ color: 'gray.400' }}
-                                fontSize={{ base: 'lg', lg: 'xl' }}
+                                _dark={{color: 'gray.400'}}
+                                fontSize={{base: 'lg', lg: 'xl'}}
                                 mt='6'
                             >
                                 Small Test Message
@@ -64,7 +63,7 @@ function HomePage({user}) {
                                 mt='10'
                                 spacing='4'
                                 justify='center'
-                                direction={{ base: 'column', sm: 'row' }}
+                                direction={{base: 'column', sm: 'row'}}
                             >
                                 <NextLink href='/register' passHref>
                                     <Button
@@ -78,7 +77,7 @@ function HomePage({user}) {
                                             bgGradient: 'linear(to-r, red.400,pink.400)',
                                             boxShadow: 'xl',
                                         }}
-                                        rightIcon={<FaArrowRight fontSize='0.8em' />}
+                                        rightIcon={<FaArrowRight fontSize='0.8em'/>}
                                     >
                                         Get Started!
                                     </Button>

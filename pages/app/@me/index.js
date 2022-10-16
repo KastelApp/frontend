@@ -52,7 +52,11 @@ function AtMe_Index({token, user, dataProps}) {
 
             {appReady ? (
                 <>
-                    <AppNav user={user}/>
+                    <AppNav user={user}>
+
+                        {/* page content goes inside here */}
+
+                    </AppNav>
                 </>
             ) : (
                 <LoadingPage user={user} token={token} appReady={appReady}/>

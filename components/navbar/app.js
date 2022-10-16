@@ -34,7 +34,7 @@ const LinkItems = [
     {name: 'Home', icon: FiHome, url: '/app/@me'},
 ];
 
-export default function AppNav({user, children}) {
+export default function AppNav({user, guilds, children}) {
     const {isOpen, onOpen, onClose} = useDisclosure();
 
     let userInfo = JSON.parse(user);
