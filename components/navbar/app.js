@@ -221,9 +221,7 @@ const MobileNav = ({userInfo, onOpen, ...rest}) => {
                                 </Box>
                             </HStack>
                         </MenuButton>
-                        <MenuList
-                            bg={useColorModeValue('white', 'gray.900')}
-                            borderColor={useColorModeValue('gray.200', 'gray.700')}>
+                        <MenuList>
                             <MenuItemLink href={'/app/@me'}>Profile</MenuItemLink>
                             <MenuItemLink href={'/app/@me/settings'}>Settings</MenuItemLink>
                             <MenuItem>Billing</MenuItem>
