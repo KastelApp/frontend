@@ -22,7 +22,7 @@ import {
     PopoverContent,
     PopoverTrigger,
     Stack,
-    Text,
+    Text, Tooltip,
     useColorModeValue,
     useDisclosure,
     VStack,
@@ -102,14 +102,17 @@ const SidebarContent = ({userInfo, onClose, ...rest}) => {
 
             <Stack h="20" mt={5} alignItems="center" mx="8" justifyContent="space-between">
 
-                <Box marginBottom={2}>
-                    <Image borderRadius='full'
-                           alt={'testing guild'}
-                           boxSize='40px' src={'/icon-2.png'}/>
-                </Box>
+                <Tooltip color={useColorModeValue('gray.800', 'white')} bg={useColorModeValue('white', 'gray.700')} hasArrow label='Test server' placement='right'>
+                    <Box marginBottom={2}>
+                        <Image borderRadius='full'
+                               alt={'testing guild'}
+                               boxSize='40px' src={'/icon-2.png'}/>
+                    </Box>
+                </Tooltip>
 
-                <NewServer userInfo={userInfo}/>
-
+                <Tooltip hasArrow label='Create new guild' placement='right'>
+                    <NewServer userInfo={userInfo}/>
+                </Tooltip>
             </Stack>
 
         </Box>
