@@ -1,7 +1,7 @@
 import React from 'react';
 import {
     Avatar,
-    Box,
+    Box, Circle,
     CloseButton,
     Divider,
     Drawer,
@@ -9,7 +9,7 @@ import {
     Flex,
     HStack,
     Icon,
-    IconButton,
+    IconButton, Image,
     Link,
     Menu,
     MenuButton,
@@ -74,23 +74,26 @@ const SidebarContent = ({userInfo, onClose, ...rest}) => {
             bg={useColorModeValue('white', 'gray.900')}
             borderRight="1px"
             borderRightColor={useColorModeValue('gray.200', 'gray.700')}
-            w={{base: 'full', md: 40}}
+            w={{base: 'full', md: '10%'}}
             pos="fixed"
             h="full"
             {...rest}>
-            <Flex h="20" alignItems="center" mx="8" justifyContent="space-between">
+            <Flex h="20" alignItems="center" mx="5" justifyContent="space-between">
                 <Text fontSize="2xl" fontFamily="monospace" fontWeight="bold">
                     Kastel
                 </Text>
                 <CloseButton display={{base: 'flex', md: 'none'}} onClick={onClose}/>
             </Flex>
+
+            {/*
+            temp removal
             {LinkItems.map((link) => (
                 <NextLink href={link.url} key={link.name}>
                     <NavItem key={link.name} icon={link.icon}>
                         {link.name}
                     </NavItem>
                 </NextLink>
-            ))}
+            ))}*/}
 
             <Divider/>
             {/* Guild Listing */}
@@ -98,12 +101,11 @@ const SidebarContent = ({userInfo, onClose, ...rest}) => {
 
             <Stack h="20" mt={5} alignItems="center" mx="8" justifyContent="space-between">
 
-
-                {/*<Box marginBottom={5}>
-                    <Circle size='30px' bg='tomato' color='white'>
-                        Server Name
-                    </Circle>
-                </Box>*/}
+                <Box marginBottom={2}>
+                    <Image borderRadius='full'
+                           alt={'testing guild'}
+                           boxSize='40px' src={'/icon-2.png'} />
+                </Box>
 
                 <NewServer userInfo={userInfo}/>
 
@@ -148,7 +150,7 @@ const MobileNav = ({userInfo, onOpen, ...rest}) => {
     const initialFocusRef = React.useRef()
     return (
         <Flex
-            ml={{base: 0, md: 40}}
+            ml={{base: 0, md: 30}}
             px={{base: 4, md: 4}}
             height="20"
             alignItems="center"
@@ -205,6 +207,7 @@ const MobileNav = ({userInfo, onOpen, ...rest}) => {
                             <HStack>
                                 <Avatar
                                     size={'sm'}
+                                    src={'/icon-1.png'}
                                 />
                                 <VStack
                                     display={{base: 'none', md: 'flex'}}

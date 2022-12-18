@@ -82,7 +82,8 @@ const NewServer = ({userInfo, onClose, ...rest}) => {
                     onClick={modal.onOpen}
                     colorScheme='teal'
                     aria-label='New'
-                    size='md'
+                    boxSize='40px'
+                    borderRadius='full'
                     icon={<FiPlus/>}
                 />
             </Box>
