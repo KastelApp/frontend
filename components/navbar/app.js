@@ -1,7 +1,7 @@
 import React from 'react';
 import {
     Avatar,
-    Box, Circle,
+    Box,
     CloseButton,
     Divider,
     Drawer,
@@ -9,7 +9,8 @@ import {
     Flex,
     HStack,
     Icon,
-    IconButton, Image,
+    IconButton,
+    Image,
     Link,
     Menu,
     MenuButton,
@@ -104,7 +105,7 @@ const SidebarContent = ({userInfo, onClose, ...rest}) => {
                 <Box marginBottom={2}>
                     <Image borderRadius='full'
                            alt={'testing guild'}
-                           boxSize='40px' src={'/icon-2.png'} />
+                           boxSize='40px' src={'/icon-2.png'}/>
                 </Box>
 
                 <NewServer userInfo={userInfo}/>
