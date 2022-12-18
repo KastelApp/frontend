@@ -47,10 +47,9 @@ function HomePage({token, user, dataProps}) {
 
             {appReady ? (
                 <>
-                    <AppNav user={user}/>
-
-                    <Text>This page is a work in progress</Text>
-
+                    <AppNav user={user}>
+                        <Text>This page is a work in progress</Text>
+                    </AppNav>
                 </>
             ) : (
                 <LoadingPage user={user} token={token} appReady={appReady}/>
