@@ -33,17 +33,11 @@ const NewServer = ({userInfo, onClose, ...rest}) => {
         setLoading(true);
 
         let name = event.target.name.value;
-        let description = event.target.description.value;
 
         if (!name) {
             setLoading(false);
             setError([
                 {code: "MISSING_NAME", message: "Please enter a name for your guild."}
-            ])
-        } else if (!description) {
-            setLoading(false);
-            setError([
-                {code: "MISSING_DESCRIPTION", message: "Please enter a description for your guild."}
             ])
         } else {
             // submit form
@@ -116,18 +110,6 @@ const NewServer = ({userInfo, onClose, ...rest}) => {
                                     type={'text'}
                                     bg={useColorModeValue('gray.200', 'gray.600')}
                                     placeholder="Name"
-                                    border={0}
-                                    color={useColorModeValue('gray.900', 'gray.100')}
-                                    _placeholder={{
-                                        color: useColorModeValue('gray.500', 'gray.100'),
-                                    }}
-                                />
-
-                                <Input
-                                    id={'description'}
-                                    type={'text'}
-                                    bg={useColorModeValue('gray.200', 'gray.600')}
-                                    placeholder="Description"
                                     border={0}
                                     color={useColorModeValue('gray.900', 'gray.100')}
                                     _placeholder={{
