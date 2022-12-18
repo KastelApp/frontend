@@ -233,7 +233,6 @@ const MobileNav = ({userInfo, onOpen, ...rest}) => {
                         <MenuList>
                             <MenuItemLink href={'/app/@me'}>Profile</MenuItemLink>
                             <MenuItemLink href={'/app/@me/settings'}>Settings</MenuItemLink>
-                            <MenuItem>Billing</MenuItem>
                             <MenuDivider/>
                             <MenuItemLink href={'/app/logout'}>Sign out</MenuItemLink>
                         </MenuList>
