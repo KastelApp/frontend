@@ -84,6 +84,7 @@ export function MobileNavContent(props) {
         {href: '/branding', label: 'Branding'},
         {href: '/github', label: 'Github'},
         {href: '/discord', label: 'Discord'},
+        {href: '/login', label: 'Login'},
     ]
 
     return (
