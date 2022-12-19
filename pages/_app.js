@@ -62,6 +62,7 @@ function MyApp({Component, pageProps}) {
 
     const [appReady, setAppReady] = useState(false)
     const [userData, setUserData] = useState(null)
+    const [userGuilds, setUserGuilds] = useState(null)
 
     const dataProps = {
         appReady: {
@@ -72,6 +73,10 @@ function MyApp({Component, pageProps}) {
             state: userData,
             stateSetter: setUserData
         },
+        userGuilds: {
+            state: userGuilds,
+            stateSetter: setUserGuilds
+        }
     }
 
     return (
