@@ -96,7 +96,7 @@ const Content = ({user}, props) => {
                     </HStack>
                 </Flex>
             </Flex>
-            <MobileNavContent isOpen={mobileNav.isOpen} onClose={mobileNav.onClose}/>
+            <MobileNavContent user={user} isOpen={mobileNav.isOpen} onClose={mobileNav.onClose}/>
         </>
     )
 }
