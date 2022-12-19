@@ -1,7 +1,7 @@
 import React from 'react';
 import {
     Avatar,
-    Box,
+    Box, Circle,
     CloseButton,
     Divider,
     Drawer,
@@ -44,6 +44,7 @@ export default function AppNav({user, guilds, children}) {
     return (
         <Box minH="100vh" bg={useColorModeValue('gray.100', 'gray.900')}>
             <SidebarContent
+                guilds={guilds}
                 userInfo={userInfo}
                 onClose={() => onClose}
                 display={{base: 'none', md: 'block'}}
@@ -57,7 +58,7 @@ export default function AppNav({user, guilds, children}) {
                 onOverlayClick={onClose}
                 size="full">
                 <DrawerContent>
-                    <SidebarContent userInfo={userInfo} onClose={onClose}/>
+                    <SidebarContent guilds={guilds} userInfo={userInfo} onClose={onClose}/>
                 </DrawerContent>
             </Drawer>
             {/* mobilenav */}
@@ -69,7 +70,7 @@ export default function AppNav({user, guilds, children}) {
     );
 }
 
-const SidebarContent = ({userInfo, onClose, ...rest}) => {
+const SidebarContent = ({guilds, userInfo, onClose, ...rest}) => {
     return (
         <Box
             transition="3s ease"
@@ -81,9 +82,11 @@ const SidebarContent = ({userInfo, onClose, ...rest}) => {
             h="full"
             {...rest}>
             <Flex h="20" alignItems="center" mx="5" justifyContent="space-between">
-                <Text fontSize="2xl" fontFamily="monospace" fontWeight="bold">
-                    Kastel
-                </Text>
+                <NextLink href={'/app/@me'} passHref>
+                    <Text as={'a'} fontSize="2xl" fontFamily="monospace" fontWeight="bold">
+                        Kastel
+                    </Text>
+                </NextLink>
                 <CloseButton display={{base: 'flex', md: 'none'}} onClick={onClose}/>
             </Flex>
 
@@ -103,14 +106,12 @@ const SidebarContent = ({userInfo, onClose, ...rest}) => {
 
             <Stack h="20" mt={5} alignItems="center" mx="8" justifyContent="space-between">
 
-                <Tooltip color={useColorModeValue('gray.800', 'white')} bg={useColorModeValue('white', 'gray.700')}
-                         hasArrow label='Test server' placement='right'>
-                    <Box marginBottom={2}>
-                        <Image borderRadius='full'
-                               alt={'testing guild'}
-                               boxSize='40px' src={'/icon-2.png'}/>
-                    </Box>
-                </Tooltip>
+                {guilds && guilds.map((guild) => {
+                    return (
+                        <GuildItem guild={guild} key={guild.id}/>
+                    )
+                })
+                }
 
                 <Tooltip hasArrow label='Create new guild' placement='right'>
                     <NewServer userInfo={userInfo}/>
@@ -120,6 +121,27 @@ const SidebarContent = ({userInfo, onClose, ...rest}) => {
         </Box>
     );
 };
+
+const GuildItem = ({guild, ...rest}) => {
+    return (
+        <NextLink href={'/app/channels/' + guild?.id || '0' + '/:channelID'} passHref>
+            <Box marginBottom={2}>
+            <Tooltip color={useColorModeValue('gray.800', 'white')}
+                     bg={useColorModeValue('white', 'gray.700')}
+                     hasArrow label={guild?.name || 'Unknown'} placement='right'>
+                    <Circle bg={useColorModeValue('white', 'gray.700')} borderRadius='full'
+                            alt={guild?.name || 'Unknown'}
+                            boxSize='40px'>
+                        <Text>
+                            {guild?.name?.charAt(0) || 'U'}
+                        </Text>
+                    </Circle>
+
+            </Tooltip>
+            </Box>
+        </NextLink>
+    )
+}
 
 const NavItem = ({url, icon, children, ...rest}) => {
     return (
