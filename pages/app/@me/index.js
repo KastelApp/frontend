@@ -9,6 +9,7 @@ import LoadingPage from "../../../components/app/loading-page";
 function AtMe_Index({token, user, dataProps}) {
     const router = useRouter();
     const {state: appReady, stateSetter: setAppReady} = dataProps.appReady
+    const {state: guilds, stateSetter: setGuilds} = dataProps.userGuilds
 
     useEffect(() => {
         (async () => {
@@ -28,7 +29,6 @@ function AtMe_Index({token, user, dataProps}) {
                 }
 
                 let userGuilds = await api.fetchGuilds(token);
-                console.log(userGuilds);
                 if (userGuilds.errors) {
                     // someting here
                 }
@@ -36,6 +36,7 @@ function AtMe_Index({token, user, dataProps}) {
                 if (userGuilds.data) {
                     // something here
                     setAppReady(true);
+                    setGuilds(userGuilds.data);
                 }
             } catch (e) {
                 console.log("API Error: " + e);
@@ -52,7 +53,7 @@ function AtMe_Index({token, user, dataProps}) {
 
             {appReady ? (
                 <>
-                    <AppNav user={user}>
+                    <AppNav guilds={guilds} user={user}>
 
                         {/* page content goes inside here */}
 

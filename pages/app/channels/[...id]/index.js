@@ -9,6 +9,7 @@ import {Text} from "@chakra-ui/react";
 
 function HomePage({token, user, dataProps}) {
     const {state: appReady, stateSetter: setAppReady} = dataProps.appReady
+    const {state: guilds, stateSetter: setGuilds} = dataProps.userGuilds
     const router = useRouter();
     const [error, setError] = useState(false);
 
@@ -47,7 +48,7 @@ function HomePage({token, user, dataProps}) {
 
             {appReady ? (
                 <>
-                    <AppNav user={user}>
+                    <AppNav guilds={guilds} user={user}>
                         <Text>This page is a work in progress</Text>
                     </AppNav>
                 </>
