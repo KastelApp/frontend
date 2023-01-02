@@ -29,7 +29,7 @@
     "react-remove-scroll": "^2.5.5"
   },
   "devDependencies": {
-    "eslint": "8.26.0",
+    "eslint": "8.31.0",
     "eslint-config-next": "13.0.1"
   }
 }
