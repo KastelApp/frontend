@@ -21,7 +21,7 @@
     "framer-motion": "^7.6.2",
     "lodash": "^4.17.21",
     "mitt": "^3.0.0",
-    "next": "^12.2.5",
+    "next": "^13.1.1",
     "nprogress": "^0.2.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
