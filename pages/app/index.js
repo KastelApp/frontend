@@ -22,9 +22,11 @@ function HomePage({token, user, dataProps}) {
                     console.log(userInfo);
                     if (userInfo.errors) {
                         setAppReady(false);
-                        if (userInfo.errors.some(item => item.code === 'LOGIN_REQUIRED')) {
+                       // if (userInfo.errors.some(item => item.code === 'LOGIN_REQUIRED')) {
                             router.push('/app/logout')
-                        }
+                       // }
+                    } else {
+                        setError(true)
                     }
 
                     if (userInfo.data) {
@@ -37,7 +39,7 @@ function HomePage({token, user, dataProps}) {
                     setAppReady(false);
                     setError(true)
                 }
-            }, 3000);
+            }, 2000);
         })();
     }, [])
 
