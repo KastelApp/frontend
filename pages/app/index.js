@@ -22,9 +22,12 @@ function HomePage({token, user, dataProps}) {
                     console.log(userInfo);
                     if (userInfo.errors) {
                         setAppReady(false);
-                        // if (userInfo.errors.some(item => item.code === 'LOGIN_REQUIRED')) {
-                        router.push('/app/logout')
-                        // }
+                        if (userInfo.errors.some(item => item.code === 'LOGIN_REQUIRED')) {
+                            router.push('/app/logout')
+                        }
+                        if (userInfo.errors.some(item => item.code === 'ERROR')) {
+                            router.push('/app/logout')
+                        }
                     } else {
                         setError(true)
                     }
