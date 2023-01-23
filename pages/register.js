@@ -37,7 +37,6 @@ function RegisterPage({user}) {
         let username = event.target.username.value;
         let email = event.target.email.value;
         let password = event.target.password.value;
-        let dob = event.target.dob.value;
 
         if (!username) {
             setLoading(false);
@@ -54,14 +53,9 @@ function RegisterPage({user}) {
             setError([
                 {code: "MISSING_PASSWORD", message: "Please enter your account password."}
             ])
-        } else if (!dob) {
-            setLoading(false);
-            setError([
-                {code: "MISSING_PASSWORD", message: "Please enter your a date of birth for your account."}
-            ])
         } else {
             try {
-                let response = await api.register({username, email, password, date_of_birth: dob});
+                let response = await api.register({username, email, password});
                 console.log(response);
 
                 if (response?.responses[0]?.code === 'ACCOUNT_CREATED') {
@@ -214,18 +208,6 @@ function RegisterPage({user}) {
                                         required={true}
                                         type={'password'}
                                         placeholder="CoolPassword123!"
-                                        bg={useColorModeValue('gray.200', 'gray.600')}
-                                        border={0}
-                                        color={useColorModeValue('gray.900', 'gray.100')}
-                                        _placeholder={{
-                                            color: useColorModeValue('gray.500', 'gray.100'),
-                                        }}
-                                    />
-                                    <Input
-                                        id={'dob'}
-                                        required={true}
-                                        type={'date'}
-                                        placeholder="Age"
                                         bg={useColorModeValue('gray.200', 'gray.600')}
                                         border={0}
                                         color={useColorModeValue('gray.900', 'gray.100')}
