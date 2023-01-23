@@ -22,44 +22,6 @@ RouterEvents.on('routeChangeError', () => {
 
 function MyApp({Component, pageProps}) {
 
-    useEffect(() => {
-        let activeRequests = 0;
-        const originalFetch = window.fetch;
-        window.fetch = async function (...args) {
-            if (activeRequests === 0) {
-                start();
-            }
-            activeRequests++;
-            try {
-                return await originalFetch(...args);
-            } catch (error) {
-                return Promise.reject(error);
-            } finally {
-                activeRequests -= 1;
-                if (activeRequests === 0) {
-                    start.cancel();
-                    NProgress.done();
-                }
-            }
-        };
-    })
-
-    // Requires
-    const needsUserAuth = [
-        '/app'
-    ]
-
-    function checkIfNeed(array, url) {
-        let result = false
-        for (const path of array) {
-            if (url.includes(path)) {
-                result = true
-                break;
-            }
-        }
-        return result
-    }
-
     const [appReady, setAppReady] = useState(false)
     const [userData, setUserData] = useState(null)
     const [userGuilds, setUserGuilds] = useState(null)
