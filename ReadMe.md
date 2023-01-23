@@ -46,6 +46,13 @@ refactoring code etc etc)
 
 This project is licensed under the GPL-3.0 License, For more info please check [LICENSE.md](/LICENSE.md)
 
+# Analytics Information
+Our analytics software is [Umami](https://umami.is/), We use it to track how many people visit our website and how many people use our app, We do not track any personal information, We only track the following:
+- Browser
+- Operating System
+- Referrer
+- Country
+
 [contributors-shield]: https://img.shields.io/github/contributors/Kastelll/frontend.svg?style=for-the-badge
 
 [contributors-url]: https://github.com/Kastelll/frontend/graphs/contributors
