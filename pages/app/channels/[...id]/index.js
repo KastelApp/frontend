@@ -24,6 +24,9 @@ function HomePage({token, user, dataProps}) {
                         if (userInfo.errors.some(item => item.code === 'LOGIN_REQUIRED')) {
                             router.push('/app/logout')
                         }
+                        if (userInfo.errors.some(item => item.code === 'ERROR')) {
+                            router.push('/app/logout')
+                        }
                     }
 
                     if (userInfo.data) {
