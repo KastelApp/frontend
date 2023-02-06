@@ -3,7 +3,7 @@ import theme from "../utils/theme";
 import NProgress from 'nprogress';
 import {debounce} from 'lodash';
 import RouterEvents from "../utils/router-events";
-import {useEffect, useState} from "react";
+import {useState} from "react";
 import '../styles/globals.css';
 import Head from 'next/head';
 import Script from "next/script";
@@ -44,9 +44,9 @@ function MyApp({Component, pageProps}) {
     return (
         <ChakraProvider theme={theme}>
             {process.env.NODE_ENV === 'production' && (
-            <Script async defer data-website-id="83dba013-b17b-45c2-a9bd-9f81d2a63c1c"
-                    src="https://analytics.kastelapp.com/umami.js"></Script>
-                )}
+                <Script async defer data-website-id="83dba013-b17b-45c2-a9bd-9f81d2a63c1c"
+                        src="https://analytics.kastelapp.com/umami.js"></Script>
+            )}
             <Head>
                 <meta name="viewport" content="width=device-width, initial-scale=1"/>
                 <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico"/>

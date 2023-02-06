@@ -1,7 +1,8 @@
 import React from 'react';
 import {
     Avatar,
-    Box, Circle,
+    Box,
+    Circle,
     CloseButton,
     Divider,
     Drawer,
@@ -10,7 +11,6 @@ import {
     HStack,
     Icon,
     IconButton,
-    Image,
     Link,
     Menu,
     MenuButton,
@@ -126,9 +126,9 @@ const GuildItem = ({guild, ...rest}) => {
     return (
         <NextLink href={'/app/channels/' + guild?.id || '0' + '/:channelID'} passHref>
             <Box marginBottom={2}>
-            <Tooltip color={useColorModeValue('gray.800', 'white')}
-                     bg={useColorModeValue('white', 'gray.700')}
-                     hasArrow label={guild?.name || 'Unknown'} placement='right'>
+                <Tooltip color={useColorModeValue('gray.800', 'white')}
+                         bg={useColorModeValue('white', 'gray.700')}
+                         hasArrow label={guild?.name || 'Unknown'} placement='right'>
                     <Circle bg={useColorModeValue('white', 'gray.700')} borderRadius='full'
                             alt={guild?.name || 'Unknown'}
                             boxSize='40px'>
@@ -137,7 +137,7 @@ const GuildItem = ({guild, ...rest}) => {
                         </Text>
                     </Circle>
 
-            </Tooltip>
+                </Tooltip>
             </Box>
         </NextLink>
     )

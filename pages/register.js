@@ -1,19 +1,6 @@
 import Head from "next/head";
 import NavBar_Home from "../components/navbar/home";
-import {
-    Box,
-    Button,
-    Container,
-    Flex,
-    Heading,
-    Icon,
-    Input,
-    SimpleGrid,
-    Stack,
-    Text,
-    useBreakpointValue,
-    useColorModeValue
-} from "@chakra-ui/react";
+import {Box, Button, Heading, Icon, Input, Stack, Text, useBreakpointValue, useColorModeValue} from "@chakra-ui/react";
 import {useRouter} from "next/router";
 import {useEffect, useState} from "react";
 import * as api from "../utils/api";
@@ -25,9 +12,9 @@ function RegisterPage({user}) {
     const [error, setError] = useState(null);
 
     useEffect(() => {
-        router.prefetch('/app')
-        router.prefetch('/reset-password')
-        router.prefetch('/login')
+        router.prefetch('/app');
+        router.prefetch('/reset-password');
+        router.prefetch('/login');
     }, [])
 
     const submit = async event => {
@@ -92,114 +79,114 @@ function RegisterPage({user}) {
                 <Box align={'center'}
                      justify={'center'} position={'relative'}>
 
-                        <Stack
-                            bg={useColorModeValue('gray.50', 'gray.700')}
-                            rounded={'xl'}
-                            p={{base: 4, sm: 6, md: 8}}
-                            spacing={{base: 8}}
-                            maxW={{lg: 'lg'}}>
-                            <Stack spacing={4}>
-                                <Heading
-                                    color={useColorModeValue('gray.800', 'gray.100')}
-                                    lineHeight={1.1}
-                                    fontSize={{base: '2xl', sm: '3xl', md: '4xl'}}>
-                                    Join our platform
-                                    <Text
-                                        as={'span'}
-                                        bgGradient="linear(to-r, red.400,pink.400)"
-                                        bgClip="text">
-                                        !
-                                    </Text>
-                                </Heading>
+                    <Stack
+                        bg={useColorModeValue('gray.50', 'gray.700')}
+                        rounded={'xl'}
+                        p={{base: 4, sm: 6, md: 8}}
+                        spacing={{base: 8}}
+                        maxW={{lg: 'lg'}}>
+                        <Stack spacing={4}>
+                            <Heading
+                                color={useColorModeValue('gray.800', 'gray.100')}
+                                lineHeight={1.1}
+                                fontSize={{base: '2xl', sm: '3xl', md: '4xl'}}>
+                                Join our platform
+                                <Text
+                                    as={'span'}
+                                    bgGradient="linear(to-r, red.400,pink.400)"
+                                    bgClip="text">
+                                    !
+                                </Text>
+                            </Heading>
 
-                                {error ? (
-                                    <Text bgGradient="linear(to-r, red.400,pink.400)"
-                                          bgClip="text"
-                                          fontSize={{base: 'sm', sm: 'md'}}>
-                                        {error.map(err => {
-                                            return err.message
-                                        })}
-                                    </Text>
-                                ) : (
-                                    <Text _dark={{color: "gray.200"}} color={'gray.500'}
-                                          fontSize={{base: 'sm', sm: 'md'}}>
-                                        We are a platform for everyone! Want to know more?{' '} ...
-                                    </Text>
-                                )}
-                            </Stack>
-                            <Box mt={10}>
-                                <Stack spacing={4}>
-                                    <Input
-                                        id={'username'}
-                                        required={true}
-                                        type={'text'}
-                                        bg={useColorModeValue('gray.200', 'gray.600')}
-                                        placeholder="Username"
-                                        border={0}
-                                        color={useColorModeValue('gray.900', 'gray.100')}
-                                        _placeholder={{
-                                            color: useColorModeValue('gray.500', 'gray.100'),
-                                        }}
-                                    />
-                                    <Input
-                                        id={'email'}
-                                        required={true}
-                                        type={'email'}
-                                        placeholder="hello@example.com"
-                                        bg={useColorModeValue('gray.200', 'gray.600')}
-                                        border={0}
-                                        color={useColorModeValue('gray.900', 'gray.100')}
-                                        _placeholder={{
-                                            color: useColorModeValue('gray.500', 'gray.100'),
-                                        }}
-                                    />
-                                    <Input
-                                        id={'password'}
-                                        required={true}
-                                        type={'password'}
-                                        placeholder="CoolPassword123!"
-                                        bg={useColorModeValue('gray.200', 'gray.600')}
-                                        border={0}
-                                        color={useColorModeValue('gray.900', 'gray.100')}
-                                        _placeholder={{
-                                            color: useColorModeValue('gray.500', 'gray.100'),
-                                        }}
-                                    />
-                                </Stack>
-
-                                {loading ?
-                                    <Button
-                                        isLoading
-                                        fontFamily={'heading'}
-                                        mt={8}
-                                        w={'full'}
-                                        _hover={{
-                                            bgGradient: 'linear(to-r, red.400,pink.400)',
-                                            boxShadow: 'xl',
-                                        }}
-                                        bgGradient="linear(to-r, red.400,pink.400)"
-                                        color={'white'}>
-                                        Registering
-                                    </Button>
-                                    :
-                                    <Button
-                                        type={'submit'}
-                                        fontFamily={'heading'}
-                                        mt={8}
-                                        w={'full'}
-                                        _hover={{
-                                            bgGradient: 'linear(to-r, red.400,pink.400)',
-                                            boxShadow: 'xl',
-                                        }}
-                                        bgGradient="linear(to-r, red.400,pink.400)"
-                                        color={'white'}>
-                                        Register
-                                    </Button>
-                                }
-
-                            </Box>
-                            form
+                            {error ? (
+                                <Text bgGradient="linear(to-r, red.400,pink.400)"
+                                      bgClip="text"
+                                      fontSize={{base: 'sm', sm: 'md'}}>
+                                    {error.map(err => {
+                                        return err.message
+                                    })}
+                                </Text>
+                            ) : (
+                                <Text _dark={{color: "gray.200"}} color={'gray.500'}
+                                      fontSize={{base: 'sm', sm: 'md'}}>
+                                    We are a platform for everyone! Want to know more?{' '} ...
+                                </Text>
+                            )}
                         </Stack>
+                        <Box mt={10}>
+                            <Stack spacing={4}>
+                                <Input
+                                    id={'username'}
+                                    required={true}
+                                    type={'text'}
+                                    bg={useColorModeValue('gray.200', 'gray.600')}
+                                    placeholder="Username"
+                                    border={0}
+                                    color={useColorModeValue('gray.900', 'gray.100')}
+                                    _placeholder={{
+                                        color: useColorModeValue('gray.500', 'gray.100'),
+                                    }}
+                                />
+                                <Input
+                                    id={'email'}
+                                    required={true}
+                                    type={'email'}
+                                    placeholder="hello@example.com"
+                                    bg={useColorModeValue('gray.200', 'gray.600')}
+                                    border={0}
+                                    color={useColorModeValue('gray.900', 'gray.100')}
+                                    _placeholder={{
+                                        color: useColorModeValue('gray.500', 'gray.100'),
+                                    }}
+                                />
+                                <Input
+                                    id={'password'}
+                                    required={true}
+                                    type={'password'}
+                                    placeholder="CoolPassword123!"
+                                    bg={useColorModeValue('gray.200', 'gray.600')}
+                                    border={0}
+                                    color={useColorModeValue('gray.900', 'gray.100')}
+                                    _placeholder={{
+                                        color: useColorModeValue('gray.500', 'gray.100'),
+                                    }}
+                                />
+                            </Stack>
+
+                            {loading ?
+                                <Button
+                                    isLoading
+                                    fontFamily={'heading'}
+                                    mt={8}
+                                    w={'full'}
+                                    _hover={{
+                                        bgGradient: 'linear(to-r, red.400,pink.400)',
+                                        boxShadow: 'xl',
+                                    }}
+                                    bgGradient="linear(to-r, red.400,pink.400)"
+                                    color={'white'}>
+                                    Registering
+                                </Button>
+                                :
+                                <Button
+                                    type={'submit'}
+                                    fontFamily={'heading'}
+                                    mt={8}
+                                    w={'full'}
+                                    _hover={{
+                                        bgGradient: 'linear(to-r, red.400,pink.400)',
+                                        boxShadow: 'xl',
+                                    }}
+                                    bgGradient="linear(to-r, red.400,pink.400)"
+                                    color={'white'}>
+                                    Register
+                                </Button>
+                            }
+
+                        </Box>
+                        form
+                    </Stack>
                     <Blur/>
                 </Box>
             </form>
