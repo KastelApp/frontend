@@ -17,6 +17,7 @@ import {useRouter} from "next/router";
 import {useEffect, useState} from "react";
 import * as api from "../utils/api";
 import {getCookie, setCookie} from 'cookies-next';
+import Script from "next/script";
 
 function LoginPage({user}) {
     const router = useRouter();
@@ -93,6 +94,11 @@ function LoginPage({user}) {
 
     return (
         <>
+            {process.env.NODE_ENV === 'production' && (
+                <Script async defer data-website-id="83dba013-b17b-45c2-a9bd-9f81d2a63c1c"
+                        src="https://analytics.kastelapp.com/umami.js"></Script>
+            )}
+
             <Head>
                 <title>Kastel - Login</title>
             </Head>

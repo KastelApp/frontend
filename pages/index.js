@@ -6,6 +6,7 @@ import {getCookie} from "cookies-next";
 import {Box, Button, chakra, Container, Stack, Text} from "@chakra-ui/react";
 import NextLink from "next/link";
 import {FaArrowRight} from "react-icons/fa";
+import Script from "next/script";
 
 function HomePage({user}) {
     const router = useRouter();
@@ -16,6 +17,10 @@ function HomePage({user}) {
 
     return (
         <>
+            {process.env.NODE_ENV === 'production' && (
+                <Script async defer data-website-id="83dba013-b17b-45c2-a9bd-9f81d2a63c1c"
+                        src="https://analytics.kastelapp.com/umami.js"></Script>
+            )}
             <Head>
                 <title>Kastel</title>
             </Head>
