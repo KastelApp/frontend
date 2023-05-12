@@ -227,10 +227,6 @@ export const Blur = (props) => {
     );
 };
 
-
-
-
-
 export const getServerSideProps = ({req, res}) => {
     let user = getCookie('user', {req, res}) || null;
 

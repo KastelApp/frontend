@@ -4,8 +4,9 @@ import {useEffect} from "react";
 import {useRouter} from "next/router";
 import {getCookie} from "cookies-next";
 import Script from "next/script";
+import {Box, Container, Heading, Stack, Text} from "@chakra-ui/react";
 
-function HomePage({user}) {
+function Branding({user}) {
     const router = useRouter();
 
     useEffect(() => {
@@ -23,6 +24,21 @@ function HomePage({user}) {
             </Head>
 
             <NavBar_Home user={user}/>
+
+            <Box p={4}>
+                <Stack spacing={4} as={Container} maxW={'3xl'} textAlign={'center'}>
+                    <Heading fontSize={{base: '2xl', sm: '4xl'}} fontWeight={'bold'}>
+                        Branding
+                    </Heading>
+                    <Text color={'gray.600'} fontSize={{base: 'sm', sm: 'lg'}}>
+                        Hi there, this is the branding page. Here you can find all the information you need to know
+                        about Kastel's branding.
+                    </Text>
+                </Stack>
+
+
+            </Box>
+
         </>
     )
 }
@@ -35,4 +51,4 @@ export const getServerSideProps = ({req, res}) => {
     };
 };
 
-export default HomePage;
+export default Branding;
