@@ -32,7 +32,7 @@ function Branding({user}) {
                     </Heading>
                     <Text color={'gray.600'} fontSize={{base: 'sm', sm: 'lg'}}>
                         Hi there, this is the branding page. Here you can find all the information you need to know
-                        about Kastel's branding.
+                        about Kastel&#39;s branding.
                     </Text>
                 </Stack>
 
