@@ -36,10 +36,8 @@ const LinkItems = [
     {name: 'Home', icon: FiHome, url: '/app/@me'},
 ];
 
-export default function AppNav({user, guilds, children}) {
+export default function AppNav({userInfo, guilds, children}) {
     const {isOpen, onOpen, onClose} = useDisclosure();
-
-    let userInfo = JSON.parse(user);
 
     return (
         <Box minH="100vh" bg={useColorModeValue('gray.100', 'gray.900')}>
@@ -108,7 +106,7 @@ const SidebarContent = ({guilds, userInfo, onClose, ...rest}) => {
 
                 {guilds && guilds.map((guild) => {
                     return (
-                        <GuildItem guild={guild} key={guild.id}/>
+                        <GuildItem guild={guild} key={guild.Id}/>
                     )
                 })
                 }
@@ -124,16 +122,16 @@ const SidebarContent = ({guilds, userInfo, onClose, ...rest}) => {
 
 const GuildItem = ({guild, ...rest}) => {
     return (
-        <NextLink href={'/app/channels/' + guild?.id || '0' + '/:channelID'} passHref>
+        <NextLink href={'/app/channels/' + guild?.Id || '0' + '/:channelID'} passHref>
             <Box marginBottom={2}>
                 <Tooltip color={useColorModeValue('gray.800', 'white')}
                          bg={useColorModeValue('white', 'gray.700')}
-                         hasArrow label={guild?.name || 'Unknown'} placement='right'>
+                         hasArrow label={guild?.Name || 'Unknown'} placement='right'>
                     <Circle bg={useColorModeValue('white', 'gray.700')} borderRadius='full'
-                            alt={guild?.name || 'Unknown'}
+                            alt={guild?.Name || 'Unknown'}
                             boxSize='40px'>
                         <Text>
-                            {guild?.name?.charAt(0) || 'U'}
+                            {guild?.Name?.charAt(0) || 'U'}
                         </Text>
                     </Circle>
 
@@ -242,7 +240,7 @@ const MobileNav = ({userInfo, onOpen, ...rest}) => {
                                     alignItems="flex-start"
                                     spacing="1px"
                                     ml="2">
-                                    <Text fontSize="sm">{userInfo?.username || "Loading"}</Text>
+                                    <Text fontSize="sm">{userInfo?.Username || "Loading"}</Text>
                                     <Text fontSize="xs" color="gray.600">
                                         Online
                                     </Text>

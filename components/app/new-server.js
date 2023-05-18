@@ -45,18 +45,13 @@ const NewServer = ({userInfo, onClose, ...rest}) => {
             try {
                 let response = await api.newGuild(`${token}`, {name});
                 console.log(response);
-                if (response?.responses[0]?.code === 'GUILD_CREATED') {
+                if (response?.Id) {
                     setLoading(false);
                     modal.onClose();
-                    let GUILD_DATA = response?.responses[0]?.data;
-                    if (GUILD_DATA) {
-                        router.push(`/app/channels/${GUILD_DATA._id}/${GUILD_DATA.channels[0]}`)
-                    } else {
-                        router.push(`/app/@me`)
-                    }
-                } else if (response.errors) {
+                    router.push(`/app/channels/${response?.Id}`)
+                } else if (response.Errors) {
                     setLoading(false);
-                    setError(response?.errors || [{code: "UNKNOWN", message: "An unknown error occurred."}])
+                    setError(response?.Errors || [{code: "UNKNOWN", message: "An unknown error occurred."}])
                 } else {
                     setLoading(false);
                     setError([

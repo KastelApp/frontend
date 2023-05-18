@@ -6,40 +6,36 @@ import * as api from "../../../utils/api";
 import {getCookie} from 'cookies-next';
 import LoadingPage from "../../../components/app/loading-page";
 
-function AtMe_Index({token, user, dataProps}) {
+function AtMe_Index({token, dataProps}) {
     const router = useRouter();
     const {state: appReady, stateSetter: setAppReady} = dataProps.appReady
     const {state: guilds, stateSetter: setGuilds} = dataProps.userGuilds
+    const {state: userData, stateSetter: setUserData} = dataProps.userData
 
     useEffect(() => {
         (async () => {
             try {
                 let userInfo = await api.fetchUser(token);
-                // console.log(userInfo);
-                if (userInfo.errors) {
-                    setAppReady(false);
-                    if (userInfo.errors.some(item => item.code === 'LOGIN_REQUIRED')) {
-                        router.push('/app/logout')
-                    }
-                    if (userInfo.errors.some(item => item.code === 'ERROR')) {
-                        router.push('/app/logout')
-                    }
-                }
 
-                if (userInfo.data) {
-                    // something here
+                if (userInfo.Errors) {
+                    router.push('/app/logout')
+                    setAppReady(false);
+                } else if (userInfo) {
+                    setUserData(userInfo);
                     setAppReady(true);
+                } else {
+                    setAppReady(false)
                 }
 
                 let userGuilds = await api.fetchGuilds(token);
-                if (userGuilds.errors) {
+                if (userGuilds.Errors) {
                     // someting here
                 }
 
-                if (userGuilds.data) {
+                if (userGuilds) {
                     // something here
                     setAppReady(true);
-                    setGuilds(userGuilds.data);
+                    setGuilds(userGuilds);
                 }
             } catch (e) {
                 console.log("API Error: " + e);
@@ -56,14 +52,14 @@ function AtMe_Index({token, user, dataProps}) {
 
             {appReady ? (
                 <>
-                    <AppNav guilds={guilds} user={user}>
+                    <AppNav guilds={guilds} userInfo={userData}>
 
                         {/* page content goes inside here */}
 
                     </AppNav>
                 </>
             ) : (
-                <LoadingPage user={user} token={token} appReady={appReady}/>
+                <LoadingPage user={userData} token={token} appReady={appReady}/>
             )}
 
         </>
@@ -72,9 +68,8 @@ function AtMe_Index({token, user, dataProps}) {
 
 export const getServerSideProps = ({req, res}) => {
     let token = getCookie('token', {req, res}) || null;
-    let user = getCookie('user', {req, res}) || null;
 
-    if (!token || !user) {
+    if (!token) {
         return {
             redirect: {
                 destination: '/login',
@@ -85,8 +80,7 @@ export const getServerSideProps = ({req, res}) => {
 
     return {
         props: {
-            token: getCookie('token', {req, res}) || null,
-            user: getCookie('user', {req, res}) || null,
+            token: getCookie('token', {req, res}) || null
         }
     };
 };

@@ -3,44 +3,41 @@ import {getCookie} from 'cookies-next';
 import LoadingPage from "../../components/app/loading-page";
 import * as api from "../../utils/api";
 import {useRouter} from "next/router";
-import {useEffect, useState} from "react";
+import {useEffect} from "react";
+//import {connect} from "../../utils/ws";
 
-function HomePage({token, user, dataProps}) {
+function HomePage({token, dataProps}) {
     const {state: appReady, stateSetter: setAppReady} = dataProps.appReady
+    const {state: userData, stateSetter: setUserData} = dataProps.userData
     const router = useRouter();
-    const [error, setError] = useState(false);
 
     useEffect(() => {
         (async () => {
             setTimeout(async () => {
 
-                {/* in the near futures (once the websocket is up and running) this will be removed, and we will use a ws response */
+                {/* in the near future (once the websocket is up and running) this will be removed, and we will use a ws response */
                 }
+
+              //  let WS = connect(token);
+
 
                 try {
                     let userInfo = await api.fetchUser(token);
-                    console.log(userInfo);
-                    if (userInfo.errors) {
-                        setAppReady(false);
-                        if (userInfo.errors.some(item => item.code === 'LOGIN_REQUIRED')) {
-                            router.push('/app/logout')
-                        }
-                        if (userInfo.errors.some(item => item.code === 'ERROR')) {
-                            router.push('/app/logout')
-                        }
-                    } else {
-                        setError(true)
-                    }
 
-                    if (userInfo.data) {
+                    if (userInfo.Errors) {
+                        router.push('/app/logout')
+                        setAppReady(false);
+                    } else if (userInfo) {
+                        setUserData(userInfo);
                         router.push('/app/@me');
                         setAppReady(true);
+                    } else {
+                        setAppReady(false);
                     }
 
                 } catch (e) {
                     console.log("API Error: " + e);
                     setAppReady(false);
-                    setError(true)
                 }
             }, 2000);
         })();
@@ -54,7 +51,7 @@ function HomePage({token, user, dataProps}) {
 
             {/* Loading Page */}
 
-            <LoadingPage user={user} token={token} appReady={appReady}/>
+            <LoadingPage user={userData} token={token} appReady={appReady}/>
 
         </>
     )
@@ -62,9 +59,8 @@ function HomePage({token, user, dataProps}) {
 
 export const getServerSideProps = ({req, res}) => {
     let token = getCookie('token', {req, res}) || null;
-    let user = getCookie('user', {req, res}) || null;
 
-    if (!token || !user) {
+    if (!token) {
         return {
             redirect: {
                 destination: '/login',
@@ -75,8 +71,7 @@ export const getServerSideProps = ({req, res}) => {
 
     return {
         props: {
-            token: getCookie('token', {req, res}) || null,
-            user: getCookie('user', {req, res}) || null,
+            token: getCookie('token', {req, res}) || null
         }
     };
 };
