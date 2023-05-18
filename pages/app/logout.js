@@ -4,12 +4,12 @@ import {useEffect} from "react";
 import {deleteCookie, getCookie} from 'cookies-next';
 import LoadingPage from "../../components/app/loading-page";
 
-function HomePage({token, user}) {
+function HomePage({token, dataProps}) {
     const router = useRouter();
+    const {state: userData, stateSetter: setUserData} = dataProps.userData
 
     useEffect(() => {
         deleteCookie('token');
-        deleteCookie('user');
         router.push('/');
     }, [])
 
@@ -19,7 +19,7 @@ function HomePage({token, user}) {
                 <title>Kastel App</title>
             </Head>
 
-            <LoadingPage user={user} token={token} appReady={false}/>
+            <LoadingPage user={userData} token={token} appReady={false}/>
 
         </>
     )
@@ -27,9 +27,8 @@ function HomePage({token, user}) {
 
 export const getServerSideProps = ({req, res}) => {
     let token = getCookie('token', {req, res}) || null;
-    let user = getCookie('user', {req, res}) || null;
 
-    if (!token || !user) {
+    if (!token) {
         return {
             redirect: {
                 destination: '/login',
@@ -40,8 +39,7 @@ export const getServerSideProps = ({req, res}) => {
 
     return {
         props: {
-            token: getCookie('token', {req, res}) || null,
-            user: getCookie('user', {req, res}) || null,
+            token: getCookie('token', {req, res}) || null
         }
     };
 };

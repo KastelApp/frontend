@@ -50,8 +50,24 @@ function LoginPage({user}) {
         } else {
             try {
                 let response = await api.login({email, password});
+                console.log(response)
 
-                if (response?.responses[0]?.code === 'LOGGED_IN') {
+                if (response?.Token) {
+                    setLoading(false);
+                    setCookie('token', response?.Token);
+
+                    router.push('/app');
+                } else if (response.Errors) {
+                    setLoading(false);
+                    setError(response?.Errors || [{code: "UNKNOWN", Message: "An unknown error occurred."}])
+                } else {
+                    setLoading(false);
+                    setError([
+                        {code: "UNKNOWN", Message: "An unknown error occurred."}
+                    ])
+                }
+
+                /*if (response?.responses[0]?.code === 'LOGGED_IN') {
                     if (response?.data) {
                         let token = response?.data?.token;
                         let user = response?.data?.user;
@@ -69,23 +85,23 @@ function LoginPage({user}) {
                         }
                     } else {
                         setLoading(false);
-                        setError(response?.errors || [{code: "UNKNOWN", message: "An unknown error occurred."}])
+                        setError(response?.Errors || [{code: "UNKNOWN", message: "An unknown error occurred."}])
                     }
-                } else if (response.errors) {
+                } else if (response.Errors) {
                     setLoading(false);
-                    setError(response?.errors || [{code: "UNKNOWN", message: "An unknown error occurred."}])
+                    setError(response?.Errors || [{code: "UNKNOWN", message: "An unknown error occurred."}])
                 } else {
                     setLoading(false);
                     setError([
                         {code: "UNKNOWN", message: "An unknown error occurred, check logs."}
                     ])
-                }
+                }*/
 
             } catch (error) {
                 console.log(error)
                 setLoading(false);
                 setError([
-                    {code: "UNKNOWN", message: "An unknown error occurred, check logs."}
+                    {code: "UNKNOWN", Message: "An unknown error occurred, check logs."}
                 ])
             }
         }
@@ -142,9 +158,7 @@ function LoginPage({user}) {
                                             as={'span'}
                                             bgGradient="linear(to-r, red.400,pink.400)"
                                             bgClip="text">
-                                            {error.map(err => {
-                                                return err.message
-                                            })}
+                                            {(Object.values(error)[0].Message) || 'Unknown error occurred.'}
                                         </Text>}
 
                                         <Input

@@ -7,18 +7,19 @@ import {useEffect, useState} from "react";
 import AppNav from "../../../../components/navbar/app";
 import {Text} from "@chakra-ui/react";
 
-function HomePage({token, user, dataProps}) {
+function HomePage({token, dataProps}) {
     const {state: appReady, stateSetter: setAppReady} = dataProps.appReady
     const {state: guilds, stateSetter: setGuilds} = dataProps.userGuilds
+    const {state: userData, stateSetter: setUserData} = dataProps.userData
+
     const router = useRouter();
-    const [error, setError] = useState(false);
 
     useEffect(() => {
         (async () => {
             setTimeout(async () => {
                 try {
                     let userInfo = await api.fetchUser(token);
-                    console.log(userInfo);
+
                     if (userInfo.errors) {
                         setAppReady(false);
                         if (userInfo.errors.some(item => item.code === 'LOGIN_REQUIRED')) {
@@ -37,7 +38,6 @@ function HomePage({token, user, dataProps}) {
                 } catch (e) {
                     console.log("API Error: " + e);
                     setAppReady(false);
-                    setError(true)
                 }
             }, 3000);
         })();
@@ -51,12 +51,12 @@ function HomePage({token, user, dataProps}) {
 
             {appReady ? (
                 <>
-                    <AppNav guilds={guilds} user={user}>
+                    <AppNav guilds={guilds} userInfo={userData}>
                         <Text>This page is a work in progress</Text>
                     </AppNav>
                 </>
             ) : (
-                <LoadingPage user={user} token={token} appReady={appReady}/>
+                <LoadingPage user={userData} token={token} appReady={appReady}/>
             )}
 
         </>
@@ -65,9 +65,8 @@ function HomePage({token, user, dataProps}) {
 
 export const getServerSideProps = ({req, res}) => {
     let token = getCookie('token', {req, res}) || null;
-    let user = getCookie('user', {req, res}) || null;
 
-    if (!token || !user) {
+    if (!token) {
         return {
             redirect: {
                 destination: '/login',
@@ -78,8 +77,7 @@ export const getServerSideProps = ({req, res}) => {
 
     return {
         props: {
-            token: getCookie('token', {req, res}) || null,
-            user: getCookie('user', {req, res}) || null,
+            token: getCookie('token', {req, res}) || null
         }
     };
 };

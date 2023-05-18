@@ -36,10 +36,8 @@ const LinkItems = [
     {name: 'Home', icon: FiHome, url: '/app/@me'},
 ];
 
-export default function AppNav({user, guilds, children}) {
+export default function AppNav({userInfo, guilds, children}) {
     const {isOpen, onOpen, onClose} = useDisclosure();
-
-    let userInfo = JSON.parse(user);
 
     return (
         <Box minH="100vh" bg={useColorModeValue('gray.100', 'gray.900')}>
@@ -242,7 +240,7 @@ const MobileNav = ({userInfo, onOpen, ...rest}) => {
                                     alignItems="flex-start"
                                     spacing="1px"
                                     ml="2">
-                                    <Text fontSize="sm">{userInfo?.username || "Loading"}</Text>
+                                    <Text fontSize="sm">{userInfo?.Username || "Loading"}</Text>
                                     <Text fontSize="xs" color="gray.600">
                                         Online
                                     </Text>

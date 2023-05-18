@@ -46,7 +46,22 @@ function RegisterPage({user}) {
                 let response = await api.register({username, email, password});
                 console.log(response);
 
-                if (response?.responses[0]?.code === 'ACCOUNT_CREATED') {
+                if (response?.Token) {
+                    setLoading(false);
+                    setCookie('token', response?.Token);
+
+                    router.push('/app');
+                } else if (response.Errors) {
+                    setLoading(false);
+                    setError(response?.Errors || [{code: "UNKNOWN", Message: "An unknown error occurred."}])
+                } else {
+                    setLoading(false);
+                    setError([
+                        {code: "UNKNOWN", Message: "An unknown error occurred."}
+                    ])
+                }
+
+                /*if (response?.responses[0]?.code === 'ACCOUNT_CREATED') {
                     setLoading(false);
                     router.push('/login');
                 } else if (response.errors) {
@@ -57,7 +72,8 @@ function RegisterPage({user}) {
                     setError([
                         {code: "UNKNOWN", message: "An unknown error occurred, check logs."}
                     ])
-                }
+                }*/
+
             } catch (error) {
                 console.log(error)
                 setLoading(false);
@@ -108,9 +124,7 @@ function RegisterPage({user}) {
                                 <Text bgGradient="linear(to-r, red.400,pink.400)"
                                       bgClip="text"
                                       fontSize={{base: 'sm', sm: 'md'}}>
-                                    {error.map(err => {
-                                        return err.message
-                                    })}
+                                    {(Object.values(error)[0].Message) || 'Unknown error occurred.'}
                                 </Text>
                             ) : (
                                 <Text _dark={{color: "gray.200"}} color={'gray.500'}
