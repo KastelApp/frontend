@@ -3,7 +3,7 @@ const Version = process.env.API_VERSION;
 
 async function fetcher(url, options) {
     // ${Version}/
-    const response = await fetch(`${API_URL}/api` + url, options);
+    const response = await fetch(`${API_URL}` + url, options);
     return await response.json();
 }
 
