@@ -20,19 +20,14 @@ function HomePage({token, dataProps}) {
                 try {
                     let userInfo = await api.fetchUser(token);
 
-                    if (userInfo.errors) {
+                    if (userInfo.Errors) {
+                        router.push('/app/logout')
                         setAppReady(false);
-                        if (userInfo.errors.some(item => item.code === 'LOGIN_REQUIRED')) {
-                            router.push('/app/logout')
-                        }
-                        if (userInfo.errors.some(item => item.code === 'ERROR')) {
-                            router.push('/app/logout')
-                        }
-                    }
-
-                    if (userInfo.data) {
-                        //router.push('/app/@me');
+                    } else if (userInfo) {
+                        setUserData(userInfo);
                         setAppReady(true);
+                    } else {
+                        setAppReady(false)
                     }
 
                 } catch (e) {

@@ -34,7 +34,7 @@ function HomePage({user}) {
 export const getServerSideProps = ({req, res}) => {
     return {
         props: {
-            user: getCookie('user', {req, res}) || null,
+            user: getCookie('token', {req, res}) || null,
         }
     };
 };

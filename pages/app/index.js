@@ -4,6 +4,7 @@ import LoadingPage from "../../components/app/loading-page";
 import * as api from "../../utils/api";
 import {useRouter} from "next/router";
 import {useEffect} from "react";
+//import {connect} from "../../utils/ws";
 
 function HomePage({token, dataProps}) {
     const {state: appReady, stateSetter: setAppReady} = dataProps.appReady
@@ -16,6 +17,9 @@ function HomePage({token, dataProps}) {
 
                 {/* in the near future (once the websocket is up and running) this will be removed, and we will use a ws response */
                 }
+
+              //  let WS = connect(token);
+
 
                 try {
                     let userInfo = await api.fetchUser(token);

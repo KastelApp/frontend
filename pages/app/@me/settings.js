@@ -9,6 +9,7 @@ import LoadingPage from "../../../components/app/loading-page";
 function AtMe_Settings({token, dataProps}) {
     const router = useRouter();
     const {state: appReady, stateSetter: setAppReady} = dataProps.appReady
+    const {state: guilds, stateSetter: setGuilds} = dataProps.userGuilds
     const {state: userData, stateSetter: setUserData} = dataProps.userData
 
     useEffect(() => {
@@ -23,7 +24,7 @@ function AtMe_Settings({token, dataProps}) {
                     setUserData(userInfo);
                     setAppReady(true);
                 } else {
-                    setError(true)
+                    setAppReady(false)
                 }
             } catch (e) {
                 console.log("API Error: " + e);
@@ -40,7 +41,7 @@ function AtMe_Settings({token, dataProps}) {
 
             {appReady ? (
                 <>
-                    <AppNav userInfo={userData}/>
+                    <AppNav guilds={guilds} userInfo={userData}/>
 
 
                 </>

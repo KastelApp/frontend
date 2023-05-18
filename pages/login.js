@@ -287,7 +287,7 @@ export const Blur = (props) => {
 };
 
 export const getServerSideProps = ({req, res}) => {
-    let user = getCookie('user', {req, res}) || null;
+    let user = getCookie('token', {req, res}) || null;
 
     if (user) {
         return {
@@ -300,7 +300,7 @@ export const getServerSideProps = ({req, res}) => {
 
     return {
         props: {
-            user: getCookie('user', {req, res}) || null,
+            user: getCookie('token', {req, res}) || null,
         }
     };
 };

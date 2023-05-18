@@ -1,6 +1,6 @@
 {
   "name": "kastelll-frontend",
-  "version": "0.0.12",
+  "version": "0.0.15",
   "description": "Frontend code for Kastel App",
   "scripts": {
     "dev": "next dev",

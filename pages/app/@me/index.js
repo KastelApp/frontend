@@ -22,21 +22,20 @@ function AtMe_Index({token, dataProps}) {
                     setAppReady(false);
                 } else if (userInfo) {
                     setUserData(userInfo);
-                    router.push('/app/@me');
                     setAppReady(true);
                 } else {
-                    setError(true)
+                    setAppReady(false)
                 }
 
                 let userGuilds = await api.fetchGuilds(token);
-                if (userGuilds.errors) {
+                if (userGuilds.Errors) {
                     // someting here
                 }
 
-                if (userGuilds.data) {
+                if (userGuilds) {
                     // something here
                     setAppReady(true);
-                    setGuilds(userGuilds.data);
+                    setGuilds(userGuilds);
                 }
             } catch (e) {
                 console.log("API Error: " + e);
