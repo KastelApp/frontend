@@ -6,35 +6,32 @@ import {useRouter} from "next/router";
 import {useEffect} from "react";
 import AppNav from "../../../../components/navbar/app";
 import {Text} from "@chakra-ui/react";
+import {UserSocket} from "../../../../utils/ws/userSocket";
 
 function HomePage({token, dataProps}) {
     const {state: appReady, stateSetter: setAppReady} = dataProps.appReady
-    const {state: guilds, stateSetter: setGuilds} = dataProps.userGuilds
     const {state: userData, stateSetter: setUserData} = dataProps.userData
 
     const router = useRouter();
 
     useEffect(() => {
         (async () => {
-            setTimeout(async () => {
-                try {
-                    let userInfo = await api.fetchUser(token);
+            try {
+                const WS = new UserSocket(token, '1', 'json')
+                const userData = await WS.connect();
 
-                    if (userInfo.Errors) {
-                        router.push('/app/logout')
-                        setAppReady(false);
-                    } else if (userInfo) {
-                        setUserData(userInfo);
-                        setAppReady(true);
-                    } else {
-                        setAppReady(false)
-                    }
-
-                } catch (e) {
-                    console.log("API Error: " + e);
-                    setAppReady(false);
+                setUserData(userData);
+                setAppReady(true);
+            } catch (e) {
+                console.log("Error: ");
+                setAppReady(false);
+                console.log(e)
+                if (e.message === 'Invalid token') {
+                    router.push('/app/logout?redirect=/login')
+                } else {
+                    router.push('/app/logout');
                 }
-            }, 3000);
+            }
         })();
     }, [])
 
@@ -46,7 +43,7 @@ function HomePage({token, dataProps}) {
 
             {appReady ? (
                 <>
-                    <AppNav guilds={guilds} userInfo={userData}>
+                    <AppNav userInfo={userData}>
                         <Text>This page is a work in progress</Text>
                     </AppNav>
                 </>

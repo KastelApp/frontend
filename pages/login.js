@@ -50,7 +50,6 @@ function LoginPage({user}) {
         } else {
             try {
                 let response = await api.login({email, password});
-                console.log(response)
 
                 if (response?.Token) {
                     setLoading(false);
@@ -67,35 +66,7 @@ function LoginPage({user}) {
                     ])
                 }
 
-                /*if (response?.responses[0]?.code === 'LOGGED_IN') {
-                    if (response?.data) {
-                        let token = response?.data?.token;
-                        let user = response?.data?.user;
-                        if (!user || !token) {
-                            setLoading(false);
-                            setError([
-                                {code: "UNKNOWN_ERROR", message: "An unknown error occurred. Please try again.",}
-                            ])
-                        } else {
-                            setLoading(false);
-                            setCookie('token', token);
-                            setCookie('user', JSON.stringify(user));
 
-                            router.push('/app');
-                        }
-                    } else {
-                        setLoading(false);
-                        setError(response?.Errors || [{code: "UNKNOWN", message: "An unknown error occurred."}])
-                    }
-                } else if (response.Errors) {
-                    setLoading(false);
-                    setError(response?.Errors || [{code: "UNKNOWN", message: "An unknown error occurred."}])
-                } else {
-                    setLoading(false);
-                    setError([
-                        {code: "UNKNOWN", message: "An unknown error occurred, check logs."}
-                    ])
-                }*/
 
             } catch (error) {
                 console.log(error)

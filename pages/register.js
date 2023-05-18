@@ -4,7 +4,7 @@ import {Box, Button, Heading, Icon, Input, Stack, Text, useBreakpointValue, useC
 import {useRouter} from "next/router";
 import {useEffect, useState} from "react";
 import * as api from "../utils/api";
-import {getCookie} from "cookies-next";
+import {getCookie, setCookie} from "cookies-next";
 import Script from "next/script";
 
 function RegisterPage({user}) {
@@ -61,18 +61,7 @@ function RegisterPage({user}) {
                     ])
                 }
 
-                /*if (response?.responses[0]?.code === 'ACCOUNT_CREATED') {
-                    setLoading(false);
-                    router.push('/login');
-                } else if (response.errors) {
-                    setLoading(false);
-                    setError(response?.errors || [{code: "UNKNOWN", message: "An unknown error occurred."}])
-                } else {
-                    setLoading(false);
-                    setError([
-                        {code: "UNKNOWN", message: "An unknown error occurred, check logs."}
-                    ])
-                }*/
+
 
             } catch (error) {
                 console.log(error)

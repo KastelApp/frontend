@@ -36,14 +36,14 @@ const LinkItems = [
     {name: 'Home', icon: FiHome, url: '/app/@me'},
 ];
 
-export default function AppNav({userInfo, guilds, children}) {
+export default function AppNav({userInfo, children}) {
     const {isOpen, onOpen, onClose} = useDisclosure();
 
     return (
         <Box minH="100vh" bg={useColorModeValue('gray.100', 'gray.900')}>
             <SidebarContent
-                guilds={guilds}
-                userInfo={userInfo}
+                guilds={userInfo?.Guilds}
+                userInfo={userInfo?.User}
                 onClose={() => onClose}
                 display={{base: 'none', md: 'block'}}
             />
@@ -56,11 +56,12 @@ export default function AppNav({userInfo, guilds, children}) {
                 onOverlayClick={onClose}
                 size="full">
                 <DrawerContent>
-                    <SidebarContent guilds={guilds} userInfo={userInfo} onClose={onClose}/>
+                    <SidebarContent guilds={userInfo?.Guilds}
+                                    userInfo={userInfo?.User} onClose={onClose}/>
                 </DrawerContent>
             </Drawer>
             {/* mobilenav */}
-            <MobileNav userInfo={userInfo} onOpen={onOpen}/>
+            <MobileNav userInfo={userInfo?.User} onOpen={onOpen}/>
             <Box ml={{base: 0, md: 60}} p="4">
                 {children}
             </Box>
@@ -112,7 +113,7 @@ const SidebarContent = ({guilds, userInfo, onClose, ...rest}) => {
                 }
 
                 <Tooltip hasArrow label='Create new guild' placement='right'>
-                    <NewServer userInfo={userInfo}/>
+                    <NewServer userInfo={userInfo?.User}/>
                 </Tooltip>
             </Stack>
 
@@ -122,7 +123,7 @@ const SidebarContent = ({guilds, userInfo, onClose, ...rest}) => {
 
 const GuildItem = ({guild, ...rest}) => {
     return (
-        <NextLink href={'/app/channels/' + guild?.Id || '0' + '/:channelID'} passHref>
+        <NextLink href={'/app/channels/' + guild?.Id || '0' + '/' + guild?.Channels[0]?.Id || '0'} passHref>
             <Box marginBottom={2}>
                 <Tooltip color={useColorModeValue('gray.800', 'white')}
                          bg={useColorModeValue('white', 'gray.700')}
