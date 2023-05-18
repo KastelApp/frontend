@@ -3,7 +3,7 @@ import {getCookie} from 'cookies-next';
 import LoadingPage from "../../../../components/app/loading-page";
 import * as api from "../../../../utils/api";
 import {useRouter} from "next/router";
-import {useEffect, useState} from "react";
+import {useEffect} from "react";
 import AppNav from "../../../../components/navbar/app";
 import {Text} from "@chakra-ui/react";
 

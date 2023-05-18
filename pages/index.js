@@ -3,9 +3,6 @@ import NavBar_Home from "../components/navbar/home";
 import {useEffect} from "react";
 import {useRouter} from "next/router";
 import {getCookie} from "cookies-next";
-import {Box, Button, chakra, Container, Stack, Text} from "@chakra-ui/react";
-import NextLink from "next/link";
-import {FaArrowRight} from "react-icons/fa";
 import Script from "next/script";
 import {Hero} from "../components/home/hero";
 
