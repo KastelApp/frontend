@@ -1,10 +1,9 @@
 import Head from "next/head";
 import {getCookie} from 'cookies-next';
 import LoadingPage from "../../components/app/loading-page";
-import * as api from "../../utils/api";
 import {useRouter} from "next/router";
 import {useEffect} from "react";
-//import {connect} from "../../utils/ws";
+import {UserSocket} from "../../utils/ws/userSocket"
 
 function HomePage({token, dataProps}) {
     const {state: appReady, stateSetter: setAppReady} = dataProps.appReady
@@ -13,33 +12,24 @@ function HomePage({token, dataProps}) {
 
     useEffect(() => {
         (async () => {
-            setTimeout(async () => {
+            try {
+                const WS = new UserSocket(token, '1', 'json')
+                const userData = await WS.connect();
+                console.log(userData)
+                setUserData(userData);
+                router.push('/app/@me');
+                setAppReady(true);
 
-                {/* in the near future (once the websocket is up and running) this will be removed, and we will use a ws response */
+            } catch (e) {
+                console.log("Error: ");
+                setAppReady(false);
+                console.log(e)
+                if (e.message === 'Invalid token') {
+                    router.push('/app/logout?redirect=/login')
+                } else {
+                    router.push('/app/logout');
                 }
-
-              //  let WS = connect(token);
-
-
-                try {
-                    let userInfo = await api.fetchUser(token);
-
-                    if (userInfo.Errors) {
-                        router.push('/app/logout')
-                        setAppReady(false);
-                    } else if (userInfo) {
-                        setUserData(userInfo);
-                        router.push('/app/@me');
-                        setAppReady(true);
-                    } else {
-                        setAppReady(false);
-                    }
-
-                } catch (e) {
-                    console.log("API Error: " + e);
-                    setAppReady(false);
-                }
-            }, 2000);
+            }
         })();
     }, [])
 
