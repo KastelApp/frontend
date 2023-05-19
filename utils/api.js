@@ -77,6 +77,16 @@ const VerifyEmail = async function (Token) {
     })
 }
 
+const ResendVerifyEmail = async function (Token) {
+    return await fetcher(`/auth/verify/resend`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": Token || null,
+        },
+    })
+}
+
 export {
     API,
     fetcher,
@@ -86,5 +96,6 @@ export {
     fetchUser,
     fetchGuilds,
     newGuild,
-    VerifyEmail
+    VerifyEmail,
+    ResendVerifyEmail
 }
