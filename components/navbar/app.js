@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {
     Avatar,
     Box,
@@ -12,6 +12,9 @@ import {
     Icon,
     IconButton,
     Link,
+    List,
+    ListIcon,
+    ListItem,
     Menu,
     MenuButton,
     MenuDivider,
@@ -31,6 +34,7 @@ import {
 import {FiBell, FiChevronDown, FiHome, FiMenu} from 'react-icons/fi';
 import NextLink from 'next/link'
 import NewServer from "../app/new-server";
+import {CloseIcon} from "@chakra-ui/icons";
 
 const LinkItems = [
     {name: 'Home', icon: FiHome, url: '/app/@me'},
@@ -175,6 +179,13 @@ const NavItem = ({url, icon, children, ...rest}) => {
 
 const MobileNav = ({userInfo, onOpen, ...rest}) => {
     const initialFocusRef = React.useRef()
+    const [count, setCount] = React.useState(0);
+
+    useEffect(() => {
+        if (!userInfo?.emailVerified) {
+            setCount(count + 1);
+        }
+    }, [])
     return (
         <Flex
             ml={{base: 0, md: 30}}
@@ -210,8 +221,18 @@ const MobileNav = ({userInfo, onOpen, ...rest}) => {
                         <IconButton
                             size="lg"
                             variant="ghost"
-                            aria-label="open menu"
-                            icon={<FiBell/>}
+                            aria-label={'Notifications'}
+
+                            py={'2'}
+                            icon={<>
+                                <FiBell/>
+                                <Box as={'span'} color={'white'} position={'absolute'} top={'6px'} right={'4px'}
+                                     fontSize={'0.8rem'}
+                                     borderRadius={'lg'} zIndex={9999} p={'1px'}>
+                                    {count > 0 && count}
+                                </Box>
+                            </>}
+
                         />
 
                     </PopoverTrigger>
@@ -220,7 +241,12 @@ const MobileNav = ({userInfo, onOpen, ...rest}) => {
                     <PopoverContent color='white' bg='blue.800' borderColor='blue.800'>
                         {/* notification listing */}
                         <PopoverBody>
-                            No New Notifications
+                            <List spacing={3}>
+                                {!userInfo?.emailVerified && <ListItem>
+                                    <ListIcon as={CloseIcon} color='red.500'/>
+                                    Email is not verified, need to resend?
+                                </ListItem>}
+                            </List>
                         </PopoverBody>
                     </PopoverContent>
 
