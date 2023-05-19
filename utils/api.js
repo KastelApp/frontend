@@ -67,6 +67,16 @@ const newGuild = async function (Token, body) {
     });
 };
 
+const VerifyEmail = async function (Token) {
+    return await fetcher(`/auth/verify`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({code: Token}),
+    })
+}
+
 export {
     API,
     fetcher,
@@ -76,4 +86,5 @@ export {
     fetchUser,
     fetchGuilds,
     newGuild,
+    VerifyEmail
 }
