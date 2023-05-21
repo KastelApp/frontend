@@ -113,7 +113,7 @@ function RegisterPage({user}) {
                                 <Text bgGradient="linear(to-r, red.400,pink.400)"
                                       bgClip="text"
                                       fontSize={{base: 'sm', sm: 'md'}}>
-                                    {(Object.values(error)[0].Message) || 'Unknown error occurred.'}
+                                    {(Object.values(error)?.[0]?.Message) || 'Unknown error occurred.'}
                                 </Text>
                             ) : (
                                 <Text _dark={{color: "gray.200"}} color={'gray.500'}
