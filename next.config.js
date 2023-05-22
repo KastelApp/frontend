@@ -1,3 +1,5 @@
+const { withSentryConfig } = require("@sentry/nextjs");
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
     reactStrictMode: true,
@@ -7,7 +9,10 @@ const nextConfig = {
         API_ENDPOINT: process.env.API_ENDPOINT,
         API_VERSION: process.env.API_VERSION,
         WS_ENDPOINT: process.env.WS_ENDPOINT,
+    },
+    sentry: {
+        hideSourceMaps: true,
     }
 }
 
-module.exports = nextConfig
+module.exports = withSentryConfig(nextConfig);
