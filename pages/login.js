@@ -129,7 +129,7 @@ function LoginPage({user}) {
                                             as={'span'}
                                             bgGradient="linear(to-r, red.400,pink.400)"
                                             bgClip="text">
-                                            {(Object.values(error)[0].Message) || 'Unknown error occurred.'}
+                                            {(Object.values(error)?.[0]?.Message) || 'Unknown error occurred.'}
                                         </Text>}
 
                                         <Input
