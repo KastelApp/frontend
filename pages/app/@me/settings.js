@@ -1,6 +1,6 @@
 import Head from "next/head";
 import {useRouter} from "next/router";
-import AppNav from "../../../components/navbar/app";
+import AppNav from "../../../components/navbar/app/index";
 import {useEffect} from "react";
 import * as api from "../../../utils/api";
 import {getCookie} from 'cookies-next';

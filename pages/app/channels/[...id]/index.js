@@ -4,7 +4,7 @@ import LoadingPage from "../../../../components/app/loading-page";
 import * as api from "../../../../utils/api";
 import {useRouter} from "next/router";
 import {useEffect} from "react";
-import AppNav from "../../../../components/navbar/app";
+import AppNav from "../../../../components/navbar/app/index";
 import {Text} from "@chakra-ui/react";
 import {UserSocket} from "../../../../utils/ws/userSocket";
 

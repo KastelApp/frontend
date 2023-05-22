@@ -76,7 +76,7 @@ function HomePage({user}) {
 
                 {status === 'error' && (
                     <Text color={'gray.500'}>
-                        {(Object?.values(error)[0]?.Message) || 'Unknown error occurred.'}
+                        {(Object.values(error)?.[0]?.Message) || 'Unknown error occurred.'}
                     </Text> )}
 
             </VStack>
