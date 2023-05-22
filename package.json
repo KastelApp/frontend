@@ -21,7 +21,7 @@
     "csurf": "^1.11.0",
     "framer-motion": "^7.6.2",
     "mitt": "^3.0.0",
-    "next": "^12.2.5",
+    "next": "^13.4.3",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-icons": "^4.4.0",
