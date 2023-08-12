@@ -2,10 +2,10 @@ import { loadTranslations } from '$lib/translations';
 
 /** @type {import('@sveltejs/kit').Load} */
 
-export const load = async ({ url }) => {
+export async function load ({ url }) {
     const { pathname } = url;
 
-    const locale = 'en'; //TODO: load from cookie or something
+    const locale = 'en';
 
     await loadTranslations(locale, pathname); // keep this just before the `return`
 
