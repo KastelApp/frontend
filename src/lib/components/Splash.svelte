@@ -100,7 +100,12 @@
 			</div>
 			{#if mounted}
 				<div class="text-white text-xl mt-4 text-center" in:fade={{ delay: 10000 }} out:fade>
-					It looks like we're taking a while to connect to our servers. They might be down.
+					It looks like we're taking a while to connect to our servers. They might be down. You can
+					check our status page <a
+						href="https://youtu.be/dQw4w9WgXcQ"
+						class="underline"
+						target="_blank">here</a
+					>.
 				</div>
 			{/if}
 		</div>
