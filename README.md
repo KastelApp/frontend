@@ -12,8 +12,7 @@
 [![Stargazers][stars-shield]][stars-url]
 [![Issues][issues-shield]][issues-url]
 
-Kastel Is a Chatting App like <a href="https://discord.com">Discord</a> & <a href="https://guilded.gg">Guilded</a>,
-Though its Open Sourced & Data is encrypted
+Kastel is an open-sourced real time chat application focused around the community & privacy.
 
 ## Roadmap
 
@@ -40,8 +39,8 @@ refactoring code etc etc)
 
 ## Maintainers
 
-[Tea Cup](https://github.com/TheTeaCup)
-[Danny](https://github.com/daanschenkel)
+- [Tea Cup](https://github.com/TheTeaCup)
+- [Danny](https://github.com/daanschenkel)
 
 # License
 
