@@ -12,6 +12,8 @@
 
 			//Set user
 			user = client?.users?.getCurrentUser();
+
+			console.log(user)
 		}
 	});
 </script>

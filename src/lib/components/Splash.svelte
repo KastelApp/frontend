@@ -1,7 +1,7 @@
 <script>
 	import { fade } from 'svelte/transition';
 	import { onMount } from 'svelte';
-	import { ready } from '$lib/stores.js';
+	import { ready, token } from '$lib/stores.js';
 	import { initClient } from '$lib/client';
 	import { goto } from '$app/navigation';
 	let clientReady = false;
@@ -12,8 +12,6 @@
 			client = initClient();
 		}
 	});
-
-	let token;
 
 	let quotes = [
 		'Insert random quote here - Dev',
@@ -47,13 +45,8 @@
 
 	onMount(() => {
 		if (!clientReady) {
-			token =
-				document?.cookie
-					?.split(';')
-					.find((c) => c.startsWith('token'))
-					?.split('=')[1] || '';
-
-			client = initClient(token || '');
+			console.log($token)
+			client = initClient($token || '');
 		} else {
 		}
 

@@ -1,15 +1,29 @@
 <script>
+	import { browser } from '$app/environment';
+	import { initClient } from '$lib/client';
+	/**
+	 * @type {import('@kastelll/wrapper').Client}
+	 */
+	let client;
 	import { fade } from 'svelte/transition';
-	import { ready } from '$lib/stores.js';
+	import { ready, token } from '$lib/stores.js';
 	import { t } from '$lib/translations';
 	import { goto } from '$app/navigation';
-	let clientReady = false;
+
 	ready.subscribe((value) => {
-		clientReady = value;
-		if (value) {
-			goto('/app');
+		if ($token !== 'null') {
+			if (browser) {
+				goto('/app');
+			}
+		} else {
+			client = initClient();
 		}
 	});
+
+	let error = {
+		message: 'Invalid email or password',
+		shown: false
+	};
 </script>
 
 <div
@@ -19,21 +33,64 @@
 	<form class="flex flex-col items-center">
 		<img src="/logo.png" alt="Logo" />
 
-		<input class="input text-center" type="text" placeholder={$t('common.token')} />
+		{#if error.shown}
+			<div class="bg-red-500 text-white p-2 rounded-lg">
+				{error.message}
+			</div>
+			<br />
+		{/if}
+		<input class="input text-center" type="email" placeholder={$t('common.email')} />
+		<br />
+		<input class="input text-center" type="password" placeholder={$t('common.password')} />
 		<button
 			type="button"
 			class="btn variant-filled-success w-full mt-5"
-			on:click={(e) => {
-				console.log('submit');
-				//set token cookie
-				if (typeof document !== undefined)
-					document.cookie = `token=${
-						document.querySelector('input').value
-					};path=/;max-age=31536000;`;
-				else console.log('document is undefined');
-				//TODO: fix this
-				// goto('/app');
-				location = '/app';
+			on:click={async (e) => {
+				const email = e.target.form[0].value;
+				const password = e.target.form[1].value;
+
+				if (!client.EmailRegex.test(email)) {
+					error = {
+						message: 'Invalid email',
+						shown: true
+					};
+
+					return;
+				} else if (!client.PasswordRegex.test(password)) {
+					error = {
+						message: 'Invalid password',
+						shown: true
+					};
+
+					return;
+				} else {
+					error = {
+						message: 'N/A',
+						shown: false
+					};
+				}
+
+				const data = await client.loginAccount({ email, password, resetClient: false });
+
+				if (data.success) {
+					const dataToken = data.token;
+
+					token.set(dataToken);
+				}
+
+				for (const [key, value] of Object.entries(data.errors)) {
+					if (value) {
+						error.message = `${error.message === 'N/A' ? '' : error.message}\n${key} is invalid`;
+					}
+				}
+
+				if (error.message !== 'N/A') {
+					error.shown = true;
+					return;
+				} else {
+					error.message = 'Unknown error, please try again later';
+					error.shown = true;
+				}
 			}}
 		>
 			{$t('common.signIn')}</button

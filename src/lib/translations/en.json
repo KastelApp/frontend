@@ -2,5 +2,7 @@
 	"test": "This is a test of the language file system.",
 	"welcome": "Welcome {{name}}!",
 	"token": "Token",
-	"signIn": "Sign In"
+	"signIn": "Sign In",
+	"password": "P@ssw0rd!",
+	"email": "Email"
 }
