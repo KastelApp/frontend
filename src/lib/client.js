@@ -4,7 +4,12 @@ import { ready } from './stores.js';
 
 let client;
 
-function initClient(token) {
+/**
+ * Initializes the client
+ * @param {string} token 
+ * @returns {import('@kastelll/wrapper').Client}
+ */
+export const initClient = (token) => {
   if (typeof window === 'undefined') return null;
 
   if (client) return client;
@@ -31,6 +36,3 @@ function initClient(token) {
 
   return client;
 }
-
-
-export { initClient };

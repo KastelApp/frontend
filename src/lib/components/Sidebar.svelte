@@ -1,4 +1,5 @@
 <script>
+	import { draggable } from '$lib/dragable.js';
 	/**
 	 * @type {import('@kastelll/wrapper').Client}
 	 */
@@ -24,9 +25,12 @@
 		}
 	});
 
-	let displayingGuildName = {
+	let selectedGuild = {
 		guildId: null,
-		displaying: false
+		displaying: false,
+		moving: false,
+		x: 0,
+		y: 0
 	};
 
 	function getTopOffset(guildId) {
@@ -37,13 +41,25 @@
 	}
 
 	function getGuildName(guildName) {
-		let end = "";
+		let end = '';
 
-		for (const word of guildName.split(" ")) {
+		for (const word of guildName.split(' ')) {
 			end += word[0];
 		}
 
 		return end;
+	}
+
+	function handleDragStart(event) {
+		selectedGuild.moving = true;
+	}
+
+	function handleDragEnd(event) {
+		selectedGuild.moving = false;
+	}
+
+	function handleDragMove(event) {
+		console.log(event.detail);
 	}
 </script>
 
@@ -58,8 +74,13 @@
 		<div class="bg-gray-300 dark:bg-gray-700 h-px w-full my-2" />
 
 		{#each guilds as guild}
-			<div>
-				{#if displayingGuildName.displaying && displayingGuildName.guildId === guild.id}
+			<div
+				use:draggable
+				on:dragstart={handleDragStart}
+				on:dragmove={handleDragMove}
+				on:dragend={handleDragEnd}
+			>
+				{#if selectedGuild.displaying && selectedGuild.guildId === guild.id}
 					<div
 						class="bg-gray-900 text-white rounded-lg p-2 absolute"
 						style="left: 75px; top: {getTopOffset(guild.id)}px;"
@@ -70,19 +91,19 @@
 				<div
 					class="flex flex-col items-center justify-center rounded-full bg-gray-400 dark:bg-gray-600 hover:bg-gray-500 dark:hover:bg-gray-700 cursor-pointer m-2 relative"
 					on:mouseover={() => {
-						displayingGuildName = {
+						selectedGuild = {
 							guildId: guild.id,
 							displaying: true
 						};
 					}}
 					on:focus={() => {
-						displayingGuildName = {
+						selectedGuild = {
 							guildId: guild.id,
 							displaying: true
 						};
 					}}
 					on:mouseleave={() => {
-						displayingGuildName = {
+						selectedGuild = {
 							guildId: null,
 							displaying: false
 						};
