@@ -7,3 +7,5 @@ export const token = writable(browser && (localStorage.getItem("token") ?? null)
 token.subscribe((value) => {
     if (browser) localStorage.setItem("token", value);
 });
+
+export const key = {};
