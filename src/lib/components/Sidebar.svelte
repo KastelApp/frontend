@@ -2,17 +2,18 @@
 	import { draggable } from '$lib/dragable.js';
 	import Menu from '$lib/components/RightClickMenu/Menu.svelte';
 	import MenuOption from '$lib/components/RightClickMenu/MenuOption.svelte';
-	import { ready } from '$lib/stores.js';
+	import { currentGuild, ready } from '$lib/stores.js';
 	import { initClient } from '$lib/client';
 	import { getGuildName } from '$lib/utils/getGuildName';
 	import { fade } from 'svelte/transition';
+	import { t } from '$lib/translations';
 
 	/**
 	 * @type {import('@kastelll/wrapper').Client}
 	 */
 	let client;
 	/**
-	 * @type {import('@kastelll/wrapper').User}
+	 * @type {import('@kastelll/wrapper').BaseUser}
 	 */
 	let user;
 	/**
@@ -96,14 +97,17 @@
 {#if selectMenu.show && selectMenu.guild}
 	<Menu x={selectMenu.x} y={selectMenu.y} on:click={closeMenu} on:clickoutside={closeMenu}>
 		<hr class="w-full my-1" style="display:none;" />
-		<MenuOption on:click={() => console.log('Mark Read')} text="Mark Read" />
-		<MenuOption on:click={console.log} text="Settings" />
+		<MenuOption
+			on:click={() => console.log('Mark Read')}
+			text={$t('common.selectMenus.guild.markAsRead')}
+		/>
+		<MenuOption on:click={console.log} text={$t('common.selectMenus.guild.settings')} />
 		<hr class="border-t border-[#0003] w-full my-1" />
 		<MenuOption
 			error={true}
 			isDisabled={selectMenu.canLeave}
 			on:click={console.log}
-			text="Leave Guild"
+			text={$t('common.selectMenus.guild.leave')}
 		/>
 		<hr class="w-full my-1" style="display:none;" />
 	</Menu>
@@ -154,6 +158,8 @@
 					on:mouseup={(event) => {
 						if (event.button === 0) {
 							client.guilds.setCurrentGuild(guild.id);
+
+							$currentGuild = client.guilds.currentGuild;
 						}
 					}}
 					on:contextmenu|preventDefault={async (e) => {
@@ -182,6 +188,19 @@
 							</p>
 						</div>
 					</div>
+
+					{#if guild.id === $currentGuild?.id}
+						<div
+							transition:fade={{ duration: 250 }}
+							class="bg-[#c4cdda] text-white rounded-lg absolute w-1 h-[40px] left-[-8px]"
+						/>
+					{/if}
+					{#if guild.id !== client.guilds.currentGuild?.id}
+						<div
+							transition:fade={{ duration: 250 }}
+							class="bg-[#c4cdda] text-white rounded-lg absolute w-1 h-[15px] bottom-[16px] left-[-8px]"
+						/>
+					{/if}
 				</div>
 				{#if selectedGuild.displaying && selectedGuild.guildId === guild.id}
 					<div
@@ -191,19 +210,6 @@
 					>
 						{guild.name}
 					</div>
-				{/if}
-
-				{#if guild.id === client.guilds.currentGuild?.id}
-					<div
-						transition:fade={{ duration: 250 }}
-						class="bg-[#c4cdda] text-white rounded-lg absolute w-1 h-[40px] left-[-8px]"
-					/>
-				{/if}
-				{#if guild.id !== client.guilds.currentGuild?.id}
-					<div
-						transition:fade={{ duration: 250 }}
-						class="bg-[#c4cdda] text-white rounded-lg absolute w-1 h-[15px] bottom-[16px] left-[-8px]"
-					/>
 				{/if}
 			</div>
 		{/each}

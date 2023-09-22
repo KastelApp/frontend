@@ -4,5 +4,12 @@
 	"token": "Token",
 	"signIn": "Sign In",
 	"password": "P@ssw0rd!",
-	"email": "Email"
+	"email": "Email",
+	"selectMenus": {
+		"guild": {
+			"leave": "Leave Guild",
+			"markAsRead": "Mark as Read",
+			"settings": "Settings"
+		}
+	}
 }

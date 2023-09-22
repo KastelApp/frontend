@@ -104,7 +104,8 @@
 		"text",
 		"track",
 		"width",
-		"zIndex"
+		"zIndex",
+		"channelList"
 	],
 	"files.exclude": {
 		"**/.git": true,
