@@ -3,6 +3,8 @@ export const draggable = (node) => {
     let y;
 
     function handleMousedown(event) {
+        if (event.button !== 0) return;
+
         x = event.clientX;
         y = event.clientY;
 

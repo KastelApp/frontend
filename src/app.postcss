@@ -5,9 +5,19 @@ body {
 }
 
 .unselectable {
-   -moz-user-select: -moz-none;
-   -khtml-user-select: none;
-   -webkit-user-select: none;
-   -ms-user-select: none;
-   user-select: none;
+	-moz-user-select: -moz-none;
+	-khtml-user-select: none;
+	-webkit-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+}
+
+
+#sidebar-left::-webkit-scrollbar {
+		display: none;
+	} {
+	@apply h-full;
+	
+	scrollbar-width: none;
+	-ms-overflow-style: none;
 }

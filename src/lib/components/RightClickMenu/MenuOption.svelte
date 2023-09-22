@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { createEventDispatcher, getContext } from 'svelte';
+	import { createEventDispatcher } from 'svelte';
 
 	export let isDisabled = false;
 	export let text = '';
@@ -22,7 +22,7 @@
 
 <!-- svelte-ignore a11y-click-events-have-key-events -- not needed-->
 <div
-	class={`p-1.5 ${mouseOnHover ? 'cursor-pointer' : 'cursor-default'} text-sm flex items-center gap-1 hover:bg-[#192339] unselectable ${error ? 'text-red-500' : 'text-white'} ${isDisabled ? 'opacity-50' : ''}`}
+	class={`p-1.5 ${mouseOnHover ? 'cursor-pointer' : 'cursor-default'} rounded-lg text-sm flex items-center gap-1 hover:bg-[#192339] unselectable ${error ? 'text-red-500' : 'text-white'} ${isDisabled ? 'opacity-50' : ''}`}
 	on:click={handleClick}
 >
 		{#if text}

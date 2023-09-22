@@ -4,8 +4,8 @@
 	import MenuOption from '$lib/components/RightClickMenu/MenuOption.svelte';
 	import { ready } from '$lib/stores.js';
 	import { initClient } from '$lib/client';
-	import { getTopOffset } from '$lib/utils/getTopOffset';
 	import { getGuildName } from '$lib/utils/getGuildName';
+	import { fade } from 'svelte/transition';
 
 	/**
 	 * @type {import('@kastelll/wrapper').Client}
@@ -28,12 +28,14 @@
 		y: 0,
 		canLeave: true
 	};
+
 	let selectMenu = {
 		x: 0,
 		y: 0,
 		show: false,
-		canLeave: true
-	}
+		canLeave: true,
+		guild: false
+	};
 
 	ready.subscribe((value) => {
 		clientReady = value;
@@ -74,23 +76,56 @@
 
 	function closeMenu() {
 		selectMenu.show = false;
+		selectMenu.guild = false;
+	}
+
+	function onMouseOver(guild) {
+		const target = document.getElementById(`guild-${guild.id}`);
+
+		const rect = target.getBoundingClientRect();
+
+		selectedGuild = {
+			guildId: guild.id,
+			displaying: true,
+			x: rect.x,
+			y: rect.y
+		};
 	}
 </script>
 
-{#if selectMenu.show}
+{#if selectMenu.show && selectMenu.guild}
 	<Menu x={selectMenu.x} y={selectMenu.y} on:click={closeMenu} on:clickoutside={closeMenu}>
-		<hr class="w-full my-1" />
+		<hr class="w-full my-1" style="display:none;" />
 		<MenuOption on:click={() => console.log('Mark Read')} text="Mark Read" />
 		<MenuOption on:click={console.log} text="Settings" />
 		<hr class="border-t border-[#0003] w-full my-1" />
-		<MenuOption error={true} isDisabled={selectMenu.canLeave} on:click={console.log} text="Leave Guild" />
+		<MenuOption
+			error={true}
+			isDisabled={selectMenu.canLeave}
+			on:click={console.log}
+			text="Leave Guild"
+		/>
+		<hr class="w-full my-1" style="display:none;" />
+	</Menu>
+{/if}
+
+{#if selectMenu.show && !selectMenu.guild}
+	<Menu x={selectMenu.x} y={selectMenu.y} on:click={closeMenu} on:clickoutside={closeMenu}>
+		<hr class="w-full my-1" style="display:none;" />
+		<MenuOption on:click={() => console.log('Mark Read')} text="Waffles" />
 		<hr class="w-full my-1" />
 	</Menu>
 {/if}
 
 {#if clientReady}
-	<div class="h-screen w-16 flex flex-col bg-white dark:bg-gray-900 shadow-lg mr-2 unselectable">
+	<div
+		class="w-16 flex flex-col bg-white dark:bg-gray-900 shadow-lg mr-2 unselectable overflow-auto"
+	>
 		<div
+			on:contextmenu|preventDefault={(e) => {
+				selectMenu.guild = false;
+				onRightClick(e);
+			}}
 			class="flex flex-col items-center justify-center rounded-full bg-red-400 hover:bg-red-500 cursor-pointer m-2 relative"
 		>
 			<img src={user?.avatar || `/logo.png`} alt="Logo" />
@@ -105,70 +140,69 @@
 				on:dragmove={handleDragMove}
 				on:dragend={handleDragEnd}
 			>
-				{#if selectedGuild.displaying && selectedGuild.guildId === guild.id}
-					<div
-						class="bg-gray-900 text-white rounded-lg p-2 absolute"
-						style="left: 75px; top: {getTopOffset(guilds, guild.id)}px;"
-					>
-						{guild.name}
-					</div>
-				{/if}
 				<div
+					id={`guild-${guild.id}`}
 					class="flex flex-col items-center justify-center rounded-full bg-gray-400 dark:bg-gray-600 hover:bg-gray-500 dark:hover:bg-gray-700 cursor-pointer m-2 relative"
-					on:mouseover={() => {
-						selectedGuild = {
-							guildId: guild.id,
-							displaying: true,
-						};
-
-						selectMenu.canLeave = guild.owner
-					}}
-					on:focus={() => {
-						selectedGuild = {
-							guildId: guild.id,
-							displaying: true
-						};
-					}}
+					on:mouseover={onMouseOver(guild)}
+					on:focus={onMouseOver(guild)}
 					on:mouseleave={() => {
 						selectedGuild = {
 							guildId: null,
 							displaying: false
 						};
 					}}
-					on:mousedown={(event) => {
-						// if left click
+					on:mouseup={(event) => {
 						if (event.button === 0) {
 							client.guilds.setCurrentGuild(guild.id);
 						}
 					}}
-					on:contextmenu|preventDefault={onRightClick}
+					on:contextmenu|preventDefault={async (e) => {
+						selectMenu.canLeave = guild.owner;
+						selectMenu.guild = true;
+
+						onRightClick(e);
+					}}
 				>
-					{#if guild.icon}
-						<img src={guild.icon || `/logo.png`} alt="Logo" />
-					{:else}
-						<div class="text-white text-2xl font-bold mt-4 text-center relative" style="top: -8px;">
-							<p style="font-size: {getGuildName(guild.name).length > 1 ? '14' : '24'}px;">
-								{getGuildName(guild.name)}
+					<div>
+						{#if guild.icon}
+							<img src={guild.icon || `/logo.png`} alt="Logo" />
+						{:else}
+							<div
+								class="text-white text-2xl font-bold mt-4 text-center relative"
+								style="top: -8px;"
+							>
+								<p style="font-size: {getGuildName(guild.name).length > 1 ? '14' : '24'}px;">
+									{getGuildName(guild.name)}
+								</p>
+							</div>
+						{/if}
+						<div class="bg-[#992828] rounded-full w-4 h-4 absolute bottom-0 right-0">
+							<p class="text-white text-xs font-bold text-center relative" style="top: -1px;">
+								{TEMPRANDOMPINGFROM0TO9()}
 							</p>
 						</div>
-					{/if}
-					<div class="bg-[#992828] rounded-full w-4 h-4 absolute bottom-0 right-0">
-						<p class="text-white text-xs font-bold text-center relative" style="top: -1px;">
-							{TEMPRANDOMPINGFROM0TO9()}
-						</p>
 					</div>
 				</div>
+				{#if selectedGuild.displaying && selectedGuild.guildId === guild.id}
+					<div
+						transition:fade={{ duration: 150 }}
+						class="bg-gray-900 text-white rounded-lg p-2 fixed left-[80px]"
+						style="top: {selectedGuild.y}px;"
+					>
+						{guild.name}
+					</div>
+				{/if}
+
 				{#if guild.id === client.guilds.currentGuild?.id}
 					<div
-						class="bg-[#c4cdda] text-white rounded-lg absolute w-1 h-[40px]"
-						style="top: {getTopOffset(guilds, guild.id)}px; left: 0px;"
+						transition:fade={{ duration: 250 }}
+						class="bg-[#c4cdda] text-white rounded-lg absolute w-1 h-[40px] left-[-8px]"
 					/>
 				{/if}
-				<!-- Emulates if there was an unread notification -->
 				{#if guild.id !== client.guilds.currentGuild?.id}
 					<div
-						class="bg-[#c4cdda] text-white rounded-lg absolute w-1 h-[15px]"
-						style="top: {getTopOffset(guilds, guild.id) + 12}px; left: 0px;"
+						transition:fade={{ duration: 250 }}
+						class="bg-[#c4cdda] text-white rounded-lg absolute w-1 h-[15px] bottom-[16px] left-[-8px]"
 					/>
 				{/if}
 			</div>

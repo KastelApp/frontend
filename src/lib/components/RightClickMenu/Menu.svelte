@@ -1,5 +1,5 @@
 <script>
-	import { onMount, setContext, createEventDispatcher } from 'svelte';
+	import { createEventDispatcher } from 'svelte';
 	import { fade } from 'svelte/transition';
 
 	export let x;
