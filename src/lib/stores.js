@@ -2,7 +2,7 @@ import { writable } from "svelte/store";
 import { browser } from "$app/environment";
 
 export const ready = writable(false);
-export const token = writable(browser && (localStorage.getItem("token") ?? null));
+export const token = writable(browser && ((localStorage.getItem("token") === 'null' ? null : localStorage.getItem("token"))));
 /**
 * @type {import('svelte/store').Writable<import('@kastelll/wrapper').BaseGuild | null>}
 */
