@@ -73,9 +73,11 @@
 				const data = await client.loginAccount({ email, password, resetClient: false });
 
 				if (data.success) {
-					const dataToken = data.token;
+					token.set(data.token);
 
-					token.set(dataToken);
+					goto('/app');
+
+					return;
 				}
 
 				for (const [key, value] of Object.entries(data.errors)) {
