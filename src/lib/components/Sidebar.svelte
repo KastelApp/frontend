@@ -2,7 +2,13 @@
 	import { draggable } from '$lib/dragable.js';
 	import Menu from '$lib/components/RightClickMenu/Menu.svelte';
 	import MenuOption from '$lib/components/RightClickMenu/MenuOption.svelte';
-	import { currentChannel, currentGuild, lastChannelCache, ready } from '$lib/stores.js';
+	import {
+		currentChannel,
+		currentGuild,
+		lastChannelCache,
+		ready,
+		settingsOpen
+	} from '$lib/stores.js';
 	import { initClient } from '$lib/client';
 	import { getGuildName } from '$lib/utils/getGuildName';
 	import { fade } from 'svelte/transition';
@@ -118,7 +124,12 @@
 {#if selectMenu.show && !selectMenu.guild}
 	<Menu x={selectMenu.x} y={selectMenu.y} on:click={closeMenu} on:clickoutside={closeMenu}>
 		<hr class="w-full my-1" style="display:none;" />
-		<MenuOption on:click={() => console.log('Mark Read')} text="Waffles" />
+		<MenuOption
+			on:click={() => {
+				settingsOpen.set(true);
+			}}
+			text="Settings"
+		/>
 		<hr class="w-full my-1" />
 	</Menu>
 {/if}
@@ -129,6 +140,17 @@
 			on:contextmenu|preventDefault={(e) => {
 				selectMenu.guild = false;
 				onRightClick(e);
+			}}
+			on:mousedown={(event) => {
+				if (event.button === 0) {
+					client.guilds.setCurrentGuild(null);
+					currentChannel.set(null);
+					currentGuild.set(null);
+
+					goto('/app');
+
+					return;
+				}
 			}}
 			class="flex flex-col items-center justify-center rounded-full bg-red-400 hover:bg-red-500 cursor-pointer m-2 relative"
 		>

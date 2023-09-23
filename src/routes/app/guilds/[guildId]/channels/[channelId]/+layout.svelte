@@ -1,6 +1,5 @@
 <script>
 	import { AppShell } from '@skeletonlabs/skeleton';
-	import { page } from '$app/stores';
 	import ChannelSidebar from '$lib/components/ChannelSidebar.svelte';
 	// export let guildId = $page.params.guildId;
 	// export let channelId = $page.params.channelId;

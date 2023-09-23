@@ -27,14 +27,8 @@
 </script>
 
 {#if clientReady}
-<div on:mousedown={() => {
-	console.log($currentGuild);
-}}>
+<div>
 
 	{$t('common.welcome', { name: user?.username })}
-
-	{#if $currentGuild}
-		<div>Guild is {$currentGuild?.name}</div>
-	{/if}
 </div>
 {/if}
