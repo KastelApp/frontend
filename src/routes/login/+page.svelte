@@ -70,10 +70,12 @@
 					};
 				}
 
-				const data = await client.loginAccount({ email, password, resetClient: false });
+				const data = await client.loginAccount({ email, password, resetClient: true });
 
 				if (data.success) {
 					token.set(data.token);
+
+					client.connect();
 
 					goto('/app');
 
