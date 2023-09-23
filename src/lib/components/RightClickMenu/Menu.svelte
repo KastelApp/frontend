@@ -24,6 +24,6 @@
 
 <svelte:body on:click={onPageClick} />
 
-<div transition:fade={{ duration: 100 }} bind:this={menuEl} style="top: {y}px; left: {x}px; z-index: 9999; min-width: 150px" class="absolute grid shadow-md bg-[#111827] rounded-lg">
+<div transition:fade={{ duration: 100 }} bind:this={menuEl} style="top: {y}px; left: {x}px; z-index: 5; min-width: 150px" class="absolute grid shadow-md bg-[#101219] rounded-lg">
     <slot />
 </div>

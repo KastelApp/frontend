@@ -8,8 +8,7 @@
 	 */
 	let user;
 
-	import { currentChannel, currentGuild, ready } from '$lib/stores.js';
-	import { t } from '$lib/translations';
+	import { currentChannel, currentGuild, lastChannelCache, ready } from '$lib/stores.js';
 	import { initClient } from '$lib/client';
 	import { page } from '$app/stores';
 	import { goto } from '$app/navigation';
@@ -37,13 +36,35 @@
 			const channel = foundGuild.channels.find((channel) => channel.id === channelId);
 
 			if (!channel) {
-				const FirstChannel = foundGuild.channels[0];
+				const ChannelCache = $lastChannelCache[guildId];
+
+				if (ChannelCache) {
+					const foundChannel = foundGuild.channels.find((channel) => channel.id === ChannelCache);
+
+					if (foundChannel) {
+						goto(`/app/guilds/${guildId}/channels/${foundChannel.id}`);
+
+						currentGuild.set(foundGuild);
+						currentChannel.set(foundChannel);
+
+						return;
+					}
+				}
+
+				const FirstChannel = foundGuild.channels.find(
+					(channel) =>
+						channel.type === 'GuildText' ||
+						channel.type === 'GuildNews' ||
+						channel.type === 'GuildNewMember' ||
+						channel.type === 'GuildRules'
+				);
 
 				if (FirstChannel) {
 					goto(`/app/guilds/${guildId}/channels/${FirstChannel.id}`);
 
 					currentGuild.set(foundGuild);
 					currentChannel.set(FirstChannel);
+					$lastChannelCache[guildId] = FirstChannel.id;
 
 					return;
 				}
@@ -54,6 +75,8 @@
 			}
 
 			currentGuild.set(foundGuild);
+			currentChannel.set(channel);
+			$lastChannelCache[guildId] = channel.id;
 		}
 	});
 </script>

@@ -12,12 +12,25 @@ body {
 	user-select: none;
 }
 
-
 #sidebar-left::-webkit-scrollbar {
-		display: none;
-	} {
+	display: none;
+}
+ {
 	@apply h-full;
-	
-	scrollbar-width: none;
-	-ms-overflow-style: none;
+	-ms-overflow-style: none; /* for Internet Explorer, Edge */
+	scrollbar-width: none; /* for Firefox */
+	overflow-y: scroll;
+}
+
+.textBasedChannel {
+	transition-property: background-color, border-color, color, fill, stroke, opacity, box-shadow,
+		transform;
+	transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+	transition-duration: 300ms;
+	transition-duration: 200ms;
+	transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.textBasedChannel:hover {
+	background: #202331;
 }

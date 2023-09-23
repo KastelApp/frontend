@@ -2,11 +2,13 @@
 	import { draggable } from '$lib/dragable.js';
 	import Menu from '$lib/components/RightClickMenu/Menu.svelte';
 	import MenuOption from '$lib/components/RightClickMenu/MenuOption.svelte';
-	import { currentGuild, ready } from '$lib/stores.js';
+	import { currentChannel, currentGuild, lastChannelCache, ready } from '$lib/stores.js';
 	import { initClient } from '$lib/client';
 	import { getGuildName } from '$lib/utils/getGuildName';
 	import { fade } from 'svelte/transition';
 	import { t } from '$lib/translations';
+	import { goto } from '$app/navigation';
+	import { ChannelTypes } from '@kastelll/wrapper';
 
 	/**
 	 * @type {import('@kastelll/wrapper').Client}
@@ -122,9 +124,7 @@
 {/if}
 
 {#if clientReady}
-	<div
-		class="w-16 flex flex-col bg-white dark:bg-gray-900 shadow-lg mr-2 unselectable overflow-auto"
-	>
+	<div class="w-16 flex flex-col bg-white dark:bg-[#101219] shadow-lg unselectable">
 		<div
 			on:contextmenu|preventDefault={(e) => {
 				selectMenu.guild = false;
@@ -138,6 +138,15 @@
 		<div class="bg-gray-300 dark:bg-gray-700 h-px w-full my-2" />
 
 		{#each guilds as guild}
+			{#if selectedGuild.displaying && selectedGuild.guildId === guild.id}
+				<div
+					transition:fade={{ duration: 150 }}
+					class="bg-[#101219] text-white rounded-lg p-2 fixed left-[80px] z-50"
+					style="top: {selectedGuild.y}px;"
+				>
+					{guild.name}
+				</div>
+			{/if}
 			<div
 				use:draggable
 				on:dragstart={handleDragStart}
@@ -159,7 +168,40 @@
 						if (event.button === 0) {
 							client.guilds.setCurrentGuild(guild.id);
 
-							$currentGuild = client.guilds.currentGuild;
+							const ChannelCache = $lastChannelCache[guild.id];
+
+							if (ChannelCache) {
+								const foundChannel = guild.channels.find((channel) => channel.id === ChannelCache);
+
+								if (foundChannel) {
+									goto(`/app/guilds/${guild.id}/channels/${foundChannel.id}`);
+
+									currentGuild.set(guild);
+									currentChannel.set(foundChannel);
+
+									return;
+								}
+							}
+
+							const FirstChannel = guild.channels.find(
+								(channel) =>
+									channel.type === 'GuildText' ||
+									channel.type === 'GuildNews' ||
+									channel.type === 'GuildNewMember' ||
+									channel.type === 'GuildRules'
+							);
+
+							if (FirstChannel) {
+								goto(`/app/guilds/${guild.id}/channels/${FirstChannel.id}`);
+
+								currentGuild.set(guild);
+								currentChannel.set(FirstChannel);
+								$lastChannelCache[guild.id] = FirstChannel.id;
+
+								return;
+							}
+
+							return;
 						}
 					}}
 					on:contextmenu|preventDefault={async (e) => {
@@ -202,15 +244,6 @@
 						/>
 					{/if}
 				</div>
-				{#if selectedGuild.displaying && selectedGuild.guildId === guild.id}
-					<div
-						transition:fade={{ duration: 150 }}
-						class="bg-gray-900 text-white rounded-lg p-2 fixed left-[80px]"
-						style="top: {selectedGuild.y}px;"
-					>
-						{guild.name}
-					</div>
-				{/if}
 			</div>
 		{/each}
 	</div>
