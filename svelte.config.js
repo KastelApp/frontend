@@ -14,7 +14,7 @@ const config = {
 			// See below for an explanation of these options
 			routes: {
 				include: ['/*'],
-				exclude: []
+				exclude: ['<all>']
 			}
 		})
 	}
