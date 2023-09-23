@@ -11,7 +11,7 @@
 	import { goto } from '$app/navigation';
 
 	ready.subscribe((value) => {
-		if ($token !== 'null') {
+		if ($token) {
 			if (browser) {
 				goto('/app');
 			}

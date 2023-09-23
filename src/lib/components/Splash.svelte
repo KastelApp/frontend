@@ -5,6 +5,7 @@
 	import { initClient } from '$lib/client';
 	import { goto } from '$app/navigation';
 	import { t } from '$lib/translations';
+	import { browser } from '$app/environment';
 
 	let clientReady = false;
 	let client;
@@ -25,7 +26,13 @@
 
 	onMount(() => {
 		if (!clientReady) {
-			console.log($token)
+			if (!$token) {
+				if (browser) {
+					goto('/login');
+				} else {
+					throw new Error('No token provided');
+				}
+			}
 			client = initClient($token || '');
 		} else {
 		}
