@@ -1,6 +1,9 @@
 <script>
-	import { ready } from '$lib/stores.js';
+	import { ready, token } from '$lib/stores.js';
 	import { initClient } from '$lib/client';
+	import { each } from 'svelte/internal';
+	import { goto } from '$app/navigation';
+	import { browser } from '$app/environment';
 
 	/**
 	 * @type {import('@kastelll/wrapper').Client}
@@ -33,7 +36,7 @@
 					badges: [
 						{
 							name: 'Beta',
-							color: '#2A1644'
+							color: '#4F2D7C'
 						}
 					]
 				}
@@ -60,86 +63,82 @@
 			name: null,
 			options: [
 				{
-					name: 'Log Out',
+					name: 'Logout',
 					badges: [],
-                    danger: true
+					selected: false,
+					onClick: () => {
+						if (!browser) return;
+						client.logout();
+						token.set(null);
+						goto('/login');
+					}
 				}
 			]
 		}
 	];
+
+	const buildInfo = {
+		channel: __BUILD_CHANNEL__,
+		commit: __GIT_COMMIT__
+	};
 </script>
 
 {#if clientReady}
-	<div
-		class="w-[358px] bg-white dark:bg-[#101219] shadow-lg unselectable relative"
-		style="border-right: 2px solid #2D3748;"
-	>
-		<div class="w-[208px] relative m-auto px-4 py-[72px]">
-			{#each options as option}
-				{#if option.name}
-					<div class="flex flex-col">
-						<div class="text-[#8e9297] text-sm font-semibold px-5 py-2">
+	<div class="relative border-r border-l-0 bg-[#171923] border-[#2d3748] w-[358px] unselectable">
+		<div class="block w-48 h-[588px] relative left-[140px] top-[72px]">
+			<div class="block w-[175px] relative top-[11px] left-[13px]">
+				{#each options as option}
+					<div class="block top-[148px] left-[11px]">
+						<hr
+							class="border-t w-full my-[4px]"
+							style="border-color: #2D3748; border-width: 1px;"
+						/>
+						{#if option.name}
 							<p
-								class="text-[#a2a3a7]"
+								class="text-white/60"
 								style="border-bottom: 2px solid #2d2f38; width: fit-content;"
 							>
 								{option.name}
 							</p>
-						</div>
-
+						{/if}
 						{#each option.options as subOption}
-							<div class="flex flex-col">
-								<div
-									class="text-[#8e9297] text-sm font-semibold px-4 py-2 cursor-pointer hover:bg-[#23252e] transition ease-in-out duration-200 rounded-lg flex flex-row items-center gap-2"
-									style={subOption.selected ? 'background-color: #36383e;' : ''}
+							<!-- svelte-ignore a11y-click-events-have-key-events -- temp -->
+							<div
+								class="block w-[182px] h-[29px] relative left-0 rounded-[5px] cursor-pointer hover:bg-[#23252e] transition ease-in-out duration-200"
+								style={subOption.selected ? 'background-color: #36383e;' : ''}
+								on:click={() => {
+									if (subOption.onClick) {
+										subOption.onClick();
+									}
+								}}
+							>
+								<p
+									class="relative top-[4px] left-[7px] h-[11px] text-sm leading-6 text-left text-white/80"
 								>
-									<p>
-										{subOption.name}
-									</p>
-									{#if subOption.badges.length > 0}
-										<div class="flex flex-col">
-											<div
-												class="text-[#8e9297] text-sm font-semibold px-3 py-0 rounded-3xl shadow-lg"
-												style="background-color: {subOption.badges[0].color};"
-											>
-												{subOption.badges[0].name}
-											</div>
-										</div>
-									{/if}
-								</div>
+									{subOption.name}
+								</p>
+								{#each subOption.badges as badge}
+									<div
+										class="block w-[34px] h-[17px] relative left-[98px] rounded-[78px] bottom-1"
+										style="background-color: {badge.color};"
+									>
+										<p
+											class="relative top-[3px] left-[6px] w-5 h-[7px] text-[10px] leading-[10px] text-white/80"
+										>
+											{badge.name.toUpperCase()}
+										</p>
+									</div>
+								{/each}
 							</div>
 						{/each}
 					</div>
-				{:else}
-					{#each option.options as subOption}
-						<div class="w-full">
-							<div class="text-[#8e9297] text-sm font-semibold px-4 py-2 cursor-pointer {subOption.danger ? "danger" : ""} transition ease-in-out duration-200 rounded-lg flex flex-row items-center 2 w-full">
-								<p>
-									{subOption.name}
-								</p>
-								<div class="absolute right-[32px]">
-									<svg
-										width="13"
-										height="13"
-										viewBox="0 0 13 13"
-										fill="none"
-										xmlns="http://www.w3.org/2000/svg"
-									>
-										<path
-											d="M1.44445 13C1.04722 13 0.707057 12.8584 0.423946 12.5753C0.140834 12.2922 -0.000480255 11.9523 1.22618e-06 11.5556V1.44445C1.22618e-06 1.04722 0.141557 0.707057 0.424668 0.423946C0.707779 0.140834 1.0477 -0.000480255 1.44445 1.22618e-06H6.5V1.44445H1.44445V11.5556H6.5V13H1.44445ZM9.38889 10.1111L8.39583 9.06389L10.2375 7.22222H4.33333V5.77778H10.2375L8.39583 3.93611L9.38889 2.88889L13 6.5L9.38889 10.1111Z"
-											fill="white"
-											fill-opacity="0.6"
-										/>
-									</svg>
-								</div>
-							</div>
-						</div>
-					{/each}
-				{/if}
-				{#if options.indexOf(option) !== options.length - 1}
-					<hr class="border-t w-full my-[4px]" style="border-color: #2D3748; border-width: 1px;" />
-				{/if}
-			{/each}
+				{/each}
+
+				<!-- build info -->
+				<p class="relative left-2 top-2 text-[10px] leading-6 text-left text-white/60 selectable">
+					{buildInfo.channel} ({buildInfo.commit})
+				</p>
+			</div>
 		</div>
 	</div>
 {/if}

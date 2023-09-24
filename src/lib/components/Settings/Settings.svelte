@@ -2,6 +2,7 @@
 	import { ready } from '$lib/stores.js';
 	import { initClient } from '$lib/client';
 	import SettingsSideBar from './SettingsSideBar.svelte';
+	import Profile from './Pages/Profile.svelte';
 
 	/**
 	 * @type {import('@kastelll/wrapper').Client}
@@ -18,7 +19,8 @@
 </script>
 
 {#if clientReady}
-    <div class="absolute bg-[#202432] w-full h-full flex">
+    <div class="absolute bg-[#202432] w-full h-[1600px] flex">
         <SettingsSideBar />
+		<Profile />
     </div>
 {/if}

@@ -135,138 +135,142 @@
 {/if}
 
 {#if clientReady}
-	<div class="w-16 flex flex-col bg-white dark:bg-[#101219] shadow-lg unselectable">
-		<div
-			on:contextmenu|preventDefault={(e) => {
-				selectMenu.guild = false;
-				onRightClick(e);
-			}}
-			on:mousedown={(event) => {
-				if (event.button === 0) {
-					client.guilds.setCurrentGuild(null);
-					currentChannel.set(null);
-					currentGuild.set(null);
-
-					goto('/app');
-
-					return;
-				}
-			}}
-			class="flex flex-col items-center justify-center rounded-full bg-red-400 hover:bg-red-500 cursor-pointer m-2 relative"
-		>
-			<img src={user?.avatar || `/logo.png`} alt="Logo" />
-			<div class="bg-green-600 rounded-full w-4 h-4 absolute bottom-0 right-0" />
-		</div>
-		<div class="bg-gray-300 dark:bg-gray-700 h-px w-full my-2" />
-
-		{#each guilds as guild}
-			{#if selectedGuild.displaying && selectedGuild.guildId === guild.id}
-				<div
-					transition:fade={{ duration: 150 }}
-					class="bg-[#101219] text-white rounded-lg p-2 fixed left-[80px] z-50"
-					style="top: {selectedGuild.y}px;"
-				>
-					{guild.name}
-				</div>
-			{/if}
+	<div class="w-16 flex flex-col bg-white dark:bg-[#101219] shadow-lg unselectable h-full">
+		<div class="flex flex-col flex-grow relative dark:bg-[#101219]">
 			<div
-				use:draggable
-				on:dragstart={handleDragStart}
-				on:dragmove={handleDragMove}
-				on:dragend={handleDragEnd}
+				on:contextmenu|preventDefault={(e) => {
+					selectMenu.guild = false;
+					onRightClick(e);
+				}}
+				on:mousedown={(event) => {
+					if (event.button === 0) {
+						client.guilds.setCurrentGuild(null);
+						currentChannel.set(null);
+						currentGuild.set(null);
+
+						goto('/app');
+
+						return;
+					}
+				}}
+				class="flex flex-col items-center justify-center rounded-full bg-red-400 hover:bg-red-500 cursor-pointer m-2 relative"
 			>
+				<img src={user?.avatar || `/logo.png`} alt="Logo" />
+				<div class="bg-green-600 rounded-full w-4 h-4 absolute bottom-0 right-0" />
+			</div>
+			<div class="bg-gray-300 dark:bg-gray-700 h-px w-full my-2" />
+
+			{#each guilds as guild}
+				{#if selectedGuild.displaying && selectedGuild.guildId === guild.id}
+					<div
+						transition:fade={{ duration: 150 }}
+						class="bg-[#101219] text-white rounded-lg p-2 fixed left-[80px] z-50"
+						style="top: {selectedGuild.y}px;"
+					>
+						{guild.name}
+					</div>
+				{/if}
 				<div
-					id={`guild-${guild.id}`}
-					class="flex flex-col items-center justify-center rounded-full bg-gray-400 dark:bg-gray-600 hover:bg-gray-500 dark:hover:bg-gray-700 cursor-pointer m-2 relative"
-					on:mouseover={onMouseOver(guild)}
-					on:focus={onMouseOver(guild)}
-					on:mouseleave={() => {
-						selectedGuild = {
-							guildId: null,
-							displaying: false
-						};
-					}}
-					on:mouseup={(event) => {
-						if (event.button === 0) {
-							client.guilds.setCurrentGuild(guild.id);
+					use:draggable
+					on:dragstart={handleDragStart}
+					on:dragmove={handleDragMove}
+					on:dragend={handleDragEnd}
+				>
+					<div
+						id={`guild-${guild.id}`}
+						class="flex flex-col items-center justify-center rounded-full bg-gray-400 dark:bg-gray-600 hover:bg-gray-500 dark:hover:bg-gray-700 cursor-pointer m-2 relative"
+						on:mouseover={onMouseOver(guild)}
+						on:focus={onMouseOver(guild)}
+						on:mouseleave={() => {
+							selectedGuild = {
+								guildId: null,
+								displaying: false
+							};
+						}}
+						on:mouseup={(event) => {
+							if (event.button === 0) {
+								client.guilds.setCurrentGuild(guild.id);
 
-							const ChannelCache = $lastChannelCache[guild.id];
+								const ChannelCache = $lastChannelCache[guild.id];
 
-							if (ChannelCache) {
-								const foundChannel = guild.channels.find((channel) => channel.id === ChannelCache);
+								if (ChannelCache) {
+									const foundChannel = guild.channels.find(
+										(channel) => channel.id === ChannelCache
+									);
 
-								if (foundChannel) {
-									goto(`/app/guilds/${guild.id}/channels/${foundChannel.id}`);
+									if (foundChannel) {
+										goto(`/app/guilds/${guild.id}/channels/${foundChannel.id}`);
+
+										currentGuild.set(guild);
+										currentChannel.set(foundChannel);
+
+										return;
+									}
+								}
+
+								const FirstChannel = guild.channels.find(
+									(channel) =>
+										channel.type === 'GuildText' ||
+										channel.type === 'GuildNews' ||
+										channel.type === 'GuildNewMember' ||
+										channel.type === 'GuildRules'
+								);
+
+								if (FirstChannel) {
+									goto(`/app/guilds/${guild.id}/channels/${FirstChannel.id}`);
 
 									currentGuild.set(guild);
-									currentChannel.set(foundChannel);
+									currentChannel.set(FirstChannel);
+									$lastChannelCache[guild.id] = FirstChannel.id;
 
 									return;
 								}
-							}
-
-							const FirstChannel = guild.channels.find(
-								(channel) =>
-									channel.type === 'GuildText' ||
-									channel.type === 'GuildNews' ||
-									channel.type === 'GuildNewMember' ||
-									channel.type === 'GuildRules'
-							);
-
-							if (FirstChannel) {
-								goto(`/app/guilds/${guild.id}/channels/${FirstChannel.id}`);
-
-								currentGuild.set(guild);
-								currentChannel.set(FirstChannel);
-								$lastChannelCache[guild.id] = FirstChannel.id;
 
 								return;
 							}
+						}}
+						on:contextmenu|preventDefault={async (e) => {
+							selectMenu.canLeave = guild.owner;
+							selectMenu.guild = true;
 
-							return;
-						}
-					}}
-					on:contextmenu|preventDefault={async (e) => {
-						selectMenu.canLeave = guild.owner;
-						selectMenu.guild = true;
-
-						onRightClick(e);
-					}}
-				>
-					<div>
-						{#if guild.icon}
-							<img src={guild.icon || `/logo.png`} alt="Logo" />
-						{:else}
-							<div
-								class="text-white text-2xl font-bold mt-4 text-center relative"
-								style="top: -8px;"
-							>
-								<p style="font-size: {getGuildName(guild.name).length > 1 ? '14' : '24'}px;">
-									{getGuildName(guild.name)}
+							onRightClick(e);
+						}}
+					>
+						<div>
+							{#if guild.icon}
+								<img src={guild.icon || `/logo.png`} alt="Logo" />
+							{:else}
+								<div
+									class="text-white text-2xl font-bold mt-4 text-center relative"
+									style="top: -8px;"
+								>
+									<p style="font-size: {getGuildName(guild.name).length > 1 ? '14' : '24'}px;">
+										{getGuildName(guild.name)}
+									</p>
+								</div>
+							{/if}
+							<div class="bg-[#992828] rounded-full w-4 h-4 absolute bottom-0 right-0">
+								<p class="text-white text-xs font-bold text-center relative" style="top: -1px;">
+									{TEMPRANDOMPINGFROM0TO9()}
 								</p>
 							</div>
-						{/if}
-						<div class="bg-[#992828] rounded-full w-4 h-4 absolute bottom-0 right-0">
-							<p class="text-white text-xs font-bold text-center relative" style="top: -1px;">
-								{TEMPRANDOMPINGFROM0TO9()}
-							</p>
 						</div>
-					</div>
 
-					{#if guild.id === $currentGuild?.id}
-						<div
-							transition:fade={{ duration: 250 }}
-							class="bg-[#c4cdda] text-white rounded-lg absolute w-1 h-[40px] left-[-8px]"
-						/>
-					{/if}
-					{#if guild.id !== client.guilds.currentGuild?.id}
-						<div
-							transition:fade={{ duration: 250 }}
-							class="bg-[#c4cdda] text-white rounded-lg absolute w-1 h-[15px] bottom-[16px] left-[-8px]"
-						/>
-					{/if}
+						{#if guild.id === $currentGuild?.id}
+							<div
+								transition:fade={{ duration: 250 }}
+								class="bg-[#c4cdda] text-white rounded-lg absolute w-1 h-[40px] left-[-8px]"
+							/>
+						{/if}
+						{#if guild.id !== client.guilds.currentGuild?.id}
+							<div
+								transition:fade={{ duration: 250 }}
+								class="bg-[#c4cdda] text-white rounded-lg absolute w-1 h-[15px] bottom-[16px] left-[-8px]"
+							/>
+						{/if}
+					</div>
 				</div>
-			</div>
-		{/each}
+			{/each}
+		</div>
 	</div>
 {/if}
