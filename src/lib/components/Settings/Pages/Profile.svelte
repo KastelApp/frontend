@@ -201,7 +201,7 @@
 					<br />
 					<br />
 					<p class="whitespace-pre-wrap w-full">
-						Please note that deleting your account may take 14-30 days to complete. If you opted to'remove' all messages<br />the process will begin during this period. Once finished, here's how your messages will be displayed:
+						Please note that deleting your account may take 14–30 days to complete. If you opt to 'remove' all messages,<br />the process will begin during this period. Once finished, here's how your messages will be displayed:
 					</p>
 					<div
 						class="box-border block relative rounded-[15px] bg-[#171923] w-[885px] h-[273px] top-[34px]"

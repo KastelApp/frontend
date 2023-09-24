@@ -27,7 +27,7 @@ export const collapsedChannels = writable(browser && (JSON.parse(localStorage.ge
 /**
  * If settings are open
  */
-export const settingsOpen = writable(browser && (JSON.parse(localStorage.getItem("settingsOpen") ?? "false") ?? false));
+export const settingsOpen = writable(false);
 
 token.subscribe((value) => {
     if (browser) localStorage.setItem("token", value);
@@ -39,10 +39,6 @@ lastChannelCache.subscribe((value) => {
 
 collapsedChannels.subscribe((value) => {
     if (browser) localStorage.setItem("collapsedChannels", typeof value !== 'string' ? JSON.stringify(value) : value);
-});
-
-settingsOpen.subscribe((value) => {
-    if (browser) localStorage.setItem("settingsOpen", typeof value !== 'string' ? JSON.stringify(value) : value);
 });
 
 export const key = {};
