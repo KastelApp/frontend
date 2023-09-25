@@ -2,5 +2,86 @@
 	"test": "This is a test of the language file system.",
 	"welcome": "Welcome {{name}}!",
 	"token": "Token",
-	"signIn": "Sign In"
+	"signIn": "Sign In",
+	"password": "P@ssw0rd!",
+	"email": "Email",
+	"selectMenus": {
+		"guild": {
+			"leave": "Leave Guild",
+			"markAsRead": "Mark as Read",
+			"settings": "Settings"
+		}
+	},
+	"slowLoading": {
+		"message": "It looks like we're taking a while to connect to our servers. They might be down. You can check our status page",
+		"here": "here"
+	},
+	"quotes": [
+		{
+			"quote": "Insert random quote here - Dev"
+		},
+		{
+			"quote": "Loading your next adventure!"
+		},
+		{
+			"quote": "How are you doing today?"
+		},
+		{
+			"quote": "I'm feeling really good today!"
+		},
+		{
+			"quote": "You meet today's quota?"
+		},
+		{
+			"quote": "I don't know much"
+		},
+		{
+			"quote": "Getting things ready for you..."
+		},
+		{
+			"quote": "One of the devs loves otters"
+		},
+		{
+			"quote": "I can't code without coffee!"
+		},
+		{
+			"quote": "I'm not lazy, I'm just on my energy-saving mode."
+		},
+		{
+			"quote": "I'm not a complete idiot; some parts are missing."
+		},
+		{
+			"quote": "I speak fluent sarcasm."
+		},
+		{
+			"quote": "I don't suffer from insanity; I enjoy every minute of it."
+		},
+		{
+			"quote": "If at first you don't succeed, call it version 1.0."
+		},
+		{
+			"quote": "I'm not a pessimist; I'm just an optimist with experience."
+		},
+		{
+			"quote": "I'm not procrastinating; I'm just giving my ideas time to mature."
+		},
+		{
+			"quote": "I'm not weird. I'm limited edition!"
+		},
+		{
+			"quote": "I'm not anti-social; I'm just not user-friendly."
+		},
+		{
+			"quote": "I put the \"fun\" in dysfunctional."
+		},
+		{
+			"quote": "The code works on my machine!"
+		},
+		{
+			"quote": "I'm not clumsy. It's just the floor hates me, the tables and chairs are bullies, and the walls get in my way."
+		},
+		{
+			"quote": "I like chicken ~ Random Person Probably"
+		}
+	]
 }
