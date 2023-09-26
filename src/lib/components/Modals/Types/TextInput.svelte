@@ -62,6 +62,10 @@
 			pattern={validationRegex ? String(validationRegex) : ''}
 			style={error ? 'border-width: 1px; border-color: #cb2424;' : ''}
 			on:input={(value) => {
+
+				// @ts-expect-error -- Too lazy to fix this;
+				$inputValue = value.target.value
+
 				// @ts-expect-error -- Too lazy to fix this;
 				const [max, min, regex] = [value.target.value.length > maxLength, value.target.value.length < minLength, validationRegex && !new RegExp(validationRegex).test(value.target.value)]
 
