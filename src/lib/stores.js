@@ -29,6 +29,11 @@ export const collapsedChannels = writable(browser && (JSON.parse(localStorage.ge
  */
 export const settingsOpen = writable(false);
 
+/**
+ * @type {import('svelte/store').Writable<import("./types/index").Modal[]>}
+ */
+export const modals = writable([]);
+
 token.subscribe((value) => {
     if (browser) localStorage.setItem("token", value);
 });

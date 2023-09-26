@@ -1,9 +1,11 @@
-<!-- NOTE: Be careful formatting this file, the text below ("Please note that deleting your account" etc) gets messed up -->
 <script>
-	import { ready, settingsOpen } from '$lib/stores.js';
+	import { modals, ready, settingsOpen } from '$lib/stores.js';
 	import { initClient } from '$lib/client';
-	import { each, onDestroy, onMount } from 'svelte/internal';
+	import { onMount } from 'svelte/internal';
 	import { browser } from '$app/environment';
+	import Modal from '$lib/components/Modals/Modal.svelte';
+	import TextInput from '$lib/components/Modals/Types/TextInput.svelte';
+	import { writable } from 'svelte/store';
 
 	/**
 	 * @type {import('@kastelll/wrapper').Client}
@@ -11,6 +13,7 @@
 	let client;
 	let clientReady = false;
 	let flags;
+	const isOpen = writable(false);
 
 	const options = [
 		{
@@ -19,7 +22,10 @@
 		},
 		{
 			name: 'Username',
-			value: 'ghost#0000'
+			value: 'ghost#0000',
+			onClick: () => {
+				$isOpen = true;
+			}
 		},
 		{
 			name: 'Email',
@@ -81,7 +87,56 @@
 
 		mounted = true;
 	});
+
+	function closeMenu(data) {
+		$isOpen = false;
+
+		if (data) $modals = $modals.filter((x) => x.id !== data.detail.id);
+	}
 </script>
+
+{#if $isOpen}
+	<Modal
+		title="Change username"
+		buttons={[
+			{
+				text: 'Cancel',
+				color: '#2a2e3f',
+				action: 'close'
+			},
+			{
+				text: 'Save',
+				color: '#2f0b5e',
+				action: 'submit',
+				onClick: (modal) => {
+					console.log(modal, $modals);
+				}
+			}
+		]}
+		on:clickoutside={closeMenu}
+		blackout={true}
+		let:parentId
+	>
+		<TextInput
+			placeholder={client.user.username}
+			title="Username"
+			maxLength={32}
+			minLength={2}
+			id="username"
+			{parentId}
+		/>
+		<TextInput
+			inputType="text"
+			placeholder={client.user.discriminator}
+			title="Discriminator"
+			minLength={4}
+			maxLength={4}
+			validationRegex={/^(?!0000)\d{4}$/}
+			{parentId}
+			id="discriminator"
+		/>
+	</Modal>
+{/if}
 
 {#if clientReady}
 	<svg
@@ -162,8 +217,10 @@
 							<p class="relative top-[4px] h-[11px] text-sm leading-6 text-left text-white/80">
 								{option.value}
 							</p>
+							<!-- svelte-ignore a11y-click-events-have-key-events -->
 							<div
 								class="box-border block w-[65px] h-6 rounded-[3px] bg-white/30 relative left-[480px] top-[-5px] cursor-pointer hover:bg-white/[0.15] transform transition-all duration-200"
+								on:click={option.onClick}
 							>
 								<p
 									class="whitespace-pre-wrap relative top-[3px] left-4 w-[34px] h-[19px] text-[13px] leading-4 text-center text-white"
@@ -200,8 +257,10 @@
 					</div>
 					<br />
 					<br />
-					<p class="whitespace-pre-wrap w-full">
-						Please note that deleting your account may take 14–30 days to complete. If you opt to 'remove' all messages,<br />the process will begin during this period. Once finished, here's how your messages will be displayed:
+					<p class="w-full">
+						Please note that deleting your account may take 14–30 days to complete. If you opt to
+						'remove' all messages,<br />the process will begin during this period. Once finished,
+						here's how your messages will be displayed:
 					</p>
 					<div
 						class="box-border block relative rounded-[15px] bg-[#171923] w-[885px] h-[273px] top-[34px]"
@@ -222,8 +281,8 @@
 								</p>
 								<img
 									class="box-border flex flex-col justify-start items-start w-10 h-10 relative top-[-12px] left-[15px] rounded-full"
-                                    src="{client.user.avatar ?? `/logo.png`}"
-                                    alt="Avatar"
+									src={client.user.avatar ?? `/logo.png`}
+									alt="Avatar"
 								/>
 								<p
 									class="whitespace-pre-wrap relative top-[-32px] left-[69px] text-base leading-[22px] text-left text-[#dbdee1]"
@@ -233,7 +292,11 @@
 								<p
 									class="whitespace-pre-wrap relative top-[-74px] left-[135px] h-[15.56px] text-[10px] leading-[22px] text-left text-white/40"
 								>
-									Today at {new Date().toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true })}
+									Today at {new Date().toLocaleString('en-US', {
+										hour: 'numeric',
+										minute: 'numeric',
+										hour12: true
+									})}
 								</p>
 							</div>
 						</div>
@@ -243,7 +306,7 @@
 							>
 								After:
 							</p>
-                            <div
+							<div
 								class="box-border block relative rounded-[15px] bg-[#202432] top-10 h-[59px] w-[764px] left-[15px]"
 							>
 								<p
@@ -253,8 +316,8 @@
 								</p>
 								<img
 									class="box-border flex flex-col justify-start items-start w-10 h-10 relative top-[-12px] left-[15px] rounded-full"
-                                    src="/logo.png"
-                                    alt="Avatar"
+									src="/logo.png"
+									alt="Avatar"
 								/>
 								<p
 									class="whitespace-pre-wrap relative top-[-32px] left-[69px] text-base leading-[22px] text-left text-[#dbdee1]"
@@ -264,7 +327,11 @@
 								<p
 									class="whitespace-pre-wrap relative top-[-74px] left-[145px] h-[15.56px] text-[10px] leading-[22px] text-left text-white/40"
 								>
-									Today at {new Date().toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true })}
+									Today at {new Date().toLocaleString('en-US', {
+										hour: 'numeric',
+										minute: 'numeric',
+										hour12: true
+									})}
 								</p>
 							</div>
 						</div>
