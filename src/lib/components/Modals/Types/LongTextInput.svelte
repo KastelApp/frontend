@@ -6,7 +6,9 @@
 
 	// example: Amazing Username
 	export let placeholder = '';
-	export let maxLength = 32;
+	// hard placeholder is the default value
+	export let hardPlaceholder = '';
+	export let maxLength = 1024;
 	export let minLength = 2;
 	export let validationRegex: RegExp | null = null;
 	// example: Username
@@ -15,12 +17,10 @@
 	export let subText = '';
 	export let errorMessage = '';
 	export let error = false;
-	export let inputType: 'password' | 'email' | 'text' = 'text';
 	export let parentId = '';
 	export let id = '';
-	export let textSize: 'sm' | 'md' | 'lg' = 'sm';
 
-	const inputValue = writable('');
+	const inputValue = writable(hardPlaceholder ?? '');
 
 	onMount(async () => {
 		if (!browser) return;
@@ -30,16 +30,6 @@
 		const foundModal = $modals.find((modal) => modal.id === parentId);
 
 		if (!foundModal) return;
-
-		const foundtextWihSameId = foundModal.textInputOptions.find((text) => text.id === id);
-
-		if (foundtextWihSameId) {
-			console.warn(
-				"[PANIC] Found text with same id, this should not happen, returning so we don't fill the same text twice"
-			);
-
-			return;
-		}
 
 		foundModal.textInputOptions.push({
 			id,
@@ -58,41 +48,38 @@
 
 		if (!foundValue) return;
 
+		const foundtextWihSameId = foundModal.textInputOptions.find((text) => text.id === id);
+
+		if (foundtextWihSameId) {
+			console.warn(
+				"[PANIC] Found text with same id, this should not happen, returning so we don't fill the same text twice"
+			);
+
+			return;
+		}
+
 		foundValue.value = value;
 	});
-
-	function textSizeConverter(size: 'sm' | 'md' | 'lg') {
-		switch (size) {
-			case 'sm':
-				return '14px';
-			case 'md':
-				return '16px';
-			case 'lg':
-				return '18px';
-		}
-	}
 </script>
 
-<div class="mb-4 h-16">
+<div class="mb-16 h-16">
 	<div>
-		<input
-			class="box-border block w-[400px] h-[43px] relative top-[75px] left-[46px] overflow-hidden font-sans leading-6 text-left text-white/80 bg-[#202432] rounded-[10px] border-none focus:ring-transparent"
+		<textarea
+			class="box-border block w-[400px] h-[86px] relative top-[75px] left-[46px] overflow-hidden font-sans text-sm leading-6 text-left text-white/80 bg-[#202432] rounded-[10px] border-none focus:ring-transparent resize-none"
 			placeholder={placeholder ?? 'Input'}
-			type={inputType}
-			minlength={minLength}
+			style={error ? 'border-width: 1px; border-color: #cb2424;' : ''}
 			maxlength={maxLength}
-			pattern={validationRegex ? String(validationRegex) : ''}
-			style={`${error ? 'border-width: 1px; border-color: #cb2424;' : ''} font-size: ${textSizeConverter(textSize)}`}
+			minlength={minLength}
 			on:input={(value) => {
 				// @ts-expect-error -- Too lazy to fix this;
 				$inputValue = value.target.value;
 
 				const [max, min, regex] = [
-					// @ts-expect-error -- Too lazy to fix this;
+                    // @ts-expect-error -- Too lazy to fix this;
 					value.target.value.length > maxLength,
-					// @ts-expect-error -- Too lazy to fix this;
+                    // @ts-expect-error -- Too lazy to fix this;
 					value.target.value.length < minLength,
-					// @ts-expect-error -- Too lazy to fix this;
+                    // @ts-expect-error -- Too lazy to fix this;
 					validationRegex && !new RegExp(validationRegex).test(value.target.value)
 				];
 
@@ -115,7 +102,7 @@
 		/>
 
 		<div class="flex justify-between">
-			<div class="flex left-12 relative top-1">
+			<div class="flex left-12 relative bottom-10">
 				<p
 					class="block relative font-sans leading-6 text-left"
 					style="{error ? 'color: #cb2424;' : ''}; font-size: 14px; line-height: 24px"

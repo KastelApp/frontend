@@ -18,6 +18,7 @@
 	export const parentId = `${
 		Math.round(Math.random() * 5000 + Math.random() * Date.now()) + 500000
 	}`;
+	export let hasX: boolean = true;
 
 	onMount(() => {
 		$modals.push({
@@ -63,6 +64,31 @@
 		>
 			{title ?? 'Unknown'}
 		</p>
+		<!-- the x, top right corner with a rounded border -->
+		<p class="absolute top-4 right-4">
+			{#if hasX}
+				<!-- svelte-ignore a11y-click-events-have-key-events -->
+				<svg
+					xmlns="http://www.w3.org/2000/svg"
+					class="h-6 w-6 cursor-pointer"
+					fill="none"
+					viewBox="0 0 24 24"
+					stroke="white"
+					on:click={() => {
+						$modals = $modals.filter((x) => x.id !== parentId);
+
+						dispatch('closed');
+					}}
+				>
+					<path
+						stroke-linecap="round"
+						stroke-linejoin="round"
+						stroke-width="2"
+						d="M6 18L18 6M6 6l12 12"
+					/>
+				</svg>
+			{/if}
+		</p>
 		<slot {parentId} />
 		<div class="flex justify-end gap-4 relative top-14 right-8">
 			{#each buttons as button}
@@ -83,7 +109,13 @@
 
 								$modals = $modals.filter((x) => x.id !== parentId);
 
-								dispatch('clickoutside');
+								dispatch('closed');
+							}
+
+							case 'none': {
+								button.onClick && button.onClick($modals.find((modal) => modal.id === parentId));
+
+								break;
 							}
 						}
 					}}

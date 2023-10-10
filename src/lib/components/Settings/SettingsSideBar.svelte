@@ -60,6 +60,29 @@
 			]
 		},
 		{
+			name: 'Billing',
+			options: [
+				{
+					name: 'Subscriptions',
+					badges: [],
+					onClick: () => {}
+				},
+
+				{
+					name: 'Shards',
+					badges: []
+				},
+				{
+					name: 'Details & History',
+					badges: []
+				},
+				{
+					name: 'Invoices',
+					badges: []
+				}
+			]
+		},
+		{
 			name: null,
 			options: [
 				{
@@ -86,9 +109,9 @@
 {#if clientReady}
 	<div class="relative border-r border-l-0 bg-[#171923] border-[#2d3748] w-[358px] unselectable">
 		<div class="block w-48 h-[588px] relative left-[140px] top-[72px]">
-			<div class="block w-[175px] relative top-[11px] left-[13px]">
+			<div class="w-[175px] top-[11px] ">
 				{#each options as option}
-					<div class="block top-[148px] left-[11px]">
+					<div class="top-[148px]">
 						<hr
 							class="border-t w-full my-[4px]"
 							style="border-color: #2D3748; border-width: 1px;"
@@ -104,7 +127,7 @@
 						{#each option.options as subOption}
 							<!-- svelte-ignore a11y-click-events-have-key-events -- temp -->
 							<div
-								class="block w-[182px] h-[29px] relative left-0 rounded-[5px] cursor-pointer hover:bg-[#23252e] transition ease-in-out duration-200"
+								class="block w-[182px] h-[29px] relative left-0 rounded-[5px] cursor-pointer hover:bg-[#23252e] transition ease-in-out duration-200 mb-2"
 								style={subOption.selected ? 'background-color: #36383e;' : ''}
 								on:click={() => {
 									if (subOption.onClick) {

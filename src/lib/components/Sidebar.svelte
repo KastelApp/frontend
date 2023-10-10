@@ -6,6 +6,7 @@
 		currentChannel,
 		currentGuild,
 		lastChannelCache,
+		modals,
 		ready,
 		settingsOpen
 	} from '$lib/stores.js';
@@ -15,6 +16,11 @@
 	import { t } from '$lib/translations';
 	import { goto } from '$app/navigation';
 	import { ChannelTypes } from '@kastelll/wrapper';
+	import Modal from './Modals/Modal.svelte';
+	import TextInput from './Modals/Types/TextInput.svelte';
+	import { writable } from 'svelte/store';
+	import BigButton from './Modals/Types/Special/BigButton.svelte';
+	import LongTextInput from './Modals/Types/LongTextInput.svelte';
 
 	/**
 	 * @type {import('@kastelll/wrapper').Client}
@@ -29,6 +35,9 @@
 	 */
 	let guilds;
 	let clientReady = false;
+	const isOpen = writable(false);
+	const typeofOpen = writable(0); // 0 = nothing, 1 = creating a new guild, 2 = joining a guild
+
 	let selectedGuild = {
 		guildId: null,
 		displaying: false,
@@ -100,7 +109,147 @@
 			y: rect.y
 		};
 	}
+
+	function onAddGuildMouseOver() {
+		const target = document.getElementById(`add-guild`);
+
+		const rect = target.getBoundingClientRect();
+
+		selectedGuild = {
+			guildId: null,
+			displaying: true,
+			x: rect.x,
+			y: rect.y
+		};
+	}
 </script>
+
+{#if $isOpen}
+	<Modal
+		let:parentId
+		title={$typeofOpen === 0
+			? 'Create or Join a Guild'
+			: $typeofOpen === 1
+			? 'Create a Guild'
+			: 'Join a Guild'}
+		buttons={[
+			...($typeofOpen === 0
+				? [
+						{
+							text: 'Close',
+							color: '#2a2e3f',
+							action: 'close',
+							onClick: () => {
+								$isOpen = false;
+							}
+						}
+				  ]
+				: [
+						{
+							text: 'Back',
+							color: '#2a2e3f',
+							action: 'none',
+							onClick: (mod) => {
+								$typeofOpen = 0;
+
+								const foundModal = $modals.find((modal) => modal.id === mod.id);
+
+								if (!foundModal) return;
+
+								foundModal.textInputOptions.forEach((input) => {
+									input.value = '';
+								});
+							}
+						},
+						{
+							text: $typeofOpen === 1 ? 'Create' : 'Join',
+							color: '#2a2e3f',
+							action: 'submit',
+							onClick: (modal) => {
+								console.log(modal);
+							}
+						}
+				  ])
+		]}
+		blackout={true}
+		on:closed={() => {
+			$isOpen = false;
+			$typeofOpen = 0;
+		}}
+	>
+		{#if $typeofOpen === 0}
+			<BigButton
+				title={'Create a Guild'}
+				str={'/logo.png'}
+				img
+				on:click={() => {
+					$typeofOpen = 1;
+				}}
+			>
+				<svg
+					width={10}
+					height={16}
+					viewBox="0 0 10 16"
+					fill="none"
+					xmlns="http://www.w3.org/2000/svg"
+				>
+					<path
+						fillRule="evenodd"
+						clipRule="evenodd"
+						d="M0 14L6 8L0 2L2 -3.8147e-06L10 8L2 16L0 14Z"
+						fill="white"
+					/>
+				</svg>
+			</BigButton>
+			<BigButton
+				title={'Join a Guild'}
+				str={'+'}
+				on:click={() => {
+					$typeofOpen = 2;
+				}}
+			>
+				<svg
+					width={10}
+					height={16}
+					viewBox="0 0 10 16"
+					fill="none"
+					xmlns="http://www.w3.org/2000/svg"
+				>
+					<path
+						fillRule="evenodd"
+						clipRule="evenodd"
+						d="M0 14L6 8L0 2L2 -3.8147e-06L10 8L2 16L0 14Z"
+						fill="white"
+					/>
+				</svg>
+			</BigButton>
+		{:else if $typeofOpen === 1}
+			<TextInput
+				title="Name"
+				inputType="text"
+				id="create-name"
+				{parentId}
+				placeholder="Cool Kidz Hangout"
+			/>
+			<LongTextInput
+				title="Description"
+				inputType="text"
+				id="create-description"
+				{parentId}
+				placeholder="A cool place for cool kids"
+			/>
+		{:else if $typeofOpen === 2}
+			<TextInput
+				title="Invite Code"
+				inputType="text"
+				id="joinguild"
+				{parentId}
+				placeholder="kastelapp.com/invites/xpFRJQUy"
+				maxLength={100}
+			/>
+		{/if}
+	</Modal>
+{/if}
 
 {#if selectMenu.show && selectMenu.guild}
 	<Menu x={selectMenu.x} y={selectMenu.y} on:click={closeMenu} on:clickoutside={closeMenu}>
@@ -271,6 +420,37 @@
 					</div>
 				</div>
 			{/each}
+			<!-- svelte-ignore a11y-click-events-have-key-events -->
+			<div
+				class="flex flex-col items-center justify-center rounded-full bg-[#22AA98] hover:bg-[#1B887A] cursor-pointer m-2 relative"
+				id="add-guild"
+				on:mouseover={onAddGuildMouseOver}
+				on:focus={onAddGuildMouseOver}
+				on:mouseleave={() => {
+					selectedGuild = {
+						guildId: null,
+						displaying: false
+					};
+				}}
+				on:click={() => {
+					$isOpen = true;
+					console.log('owo?');
+				}}
+			>
+				<div class="text-white text-2xl font-bold mt-4 text-center relative" style="top: -9px;">
+					<p style="font-size: 24px;">+</p>
+				</div>
+
+				{#if selectedGuild.displaying && selectedGuild.guildId === null}
+					<div
+						transition:fade={{ duration: 150 }}
+						class="bg-[#101219] text-white rounded-lg p-2 fixed left-[80px] z-50"
+						style="top: {selectedGuild.y}px;"
+					>
+						Add Guild
+					</div>
+				{/if}
+			</div>
 		</div>
 	</div>
 {/if}

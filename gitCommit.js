@@ -24,7 +24,31 @@ const getCurrentBranch = () => {
     });
 }
 
+const getContributors = () => {
+    return new Promise((resolve, reject) => {
+        exec('git log', (err, stdout) => {
+            if (err) {
+                reject(err);
+            } else {
+                const contributors = [];
+                const lines = stdout.split('\n');
+                for (let i = 0; i < lines.length; i++) {
+                    const line = lines[i];
+                    if (line.startsWith('Author:')) {
+                        const name = line.slice(8).trim();
+                        if (!contributors.includes(name)) {
+                            contributors.push(name);
+                        }
+                    }
+                }
+                resolve(contributors);
+            }
+        });
+    });
+}
+
 export {
     getCurrentHash,
-    getCurrentBranch
+    getCurrentBranch,
+    getContributors
 }
