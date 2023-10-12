@@ -3,3 +3,63 @@ html,
 body {
 	@apply h-full;
 }
+
+.unselectable {
+	-moz-user-select: -moz-none;
+	-khtml-user-select: none;
+	-webkit-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+}
+
+.selectable {
+	-moz-user-select: text;
+	-khtml-user-select: text;
+	-webkit-user-select: text;
+	-ms-user-select: text;
+	user-select: text;
+}
+
+#sidebar-left::-webkit-scrollbar {
+	display: none;
+}
+ {
+	@apply h-full;
+	-ms-overflow-style: none; /* for Internet Explorer, Edge */
+	scrollbar-width: none; /* for Firefox */
+	overflow-y: scroll;
+}
+
+.textBasedChannel {
+	transition-property: background-color, border-color, color, fill, stroke, opacity, box-shadow,
+		transform;
+	transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+	transition-duration: 300ms;
+	transition-duration: 200ms;
+	transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.textBasedChannel:hover {
+	background: #202331;
+}
+
+.danger:hover {
+	background: #b53434;
+}
+
+.container p {
+	display: inline-block;
+}
+
+.checkboxItem {
+	min-width: calc(100% * (1 / 4) - 1px);
+}
+.checkboxItems {
+	flex: 1;
+	display: flex;
+	flex-wrap: wrap;
+	align-content: flex-start;
+}
+.checkboxItems * {
+	box-sizing: border-box;
+}

@@ -10,8 +10,8 @@ const config = ({
         await import('./en.json')
       ).default,
     },
-   
   ],
+  preprocess: 'preserveArrays'
 });
 
 export const { t, locale, locales, loading, loadTranslations } = new i18n(config);
