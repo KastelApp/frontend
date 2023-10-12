@@ -31,6 +31,16 @@
 
 		if (!foundModal) return;
 
+		const foundtextWihSameId = foundModal.textInputOptions.find((text) => text.id === id);
+
+		if (foundtextWihSameId) {
+			console.warn(
+				"[PANIC] Found text with same id, this should not happen, returning so we don't fill the same text twice"
+			);
+
+			return;
+		}
+
 		foundModal.textInputOptions.push({
 			id,
 			value: $inputValue
@@ -47,16 +57,6 @@
 		const foundValue = foundModal.textInputOptions.find((text) => text.id === id);
 
 		if (!foundValue) return;
-
-		const foundtextWihSameId = foundModal.textInputOptions.find((text) => text.id === id);
-
-		if (foundtextWihSameId) {
-			console.warn(
-				"[PANIC] Found text with same id, this should not happen, returning so we don't fill the same text twice"
-			);
-
-			return;
-		}
 
 		foundValue.value = value;
 	});

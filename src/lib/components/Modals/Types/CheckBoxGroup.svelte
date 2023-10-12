@@ -56,7 +56,7 @@
 </script>
 
 <div class="mb-8">
-	<div class="">
+	<div>
 		<div class="flex justify-between">
 			<div class="flex left-12 relative top-12">
 				<p

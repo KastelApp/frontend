@@ -19,7 +19,7 @@
 </script>
 
 <div class="mb-8">
-	<div class="">
+	<div>
 		<!-- svelte-ignore a11y-click-events-have-key-events -->
 		<div
 			class="box-border block w-[428px] h-[70px] relative left-9 overflow-hidden rounded-[10px] bg-[#202432] top-12 cursor-pointer unselectable"

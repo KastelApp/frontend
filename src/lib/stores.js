@@ -13,6 +13,17 @@ export const currentGuild = writable(null);
 export const currentChannel = writable(null);
 
 /**
+ * Store for the guilds
+ * @type {import('./types/index').GuildBaseStore}
+ */
+export const guilds = writable(null);
+/**
+ * Store for the channels
+ * @type {import('svelte/store').Writable<import('@kastelll/wrapper').BaseStore<string, import('@kastelll/wrapper').BaseChannel>>}
+ */
+export const channels = writable(null);
+
+/**
  * LastChannelCache is so we can easily get the last channel a user was in for a specific guild
  * @type {import('svelte/store').Writable<import('./types/index').LastChannelCache>}
  */

@@ -4,19 +4,19 @@
 		currentChannel,
 		currentGuild,
 		lastChannelCache,
-		ready
+		ready,
 	} from '$lib/stores.js';
 	import { initClient } from '$lib/client';
 	import { fade } from 'svelte/transition';
 	import { goto } from '$app/navigation';
 	import { SortChannels } from '$lib/utils/sortChannels';
+	import { draggable } from '$lib/dragable';
 
 	/**
 	 * @type {import('@kastelll/wrapper').Client}
 	 */
 	let client;
 	let clientReady = false;
-	let guilds;
 
 	let sortedChannelGroups;
 
@@ -24,7 +24,6 @@
 		clientReady = value;
 		if (value) {
 			client = initClient();
-			guilds = client.guilds.guilds.array();
 		}
 	});
 
@@ -62,8 +61,8 @@
 					class="flex flex-row items-center justify-between px-8 cursor-pointer relative hover:bg-[#202331] transition ease-in-out duration-200"
 					style="top: 0px; bottom: 8px; height: 44px;"
 				>
-					<div class="">
-						<span class="text-lg font-medium text-white">{getGuildName($currentGuild.name)}</span>
+					<div>
+						<span class="text-base font-medium text-white">{getGuildName($currentGuild.name)}</span>
 					</div>
 				</div>
 				<hr class="border-t w-full my-[0px]" style="border-color: #2D3748; border-width: 1px;" />
@@ -99,6 +98,7 @@
 
 									goto(`/app/guilds/${$currentGuild.id}/channels/${channel.id}`);
 								}}
+								use:draggable
 							>
 								<div class="flex flex-row items-center">
 									{#if channel.type === 'GuildText'}
