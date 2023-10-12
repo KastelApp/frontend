@@ -17,7 +17,7 @@
     "@emotion/react": "^11.10.4",
     "@emotion/styled": "^11.10.4",
     "@sentry/nextjs": "^7.52.1",
-    "cookies-next": "^2.1.1",
+    "cookies-next": "^4.0.0",
     "csurf": "^1.11.0",
     "framer-motion": "^7.6.2",
     "mitt": "^3.0.0",
