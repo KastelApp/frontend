@@ -59,7 +59,7 @@
 		bind:this={modal}
 	>
 		<p
-			class="whitespace-pre-wrap relative top-[18px] left-[18px] font-sans text-lg leading-6 text-white/60"
+			class="relative top-[18px] left-[18px] font-sans text-lg leading-6 text-white/60"
 			style={titlePosition === 'center' ? 'text-align: center;' : 'text-align: left;'}
 		>
 			{title ?? 'Unknown'}
