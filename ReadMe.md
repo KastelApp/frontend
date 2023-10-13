@@ -2,6 +2,7 @@
 <div align="center">
   <br />
   <p>
+    <h1>This branch is archived as we moved to Svelte</h1>
     <a href="https://kastelapp.com"><h1>Kastel</h1></a> 
   </p>
 </div>
