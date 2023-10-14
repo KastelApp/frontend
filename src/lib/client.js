@@ -33,11 +33,11 @@ export const initClient = (token) => {
   });
 
   client.on('ready', () => {    
-    client.guilds.guilds.subscribe((guilds) => {
+    client.guilds.guildStore.subscribe((guilds) => {
       guildStore.set(guilds)
     });
 
-    client.channels.channels.subscribe((channels) => {
+    client.channels.channelStore.subscribe((channels) => {
       channelStore.set(channels)
     });
 
