@@ -27,9 +27,8 @@
     };
 
     function onSubmit(e) {
-        console.log(e.target);
-        const email = e.target.input['email'].value;
-        const password = e.target.input['password'].value;
+        const email = e.target[0].value;
+        const password = e.target[1].value;
 
         if (!client.EmailRegex.test(email)) {
             error = {
@@ -84,7 +83,7 @@
         class="fixed inset-0 flex items-center justify-center w-full splash"
         out:fade={{ duration: 200 }}
 >
-
+    <div class="flex flex-col items-center">
         <p class="mb-5 font-sans text-6xl font-bold text-left text-white/[0.92]">
             Login to Kastel!
         </p>
@@ -148,7 +147,7 @@
         </div>
 
 
-
+    </div>
 </div>
 
 <style>
