@@ -11,6 +11,7 @@
      */
     let client;
 
+    // eslint-disable-next-line no-unused-vars
     ready.subscribe((value) => {
         if ($token) {
             if (browser) {
