@@ -17,7 +17,7 @@ body {
 	-khtml-user-select: text;
 	-webkit-user-select: text;
 	-ms-user-select: text;
-	user-select: text;	
+	user-select: text;
 }
 
 #sidebar-left::-webkit-scrollbar {
@@ -44,5 +44,29 @@ body {
 }
 
 .danger:hover {
-	background: #B53434;
+	background: #b53434;
+}
+
+.container p {
+	display: inline-block;
+}
+
+.checkboxItem {
+	min-width: calc(100% * (1 / 4) - 1px);
+}
+.checkboxItems {
+	flex: 1;
+	display: flex;
+	flex-wrap: wrap;
+	align-content: flex-start;
+}
+.checkboxItems * {
+	box-sizing: border-box;
+}
+
+.guildPlaceholderThing {
+	height: 2px;
+	width: 100px;
+	background-color: #208640;
+	position: reative;
 }

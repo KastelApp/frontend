@@ -1,7 +1,12 @@
 import { env } from '$env/dynamic/public';
 import { Client } from '@kastelll/wrapper';
-import { ready } from './stores.js';
-
+import { ready, guilds as guildStore, channels as channelStore } from './stores.js';
+import { goto } from '$app/navigation';
+import { token as tokenStore } from "./stores.js"
+import { browser } from '$app/environment';
+/**
+ * @type {import('@kastelll/wrapper').Client}
+ */
 let client;
 
 /**
@@ -10,7 +15,7 @@ let client;
  * @returns {import('@kastelll/wrapper').Client}
  */
 export const initClient = (token) => {
-  if (typeof window === 'undefined') return null;
+  if (!browser) return null;
 
   if (client) return client;
 
@@ -23,14 +28,28 @@ export const initClient = (token) => {
     worker: new Worker('/workers/interval.worker.js')
   });
 
-  //TODO: change to unauthed when fixed
-  client.on('unready', () => {
+  client.on('unReady', () => {
     ready.set(false);
   });
 
-  client.on('ready', () => {
-    ready.set(true);
+  client.on('ready', () => {    
+    client.guilds.guilds.subscribe((guilds) => {
+      guildStore.set(guilds)
+    });
+
+    client.channels.channels.subscribe((channels) => {
+      channelStore.set(channels)
+    });
+
+    setTimeout(() => ready.set(true), 150);
   });
+
+  client.on('unAuthed', () => {
+    tokenStore.set(null);
+    client.setToken(null);
+
+    goto('/login');
+  })
 
   client.connect();
 
