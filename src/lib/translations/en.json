@@ -4,8 +4,8 @@
 	"token": "Token",
 	"signIn": "Sign In",
 	"createAcc": "Create an Account",
-	"password": "P@ssw0rd!",
-	"email": "Email",
+	"password": "Password",
+	"email": "Your Email",
 	"selectMenus": {
 		"guild": {
 			"leave": "Leave Guild",
