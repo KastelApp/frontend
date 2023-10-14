@@ -84,7 +84,7 @@
         class="fixed inset-0 flex items-center justify-center w-full splash"
         out:fade={{ duration: 200 }}
 >
-    <form class="flex flex-col items-center">
+
         <p class="mb-5 font-sans text-6xl font-bold text-left text-white/[0.92]">
             Login to Kastel!
         </p>
@@ -148,7 +148,7 @@
         </div>
 
 
-    </form>
+
 </div>
 
 <style>
