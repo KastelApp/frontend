@@ -8,6 +8,7 @@
 	"email": "Your Email",
 	"username": "Username",
 	"confirmPass": "Confirm Password",
+	"forgotPass": "Forgot Password?",
 	"selectMenus": {
 		"guild": {
 			"leave": "Leave Guild",
