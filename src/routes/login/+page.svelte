@@ -36,14 +36,12 @@
                 message: 'Invalid email',
                 shown: true
             };
-
             return;
         } else if (!client.PasswordRegex.test(password)) {
             error = {
                 message: 'Invalid password',
                 shown: true
             };
-
             return;
         } else {
             error = {
@@ -71,7 +69,6 @@
 
             if (error.message !== 'N/A') {
                 error.shown = true;
-
             } else {
                 error.message = 'Unknown error, please try again later';
                 error.shown = true;
@@ -122,9 +119,9 @@
                             <div class="flex items-center h-5">
                                 <input aria-describedby="remember"
                                        class="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-primary-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-primary-600 dark:ring-offset-gray-800"
+                                       disabled
                                        id="remember"
-                                       type="checkbox"
-                                       disabled>
+                                       type="checkbox">
                             </div>
                             <div class="ml-3 text-sm">
                                 <label class="text-gray-500 dark:text-gray-300" for="remember">Remember me</label>
