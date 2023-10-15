@@ -16,7 +16,7 @@
 		}
 	});
 
-	let quotes = $t('common.quotes').map((y) => y.quote);
+	let quotes = $t('app.quotes').map((y) => y.quote);
 	let quote1 = quotes[Math.floor(Math.random() * quotes.length)];
 	let quote2 = quotes[Math.floor(Math.random() * quotes.length)];
 	let active = 1;
@@ -83,14 +83,10 @@
 				{/if}
 			</div>
 			{#if mounted && showing}
-				<div class="text-white text-xl mt-4 text-center"
-				
-				transition:fade={{ duration: 1000 }}
-				>
-					{$t('common.slowLoading.message')} <a
-						href="https://youtu.be/dQw4w9WgXcQ"
-						class="underline"
-						target="_blank">{$t('common.slowLoading.here')}</a
+				<div class="text-white text-xl mt-4 text-center" transition:fade={{ duration: 1000 }}>
+					{$t('common.slowLoading.message')}
+					<a href="https://youtu.be/dQw4w9WgXcQ" class="underline" target="_blank"
+						>{$t('common.slowLoading.here')}</a
 					>.
 				</div>
 			{/if}
