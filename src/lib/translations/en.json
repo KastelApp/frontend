@@ -6,6 +6,8 @@
 	"createAcc": "Create an Account",
 	"password": "Password",
 	"email": "Your Email",
+	"username": "Username",
+	"confirmPass": "Confirm Password",
 	"selectMenus": {
 		"guild": {
 			"leave": "Leave Guild",
