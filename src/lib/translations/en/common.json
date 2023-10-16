@@ -1,9 +1,11 @@
 {
-	"test": "This is a test of the language file system.",
-	"welcome": "Welcome {{name}}!",
-	"token": "Token",
-	"signIn": "Sign In",
-	"password": "P@ssw0rd!",
-	"email": "Email",
-	"back": "Back"
+  "welcome": "Welcome {{name}}!",
+  "token": "Token",
+  "signIn": "Sign In",
+  "createAcc": "Create an Account",
+  "password": "Password",
+  "email": "Your Email",
+  "username": "Username",
+  "confirmPass": "Confirm Password",
+  "forgotPass": "Forgot Password?"
 }

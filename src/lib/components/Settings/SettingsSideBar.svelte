@@ -92,6 +92,7 @@
 					onClick: () => {
 						if (!browser) return;
 						client.logout();
+						client.setToken(null);
 						token.set(null);
 						goto('/login');
 					}
