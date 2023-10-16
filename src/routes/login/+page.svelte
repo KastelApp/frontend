@@ -9,6 +9,7 @@
 	import { ready, token } from '$lib/stores.js';
 	import { t } from '$lib/translations';
 	import { goto } from '$app/navigation';
+	import Navbar from '$lib/components/Navbar.svelte';
 
 	ready.subscribe((value) => {
 		if ($token) {
@@ -26,6 +27,7 @@
 	};
 </script>
 
+<Navbar />
 <div
 	class="fixed inset-0 flex items-center justify-center w-full h-full splash"
 	out:fade={{ duration: 200 }}

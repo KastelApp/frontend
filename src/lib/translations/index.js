@@ -12,7 +12,7 @@ const config = {
 			locale: 'en',
 			key: 'home',
 			loader: async () => (await import('./en/home.json')).default,
-			routes: ['/'] // you can use regexes as well!
+			routes: ['/', '/login', '/register'] // you can use regexes as well!
 		},
 		{
 			locale: 'en',
