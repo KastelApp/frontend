@@ -1,10 +1,10 @@
 {
-	"header": {
-		"main": "It's time to ditch Discord.",
-		"sub": "Welcome to Kastel, a new (but familiar) way to chat with your friends.",
-		"button": "Ah yes, yet another chat app. But what makes this one different?"
-	},
-	"different": {
-		"main": "So, what makes Kastel different?"
-	}
+  "header": {
+    "main": "It's time to ditch Discord.",
+    "sub": "Welcome to Kastel, a new (but familiar) way to chat with your friends.",
+    "button": "Ah yes, yet another chat app. But what makes this one different?"
+  },
+  "different": {
+    "main": "So, what makes Kastel different?"
+  }
 }
