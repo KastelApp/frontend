@@ -1,0 +1,11 @@
+{
+  "welcome": "Welcome {{name}}!",
+  "token": "Token",
+  "signIn": "Sign In",
+  "createAcc": "Create an Account",
+  "password": "Password",
+  "email": "Your Email",
+  "username": "Username",
+  "confirmPass": "Confirm Password",
+  "forgotPass": "Forgot Password?"
+}

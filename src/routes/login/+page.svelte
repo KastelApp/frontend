@@ -1,4 +1,5 @@
 <script>
+    import Navbar from '$lib/components/Navbar.svelte';
     import {browser} from '$app/environment';
     import {initClient} from '$lib/client';
     import {fade} from 'svelte/transition';
@@ -76,6 +77,8 @@
         });
     }
 </script>
+
+<Navbar />
 
 <div
         class="fixed inset-0 flex items-center justify-center w-full splash"
