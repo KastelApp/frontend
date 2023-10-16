@@ -1,4 +1,5 @@
 {
+  "test": "Test",
   "welcome": "Welcome {{name}}!",
   "token": "Token",
   "signIn": "Sign In",
