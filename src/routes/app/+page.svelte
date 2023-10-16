@@ -23,12 +23,10 @@
 			user = client?.users?.getCurrentUser();
 		}
 	});
-
 </script>
 
 {#if clientReady}
-<div>
-
-	{$t('common.welcome', { name: user?.username })}
-</div>
+	<div>
+		{$t('app.welcome', { name: user?.username })}
+	</div>
 {/if}
