@@ -20,7 +20,8 @@
     "next-seo": "^6.4.0",
     "react": "^18",
     "react-dom": "^18",
-    "react-i18next": "^13.4.0"
+    "react-i18next": "^13.4.0",
+    "recoil": "^0.7.7"
   },
   "devDependencies": {
     "eslint": "^8",
