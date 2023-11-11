@@ -8,5 +8,6 @@
   "email": "Your Email",
   "username": "Username",
   "confirmPass": "Confirm Password",
-  "forgotPass": "Forgot Password?"
+  "forgotPass": "Forgot Password?",
+  "title": "Home"
 }
