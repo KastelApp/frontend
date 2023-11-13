@@ -2,11 +2,7 @@
   "test": "Test",
   "welcome": "Welcome {{name}}!",
   "token": "Token",
-  "signIn": "Login to",
-  "register": "Create an Account",
-  "password": "Password",
-  "email": "Your Email",
-  "username": "Username",
+  "login": "Login to",
   "confirmPass": "Confirm Password",
   "forgotPass": "Forgot Password?",
   "home": {
@@ -19,5 +15,15 @@
     "title": "Page Not Found",
     "message": "You just hit a route that doesn&apos;t exist...",
     "home": "Back to Home"
+  },
+  "register": {
+    "title": "Create an Account",
+    "message": "Register for",
+    "button": "Have an account?",
+    "password": "Password",
+    "confirmPassword": "Confirm Password",
+    "email": "Your Email",
+    "username": "Username",
+    "terms": "I agree to the Terms and Conditions"
   }
 }
