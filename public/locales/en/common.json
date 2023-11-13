@@ -14,5 +14,10 @@
     "welcome": "Welcome to",
     "start": "Get Started",
     "learn": "Learn More"
+  },
+  "notfound": {
+    "title": "Page Not Found",
+    "message": "You just hit a route that doesn&apos;t exist...",
+    "home": "Back to Home"
   }
 }
