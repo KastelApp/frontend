@@ -78,7 +78,7 @@ export default function Login() {
     return (
         <>
             <SEO
-                title={t('signIn')}
+                title={t('login')}
             />
 
             <Layout>
@@ -92,7 +92,7 @@ export default function Login() {
                                 <Heading
                                     lineHeight={1.1}
                                     fontSize={{base: '3xl', sm: '4xl', md: '5xl', lg: '6xl'}}>
-                                    {t('signIn')}{' '}
+                                    {t('login')}{' '}
                                     <Text
                                         as={'span'}
                                         bgGradient="linear(to-r, red.400,pink.400)"
