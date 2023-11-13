@@ -14,6 +14,10 @@ export default function Home() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
+    let client;
+    // note to darker: how to get token value correctly?
+    // const tokenVal = useRecoilValue(token);
+
     useEffect(() => {
         router.prefetch('/app')
         router.prefetch('/reset-password')
