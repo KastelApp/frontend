@@ -13,7 +13,6 @@ let client;
  * @returns {import('@kastelll/wrapper').Client}
  */
 export const initClient = (token) => {
-
     if (client) return client;
 
     client = new Client({
