@@ -10,7 +10,7 @@ import {useRecoilState} from "recoil";
 import {tokenStore} from "@/utils/stores";
 import {initClient} from "@/utils/client";
 
-export default function Home() {
+export default function Login() {
     const {t, i18n} = useTranslation('common')
     const router = useRouter();
     const [loading, setLoading] = useState(false);
