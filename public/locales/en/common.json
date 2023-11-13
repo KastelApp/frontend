@@ -9,5 +9,10 @@
   "username": "Username",
   "confirmPass": "Confirm Password",
   "forgotPass": "Forgot Password?",
-  "title": "Home"
+  "home": {
+    "title": "Home",
+    "welcome": "Welcome to",
+    "start": "Get Started",
+    "learn": "Learn More"
+  }
 }
