@@ -1,5 +1,4 @@
 import { Client } from '@kastelll/wrapper';
-import process from "next/dist/build/webpack/loaders/resolve-url-loader/lib/postcss";
 import {channelStore, guildStore, readyStore, tokenStore} from "@/utils/stores";
 import {useSetRecoilState} from "recoil";
 
