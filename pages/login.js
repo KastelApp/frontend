@@ -6,17 +6,17 @@ import {useEffect, useState} from "react";
 import {Box, Button, Container, Heading, Input, Stack, Text, useColorModeValue} from "@chakra-ui/react";
 import NextLink from "next/link";
 import Layout from "@/components/layout";
+import {useRecoilState, useRecoilValue} from "recoil";
+import {tokenStore} from "@/utils/stores";
 
 export default function Home() {
     const {t, i18n} = useTranslation('common')
-
     const router = useRouter();
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
     let client;
-    // note to darker: how to get token value correctly?
-    // const tokenVal = useRecoilValue(token);
+    const [token, setToken] = useRecoilState(tokenStore);
 
     useEffect(() => {
         router.prefetch('/app')
