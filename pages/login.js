@@ -6,22 +6,28 @@ import {useEffect, useState} from "react";
 import {Box, Button, Container, Heading, Input, Stack, Text, useColorModeValue} from "@chakra-ui/react";
 import NextLink from "next/link";
 import Layout from "@/components/layout";
-import {useRecoilState, useRecoilValue} from "recoil";
+import {useRecoilState} from "recoil";
 import {tokenStore} from "@/utils/stores";
+import {initClient} from "@/utils/client";
 
 export default function Home() {
     const {t, i18n} = useTranslation('common')
     const router = useRouter();
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
-
-    let client;
+    const [client, setClient] = useState(null);
     const [token, setToken] = useRecoilState(tokenStore);
 
     useEffect(() => {
         router.prefetch('/app')
         router.prefetch('/reset-password')
         router.prefetch('/register')
+
+        if (token) {
+            router.push('/app')
+        } else {
+            setClient(initClient());
+        }
 
     }, [])
 
@@ -30,11 +36,43 @@ export default function Home() {
         setLoading(true);
         setError(null);
 
-        const body = {
-            email: event.target.email.value,
-            password: event.target.password.value,
-        };
+        const email = event.target.email.value;
+        const password = event.target.password.value;
 
+        if (!client.EmailRegex.test(email)) {
+            setError({email: {Message: 'Invalid email.'}});
+            setLoading(false);
+        } else if (!client.PasswordRegex.test(password)) {
+            setError({password: {Message: 'Invalid password.'}});
+            setLoading(false);
+        } else {
+            client.loginAccount({email, password, resetClient: true}).then((data) => {
+                if (data.success) {
+                    setToken(data.token);
+                    client.connect();
+                    router.push('/app');
+                }
+
+                if (data.errors) {
+                    setLoading(false);
+                    if (data.errors.email) {
+                        setError({email: {Message: "Invalid Email and or Password"}})
+                    } else if (data.errors.password) {
+                        setError({email: {Message: "Invalid Email and or Password"}})
+                    } else {
+                        setError({other: {Message: "Unknown error occurred."}})
+                    }
+                }
+
+                setLoading(false);
+                setError({other: {Message: "Unknown error occurred."}})
+
+            }).catch((err) => {
+                console.log('Login Client Error:\n', err)
+                setError({other: {Message: "Unknown error occurred."}})
+                setLoading(false);
+            });
+        }
     }
 
     return (
