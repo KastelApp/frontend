@@ -1,6 +1,6 @@
 import {Client} from '@kastelll/wrapper';
 import {channelStore, guildStore, readyStore, tokenStore} from "@/utils/stores";
-import {useSetRecoilState} from "recoil";
+import { useReadyStoreUpdater } from '../hooks/useReadyStore';
 
 /**
  * @type {import('@kastelll/wrapper').Client}
@@ -24,18 +24,20 @@ export const initClient = (token) => {
         worker: new Worker('/workers/interval.worker.js')
     });
 
+   // const [ready, setReady] = useRecoilState(tokenStore);
+
     client.on('unReady', () => {
         useSetRecoilState(readyStore)(false);
     });
 
     client.on('ready', () => {
-        client.guilds.guildStore.subscribe((guilds) => {
+        /*client.guilds.guildStore.subscribe((guilds) => {
             useSetRecoilState(guildStore)(guilds)
         });
 
         client.channels.channelStore.subscribe((channels) => {
             useSetRecoilState(channelStore)(channels)
-        });
+        });*/
 
         setTimeout(() => useSetRecoilState(readyStore)(true), 150);
     });

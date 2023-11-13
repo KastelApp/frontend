@@ -1,6 +1,5 @@
 {
   "test": "Test",
-  "welcome": "Welcome {{name}}!",
   "token": "Token",
   "login": "Login to",
   "confirmPass": "Confirm Password",
