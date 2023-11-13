@@ -7,18 +7,6 @@ import {Box, Button, Container, Heading, Input, Stack, Text, useColorModeValue} 
 import NextLink from "next/link";
 import Layout from "@/components/layout";
 
-const confetti = {
-    light: {
-        primary: '4299E1', // blue.400
-        secondary: 'BEE3F8', // blue.100
-    },
-
-    dark: {
-        primary: '1A365D', // blue.900
-        secondary: '2A4365', // blue.800
-    },
-};
-
 export default function Home() {
     const {t, i18n} = useTranslation('common')
 
@@ -30,7 +18,6 @@ export default function Home() {
         router.prefetch('/app')
         router.prefetch('/reset-password')
         router.prefetch('/register')
-
 
     }, [])
 
@@ -54,7 +41,6 @@ export default function Home() {
 
             <Layout>
                 <form onSubmit={login}>
-
                     <Box align={'center'}
                          justify={'center'} position={'relative'}>
                         <Container
@@ -178,15 +164,10 @@ export default function Home() {
                                                 </Button>
                                             </NextLink>
                                         </Stack>
-
                                     </Box>
-
                                 </Box>
-
                             </>
-
                         </Container>
-
                     </Box>
                 </form>
             </Layout>
