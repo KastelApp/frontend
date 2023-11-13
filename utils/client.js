@@ -1,4 +1,4 @@
-import { Client } from '@kastelll/wrapper';
+import {Client} from '@kastelll/wrapper';
 import {channelStore, guildStore, readyStore, tokenStore} from "@/utils/stores";
 import {useSetRecoilState} from "recoil";
 
@@ -45,7 +45,7 @@ export const initClient = (token) => {
         useSetRecoilState(tokenStore)(null);
         client.setToken(null);
 
-       // goto('/login');
+        // goto('/login');
     })
 
     client.connect();

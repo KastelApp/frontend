@@ -22,11 +22,11 @@ onmessage = (event) => {
         .find((data) => data[1] === event.data.op);
 
 
-    const { interval, session } = event.data.data;
+    const {interval, session} = event.data.data;
 
     switch (eventName[0]) {
         case 'Hey': {
-            postMessage({ op: OpCodes.Hello });
+            postMessage({op: OpCodes.Hello});
 
             intervals.push({
                 miniSession: session,
@@ -43,7 +43,7 @@ onmessage = (event) => {
                         return;
                     }
 
-                    postMessage({ op: OpCodes.Heartbeat });
+                    postMessage({op: OpCodes.Heartbeat});
 
                     intervalOfSession.lastHeartbeat = Date.now();
                 }, interval),

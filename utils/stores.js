@@ -1,4 +1,4 @@
-import { atom, selector } from 'recoil'
+import {atom, selector} from 'recoil'
 
 // readyStore
 export const readyStore = atom({
@@ -8,8 +8,8 @@ export const readyStore = atom({
 
 export const ready = selector({
     key: 'ready',
-    get: ({ get }) => get(readyStore),
-    set: ({ set }, newValue) => set(readyStore, newValue)
+    get: ({get}) => get(readyStore),
+    set: ({set}, newValue) => set(readyStore, newValue)
 })
 
 // tokenStore
@@ -20,8 +20,8 @@ export const tokenStore = atom({
 
 export const token = selector({
     key: 'token',
-    get: ({ get }) => get(tokenStore),
-    set: ({ set }, newValue) => set(tokenStore, newValue)
+    get: ({get}) => get(tokenStore),
+    set: ({set}, newValue) => set(tokenStore, newValue)
 });
 
 
@@ -33,8 +33,8 @@ export const guildStore = atom({
 
 export const guilds = selector({
     key: 'guilds',
-    get: ({ get }) => get(guildStore),
-    set: ({ set }, newValue) => set(guildStore, newValue)
+    get: ({get}) => get(guildStore),
+    set: ({set}, newValue) => set(guildStore, newValue)
 });
 
 
@@ -46,6 +46,6 @@ export const channelStore = atom({
 
 export const channels = selector({
     key: 'channels',
-    get: ({ get }) => get(channelStore),
-    set: ({ set }, newValue) => set(channelStore, newValue)
+    get: ({get}) => get(channelStore),
+    set: ({set}, newValue) => set(channelStore, newValue)
 });
