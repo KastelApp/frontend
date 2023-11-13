@@ -188,7 +188,7 @@ export default function Login() {
                                                         bgGradient: 'linear(to-r, red.400,pink.400)',
                                                         boxShadow: 'xl',
                                                     }}>
-                                                    {t('register')}
+                                                    {t('register.title')}
                                                 </Button>
                                             </NextLink>
 
