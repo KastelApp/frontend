@@ -62,6 +62,7 @@ export default function Login() {
                     } else {
                         setError({other: {Message: "Unknown error occurred."}})
                     }
+                    return;
                 }
 
                 setLoading(false);
