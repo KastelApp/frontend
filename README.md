@@ -1,48 +1,56 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped
-with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+<div>
+<div align="center">
+  <br />
+  <p>
+    <a href="https://kastelapp.com"><h1>Kastel</h1></a> 
+  </p>
+</div>
 
-## Getting Started
+[![Contributors][contributors-shield]][contributors-url]
+[![Forks][forks-shield]][forks-url]
+[![Stargazers][stars-shield]][stars-url]
+[![Issues][issues-shield]][issues-url]
 
-First, run the development server:
+Kastel is an open-sourced real time chat application focused around the community & privacy.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+# Contributing
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+If you want to contribute fork the development branch, make your changes, verify it works then create a pull request
+with the changed things, In the Pull request explain what you changed and why you changed it. If you want to make more
+then one change please do it in one pull request unless they are big things (Like changing Packages, Completely
+refactoring code etc etc)
 
-You can start editing the page by modifying `pages/index.js`. The page auto-updates as you edit the file.
+## Maintainers
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed
-on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited
-in `pages/api/hello.js`.
+- [Tea Cup](https://github.com/TheTeaCup)
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated
-as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+# License
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and
-load Inter, a custom Google Font.
+This project is licensed under the GPL-3.0 License, For more info please check [LICENSE.md](/LICENSE.md)
 
-## Learn More
+# Analytics Information
 
-To learn more about Next.js, take a look at the following resources:
+Our analytics software is [Umami](https://umami.is/), We use it to track how many people visit our website and how many
+people use our app, We do not track any personal information, We only track the following:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- Browser
+- Operating System
+- Referrer
+- Country
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions
-are welcome!
+[contributors-shield]: https://img.shields.io/github/contributors/Kastelll/frontend.svg?style=for-the-badge
 
-## Deploy on Vercel
+[contributors-url]: https://github.com/Kastelll/frontend/graphs/contributors
 
-The easiest way to deploy your Next.js app is to use
-the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme)
-from the creators of Next.js.
+[forks-shield]: https://img.shields.io/github/forks/Kastelll/frontend.svg?style=for-the-badge
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+[forks-url]: https://github.com/Kastelll/frontend/network/members
+
+[stars-shield]: https://img.shields.io/github/stars/Kastelll/frontend.svg?style=for-the-badge
+
+[stars-url]: https://github.com/Kastelll/frontend/stargazers
+
+[issues-shield]: https://img.shields.io/github/issues/Kastelll/frontend.svg?style=for-the-badge
+
+[issues-url]: https://github.com/Kastelll/frontend/issues
+</div>
