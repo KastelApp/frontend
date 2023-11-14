@@ -1,0 +1,28 @@
+{
+  "test": "Test",
+  "token": "Token",
+  "login": "Login to",
+  "confirmPass": "Confirm Password",
+  "forgotPass": "Forgot Password?",
+  "home": {
+    "title": "Home",
+    "welcome": "Welcome to",
+    "start": "Get Started",
+    "learn": "Learn More"
+  },
+  "notfound": {
+    "title": "Page Not Found",
+    "message": "You just hit a route that doesn&apos;t exist...",
+    "home": "Back to Home"
+  },
+  "register": {
+    "title": "Create an Account",
+    "message": "Register for",
+    "button": "Have an account?",
+    "password": "Password",
+    "confirmPassword": "Confirm Password",
+    "email": "Your Email",
+    "username": "Username",
+    "terms": "I agree to the Terms and Conditions"
+  }
+}
