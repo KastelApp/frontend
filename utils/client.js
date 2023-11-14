@@ -39,11 +39,11 @@ export const initClient = (token) => {
             useSetRecoilState(channelStore)(channels)
         });*/
 
-        setTimeout(() => useSetRecoilState(readyStore)(true), 150);
+      //  setTimeout(() => useSetRecoilState(readyStore)(true), 150);
     });
 
     client.on('unAuthed', () => {
-        useSetRecoilState(tokenStore)(null);
+       // useSetRecoilState(tokenStore)(null);
         client.setToken(null);
 
         // goto('/login');
