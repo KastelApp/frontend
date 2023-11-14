@@ -18,7 +18,7 @@ Kastel is an open-sourced real time chat application focused around the communit
 If you want to contribute fork the development branch, make your changes, verify it works then create a pull request
 with the changed things, In the Pull request explain what you changed and why you changed it. If you want to make more
 then one change please do it in one pull request unless they are big things (Like changing Packages, Completely
-refactoring code etc etc)
+refactoring code, etc)
 
 ## Maintainers
 
