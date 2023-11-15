@@ -6,7 +6,7 @@ import { Box, Button, Container, Heading, Stack, Text } from "@chakra-ui/react";
 import NextLink from "next/link";
 
 export default function Home() {
-  const { t, i18n } = useTranslation("common");
+  const { t } = useTranslation("common");
   return (
     <>
       <SEO title={t("home.title")} />

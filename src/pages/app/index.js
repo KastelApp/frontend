@@ -7,10 +7,10 @@ import { useRecoilState } from "recoil";
 import { clientStore, readyStore, tokenStore } from "@/utils/stores";
 
 export default function App() {
-  const { t, i18n } = useTranslation("app");
+  const { t } = useTranslation("app");
   const router = useRouter();
-  const [token, setToken] = useRecoilState(tokenStore);
-  const [client, setClient] = useRecoilState(clientStore);
+  const [token] = useRecoilState(tokenStore);
+  const [client] = useRecoilState(clientStore);
   const [ready] = useRecoilState(readyStore)
   const [user, setUser] = useState(null);
 

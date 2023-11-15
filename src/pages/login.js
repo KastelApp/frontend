@@ -19,7 +19,7 @@ import { useRecoilState } from "recoil";
 import { clientStore, tokenStore } from "@/utils/stores";
 
 export default function Login() {
-  const { t, i18n } = useTranslation("common");
+  const { t } = useTranslation("common");
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -33,8 +33,6 @@ export default function Login() {
 
     if (token) {
       router.push("/app");
-
-      return;
     }
   }, []);
 
