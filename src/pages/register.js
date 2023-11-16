@@ -29,7 +29,7 @@ export default function Register() {
   const [terms, setTerms] = useState(false);
   const [error, setError] = useState(null);
   const [client] = useRecoilState(clientStore);
-  const [token] = useRecoilState(tokenStore);
+  const [token, setToken] = useRecoilState(tokenStore);
 
   useEffect(() => {
     router.prefetch("/app");
@@ -49,51 +49,66 @@ export default function Register() {
     setError(null);
     console.log(terms);
 
-    let username = event.target.username.value;
-    let email = event.target.email.value;
-    let password = event.target.password.value;
-    let confirmPassword = event.target.confirmpassword.value;
+    const username = event.target.username.value;
+    const email = event.target.email.value;
+    const password = event.target.password.value;
+    const confirmPassword = event.target.confirmpassword.value;
 
     if (password !== confirmPassword) {
       setError({ password: { Message: "Passwords do not match." } });
       setLoading(false);
-    } else if (!terms) {
+    }
+
+    // Testing against the regexes (which should be the same that the backend uses) helps prevent unnecessary requests.
+    if (!client.EmailRegex.test(email)) {
+      setError({ email: { Message: "Invalid email." } });
+      setLoading(false);
+
+      return;
+    }
+    
+    if (!client.PasswordRegex.test(password)) {
+      setError({ password: { Message: "Invalid password." } });
+      setLoading(false);
+
+      return;
+    }
+    
+    if (!terms) {
       setError({ terms: { Message: "You must accept the terms of service." } });
       setLoading(false);
-    } else {
-      client
-        .registerAccount({ email, password, username, resetClient: true })
-        .then((data) => {
-          console.log(data);
-          if (data.success) {
-            console.log(data.token);
-            token.set(data.token);
 
-            client.connect();
+      return;
+    } 
 
-            router.push("/app");
-          }
+    const registeredAccount = await client.registerAccount({
+      email,
+      password,
+      username,
+      resetClient: true,
+    });
 
-          if (data.errors) {
-            setLoading(false);
-            if (data.errors.email) {
-              setError({ email: { Message: "Invalid Email and or Password" } });
-            } else if (data.errors.password) {
-              setError({ email: { Message: "Invalid Email and or Password" } });
-            } else {
-              setError({ other: { Message: "Unknown error occurred." } });
-            }
-          }
+    if (registeredAccount.success) {
+      setToken(registeredAccount.token);
+      
+      client.connect();
 
-          setLoading(false);
-          setError({ other: { Message: "Unknown error occurred." } });
-        })
-        .catch((err) => {
-          console.log("Register Client Error:\n", err);
-          setError({ other: { Message: "Unknown error occurred." } });
-          setLoading(false);
-        });
+      router.push("/app");
+
+      return;
     }
+
+    if (registeredAccount.errors.email || registeredAccount.errors.password) {
+      setError({ email: { Message: "Invalid Email and or Password" } });
+    } else if (registeredAccount.errors.username) {
+      setError({ username: { Message: "Invalid Username (This username may be maxed out)" } });
+    } else if (registeredAccount.errors.unknown) {
+      setError({ other: { Message: `${Object.entries(registeredAccount.errors.unknown).map(([k, obj]) => `${k} - ${obj.Message}`)}` } });
+    } else {
+      setError({ other: { Message: "Unknown error occurred." } });
+    }
+
+    setLoading(false);
   };
 
   return (
