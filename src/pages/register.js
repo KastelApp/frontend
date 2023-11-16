@@ -38,7 +38,7 @@ export default function Register() {
 
     if (token) {
       router.push("/app");
-    } 
+    }
   }, [router, token]);
 
   const register = async (event) => {
@@ -64,20 +64,20 @@ export default function Register() {
 
       return;
     }
-    
+
     if (!client.PasswordRegex.test(password)) {
       setError({ password: { Message: "Invalid password." } });
       setLoading(false);
 
       return;
     }
-    
+
     if (!terms) {
       setError({ terms: { Message: "You must accept the terms of service." } });
       setLoading(false);
 
       return;
-    } 
+    }
 
     const registeredAccount = await client.registerAccount({
       email,
@@ -88,7 +88,7 @@ export default function Register() {
 
     if (registeredAccount.success) {
       setToken(registeredAccount.token);
-      
+
       client.connect();
 
       router.push("/app");
@@ -99,9 +99,19 @@ export default function Register() {
     if (registeredAccount.errors.email || registeredAccount.errors.password) {
       setError({ email: { Message: "Invalid Email and or Password" } });
     } else if (registeredAccount.errors.username) {
-      setError({ username: { Message: "Invalid Username (This username may be maxed out)" } });
+      setError({
+        username: {
+          Message: "Invalid Username (This username may be maxed out)",
+        },
+      });
     } else if (registeredAccount.errors.unknown) {
-      setError({ other: { Message: `${Object.entries(registeredAccount.errors.unknown).map(([k, obj]) => `${k} - ${obj.Message}`)}` } });
+      setError({
+        other: {
+          Message: `${Object.entries(registeredAccount.errors.unknown).map(
+            ([k, obj]) => `${k} - ${obj.Message}`,
+          )}`,
+        },
+      });
     } else {
       setError({ other: { Message: "Unknown error occurred." } });
     }

@@ -17,15 +17,13 @@ export default function App() {
 
   useEffect(() => {
     if (!token) return router.push("/login");
-     setUser(client?.users?.getCurrentUser())
+    setUser(client?.users?.getCurrentUser());
   }, [ready]);
 
   return (
     <>
       {ready ? (
-        <>
-          {t("welcome", { name: user?.username })}
-        </>
+        <>{t("welcome", { name: user?.username })}</>
       ) : (
         <Loading translations={t} />
       )}

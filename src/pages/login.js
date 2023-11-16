@@ -49,8 +49,8 @@ export default function Login() {
       setLoading(false);
 
       return;
-    } 
-    
+    }
+
     if (!client.PasswordRegex.test(password)) {
       setError({ password: { Message: "Invalid password." } });
       setLoading(false);
@@ -78,7 +78,13 @@ export default function Login() {
     if (loggedInAccount.errors.email || loggedInAccount.errors.password) {
       setError({ email: { Message: "Invalid Email and or Password" } });
     } else if (loggedInAccount.errors.unknown) {
-      setError({ other: { Message: `${Object.entries(loggedInAccount.errors.unknown).map(([k, obj]) => `${k} - ${obj.Message}`)}` } });
+      setError({
+        other: {
+          Message: `${Object.entries(loggedInAccount.errors.unknown).map(
+            ([k, obj]) => `${k} - ${obj.Message}`,
+          )}`,
+        },
+      });
     } else {
       setError({ other: { Message: "Unknown error occurred." } });
     }

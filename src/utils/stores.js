@@ -32,7 +32,7 @@ export const clientStore = atom({
  */
 export const currentGuild = atom({
   key: "currentGuild",
-  default: null, 
+  default: null,
   dangerouslyAllowMutability: true,
 });
 
@@ -41,7 +41,7 @@ export const currentGuild = atom({
  */
 export const currentChannel = atom({
   key: "currentChannel",
-  default: null, 
+  default: null,
   dangerouslyAllowMutability: true,
 });
 
@@ -50,7 +50,7 @@ export const currentChannel = atom({
  */
 export const guildStore = atom({
   key: "guilds",
-  default: [], 
+  default: [],
   dangerouslyAllowMutability: true,
 });
 
@@ -59,7 +59,7 @@ export const guildStore = atom({
  */
 export const channelStore = atom({
   key: "channels",
-  default: [], 
+  default: [],
   dangerouslyAllowMutability: true,
 });
 
