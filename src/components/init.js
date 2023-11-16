@@ -1,10 +1,7 @@
 import { useRecoilState } from "recoil";
 import { channelStore, clientStore, guildStore, readyStore, tokenStore } from "../utils/stores.js";
 import { useEffect } from "react";
-import { EventEmitter } from "events";
 import { Client } from "@kastelll/wrapper";
-
-class Testing extends EventEmitter { }
 
 const Init = () => {
     const [token, setToken] = useRecoilState(tokenStore);
@@ -68,5 +65,3 @@ const Init = () => {
 };
 
 export default Init;
-
-export { Testing };

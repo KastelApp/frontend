@@ -47,40 +47,43 @@ export default function Login() {
     if (!client.EmailRegex.test(email)) {
       setError({ email: { Message: "Invalid email." } });
       setLoading(false);
-    } else if (!client.PasswordRegex.test(password)) {
+
+      return;
+    } 
+    
+    if (!client.PasswordRegex.test(password)) {
       setError({ password: { Message: "Invalid password." } });
       setLoading(false);
-    } else {
-      client
-        .loginAccount({ email, password, resetClient: true })
-        .then((data) => {
-          if (data.success) {
-            setToken(data.token);
-            client.connect();
-            router.push("/app");
-          }
 
-          if (data.errors) {
-            setLoading(false);
-            if (data.errors.email) {
-              setError({ email: { Message: "Invalid Email and or Password" } });
-            } else if (data.errors.password) {
-              setError({ email: { Message: "Invalid Email and or Password" } });
-            } else {
-              setError({ other: { Message: "Unknown error occurred." } });
-            }
-            return;
-          }
-
-          setLoading(false);
-          setError({ other: { Message: "Unknown error occurred." } });
-        })
-        .catch((err) => {
-          console.log("Login Client Error:\n", err);
-          setError({ other: { Message: "Unknown error occurred." } });
-          setLoading(false);
-        });
+      return;
     }
+
+    const loggedInAccount = await client.loginAccount({
+      email,
+      password,
+      resetClient: true,
+    });
+
+    console.log(loggedInAccount);
+
+    if (loggedInAccount.success) {
+      setToken(loggedInAccount.token);
+
+      client.connect();
+      router.push("/app");
+
+      return;
+    }
+
+    if (loggedInAccount.errors.email || loggedInAccount.errors.password) {
+      setError({ email: { Message: "Invalid Email and or Password" } });
+    } else if (loggedInAccount.errors.unknown) {
+      setError({ other: { Message: `${Object.entries(loggedInAccount.errors.unknown).map(([k, obj]) => `${k} - ${obj.Message}`)}` } });
+    } else {
+      setError({ other: { Message: "Unknown error occurred." } });
+    }
+
+    setLoading(false);
   };
 
   return (
