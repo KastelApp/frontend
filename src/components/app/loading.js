@@ -1,4 +1,5 @@
 import {
+  Button,
   Flex,
   Heading,
   Stack,
@@ -6,6 +7,7 @@ import {
   useColorModeValue,
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
+import NextLink from "next/link";
 
 const confetti = {
   light: {
@@ -77,9 +79,16 @@ const Loading = ({ translations }) => {
             </Text>
           </Stack>
           {slow && (
-            <Text fontSize={"2xl"} color={"gray.600"}>
-              {translations("slowLoading.message")}
-            </Text>
+            <>
+              <Text fontSize={"xl"} color={"gray.600"}>
+                {translations("slowLoading.message")}
+              </Text>
+              <Button size={"md"}>
+                <NextLink href={"https://status.kastelapp.com?redir=slow"} target={"_blank"}>
+                  {translations("slowLoading.button")}
+                </NextLink>
+              </Button>
+            </>
           )}
         </Stack>
       </Flex>
