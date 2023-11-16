@@ -1,5 +1,5 @@
 import { useRecoilState } from "recoil";
-import { channelStore, clientStore, guildStore, readyStore, tokenStore } from "../utils/stores.js";
+import { channelStore, clientStore, guildStore, readyStore, tokenStore } from "@/utils/stores";
 import { useEffect } from "react";
 import { Client } from "@kastelll/wrapper";
 

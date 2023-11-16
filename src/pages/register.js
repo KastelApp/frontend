@@ -38,8 +38,6 @@ export default function Register() {
 
     if (token) {
       router.push("/app");
-
-      return;
     } 
   }, [router, token]);
 
