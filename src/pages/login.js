@@ -202,7 +202,7 @@ export default function Login() {
                       mt={2}
                       direction={["column", "row"]}
                     >
-                      <NextLink href={"/register"}>
+                      <NextLink prefetch={false} href={"/register"}>
                         <Button
                           fontFamily={"heading"}
                           w={"full"}
@@ -217,7 +217,7 @@ export default function Login() {
                         </Button>
                       </NextLink>
 
-                      <NextLink href={"/reset-password"}>
+                      <NextLink prefetch={false} href={"/reset-password"}>
                         <Button
                           fontFamily={"heading"}
                           w={"full"}

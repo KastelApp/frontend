@@ -30,7 +30,7 @@ export default function Home() {
             <Text color={"gray.500"}></Text>
 
             <Stack spacing={6} direction={"row"}>
-              <NextLink href="/register" passHref>
+              <NextLink prefetch={false} href="/register" passHref>
                 <Button
                   rounded={"full"}
                   px={6}

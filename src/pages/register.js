@@ -45,7 +45,6 @@ export default function Register() {
     event.preventDefault();
     setLoading(true);
     setError(null);
-    console.log(terms);
 
     const username = event.target.username.value;
     const email = event.target.email.value;
@@ -274,7 +273,7 @@ export default function Register() {
                       mt={2}
                       direction={["column", "row"]}
                     >
-                      <NextLink href={"/login"}>
+                      <NextLink prefetch={false} href={"/login"}>
                         <Button
                           fontFamily={"heading"}
                           w={"full"}
@@ -289,7 +288,7 @@ export default function Register() {
                         </Button>
                       </NextLink>
 
-                      <NextLink href={"/reset-password"}>
+                      <NextLink prefetch={false} href={"/reset-password"}>
                         <Button
                           fontFamily={"heading"}
                           w={"full"}

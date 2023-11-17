@@ -20,7 +20,7 @@ function NotFoundPage() {
       >
         <Heading>{t("notfound.title")}</Heading>
         <Text fontSize={{ md: "xl" }}>{t("notfound.message")}</Text>
-        <NextLink href="/" passHref>
+        <NextLink prefetch={false} href="/" passHref>
           <Button
             aria-label="Back to Home"
             bgGradient="linear(to-r, red.400,pink.400)"
