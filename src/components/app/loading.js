@@ -84,7 +84,10 @@ const Loading = ({ translations }) => {
                 {translations("slowLoading.message")}
               </Text>
               <Button size={"md"}>
-                <NextLink href={"https://status.kastelapp.com?redir=slow"} target={"_blank"}>
+                <NextLink
+                  href={"https://status.kastelapp.com?redir=slow"}
+                  target={"_blank"}
+                >
                   {translations("slowLoading.button")}
                 </NextLink>
               </Button>
