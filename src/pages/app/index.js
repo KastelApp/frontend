@@ -2,7 +2,6 @@ import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-// import {initClient} from "@/utils/client";
 import { useRecoilState } from "recoil";
 import { clientStore, readyStore, tokenStore } from "@/utils/stores";
 import Loading from "@/components/app/loading";
