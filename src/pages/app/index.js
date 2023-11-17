@@ -5,6 +5,7 @@ import { useRouter } from "next/router";
 import { useRecoilState } from "recoil";
 import { clientStore, readyStore, tokenStore } from "@/utils/stores";
 import Loading from "@/components/app/loading";
+import SEO from "@/components/seo";
 
 export default function App() {
   const { t } = useTranslation("app");
@@ -21,6 +22,7 @@ export default function App() {
 
   return (
     <>
+      <SEO title={t("title")} />
       {ready ? (
         <>{t("welcome", { name: user?.username })}</>
       ) : (

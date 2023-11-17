@@ -1,4 +1,5 @@
 {
+  "title": "App",
   "welcome": "Welcome {{name}}!",
   "selectMenus": {
     "guild": {
