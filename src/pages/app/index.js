@@ -6,6 +6,7 @@ import { useRecoilState } from "recoil";
 import { clientStore, readyStore, tokenStore } from "@/utils/stores";
 import Loading from "@/components/app/loading";
 import SEO from "@/components/seo";
+import AppNavbar from "@/components/app/navbar";
 
 export default function App() {
   const { t } = useTranslation("app");
@@ -24,7 +25,11 @@ export default function App() {
     <>
       <SEO title={t("title")} />
       {ready ? (
-        <>{t("welcome", { name: user?.username })}</>
+        <>
+          <AppNavbar userInfo={user}>
+            {t("welcome", { name: user?.username })}
+          </AppNavbar>
+        </>
       ) : (
         <Loading translations={t} />
       )}
