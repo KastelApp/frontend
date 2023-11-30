@@ -3,10 +3,11 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { useRecoilState } from "recoil";
-import { clientStore, readyStore, tokenStore } from "@/utils/stores";
+import {clientStore, guildStore, readyStore, tokenStore} from "@/utils/stores";
 import Loading from "@/components/app/loading";
 import SEO from "@/components/seo";
 import AppNavbar from "@/components/app/navbar";
+import {Box} from "@chakra-ui/react";
 
 export default function App() {
   const { t } = useTranslation("app");
@@ -15,6 +16,7 @@ export default function App() {
   const [client] = useRecoilState(clientStore);
   const [ready] = useRecoilState(readyStore);
   const [user, setUser] = useState(null);
+  const [guilds] = useRecoilState(guildStore);
 
   useEffect(() => {
     if (!token) return router.push("/login");
@@ -26,9 +28,9 @@ export default function App() {
       <SEO title={t("title")} />
       {ready ? (
         <>
-          <AppNavbar userInfo={user}>
-            {t("welcome", { name: user?.username })}
-          </AppNavbar>
+          <Box>
+            <AppNavbar userInfo={user} guilds={guilds} />
+          </Box>
         </>
       ) : (
         <Loading translations={t} />

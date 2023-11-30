@@ -1,138 +1,156 @@
-import {
-  Box,
-  Circle,
-  CloseButton,
-  Divider,
-  Drawer,
-  DrawerContent,
-  Flex,
-  Stack,
-  Text,
-  Tooltip,
-  useColorModeValue,
-  useDisclosure,
-} from "@chakra-ui/react";
-import NextLink from "next/link";
-import MobileNavbar from "@/components/app/mobile-navbar";
-import NewServer from "@/components/app/new-server";
+import { Box, Flex, Heading, HStack, Tooltip, Text, Image } from "@chakra-ui/react";
+import Link from "next/link";
+import { FaHome, FaRegCompass, FaRegPaperPlane } from "react-icons/fa";
 
-export default function AppNavbar({ userInfo, children }) {
-  const { isOpen, onOpen, onClose } = useDisclosure();
+export default function AppNavbar({ userInfo, guilds, children }) {
 
-  return (
-    <Box minH="100vh">
-      {/*
-            guilds={userInfo?.Guilds}
-            */}
+    return (
+        <>
+            <Flex
+                w="full"
+                h="14"
+                alignItems="center"
+                pos="fixed"
+                bottom="2"
+                px="3"
+            >
+                <Flex
+                    bg={"gray.700"}
+                    boxShadow="xl"
+                    px="5"
+                    w="full"
+                    h="full"
+                    rounded="xl"
+                    alignItems="center"
+                >
 
-      <SidebarContent
-        userInfo={userInfo}
-        onClose={() => onClose}
-        display={{ base: "none", md: "block" }}
-      />
+                    <Flex id="leftSideBar" alignItems="center" h="full">
+                        <HStack id="toolbar" spacing="7">
+                            <Link href="/app">
+                                <Box
+                                    id="home_toolbar"
+                                    as="div"
+                                    className="group flex justify-center"
+                                    cursor="pointer"
+                                >
+                                    {/* home button */}
+                                    <FaHome size="1.25em"/>
+                                </Box>
+                            </Link>
 
-      <Drawer
-        autoFocus={false}
-        isOpen={isOpen}
-        placement="left"
-        onClose={onClose}
-        returnFocusOnClose={false}
-        onOverlayClick={onClose}
-        size="full"
-      >
-        <DrawerContent>
-          {/* guilds={userInfo?.Guilds}
-           */}
-          <SidebarContent userInfo={userInfo} onClose={onClose} />
-        </DrawerContent>
-      </Drawer>
+                            <Box
+                                id="directMessage_toolbar"
+                                className="group hidden sm:flex justify-center"
+                                cursor="pointer"
+                            >
+                                {/* direct message button */}
+                                <FaRegPaperPlane size="1.25em"/>
+                            </Box>
 
-      <MobileNavbar userInfo={userInfo} onOpen={onOpen} />
+                            <Box
+                                id="explore_toolbar"
+                                className="group hidden sm:flex justify-center"
+                                cursor="pointer"
+                            >
+                                {/* explore button */}
+                                <FaRegCompass size="1.25em"/>
+                            </Box>
+                        </HStack>
 
-      <Box ml={{ base: 0, md: 60 }} p="4">
-        {children}
-      </Box>
-    </Box>
-  );
+                        <Box
+                            height={"full"}
+                            width={"0.5"}
+                            marginLeft={"5"}
+                            py={3}
+                        >
+                            <Box
+                                width={"full"}
+                                height={"full"}
+                                bg={"gray.900"}
+                                rounded="xl"
+                            />
+                        </Box>
+
+                        <Box id="guilds"
+                             height={"full"}
+                             py={2}
+                             marginLeft={"5"}
+                        >
+                            <Box
+                                height={"full"}
+                                width={"fit"}
+                                justifyContent={"center"}
+                                className="group flex">
+                                <Tooltip
+                                    label="Home"
+                                    placement="right"
+                                    bg="gray.700"
+                                    color="white"
+                                    borderRadius="md"
+                                    px="2"
+                                    py="1">
+                                    <Box
+                                        height={"full"}
+                                        width={"full"}
+                                        borderRadius={"full"}
+                                        bg={"gray.900"}
+                                        cursor="pointer"
+                                    >
+                                        Guild
+                                    </Box>
+                                </Tooltip>
+                            </Box>
+                        </Box>
+                    </Flex>
+
+                    <Flex id="rightSideBar" alignItems="center"
+                          height={"full"}
+                          marginLeft={"auto"}
+                          >
+                        <Flex id="profileData" alignItems="center" py="1.5">
+                            <Box
+
+                                py={1}
+                                className=" flex ">
+                                <Image
+                                    boxSize='30px'
+                                    objectFit='cover'
+                                    borderRadius='full'
+                                    src={userInfo?.avatarURL}
+                                    fallbackSrc={"/icon-1.png"}
+                                    alt={userInfo?.username || "Loading"}/>
+                                <Box
+                                    position={"absolute"}
+                                    bg={"green.400"}
+                                    shadow={"xl"}
+                                    w={"2"}
+                                    h={"2"}
+                                    rounded={"full"}
+                                    />
+                            </Box>
+                            <Box
+                                marginLeft={"2"}
+                                className="hidden sm:block">
+                                <Heading
+                                    fontSize={"sm"}
+                                    color={"gray.200"}
+                                    className=" font-black ">
+                                    {userInfo?.username || "Loading"}
+                                </Heading>
+                                <Text
+                                    fontSize={"xs"}
+                                    color={"gray.400"}
+                                    className="font-medium">
+                                    {userInfo?.activityMessage || ""}
+                                </Text>
+                            </Box>
+                        </Flex>
+                        
+                    </Flex>
+
+                </Flex>
+            </Flex>
+
+        </>
+    );
 }
-
-const SidebarContent = ({ userInfo, guilds, onClose, ...rest }) => {
-  return (
-    <Box
-      transition="3s ease"
-      bg={useColorModeValue("white", "gray.900")}
-      borderRight="1px"
-      borderRightColor={useColorModeValue("gray.200", "gray.700")}
-      w={{ base: "full", md: "10%" }}
-      pos="fixed"
-      h="full"
-      {...rest}
-    >
-      <Flex h="20" alignItems="center" mx="5" justifyContent="space-between">
-        <NextLink href={"/app/"} passHref>
-          <Text
-            as={"a"}
-            fontSize="2xl"
-            fontFamily="monospace"
-            fontWeight="bold"
-          >
-            Kastel
-          </Text>
-        </NextLink>
-        <CloseButton display={{ base: "flex", md: "none" }} onClick={onClose} />
-      </Flex>
-
-      <Divider />
-      {/* Guild Listing */}
-
-      <Stack
-        h="20"
-        mt={5}
-        alignItems="center"
-        mx="8"
-        justifyContent="space-between"
-      >
-        {guilds &&
-          guilds.map((guild) => {
-            return <GuildItem guild={guild} key={guild.Id} />;
-          })}
-
-        <Tooltip hasArrow label="Create new guild" placement="right">
-          <NewServer userInfo={userInfo} />
-        </Tooltip>
-      </Stack>
-    </Box>
-  );
-};
-
-const GuildItem = ({ guild }) => {
-  return (
-    <NextLink
-      href={
-        "/app/channels/" + guild?.Id ||
-        "0" + "/" + guild?.Channels[0]?.Id ||
-        "0"
-      }
-      passHref
-    >
-      <Box marginBottom={2}>
-        <Tooltip
-          color={useColorModeValue("gray.800", "white")}
-          bg={useColorModeValue("white", "gray.700")}
-          hasArrow
-          label={guild?.Name || "Unknown"}
-          placement="right"
-        >
-          <Circle
-            bg={useColorModeValue("white", "gray.700")}
-            borderRadius="full"
-            alt={guild?.Name || "Unknown"}
-            boxSize="40px"
-          >
-            <Text>{guild?.Name?.charAt(0) || "U"}</Text>
-          </Circle>
-        </Tooltip>
-      </Box>
-    </NextLink>
-  );
-};
