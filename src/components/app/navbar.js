@@ -1,16 +1,29 @@
 import {
+  Avatar,
+  AvatarBadge,
   Box,
+  Button,
   Flex,
-  Heading,
   HStack,
+  Popover,
+  PopoverArrow,
+  PopoverBody,
+  PopoverContent,
+  PopoverTrigger,
+  Stack,
   Tooltip,
-  Text,
-  Image,
 } from "@chakra-ui/react";
 import Link from "next/link";
-import { FaHome, FaRegCompass, FaRegPaperPlane } from "react-icons/fa";
+import {
+  FaCog,
+  FaHome,
+  FaRegCompass,
+  FaRegPaperPlane,
+  FaSignOutAlt,
+} from "react-icons/fa";
+import NewServer from "@/components/app/new-server";
 
-export default function AppNavbar({ userInfo }) {
+export default function AppNavbar({ userInfo, guilds }) {
   return (
     <>
       <Flex w="full" h="14" alignItems="center" pos="fixed" bottom="2" px="3">
@@ -66,32 +79,31 @@ export default function AppNavbar({ userInfo }) {
             </Box>
 
             <Box id="guilds" height={"full"} py={2} marginLeft={"5"}>
-              <Box
+              <Flex
+                id="guildsList"
+                direction="list"
                 height={"full"}
-                width={"fit"}
-                justifyContent={"center"}
-                className="group flex"
+                overflowY={"scroll"}
               >
-                <Tooltip
-                  label="Home"
-                  placement="right"
-                  bg="gray.700"
-                  color="white"
-                  borderRadius="md"
-                  px="2"
-                  py="1"
-                >
-                  <Box
-                    height={"full"}
-                    width={"full"}
-                    borderRadius={"full"}
-                    bg={"gray.900"}
-                    cursor="pointer"
-                  >
-                    Guild
-                  </Box>
-                </Tooltip>
-              </Box>
+                {guilds &&
+                  guilds.map((guild) => {
+                    return <Guild key={guild.id} guild={guild} />;
+                  })}
+
+                {/*
+                <Box>
+                  <IconButton
+                      colorScheme="teal"
+                      aria-label="New"
+                      boxSize="40px"
+                      borderRadius="full"
+                      marginRight={2}
+                  />
+                </Box>
+                */}
+
+                <NewServer marginRight={2} userInfo />
+              </Flex>
             </Box>
           </Flex>
 
@@ -102,44 +114,106 @@ export default function AppNavbar({ userInfo }) {
             marginLeft={"auto"}
           >
             <Flex id="profileData" alignItems="center" py="1.5">
-              <Box py={1} className=" flex ">
-                <Image
+              <Popover placement="top">
+                <PopoverTrigger>
+                  <Box py={1} className=" flex ">
+                    {/*<Image
                   boxSize="30px"
                   objectFit="cover"
                   borderRadius="full"
                   src={userInfo?.avatarURL}
                   fallbackSrc={"/icon-1.png"}
                   alt={userInfo?.username || "Loading"}
-                />
-                <Box
-                  position={"absolute"}
-                  bg={"green.400"}
-                  shadow={"xl"}
-                  w={"2"}
-                  h={"2"}
-                  rounded={"full"}
-                />
-              </Box>
-              <Box marginLeft={"2"} className="hidden sm:block">
-                <Heading
-                  fontSize={"sm"}
-                  color={"gray.200"}
-                  className=" font-black "
+                />*/}
+
+                    <Avatar
+                      boxSize="30px"
+                      size={"md"}
+                      name={userInfo?.username || "Loading"}
+                      src={userInfo?.avatarURL || "/icon-2.png"}
+                    >
+                      <AvatarBadge boxSize="4" bg="green.500" />
+                    </Avatar>
+                  </Box>
+                  {/*<Box marginLeft={"2"} className="hidden sm:block">
+                    <Heading
+                      fontSize={"sm"}
+                      color={"gray.200"}
+                      className=" font-black "
+                    >
+                      {userInfo?.username || "Loading"}
+                    </Heading>
+                    <Text
+                      fontSize={"xs"}
+                      color={"gray.400"}
+                      className="font-medium"
+                    >
+                      {userInfo?.activityMessage || ""}
+                    </Text>
+                  </Box>*/}
+                </PopoverTrigger>
+
+                <PopoverContent
+                  w="fit-content"
+                  _focus={{ boxShadow: "none" }}
+                  marginRight={5}
                 >
-                  {userInfo?.username || "Loading"}
-                </Heading>
-                <Text
-                  fontSize={"xs"}
-                  color={"gray.400"}
-                  className="font-medium"
-                >
-                  {userInfo?.activityMessage || ""}
-                </Text>
-              </Box>
+                  <PopoverArrow />
+                  <PopoverBody>
+                    <Stack>
+                      <Button
+                        w="194px"
+                        variant="ghost"
+                        rightIcon={<FaCog />}
+                        justifyContent="space-between"
+                        fontWeight="normal"
+                        fontSize="sm"
+                      >
+                        Settings
+                      </Button>
+
+                      <Button
+                        w="194px"
+                        variant="ghost"
+                        rightIcon={<FaSignOutAlt />}
+                        justifyContent="space-between"
+                        fontWeight="normal"
+                        colorScheme="red"
+                        fontSize="sm"
+                      >
+                        Logout
+                      </Button>
+                    </Stack>
+                  </PopoverBody>
+                </PopoverContent>
+              </Popover>
             </Flex>
           </Flex>
         </Flex>
       </Flex>
     </>
+  );
+}
+
+function Guild({ guild }) {
+  console.log(guild);
+  return (
+    <Tooltip label={`${guild?.name || "Loading..."}`} placement="top">
+      <Box display="inline-block" marginRight={2}>
+        <Flex
+          overflow={"hidden"}
+          flexDirection="column"
+          justifyContent="center"
+          alignItems="center"
+          bg={"red.500"}
+          rounded={"50px"}
+          w={"40px"}
+          h={"40px"}
+          textAlign="center"
+        >
+          {guild.name}
+        </Flex>
+      </Box>
+    </Tooltip>
   );
 }

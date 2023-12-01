@@ -17,11 +17,14 @@ import {
 } from "@chakra-ui/react";
 import { FiPlus } from "react-icons/fi";
 import { useState } from "react";
+import { useRecoilState } from "recoil";
+import { clientStore } from "@/utils/stores";
 
 const NewServer = () => {
   const modal = useDisclosure();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [client] = useRecoilState(clientStore);
 
   const submit = async (event) => {
     event.preventDefault();
@@ -39,31 +42,45 @@ const NewServer = () => {
       ]);
     } else {
       // submit form
-      /* setError(null);
-             try {
-                 let response = await api.newGuild(`${token}`, { name });
-                 console.log(response);
-                 if (response?.Id) {
-                     setLoading(false);
-                     modal.onClose();
-                     router.push(`/app/channels/${response?.Id}`)
-                 } else if (response.Errors) {
-                     setLoading(false);
-                     setError(response?.Errors || [{ code: "UNKNOWN", message: "An unknown error occurred." }])
-                 } else {
-                     setLoading(false);
-                     setError([
-                         { code: "UNKNOWN", message: "An unknown error occurred, check logs." }
-                     ])
-                 }
 
-             } catch (error) {
-                 console.log(error)
-                 setLoading(false);
-                 setError([
-                     { code: "UNKNOWN", message: "An unknown error occurred, check logs." }
-                 ])
-             }*/
+      setError(null);
+      try {
+        let guild = await client.guilds.createGuild({
+          name: name,
+          description: "",
+        });
+        console.log(guild);
+
+        if (guild.success) {
+          setLoading(false);
+          modal.onClose();
+          // redirect to guild?
+          return;
+        } else {
+          setError([
+            {
+              code: "TBA",
+              message: "An error occurred, check logs.",
+            },
+          ]);
+        }
+
+        setError([
+          {
+            code: "TBA",
+            message: "An error occurred, check logs.",
+          },
+        ]);
+      } catch (error) {
+        console.log(error);
+        setLoading(false);
+        setError([
+          {
+            code: "UNKNOWN",
+            message: "An unknown error occurred, check logs.",
+          },
+        ]);
+      }
     }
   };
 
