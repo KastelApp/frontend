@@ -1,1 +1,3 @@
-export default function Settings_Profile() {}
+export default function Settings_Profile() {
+  return <div>Profile</div>;
+}
