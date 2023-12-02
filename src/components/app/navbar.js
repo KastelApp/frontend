@@ -11,7 +11,8 @@ import {
   PopoverContent,
   PopoverTrigger,
   Stack,
-  Tooltip, useDisclosure,
+  Tooltip,
+  useDisclosure,
 } from "@chakra-ui/react";
 import Link from "next/link";
 import {
@@ -25,15 +26,11 @@ import NewServer from "@/components/app/new-server";
 import Settings from "@/components/app/settings";
 
 export default function AppNavbar({ userInfo, guilds }) {
-  const { isOpen, onOpen, onClose } = useDisclosure()
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   return (
     <>
-      <Settings
-        userInfo={userInfo}
-        isOpen={isOpen}
-        onClose={onClose}
-        />
+      <Settings userInfo={userInfo} isOpen={isOpen} onClose={onClose} />
 
       <Flex w="full" h="14" alignItems="center" pos="fixed" bottom="2" px="3">
         <Flex
@@ -169,7 +166,6 @@ export default function AppNavbar({ userInfo, guilds }) {
                 >
                   <PopoverArrow />
                   <PopoverBody>
-
                     <Stack>
                       <Button
                         w="194px"
@@ -178,8 +174,8 @@ export default function AppNavbar({ userInfo, guilds }) {
                         justifyContent="space-between"
                         fontWeight="normal"
                         fontSize="sm"
-                        onClick={onOpen}>
-
+                        onClick={onOpen}
+                      >
                         Settings
                       </Button>
 
