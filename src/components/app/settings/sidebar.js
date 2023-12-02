@@ -19,7 +19,6 @@ const data = [
       {
         name: "My Profile",
         badges: [],
-        selected: true,
         id: 0,
       },
       {
@@ -77,18 +76,23 @@ const data = [
         name: "Details & History",
         badges: [],
         id: 8,
-      }
+      },
     ],
   },
 ];
 
-export default function Settings_Sidebar({ setSelectedPage, children }) {
+export default function Settings_Sidebar({
+  selectedPage,
+  setSelectedPage,
+  children,
+}) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   return (
     <>
       <Box minH="100vh">
         <SidebarContent
           setSelectedPage={setSelectedPage}
+          selectedPage={selectedPage}
           onClose={() => onClose}
           display={{ base: "none", md: "block" }}
         />
@@ -103,6 +107,7 @@ export default function Settings_Sidebar({ setSelectedPage, children }) {
           <DrawerContent>
             <SidebarContent
               setSelectedPage={setSelectedPage}
+              selectedPage={selectedPage}
               onClose={onClose}
             />
           </DrawerContent>
@@ -117,7 +122,12 @@ export default function Settings_Sidebar({ setSelectedPage, children }) {
   );
 }
 
-const SidebarContent = ({ setSelectedPage, onClose, ...rest }) => {
+const SidebarContent = ({
+  selectedPage,
+  setSelectedPage,
+  onClose,
+  ...rest
+}) => {
   return (
     <Box
       bg={useColorModeValue("white", "gray.900")}
@@ -153,6 +163,8 @@ const SidebarContent = ({ setSelectedPage, onClose, ...rest }) => {
           {section.options.map((option) => (
             <NavItem
               key={option.name}
+              selectedPage={selectedPage}
+              id={option.id}
               onClick={() => setSelectedPage(option.id)}
               icon={option.icon}
             >
@@ -180,38 +192,68 @@ const SidebarContent = ({ setSelectedPage, onClose, ...rest }) => {
   );
 };
 
-const NavItem = ({ icon, children, ...rest }) => {
+const NavItem = ({ selectedPage, id, icon, children, ...rest }) => {
   return (
     <Box
       as="a"
       style={{ textDecoration: "none" }}
       _focus={{ boxShadow: "none" }}
     >
-      <Flex
-        align="center"
-        p="4"
-        mx="4"
-        borderRadius="lg"
-        role="group"
-        cursor="pointer"
-        _hover={{
-          bg: "gray.700",
-          color: "white",
-        }}
-        {...rest}
-      >
-        {icon && (
-          <Icon
-            mr="4"
-            fontSize="16"
-            _groupHover={{
-              color: "white",
-            }}
-            as={icon}
-          />
-        )}
-        {children}
-      </Flex>
+      {selectedPage === id ? (
+        <Flex
+          align="center"
+          p="4"
+          mx="4"
+          borderRadius="lg"
+          role="group"
+          cursor="pointer"
+          bg={"gray.700"}
+          color={"white"}
+          _hover={{
+            bg: "gray.600",
+            color: "white",
+          }}
+          {...rest}
+        >
+          {icon && (
+            <Icon
+              mr="4"
+              fontSize="16"
+              _groupHover={{
+                color: "white",
+              }}
+              as={icon}
+            />
+          )}
+          {children}
+        </Flex>
+      ) : (
+        <Flex
+          align="center"
+          p="4"
+          mx="4"
+          borderRadius="lg"
+          role="group"
+          cursor="pointer"
+          _hover={{
+            bg: "gray.800",
+            color: "white",
+          }}
+          {...rest}
+        >
+          {icon && (
+            <Icon
+              mr="4"
+              fontSize="16"
+              _groupHover={{
+                color: "white",
+              }}
+              as={icon}
+            />
+          )}
+          {children}
+        </Flex>
+      )}
     </Box>
   );
 };
