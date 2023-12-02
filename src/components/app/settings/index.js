@@ -6,16 +6,13 @@ import {
 } from "@chakra-ui/react";
 import Settings_Sidebar from "@/components/app/settings/sidebar";
 import { useState } from "react";
-import Settings_Profile from "@/components/app/settings/sections/profile";
-import Settings_Privacy from "@/components/app/settings/sections/privacy";
-import Settings_Sessions from "@/components/app/settings/sections/sessions";
-import Settings_Appearance from "@/components/app/settings/sections/appearance";
-import Settings_Accessibility from "@/components/app/settings/sections/accessibility";
-import Settings_Text from "@/components/app/settings/sections/text";
-import Settings_Subscriptions from "@/components/app/settings/sections/subscriptions";
-import Settings_Shards from "@/components/app/settings/sections/shards";
-import Settings_History from "@/components/app/settings/sections/history";
-import Settings_Invoices from "@/components/app/settings/sections/invoices";
+import {
+  Settings_Profile,
+  Settings_Accessibility,
+  Settings_Appearance, Settings_History,
+  Settings_Privacy,
+  Settings_Sessions, Settings_Shards, Settings_Subscriptions, Settings_Text
+} from "@/components/app/settings/sections";
 
 export default function Settings({ userInfo, isOpen, onClose }) {
   let [selectedPage, setSeletedPage] = useState(0);
@@ -31,7 +28,6 @@ export default function Settings({ userInfo, isOpen, onClose }) {
    * 6 - Subscriptions
    * 7 - Shards
    * 8 - Details & History
-   * 9 - Invoices
    */
 
   return (
@@ -52,7 +48,6 @@ export default function Settings({ userInfo, isOpen, onClose }) {
           {selectedPage === 6 && <Settings_Subscriptions userInfo={userInfo} />}
           {selectedPage === 7 && <Settings_Shards userInfo={userInfo} />}
           {selectedPage === 8 && <Settings_History userInfo={userInfo} />}
-          {selectedPage === 9 && <Settings_Invoices userInfo={userInfo} />}
         </Settings_Sidebar>
       </ModalContent>
     </Modal>
