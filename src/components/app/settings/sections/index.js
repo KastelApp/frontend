@@ -10,13 +10,13 @@ import Settings_History from "./history";
 import Settings_Profile from "./profile";
 
 export {
-    Settings_Privacy,
-    Settings_Sessions,
-    Settings_Appearance,
-    Settings_Accessibility,
-    Settings_Text,
-    Settings_Subscriptions,
-    Settings_Shards,
-    Settings_History,
-    Settings_Profile
-}
+  Settings_Privacy,
+  Settings_Sessions,
+  Settings_Appearance,
+  Settings_Accessibility,
+  Settings_Text,
+  Settings_Subscriptions,
+  Settings_Shards,
+  Settings_History,
+  Settings_Profile,
+};

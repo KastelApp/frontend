@@ -9,9 +9,13 @@ import { useState } from "react";
 import {
   Settings_Profile,
   Settings_Accessibility,
-  Settings_Appearance, Settings_History,
+  Settings_Appearance,
+  Settings_History,
   Settings_Privacy,
-  Settings_Sessions, Settings_Shards, Settings_Subscriptions, Settings_Text
+  Settings_Sessions,
+  Settings_Shards,
+  Settings_Subscriptions,
+  Settings_Text,
 } from "@/components/app/settings/sections";
 
 export default function Settings({ userInfo, isOpen, onClose }) {
