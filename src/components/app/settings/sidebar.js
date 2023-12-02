@@ -11,6 +11,8 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 import { FiMenu } from "react-icons/fi";
+import pack from "../../../../package.json";
+import generatedGitInfo from "../../../generatedGitInfo.json";
 
 const data = [
   {
@@ -188,6 +190,28 @@ const SidebarContent = ({
           ))}
         </>
       ))}
+
+      {/* Build info very bottom of sidebar */}
+      <Text
+        as="sub"
+        ml="8"
+        mt="8"
+        fontSize="xs"
+        fontWeight="bold"
+        letterSpacing="wide"
+        color="gray.500"
+        bottom={0}
+        position="absolute"
+        mb="4"
+        css={{
+          "&:first-letter": {
+            textTransform: "uppercase",
+          },
+        }}
+      >
+        {generatedGitInfo.gitBranch} {pack?.version || "0.0.0"} (
+        {generatedGitInfo.gitCommitHash})
+      </Text>
     </Box>
   );
 };
