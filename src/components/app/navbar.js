@@ -1,8 +1,10 @@
 import {
+  Badge,
   Box,
   Button,
   Flex,
   HStack,
+  Image,
   Popover,
   PopoverArrow,
   PopoverBody,
@@ -10,9 +12,8 @@ import {
   PopoverTrigger,
   Stack,
   Tooltip,
-  Image,
+  useBreakpointValue,
   useDisclosure,
-  Badge,
 } from "@chakra-ui/react";
 import Link from "next/link";
 import {
@@ -22,11 +23,11 @@ import {
   FaRegPaperPlane,
   FaSignOutAlt,
 } from "react-icons/fa";
-import NewServer from "@/components/app/new-server";
 import Settings from "@/components/app/settings";
 import { useRecoilState } from "recoil";
 import { clientStore, tokenStore } from "@/utils/stores";
 import { useRouter } from "next/router";
+import NewServer from "@/components/app/new-server";
 
 export default function AppNavbar({ userInfo, guilds }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -34,6 +35,7 @@ export default function AppNavbar({ userInfo, guilds }) {
   // eslint-disable-next-line no-unused-vars
   const [_, setToken] = useRecoilState(tokenStore);
   const router = useRouter();
+  const isSmallScreen = useBreakpointValue({ base: true, sm: false });
 
   function handleLogout() {
     client.logout();
@@ -74,6 +76,7 @@ export default function AppNavbar({ userInfo, guilds }) {
                 id="directMessage_toolbar"
                 className="group hidden sm:flex justify-center"
                 cursor="pointer"
+                display={isSmallScreen ? "none" : "flex"}
               >
                 {/* direct message button */}
                 <FaRegPaperPlane size="1.25em" />
@@ -83,6 +86,7 @@ export default function AppNavbar({ userInfo, guilds }) {
                 id="explore_toolbar"
                 className="group hidden sm:flex justify-center"
                 cursor="pointer"
+                display={isSmallScreen ? "none" : "flex"}
               >
                 {/* explore button */}
                 <FaRegCompass size="1.25em" />
@@ -98,33 +102,23 @@ export default function AppNavbar({ userInfo, guilds }) {
               />
             </Box>
 
-            <Box id="guilds" height={"full"} py={2} marginLeft={"5"}>
-              <Flex
+            <Flex id="guilds" height="full" py={2} marginLeft={5}>
+              <Box
                 id="guildsList"
-                direction="list"
-                height={"full"}
-                overflowY={"scroll"}
+                height="full"
+                overflowY="scroll"
+                css={{
+                  // Set a fixed height or max-height to enable scrolling
+                  maxHeight: "300px", // Adjust the height based on your design
+                }}
               >
                 {guilds &&
                   guilds.map((guild) => {
                     return <Guild key={guild.id} guild={guild} />;
                   })}
-
-                {/*
-                <Box>
-                  <IconButton
-                      colorScheme="teal"
-                      aria-label="New"
-                      boxSize="40px"
-                      borderRadius="full"
-                      marginRight={2}
-                  />
-                </Box>
-                */}
-
                 <NewServer marginRight={2} userInfo />
-              </Flex>
-            </Box>
+              </Box>
+            </Flex>
           </Flex>
 
           <Flex
@@ -137,15 +131,6 @@ export default function AppNavbar({ userInfo, guilds }) {
               <Popover placement="top">
                 <PopoverTrigger>
                   <Box py={1} className=" flex ">
-                    {/*<Avatar
-                      boxSize="30px"
-                      size={"md"}
-                      name={userInfo?.username || "Loading"}
-                      src={userInfo?.avatarURL || "/icon-2.png"}
-                    >
-                      <AvatarBadge boxSize="4" bg="green.500"/>
-                    </Avatar>*/}
-
                     <Box
                       boxSize="30px"
                       display="inline-flex"
