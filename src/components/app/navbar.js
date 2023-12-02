@@ -11,7 +11,7 @@ import {
   PopoverContent,
   PopoverTrigger,
   Stack,
-  Tooltip,
+  Tooltip, useDisclosure,
 } from "@chakra-ui/react";
 import Link from "next/link";
 import {
@@ -22,10 +22,19 @@ import {
   FaSignOutAlt,
 } from "react-icons/fa";
 import NewServer from "@/components/app/new-server";
+import Settings from "@/components/app/settings";
 
 export default function AppNavbar({ userInfo, guilds }) {
+  const { isOpen, onOpen, onClose } = useDisclosure()
+
   return (
     <>
+      <Settings
+        userInfo={userInfo}
+        isOpen={isOpen}
+        onClose={onClose}
+        />
+
       <Flex w="full" h="14" alignItems="center" pos="fixed" bottom="2" px="3">
         <Flex
           bg={"gray.700"}
@@ -160,6 +169,7 @@ export default function AppNavbar({ userInfo, guilds }) {
                 >
                   <PopoverArrow />
                   <PopoverBody>
+
                     <Stack>
                       <Button
                         w="194px"
@@ -168,7 +178,8 @@ export default function AppNavbar({ userInfo, guilds }) {
                         justifyContent="space-between"
                         fontWeight="normal"
                         fontSize="sm"
-                      >
+                        onClick={onOpen}>
+
                         Settings
                       </Button>
 
