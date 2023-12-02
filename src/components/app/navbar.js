@@ -1,6 +1,4 @@
 import {
-  Avatar,
-  AvatarBadge,
   Box,
   Button,
   Flex,
@@ -12,7 +10,9 @@ import {
   PopoverTrigger,
   Stack,
   Tooltip,
+  Image,
   useDisclosure,
+  Badge,
 } from "@chakra-ui/react";
 import Link from "next/link";
 import {
@@ -24,9 +24,23 @@ import {
 } from "react-icons/fa";
 import NewServer from "@/components/app/new-server";
 import Settings from "@/components/app/settings";
+import { useRecoilState } from "recoil";
+import { clientStore, tokenStore } from "@/utils/stores";
+import { useRouter } from "next/router";
 
 export default function AppNavbar({ userInfo, guilds }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const [client] = useRecoilState(clientStore);
+  // eslint-disable-next-line no-unused-vars
+  const [_, setToken] = useRecoilState(tokenStore);
+  const router = useRouter();
+
+  function handleLogout() {
+    client.logout();
+    client.setToken(null);
+    setToken(null);
+    router.push("/");
+  }
 
   return (
     <>
@@ -123,24 +137,43 @@ export default function AppNavbar({ userInfo, guilds }) {
               <Popover placement="top">
                 <PopoverTrigger>
                   <Box py={1} className=" flex ">
-                    {/*<Image
-                  boxSize="30px"
-                  objectFit="cover"
-                  borderRadius="full"
-                  src={userInfo?.avatarURL}
-                  fallbackSrc={"/icon-1.png"}
-                  alt={userInfo?.username || "Loading"}
-                />*/}
-
-                    <Avatar
+                    {/*<Avatar
                       boxSize="30px"
                       size={"md"}
                       name={userInfo?.username || "Loading"}
                       src={userInfo?.avatarURL || "/icon-2.png"}
                     >
-                      <AvatarBadge boxSize="4" bg="green.500" />
-                    </Avatar>
+                      <AvatarBadge boxSize="4" bg="green.500"/>
+                    </Avatar>*/}
+
+                    <Box
+                      boxSize="30px"
+                      display="inline-flex"
+                      alignItems="center"
+                      justifyContent="center"
+                      overflow="visible"
+                      lineHeight="none"
+                      borderRadius="full"
+                      position="relative"
+                    >
+                      <Image
+                        borderRadius={"full"}
+                        src={userInfo?.avatarURL}
+                        fallbackSrc={"/icon-1.png"}
+                        alt={userInfo?.username || "Loading"}
+                        fit="cover"
+                      />
+                      <Badge
+                        boxSize="3"
+                        borderRadius="full"
+                        bg="green.500"
+                        position="absolute"
+                        bottom="-0.5"
+                        right="-0.5"
+                      />
+                    </Box>
                   </Box>
+
                   {/*<Box marginLeft={"2"} className="hidden sm:block">
                     <Heading
                       fontSize={"sm"}
@@ -187,6 +220,7 @@ export default function AppNavbar({ userInfo, guilds }) {
                         fontWeight="normal"
                         colorScheme="red"
                         fontSize="sm"
+                        onClick={handleLogout}
                       >
                         Logout
                       </Button>
