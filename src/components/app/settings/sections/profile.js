@@ -54,6 +54,9 @@ export default function Settings_Profile({ userInfo }) {
           </FormControl>
         </Stack>
       </Box>
+
+      {userInfo?.username || "Loading..."}
+
     </>
   );
 }
