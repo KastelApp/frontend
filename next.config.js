@@ -3,7 +3,7 @@ const { i18n } = require("./next-i18next.config.js");
 const { withSentryConfig } = require("@sentry/nextjs");
 
 const nextConfig = {
-  reactStrictMode: true,
+  reactStrictMode: false,
   i18n,
   env: {
     PUBLIC_API_URL: process.env.PUBLIC_API_URL,
