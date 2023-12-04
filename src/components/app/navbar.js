@@ -28,6 +28,7 @@ import { useRecoilState } from "recoil";
 import { clientStore, tokenStore } from "@/utils/stores";
 import { useRouter } from "next/router";
 import NewServer from "@/components/app/new-server";
+import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 
 export default function AppNavbar({ userInfo, guilds }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -103,21 +104,34 @@ export default function AppNavbar({ userInfo, guilds }) {
             </Box>
 
             <Flex id="guilds" height="full" py={2} marginLeft={5}>
-              <Box
-                id="guildsList"
-                height="full"
-                overflowY="scroll"
-                css={{
-                  // Set a fixed height or max-height to enable scrolling
-                  maxHeight: "300px", // Adjust the height based on your design
-                }}
-              >
-                {guilds &&
-                  guilds.map((guild) => {
-                    return <Guild key={guild.id} guild={guild} />;
-                  })}
-                <NewServer marginRight={2} userInfo />
-              </Box>
+              <DragDropContext>
+                <Droppable droppableId="droppable" direction="horizontal">
+                  {(provided) => (
+                    <Flex ref={provided.innerRef} {...provided.droppableProps}>
+                      {guilds &&
+                        guilds.map((guild, index) => (
+                          <Draggable
+                            draggableId={guild.id}
+                            key={guild.id}
+                            index={index}
+                          >
+                            {(provided) => (
+                              <Box
+                                ref={provided.innerRef}
+                                {...provided.draggableProps}
+                                {...provided.dragHandleProps}
+                              >
+                                <Guild guild={guild} />
+                              </Box>
+                            )}
+                          </Draggable>
+                        ))}
+                    </Flex>
+                  )}
+                </Droppable>
+              </DragDropContext>
+
+              <NewServer marginRight={2} userInfo />
             </Flex>
           </Flex>
 

@@ -56,7 +56,6 @@ export default function Settings_Profile({ userInfo }) {
       </Box>
 
       {userInfo?.username || "Loading..."}
-
     </>
   );
 }
