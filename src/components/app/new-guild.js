@@ -215,25 +215,31 @@ function NewServerForm({ modal, setForm }) {
   );
 }
 
-function JoinServer({ modal, setForm }) {
+function JoinServer({ /* modal, */ setForm }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [client] = useRecoilState(clientStore);
+  // const [client] = useRecoilState(clientStore);
 
   const submit = async (event) => {
     event.preventDefault();
     setLoading(true);
     setLoading(false);
+    setError([
+      {
+        code: "TBA",
+        message: "This is not done yet.",
+      },
+    ]);
   };
 
   return (
     <>
-      <center>
-        <ModalHeader>Join a Guild</ModalHeader>
-      </center>
-      <ModalCloseButton />
-      <ModalBody>
-        <form id="join-guild" onSubmit={submit}>
+      <form id="join-guild" onSubmit={submit}>
+        <center>
+          <ModalHeader>Join a Guild</ModalHeader>
+        </center>
+        <ModalCloseButton />
+        <ModalBody>
           <Stack spacing={4}>
             {error && (
               <center>
@@ -272,27 +278,27 @@ function JoinServer({ modal, setForm }) {
               </FormHelperText>
             </FormControl>
           </Stack>
-        </form>
-      </ModalBody>
+        </ModalBody>
 
-      <ModalFooter
-        mt={5}
-        display="flex"
-        justifyContent="center"
-        alignItems="center"
-      >
-        <Button mr={3} onClick={() => setForm(0)}>
-          Back
-        </Button>
-
-        {loading ? (
-          <Button isLoading={true}>Join Guild</Button>
-        ) : (
-          <Button form="new-note" type={"submit"}>
-            Join Guild
+        <ModalFooter
+          mt={5}
+          display="flex"
+          justifyContent="center"
+          alignItems="center"
+        >
+          <Button mr={3} onClick={() => setForm(0)}>
+            Back
           </Button>
-        )}
-      </ModalFooter>
+
+          {loading ? (
+            <Button isLoading={true}>Join Guild</Button>
+          ) : (
+            <Button form="join-guild" type={"submit"}>
+              Join Guild
+            </Button>
+          )}
+        </ModalFooter>
+      </form>
     </>
   );
 }
