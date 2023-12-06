@@ -11,7 +11,7 @@ export default function Document(props) {
     <Html lang={currentLocale}>
       <Head />
       <body>
-       <ColorModeScript initialColorMode={theme.config.initialColorMode} />
+        <ColorModeScript initialColorMode={theme.config.initialColorMode} />
         <Main />
         <NextScript />
       </body>
