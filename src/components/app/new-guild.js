@@ -21,10 +21,11 @@ import {
   useColorModeValue,
   useDisclosure,
   VStack,
-  Flex, Center
+  Flex,
+  Center,
 } from "@chakra-ui/react";
 import { FiPlus } from "react-icons/fi";
-import {useRef, useState} from "react";
+import { useRef, useState } from "react";
 import { useRecoilState } from "recoil";
 import { clientStore } from "@/utils/stores";
 
@@ -196,32 +197,32 @@ function NewServerForm({ modal, setForm }) {
                   <Flex alignItems="center">
                     <Box position="relative" display="inline-block">
                       <Avatar
-                          size="xl"
-                          src={selectedImage}
-                          name="avatar-preview"
-                          mb={4}
-                          cursor="pointer"
-                          onClick={() => {
-                            const input = fileInputRef.current;
-                            if (input) {
-                              input.click();
-                            }
-                          }}
+                        size="xl"
+                        src={selectedImage}
+                        name="avatar-preview"
+                        mb={4}
+                        cursor="pointer"
+                        onClick={() => {
+                          const input = fileInputRef.current;
+                          if (input) {
+                            input.click();
+                          }
+                        }}
                       />
                       <Input
-                          type="file"
-                          id="avatar-input"
-                          ref={fileInputRef}
-                          onChange={handleImageChange}
-                          accept="image/*"
-                          position="absolute"
-                          top="0"
-                          left="0"
-                          opacity="0"
-                          width="100%"
-                          height="100%"
-                          cursor="pointer"
-                          zIndex="-1"
+                        type="file"
+                        id="avatar-input"
+                        ref={fileInputRef}
+                        onChange={handleImageChange}
+                        accept="image/*"
+                        position="absolute"
+                        top="0"
+                        left="0"
+                        opacity="0"
+                        width="100%"
+                        height="100%"
+                        cursor="pointer"
+                        zIndex="-1"
                       />
                     </Box>
                   </Flex>
@@ -230,7 +231,6 @@ function NewServerForm({ modal, setForm }) {
                 <FormHelperText>
                   Icon upload is not functional at this time.
                 </FormHelperText>
-
               </FormControl>
             </center>
 
