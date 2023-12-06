@@ -1,4 +1,5 @@
 import {
+  Avatar,
   Box,
   Button,
   FormControl,
@@ -20,9 +21,10 @@ import {
   useColorModeValue,
   useDisclosure,
   VStack,
+  Flex, Center
 } from "@chakra-ui/react";
 import { FiPlus } from "react-icons/fi";
-import { useState } from "react";
+import {useRef, useState} from "react";
 import { useRecoilState } from "recoil";
 import { clientStore } from "@/utils/stores";
 
@@ -151,6 +153,20 @@ function NewServerForm({ modal, setForm }) {
     }
   };
 
+  const [selectedImage, setSelectedImage] = useState(null);
+  const fileInputRef = useRef(null);
+
+  const handleImageChange = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        setSelectedImage(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   return (
     <>
       <center>
@@ -173,6 +189,50 @@ function NewServerForm({ modal, setForm }) {
                 </Text>
               </center>
             )}
+
+            <center>
+              <FormControl>
+                <Center>
+                  <Flex alignItems="center">
+                    <Box position="relative" display="inline-block">
+                      <Avatar
+                          size="xl"
+                          src={selectedImage}
+                          name="avatar-preview"
+                          mb={4}
+                          cursor="pointer"
+                          onClick={() => {
+                            const input = fileInputRef.current;
+                            if (input) {
+                              input.click();
+                            }
+                          }}
+                      />
+                      <Input
+                          type="file"
+                          id="avatar-input"
+                          ref={fileInputRef}
+                          onChange={handleImageChange}
+                          accept="image/*"
+                          position="absolute"
+                          top="0"
+                          left="0"
+                          opacity="0"
+                          width="100%"
+                          height="100%"
+                          cursor="pointer"
+                          zIndex="-1"
+                      />
+                    </Box>
+                  </Flex>
+                </Center>
+
+                <FormHelperText>
+                  Icon upload is not functional at this time.
+                </FormHelperText>
+
+              </FormControl>
+            </center>
 
             <FormControl isRequired>
               <FormLabel>Guild Name</FormLabel>
