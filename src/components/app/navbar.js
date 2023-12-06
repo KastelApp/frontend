@@ -57,6 +57,14 @@ export default function AppNavbar({ userInfo, guilds }) {
     }
   }, []);
 
+  useEffect(() => {
+    // on guild list update check for dupes
+    if (!guildList.some((guild) => guild.id === guilds.id)) {
+      // Use the spread operator to create a new array with the existing guildList and the new guilds
+      setGuildList((prevGuildList) => [...prevGuildList, guilds]);
+    }
+  }, [guilds]);
+
   function handleLogout() {
     client.logout();
     client.setToken(null);
