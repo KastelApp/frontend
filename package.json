@@ -1,6 +1,6 @@
 {
   "name": "kastel-frontend",
-  "version": "0.0.19",
+  "version": "0.0.20",
   "scripts": {
     "git-info": "node src/gitInfo.js",
     "dev": "npm run git-info && next dev",
