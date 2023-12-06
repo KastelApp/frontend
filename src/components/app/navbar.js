@@ -30,6 +30,7 @@ import { useRouter } from "next/router";
 import NewServer from "@/components/app/new-server";
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 import { useEffect, useState } from "react";
+import NextLink from "next/link";
 
 const reorder = (list, startIndex, endIndex) => {
   const result = Array.from(list);
@@ -154,13 +155,11 @@ export default function AppNavbar({ userInfo, guilds }) {
                               index={index}
                             >
                               {(provided) => (
-                                <Box
-                                  ref={provided.innerRef}
-                                  {...provided.draggableProps}
-                                  {...provided.dragHandleProps}
-                                >
-                                  <Guild guild={guild} />
-                                </Box>
+                                <Guild
+                                  key={guild.id}
+                                  provided={provided}
+                                  guild={guild}
+                                />
                               )}
                             </Draggable>
                           );
@@ -274,24 +273,40 @@ export default function AppNavbar({ userInfo, guilds }) {
   );
 }
 
-function Guild({ guild }) {
+function Guild({ provided, guild }) {
+  const FirstChannel = guild.channels.find(
+    (channel) =>
+      channel.type === "GuildText" ||
+      channel.type === "GuildNews" ||
+      channel.type === "GuildNewMember" ||
+      channel.type === "GuildRules",
+  );
+
   return (
-    <Tooltip label={`${guild?.name || "Loading..."}`} placement="top">
-      <Box display="inline-block" marginRight={2}>
-        <Flex
-          overflow={"hidden"}
-          flexDirection="column"
-          justifyContent="center"
-          alignItems="center"
-          bg={"red.500"}
-          rounded={"50px"}
-          w={"40px"}
-          h={"40px"}
-          textAlign="center"
-        >
-          {guild.name}
-        </Flex>
+    <NextLink href={`/app/guilds/${guild?.id}/channels/${FirstChannel.id}`}>
+      <Box
+        ref={provided.innerRef}
+        {...provided.draggableProps}
+        {...provided.dragHandleProps}
+      >
+        <Tooltip label={`${guild?.name || "Loading..."}`} placement="top">
+          <Box display="inline-block" marginRight={2}>
+            <Flex
+              overflow={"hidden"}
+              flexDirection="column"
+              justifyContent="center"
+              alignItems="center"
+              bg={"red.500"}
+              rounded={"50px"}
+              w={"40px"}
+              h={"40px"}
+              textAlign="center"
+            >
+              {guild.name}
+            </Flex>
+          </Box>
+        </Tooltip>
       </Box>
-    </Tooltip>
+    </NextLink>
   );
 }
