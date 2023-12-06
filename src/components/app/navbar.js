@@ -27,7 +27,7 @@ import Settings from "@/components/app/settings";
 import { useRecoilState } from "recoil";
 import { clientStore, tokenStore } from "@/utils/stores";
 import { useRouter } from "next/router";
-import NewServer from "@/components/app/new-server";
+import NewGuild from "@/components/app/new-guild";
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 import { useEffect, useState } from "react";
 import NextLink from "next/link";
@@ -177,7 +177,7 @@ export default function AppNavbar({ userInfo, guilds }) {
                 </Droppable>
               </DragDropContext>
 
-              <NewServer marginRight={2} userInfo />
+              <NewGuild marginRight={2} userInfo />
             </Flex>
           </Flex>
 
