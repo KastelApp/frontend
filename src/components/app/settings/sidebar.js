@@ -148,8 +148,8 @@ const SidebarContent = ({
         */}
         <CloseButton display={{ base: "flex", md: "none" }} onClick={onClose} />
       </Flex>
-      {data.map((section) => (
-        <>
+      {data.map((section,index) => (
+        <div key={index}>
           <Text
             ml="8"
             mt="4"
@@ -188,7 +188,7 @@ const SidebarContent = ({
               )}
             </NavItem>
           ))}
-        </>
+        </div>
       ))}
 
       {/* Build info very bottom of sidebar */}
