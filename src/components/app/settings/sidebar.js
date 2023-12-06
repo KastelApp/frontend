@@ -148,7 +148,7 @@ const SidebarContent = ({
         */}
         <CloseButton display={{ base: "flex", md: "none" }} onClick={onClose} />
       </Flex>
-      {data.map((section,index) => (
+      {data.map((section, index) => (
         <div key={index}>
           <Text
             ml="8"
