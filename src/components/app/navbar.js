@@ -29,6 +29,15 @@ import { clientStore, tokenStore } from "@/utils/stores";
 import { useRouter } from "next/router";
 import NewServer from "@/components/app/new-server";
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
+import { useEffect, useState } from "react";
+
+const reorder = (list, startIndex, endIndex) => {
+  const result = Array.from(list);
+  const [removed] = result.splice(startIndex, 1);
+  result.splice(endIndex, 0, removed);
+
+  return result;
+};
 
 export default function AppNavbar({ userInfo, guilds }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -37,12 +46,38 @@ export default function AppNavbar({ userInfo, guilds }) {
   const [_, setToken] = useRecoilState(tokenStore);
   const router = useRouter();
   const isSmallScreen = useBreakpointValue({ base: true, sm: false });
+  const [guildList, setGuildList] = useState(guilds);
+
+  useEffect(() => {
+    // Check if the guilds you want to add isn't already in the guildList
+    if (!guildList.some((guild) => guild.id === guilds.id)) {
+      // Use the spread operator to create a new array with the existing guildList and the new guilds
+      setGuildList((prevGuildList) => [...prevGuildList, guilds]);
+    }
+  }, []);
 
   function handleLogout() {
     client.logout();
     client.setToken(null);
     setToken(null);
     router.push("/");
+  }
+
+  function onDragEnd(result) {
+    // dropped outside the list
+    if (!result.destination) {
+      return;
+    }
+
+    const items = reorder(
+      guildList,
+      result.source.index,
+      result.destination.index,
+    );
+
+    setGuildList(items);
+
+    // todo - save new positioned guilds
   }
 
   return (
@@ -104,28 +139,32 @@ export default function AppNavbar({ userInfo, guilds }) {
             </Box>
 
             <Flex id="guilds" height="full" py={2} marginLeft={5}>
-              <DragDropContext>
+              <DragDropContext onDragEnd={onDragEnd}>
                 <Droppable droppableId="droppable" direction="horizontal">
                   {(provided) => (
                     <Flex ref={provided.innerRef} {...provided.droppableProps}>
-                      {guilds &&
-                        guilds.map((guild, index) => (
-                          <Draggable
-                            draggableId={guild.id}
-                            key={guild.id}
-                            index={index}
-                          >
-                            {(provided) => (
-                              <Box
-                                ref={provided.innerRef}
-                                {...provided.draggableProps}
-                                {...provided.dragHandleProps}
-                              >
-                                <Guild guild={guild} />
-                              </Box>
-                            )}
-                          </Draggable>
-                        ))}
+                      {provided.placeholder}
+                      {guildList &&
+                        guildList.map((guild, index) => {
+                          if (!guild?.id) return;
+                          return (
+                            <Draggable
+                              draggableId={guild.id}
+                              key={guild.id}
+                              index={index}
+                            >
+                              {(provided) => (
+                                <Box
+                                  ref={provided.innerRef}
+                                  {...provided.draggableProps}
+                                  {...provided.dragHandleProps}
+                                >
+                                  <Guild guild={guild} />
+                                </Box>
+                              )}
+                            </Draggable>
+                          );
+                        })}
                     </Flex>
                   )}
                 </Droppable>
@@ -236,7 +275,6 @@ export default function AppNavbar({ userInfo, guilds }) {
 }
 
 function Guild({ guild }) {
-  console.log(guild);
   return (
     <Tooltip label={`${guild?.name || "Loading..."}`} placement="top">
       <Box display="inline-block" marginRight={2}>
