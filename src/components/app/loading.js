@@ -11,13 +11,13 @@ import NextLink from "next/link";
 
 const confetti = {
   light: {
-    primary: "4299E1", // blue.400
-    secondary: "BEE3F8", // blue.100
+    primary: "F56565", // red.400
+    secondary: "ED64A6", // pink.400
   },
 
   dark: {
-    primary: "1A365D", // blue.900
-    secondary: "2A4365", // blue.800
+    primary: "ED64A6", // blue.900
+    secondary: "F56565", // blue.800
   },
 };
 
