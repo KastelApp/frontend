@@ -117,15 +117,17 @@ export default function AppNavbar({ userInfo, guilds }) {
                 </Box>
               </Link>
 
-              <Box
-                id="directMessage_toolbar"
-                className="group hidden sm:flex justify-center"
-                cursor="pointer"
-                display={isSmallScreen ? "none" : "flex"}
-              >
-                {/* direct message button */}
-                <FaRegPaperPlane size="1.25em" />
-              </Box>
+              <Link href="/app/@me/messages">
+                <Box
+                    id="directMessage_toolbar"
+                    className="group hidden sm:flex justify-center"
+                    cursor="pointer"
+                    display={isSmallScreen ? "none" : "flex"}
+                >
+                  {/* direct message button */}
+                  <FaRegPaperPlane size="1.25em" />
+                </Box>
+              </Link>
 
               <Box
                 id="explore_toolbar"
