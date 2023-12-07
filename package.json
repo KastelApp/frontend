@@ -1,11 +1,11 @@
 {
   "name": "kastel-frontend",
-  "version": "0.0.23",
+  "version": "0.0.24",
   "scripts": {
     "git-info": "node src/gitInfo.js",
     "dev": "npm run git-info && next dev",
     "build": "npm run git-info && next build",
-    "start": "npm run git-info && next start",
+    "start": "next start",
     "lint": "next lint",
     "format": "npm run git-info && prettier --write . && eslint src --ext .js,.ts --fix"
   },

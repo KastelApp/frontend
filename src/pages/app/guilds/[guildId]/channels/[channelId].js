@@ -75,8 +75,16 @@ const GuildChannelPage = () => {
 
 export default GuildChannelPage;
 
-export const getServerSideProps = async ({ locale }) => ({
+export async function getStaticPaths() {
+  return {
+    paths: [],
+    fallback: "blocking", // Generate pages on-demand
+  };
+}
+
+export const getStaticProps = async ({ params, locale }) => ({
   props: {
+    params: params,
     ...(await serverSideTranslations(locale ?? "en", ["app"])),
   },
 });
