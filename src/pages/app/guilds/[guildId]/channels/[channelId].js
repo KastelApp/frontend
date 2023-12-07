@@ -58,6 +58,7 @@ const GuildChannelPage = () => {
         <>
           <Box>
             <AppNavbar userInfo={user} guilds={guilds} />
+            <SEO title={guild?.name || "Loading"} />
             <Text>
               Name: {guild?.name || "Loading"} <br />
               ID: {guildId} <br />
