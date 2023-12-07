@@ -44,8 +44,16 @@ export default function AtMeMessagesId() {
   );
 }
 
-export const getStaticProps = async ({ locale }) => ({
+export async function getStaticPaths() {
+  return {
+    paths: [],
+    fallback: "blocking", // Generate pages on-demand
+  };
+}
+
+export const getStaticProps = async ({ params, locale }) => ({
   props: {
+    params: params,
     ...(await serverSideTranslations(locale ?? "en", ["app"])),
   },
 });
