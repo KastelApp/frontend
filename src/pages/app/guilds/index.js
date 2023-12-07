@@ -2,13 +2,13 @@ import { useRouter } from "next/router";
 import { useEffect } from "react";
 
 const Redirect = () => {
-    const router = useRouter();
+  const router = useRouter();
 
-    useEffect(() => {
-        router.push("/app");
-    }, [router]);
+  useEffect(() => {
+    router.push("/app");
+  }, [router]);
 
-    return null;
+  return null;
 };
 
 export default Redirect;
