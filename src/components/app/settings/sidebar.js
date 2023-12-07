@@ -132,86 +132,87 @@ const SidebarContent = ({
 }) => {
   return (
     <Box
-      bg={useColorModeValue("white", "gray.900")}
-      borderRight="1px"
-      borderRightColor={useColorModeValue("gray.200", "gray.700")}
-      w={{ base: "full", md: 60 }}
-      pos="fixed"
-      h="full"
-      {...rest}
+        bg={useColorModeValue("white", "gray.900")}
+        borderRight="1px"
+        borderRightColor={useColorModeValue("gray.200", "gray.700")}
+        w={{ base: "full", md: 60 }}
+        pos="fixed"
+        h="full"
+        display="flex"
+        flexDirection="column"
+        justifyContent="space-between"
+        {...rest}
     >
-      <Flex h="20" alignItems="center" mx="8" justifyContent="space-between">
-        {/*
+
+      <Box flex="1">
+        <Flex h="20" alignItems="center" mx="8" justifyContent="space-between">
+          {/*
         <Text fontSize="2xl" fontFamily="monospace" fontWeight="bold">
           Kastel
         </Text>
         */}
-        <CloseButton display={{ base: "flex", md: "none" }} onClick={onClose} />
-      </Flex>
-      {data.map((section, index) => (
-        <div key={index}>
-          <Text
-            ml="8"
-            mt="4"
-            mb="2"
-            fontSize="xs"
-            fontWeight="bold"
-            textTransform="uppercase"
-            letterSpacing="wide"
-            color="gray.500"
-          >
-            {section.name}
-          </Text>
-          {section.options.map((option) => (
-            <NavItem
-              key={option.name}
-              selectedPage={selectedPage}
-              id={option.id}
-              onClick={() => setSelectedPage(option.id)}
-              icon={option.icon}
-            >
-              {option.name}
-              {option.badges && option.badges.length === 1 && (
-                <Box
-                  bg={option.badges[0].color}
-                  ml="auto"
-                  mr="2"
-                  borderRadius="lg"
-                  px="2"
-                  py="1"
+          <CloseButton display={{ base: "flex", md: "none" }} onClick={onClose} />
+        </Flex>
+        {data.map((section, index) => (
+            <div key={index}>
+              <Text
+                  ml="8"
+                  mt="4"
+                  mb="2"
                   fontSize="xs"
                   fontWeight="bold"
-                  color="white"
-                >
-                  {option.badges[0].name}
-                </Box>
-              )}
-            </NavItem>
-          ))}
-        </div>
-      ))}
+                  textTransform="uppercase"
+                  letterSpacing="wide"
+                  color="gray.500"
+              >
+                {section.name}
+              </Text>
+              {section.options.map((option) => (
+                  <NavItem
+                      key={option.name}
+                      selectedPage={selectedPage}
+                      id={option.id}
+                      onClick={() => setSelectedPage(option.id)}
+                      icon={option.icon}
+                  >
+                    {option.name}
+                    {option.badges && option.badges.length === 1 && (
+                        <Box
+                            bg={option.badges[0].color}
+                            ml="auto"
+                            mr="2"
+                            borderRadius="lg"
+                            px="2"
+                            py="1"
+                            fontSize="xs"
+                            fontWeight="bold"
+                            color="white"
+                        >
+                          {option.badges[0].name}
+                        </Box>
+                    )}
+                  </NavItem>
+              ))}
+            </div>
+        ))}
+      </Box>
 
       {/* Build info very bottom of sidebar */}
-      <Text
-        as="sub"
-        ml="8"
-        mt="8"
-        fontSize="xs"
-        fontWeight="bold"
-        letterSpacing="wide"
-        color="gray.500"
-        bottom={0}
-        position="absolute"
-        mb="4"
-        css={{
-          "&:first-letter": {
-            textTransform: "uppercase",
-          },
-        }}
-      >
-        {generatedGitInfo.gitBranch} {pack?.version || "0.0.0"} (
-        {generatedGitInfo.gitCommitHash})
-      </Text>
+      <Box>
+        <Text
+            as="sub"
+            ml="8"
+            fontSize="xs"
+            fontWeight="bold"
+            letterSpacing="wide"
+            color="gray.500"
+            mb="4"
+            textTransform="uppercase"
+        >
+          {generatedGitInfo.gitBranch} {pack?.version || "0.0.0"} (
+          {generatedGitInfo.gitCommitHash})
+        </Text>
+      </Box>
     </Box>
   );
 };
