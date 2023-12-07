@@ -83,8 +83,8 @@ export default function GuildSideBar({ guild }) {
           color="gray.600"
           aria-label="Main Navigation"
         >
-          {guild?.Channels &&
-            guild.Channels.map((channel) => {
+          {guild?.channels &&
+            guild.channels.map((channel) => {
               return (
                 <Button
                   key={channel.id}
