@@ -144,7 +144,7 @@ export default function AppNavbar({ userInfo, guilds }) {
               <Box
                 width={"full"}
                 height={"full"}
-                bg={"gray.900"}
+                bg={"gray.500"}
                 rounded="xl"
               />
             </Box>
@@ -153,7 +153,9 @@ export default function AppNavbar({ userInfo, guilds }) {
               <DragDropContext onDragEnd={onDragEnd}>
                 <Droppable droppableId="droppable" direction="horizontal">
                   {(provided) => (
-                    <Flex ref={provided.innerRef} {...provided.droppableProps}>
+                    <Flex overflowX="auto" // Enable horizontal scrolling
+                          maxWidth="calc(100vw - 260px)" // Set a maximum width to prevent overflowing the screen
+                          ref={provided.innerRef} {...provided.droppableProps}>
                       {provided.placeholder}
                       {guildList &&
                         guildList.map((guild, index) => {
@@ -174,12 +176,11 @@ export default function AppNavbar({ userInfo, guilds }) {
                             </Draggable>
                           );
                         })}
+                      <NewGuild marginRight={2} userInfo />
                     </Flex>
                   )}
                 </Droppable>
               </DragDropContext>
-
-              <NewGuild marginRight={2} userInfo />
             </Flex>
           </Flex>
 
