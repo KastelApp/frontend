@@ -1,5 +1,3 @@
-import { useTranslation } from "next-i18next";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import SEO from "@/components/seo";
 import Layout from "@/components/layout";
 import {
@@ -23,7 +21,6 @@ import { useRecoilState } from "recoil";
 import { clientStore, tokenStore } from "@/utils/stores";
 
 export default function Register() {
-  const { t } = useTranslation("common");
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [terms, setTerms] = useState(false);
@@ -120,7 +117,7 @@ export default function Register() {
 
   return (
     <>
-      <SEO title={t("register.title")} />
+      <SEO title={"Register"} />
 
       <Layout>
         <form onSubmit={register}>
@@ -131,7 +128,7 @@ export default function Register() {
                   lineHeight={1.1}
                   fontSize={{ base: "3xl", sm: "4xl", md: "5xl", lg: "6xl" }}
                 >
-                  {t("register.message")}{" "}
+                  Register for{" "}
                   <Text
                     as={"span"}
                     bgGradient="linear(to-r, red.400,pink.400)"
@@ -166,7 +163,7 @@ export default function Register() {
                       )}
 
                       <FormControl id="username">
-                        <FormLabel>{t("register.username")}</FormLabel>
+                        <FormLabel>Username</FormLabel>
                         <Input
                           id={"username"}
                           required={true}
@@ -182,7 +179,7 @@ export default function Register() {
                       </FormControl>
 
                       <FormControl id="email">
-                        <FormLabel>{t("register.email")}</FormLabel>
+                        <FormLabel>Your Email</FormLabel>
                         <Input
                           id={"email"}
                           required={true}
@@ -198,7 +195,7 @@ export default function Register() {
                       </FormControl>
 
                       <FormControl id="password">
-                        <FormLabel>{t("register.password")}</FormLabel>
+                        <FormLabel>Password</FormLabel>
                         <Input
                           id={"password"}
                           required={true}
@@ -214,7 +211,7 @@ export default function Register() {
                       </FormControl>
 
                       <FormControl id="confirmpassword">
-                        <FormLabel>{t("register.confirmPassword")}</FormLabel>
+                        <FormLabel>Confirm Password</FormLabel>
                         <Input
                           id={"confirmpassword"}
                           required={true}
@@ -231,7 +228,7 @@ export default function Register() {
 
                       <Flex>
                         <Checkbox onChange={() => setTerms(!terms)}>
-                          {t("register.terms")}
+                          I agree to the Terms and Conditions
                         </Checkbox>
                       </Flex>
                     </Stack>
@@ -284,7 +281,7 @@ export default function Register() {
                             boxShadow: "xl",
                           }}
                         >
-                          {t("register.button")}
+                          Have an Account?
                         </Button>
                       </NextLink>
 
@@ -299,7 +296,7 @@ export default function Register() {
                             boxShadow: "xl",
                           }}
                         >
-                          {t("forgotPass")}
+                          Forgot Password?
                         </Button>
                       </NextLink>
                     </Stack>
@@ -313,9 +310,3 @@ export default function Register() {
     </>
   );
 }
-
-export const getStaticProps = async ({ locale }) => ({
-  props: {
-    ...(await serverSideTranslations(locale ?? "en", ["common"])),
-  },
-});

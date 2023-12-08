@@ -1,5 +1,3 @@
-import { useTranslation } from "next-i18next";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { useRecoilState } from "recoil";
@@ -15,7 +13,6 @@ import AppNavbar from "@/components/app/navbar";
 import { Box } from "@chakra-ui/react";
 
 export default function AtMeMessages() {
-  const { t } = useTranslation("app");
   const router = useRouter();
   const [token] = useRecoilState(tokenStore);
   const [client] = useRecoilState(clientStore);
@@ -30,7 +27,7 @@ export default function AtMeMessages() {
 
   return (
     <>
-      <SEO title={t("title")} />
+      <SEO title={"App"} />
       {ready ? (
         <>
           <Box>
@@ -38,14 +35,8 @@ export default function AtMeMessages() {
           </Box>
         </>
       ) : (
-        <Loading translations={t} />
+        <Loading />
       )}
     </>
   );
 }
-
-export const getStaticProps = async ({ locale }) => ({
-  props: {
-    ...(await serverSideTranslations(locale ?? "en", ["app"])),
-  },
-});

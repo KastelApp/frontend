@@ -1,5 +1,3 @@
-import { useTranslation } from "next-i18next";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import SEO from "@/components/seo";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
@@ -19,7 +17,6 @@ import { useRecoilState } from "recoil";
 import { clientStore, tokenStore } from "@/utils/stores";
 
 export default function Login() {
-  const { t } = useTranslation("common");
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -94,7 +91,7 @@ export default function Login() {
 
   return (
     <>
-      <SEO title={t("login")} />
+      <SEO title={"Login"} />
 
       <Layout>
         <form onSubmit={login}>
@@ -105,7 +102,7 @@ export default function Login() {
                   lineHeight={1.1}
                   fontSize={{ base: "3xl", sm: "4xl", md: "5xl", lg: "6xl" }}
                 >
-                  {t("login")}{" "}
+                  Login to{" "}
                   <Text
                     as={"span"}
                     bgGradient="linear(to-r, red.400,pink.400)"
@@ -213,7 +210,7 @@ export default function Login() {
                             boxShadow: "xl",
                           }}
                         >
-                          {t("register.title")}
+                          Create an Account
                         </Button>
                       </NextLink>
 
@@ -228,7 +225,7 @@ export default function Login() {
                             boxShadow: "xl",
                           }}
                         >
-                          {t("forgotPass")}
+                          Forgot Password?
                         </Button>
                       </NextLink>
                     </Stack>
@@ -242,9 +239,3 @@ export default function Login() {
     </>
   );
 }
-
-export const getStaticProps = async ({ locale }) => ({
-  props: {
-    ...(await serverSideTranslations(locale ?? "en", ["common"])),
-  },
-});
