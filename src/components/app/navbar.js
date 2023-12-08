@@ -293,7 +293,7 @@ function Guild({ provided, guild }) {
   );
 
   return (
-    <NextLink href={`/app/guilds/${guild?.id}/channels/${FirstChannel.id}`}>
+    <NextLink href={`/app/guilds/${guild?.id}/channels/${FirstChannel?.id}`}>
       <Box
         ref={provided.innerRef}
         {...provided.draggableProps}

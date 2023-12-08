@@ -6,6 +6,8 @@ import {
   guildStore,
   readyStore,
   tokenStore,
+  currentGuild,
+  currentChannel,
 } from "@/utils/stores";
 import { Box, Text } from "@chakra-ui/react";
 import AppNavbar from "@/components/app/navbar";
@@ -14,43 +16,46 @@ import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import SEO from "@/components/seo";
 import GuildSideBar from "@/components/app/guild/side-bar";
+import { SortChannels } from "@/utils/sortChannels";
 
 const GuildChannelPage = () => {
   const { t } = useTranslation("app");
   const router = useRouter();
   const { guildId, channelId } = router.query;
-  const [token] = useRecoilState(tokenStore);
+  // const [token] = useRecoilState(tokenStore);
   const [client] = useRecoilState(clientStore);
   const [ready] = useRecoilState(readyStore);
   const [user, setUser] = useState(null);
   const [guilds] = useRecoilState(guildStore);
-  const [guild, setGuild] = useState(null);
+  // const [token, setToken] = useRecoilState(tokenStore);
+  const [guild, setGuild] = useRecoilState(currentGuild);
+  const [channel, setChannel] = useRecoilState(currentChannel);
 
   useEffect(() => {
-    if (!token) return router.push("/login");
-    setUser(client?.users?.getCurrentUser());
-
     if (ready) {
-      if (guildId) {
-        // is user in guild?
-        if (!guilds.some((guild) => guild.id === guildId)) {
-          router.push("/app");
-        }
+      setUser(client?.users?.getCurrentUser());
+    }
+  }, [ready, guildId, channelId]);
 
-        const foundGuild = client.guilds.get(guildId);
-        if (!foundGuild) return router.push("/app");
-        setGuild(foundGuild);
-        console.log(foundGuild);
+  useEffect(() => {
+    if (ready) {
+      const foundGuild = client.guilds.get(guildId);
 
-        // is channel in guild?
-        /*if (!guilds.some((guild) => guild.channels.some((channel) => channel.id === channelId))) {
-                     router.push("/app");
-                }*/
-      } else {
+      if (!foundGuild) {
         router.push("/app");
       }
+
+      const channel = foundGuild.channels.find(
+        (channel) => channel.id === channelId,
+      );
+      if (!channel) {
+        // todo: handle this
+      }
+
+      setGuild(foundGuild);
+      setChannel(channel);
     }
-  }, [guildId, ready]);
+  }, [ready, guildId, channelId]);
 
   return (
     <>
@@ -60,7 +65,7 @@ const GuildChannelPage = () => {
           <Box>
             <AppNavbar userInfo={user} guilds={guilds} />
             <SEO title={guild?.name || "Loading"} />
-            <GuildSideBar userInfo={user} guild={guild}>
+            <GuildSideBar userInfo={user}>
               <Text>
                 Name: {guild?.name || "Loading"} <br />
                 ID: {guildId} <br />
@@ -91,3 +96,5 @@ export const getStaticProps = async ({ params, locale }) => ({
     ...(await serverSideTranslations(locale ?? "en", ["app"])),
   },
 });
+
+// export const runtime = "edge";
