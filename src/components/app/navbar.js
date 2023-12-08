@@ -11,7 +11,6 @@ import {
   PopoverContent,
   PopoverTrigger,
   Stack,
-  Tooltip,
   useBreakpointValue,
   useDisclosure,
 } from "@chakra-ui/react";
@@ -153,9 +152,12 @@ export default function AppNavbar({ userInfo, guilds }) {
               <DragDropContext onDragEnd={onDragEnd}>
                 <Droppable droppableId="droppable" direction="horizontal">
                   {(provided) => (
-                    <Flex overflowX="auto" // Enable horizontal scrolling
-                          maxWidth="calc(100vw - 260px)" // Set a maximum width to prevent overflowing the screen
-                          ref={provided.innerRef} {...provided.droppableProps}>
+                    <Flex
+                      overflowX="auto" // Enable horizontal scrolling
+                      maxWidth="calc(100vw - 260px)" // Set a maximum width to prevent overflowing the screen
+                      ref={provided.innerRef}
+                      {...provided.droppableProps}
+                    >
                       {provided.placeholder}
                       {guildList &&
                         guildList.map((guild, index) => {
@@ -308,23 +310,25 @@ function Guild({ provided, guild }) {
         {...provided.draggableProps}
         {...provided.dragHandleProps}
       >
-        <Tooltip label={`${guild?.name || "Loading..."}`} placement="top">
-          <Box display="inline-block" marginRight={2}>
-            <Flex
-              overflow={"hidden"}
-              flexDirection="column"
-              justifyContent="center"
-              alignItems="center"
-              bg={"red.500"}
-              rounded={"50px"}
-              w={"40px"}
-              h={"40px"}
-              textAlign="center"
-            >
-              {getGuildName(guild?.name)}
-            </Flex>
-          </Box>
-        </Tooltip>
+        <Box display="inline-block" marginRight={2}>
+          <Flex
+            overflow={"hidden"}
+            flexDirection="column"
+            justifyContent="center"
+            alignItems="center"
+            bg={"gray.600"}
+            rounded={"50px"}
+            w={"40px"}
+            h={"40px"}
+            textAlign="center"
+            _hover={{
+              bg: "gray.500",
+              rounded: "40px",
+            }}
+          >
+            <Image src={guild?.Icon} alt={getGuildName(guild?.name)} />
+          </Flex>
+        </Box>
       </Box>
     </NextLink>
   );
