@@ -30,6 +30,7 @@ import NewGuild from "@/components/app/new-guild";
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 import { useEffect, useState } from "react";
 import NextLink from "next/link";
+import getInitials from "@/utils/getGuildInitals";
 
 const reorder = (list, startIndex, endIndex) => {
   const result = Array.from(list);
@@ -286,13 +287,7 @@ export default function AppNavbar({ userInfo, guilds }) {
   );
 }
 
-function getGuildName(name) {
-  if (name.length > 5) {
-    return name.slice(0, 5);
-  } else {
-    return name;
-  }
-}
+
 
 function Guild({ provided, guild }) {
   const FirstChannel = guild.channels.find(
@@ -326,7 +321,7 @@ function Guild({ provided, guild }) {
               rounded: "40px",
             }}
           >
-            <Image src={guild?.Icon} alt={getGuildName(guild?.name)} />
+            <Image src={guild?.Icon} alt={getInitials(guild?.name)} />
           </Flex>
         </Box>
       </Box>
