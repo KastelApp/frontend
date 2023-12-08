@@ -35,6 +35,7 @@ const GuildChannelPage = () => {
   useEffect(() => {
     if (ready) {
       const foundGuild = client.guilds.get(guildId);
+      console.log(foundGuild);
 
       if (!foundGuild) {
         router.push("/app");

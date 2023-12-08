@@ -3,6 +3,7 @@ import {
   ModalCloseButton,
   ModalContent,
   ModalOverlay,
+  Text,
 } from "@chakra-ui/react";
 
 export default function GuildSettings({ isOpen, onClose }) {
@@ -11,6 +12,12 @@ export default function GuildSettings({ isOpen, onClose }) {
       <ModalOverlay />
       <ModalContent margin={0} rounded="none">
         <ModalCloseButton />
+
+        <Text>
+          Guild Settings
+          <br />
+          Under Construction
+        </Text>
       </ModalContent>
     </Modal>
   );

@@ -287,8 +287,6 @@ export default function AppNavbar({ userInfo, guilds }) {
   );
 }
 
-
-
 function Guild({ provided, guild }) {
   const FirstChannel = guild.channels.find(
     (channel) =>

@@ -7,6 +7,7 @@ import {
   Button,
   MenuList,
   MenuItem,
+  useDisclosure,
 } from "@chakra-ui/react";
 
 import {
@@ -26,6 +27,8 @@ import { useRecoilState } from "recoil";
 import NextLink from "next/link";
 import { SortChannels } from "@/utils/sortChannels";
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
+import GuildSettings from "@/components/app/guild/settings";
+import GuildInvites from "@/components/app/guild/invites";
 
 export default function GuildSideBar() {
   const [guild] = useRecoilState(currentGuild);
@@ -33,6 +36,17 @@ export default function GuildSideBar() {
   const [collapsedChannelsList] = useRecoilState(collapsedChannels);
   const [sortedChannelGroups, setSortedChannelGroups] = useState(null);
   const [currentChannelStore] = useRecoilState(currentChannel);
+
+  const {
+    isOpen: settingsIsOpen,
+    onOpen: settingsOnOpen,
+    onClose: settingsOnClose,
+  } = useDisclosure();
+  const {
+    isOpen: invitesIsOpen,
+    onOpen: invitesOnOpen,
+    onClose: invitesOnClose,
+  } = useDisclosure();
 
   function getGuildName(name) {
     if (name.length > 12) {
@@ -58,6 +72,8 @@ export default function GuildSideBar() {
 
   return ready ? (
     <>
+      <GuildSettings isOpen={settingsIsOpen} onClose={settingsOnClose} />
+      <GuildInvites isOpen={invitesIsOpen} onClose={invitesOnClose} />
       <Box
         as="nav"
         pos="fixed"
@@ -90,8 +106,12 @@ export default function GuildSideBar() {
               </Text>
             </MenuButton>
             <MenuList>
-              <MenuItem icon={<SettingsIcon />}>Settings</MenuItem>
-              <MenuItem icon={<SettingsIcon />}>Invite</MenuItem>
+              <MenuItem onClick={settingsOnOpen} icon={<SettingsIcon />}>
+                Settings
+              </MenuItem>
+              <MenuItem onClick={invitesOnOpen} icon={<SettingsIcon />}>
+                Invite
+              </MenuItem>
               <MenuItem icon={<BellIcon />}>Notifications</MenuItem>
               <MenuItem icon={<DeleteIcon />}>Leave</MenuItem>
             </MenuList>
