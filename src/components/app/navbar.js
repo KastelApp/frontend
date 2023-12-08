@@ -283,6 +283,14 @@ export default function AppNavbar({ userInfo, guilds }) {
   );
 }
 
+function getGuildName(name) {
+  if (name.length > 5) {
+    return name.slice(0, 5);
+  } else {
+    return name;
+  }
+}
+
 function Guild({ provided, guild }) {
   const FirstChannel = guild.channels.find(
     (channel) =>
@@ -312,7 +320,7 @@ function Guild({ provided, guild }) {
               h={"40px"}
               textAlign="center"
             >
-              {guild.name}
+              {getGuildName(guild?.name)}
             </Flex>
           </Box>
         </Tooltip>

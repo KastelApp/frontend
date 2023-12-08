@@ -141,6 +141,7 @@ const SidebarContent = ({
       display="flex"
       flexDirection="column"
       justifyContent="space-between"
+      overflow={"scroll"}
       {...rest}
     >
       <Box flex="1">
@@ -208,7 +209,7 @@ const SidebarContent = ({
           fontWeight="bold"
           letterSpacing="wide"
           color="gray.500"
-          mb="4"
+          mb="5"
           textTransform="uppercase"
         >
           {generatedGitInfo.gitBranch} {pack?.version || "0.0.0"} (
