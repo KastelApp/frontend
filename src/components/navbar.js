@@ -51,25 +51,19 @@ const Navbar = () => {
           </Flex>
           <HStack display="flex" alignItems="center" spacing={1}>
             <HStack
-                spacing={1}
-                mr={1}
-                color="brand.500"
-                display={{
-                  base: "none",
-                  md: "inline-flex",
+              spacing={1}
+              mr={1}
+              color="brand.500"
+              display={{
+                base: "none",
+                md: "inline-flex",
               }}
             >
-              <NextLink
-                target={"_blank"}
-                href={"https://docs.kastelapp.com"}
-              >
+              <NextLink target={"_blank"} href={"https://docs.kastelapp.com"}>
                 <Button variant="ghost">Docs</Button>
               </NextLink>
 
-              <NextLink
-                target={"_blank"}
-                href={"https://github.com/KastelApp"}
-              >
+              <NextLink target={"_blank"} href={"https://github.com/KastelApp"}>
                 <Button variant="ghost">Github</Button>
               </NextLink>
 
