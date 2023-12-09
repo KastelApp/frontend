@@ -1,5 +1,3 @@
-import { useTranslation } from "next-i18next";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import SEO from "@/components/seo";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
@@ -17,9 +15,9 @@ import NextLink from "next/link";
 import Layout from "@/components/layout";
 import { useRecoilState } from "recoil";
 import { clientStore, tokenStore } from "@/utils/stores";
+import Navbar from "@/components/navbar";
 
 export default function Login() {
-  const { t } = useTranslation("common");
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -47,46 +45,55 @@ export default function Login() {
     if (!client.EmailRegex.test(email)) {
       setError({ email: { Message: "Invalid email." } });
       setLoading(false);
-    } else if (!client.PasswordRegex.test(password)) {
+
+      return;
+    }
+
+    if (!client.PasswordRegex.test(password)) {
       setError({ password: { Message: "Invalid password." } });
       setLoading(false);
-    } else {
-      client
-        .loginAccount({ email, password, resetClient: true })
-        .then((data) => {
-          if (data.success) {
-            setToken(data.token);
-            client.connect();
-            router.push("/app");
-          }
 
-          if (data.errors) {
-            setLoading(false);
-            if (data.errors.email) {
-              setError({ email: { Message: "Invalid Email and or Password" } });
-            } else if (data.errors.password) {
-              setError({ email: { Message: "Invalid Email and or Password" } });
-            } else {
-              setError({ other: { Message: "Unknown error occurred." } });
-            }
-            return;
-          }
-
-          setLoading(false);
-          setError({ other: { Message: "Unknown error occurred." } });
-        })
-        .catch((err) => {
-          console.log("Login Client Error:\n", err);
-          setError({ other: { Message: "Unknown error occurred." } });
-          setLoading(false);
-        });
+      return;
     }
+
+    const loggedInAccount = await client.loginAccount({
+      email,
+      password,
+      resetClient: true,
+    });
+
+    console.log(loggedInAccount);
+
+    if (loggedInAccount.success) {
+      setToken(loggedInAccount.token);
+
+      client.connect();
+      router.push("/app");
+
+      return;
+    }
+
+    if (loggedInAccount.errors.email || loggedInAccount.errors.password) {
+      setError({ email: { Message: "Invalid Email and or Password" } });
+    } else if (loggedInAccount.errors.unknown) {
+      setError({
+        other: {
+          Message: `${Object.entries(loggedInAccount.errors.unknown).map(
+            ([k, obj]) => `${k} - ${obj.Message}`,
+          )}`,
+        },
+      });
+    } else {
+      setError({ other: { Message: "Unknown error occurred." } });
+    }
+
+    setLoading(false);
   };
 
   return (
     <>
-      <SEO title={t("login")} />
-
+      <SEO title={"Login"} />
+      <Navbar />
       <Layout>
         <form onSubmit={login}>
           <Box align={"center"} justify={"center"} position={"relative"}>
@@ -96,7 +103,7 @@ export default function Login() {
                   lineHeight={1.1}
                   fontSize={{ base: "3xl", sm: "4xl", md: "5xl", lg: "6xl" }}
                 >
-                  {t("login")}{" "}
+                  Login to{" "}
                   <Text
                     as={"span"}
                     bgGradient="linear(to-r, red.400,pink.400)"
@@ -193,7 +200,7 @@ export default function Login() {
                       mt={2}
                       direction={["column", "row"]}
                     >
-                      <NextLink href={"/register"}>
+                      <NextLink prefetch={false} href={"/register"}>
                         <Button
                           fontFamily={"heading"}
                           w={"full"}
@@ -204,11 +211,11 @@ export default function Login() {
                             boxShadow: "xl",
                           }}
                         >
-                          {t("register.title")}
+                          Create an Account
                         </Button>
                       </NextLink>
 
-                      <NextLink href={"/reset-password"}>
+                      <NextLink prefetch={false} href={"/reset-password"}>
                         <Button
                           fontFamily={"heading"}
                           w={"full"}
@@ -219,7 +226,7 @@ export default function Login() {
                             boxShadow: "xl",
                           }}
                         >
-                          {t("forgotPass")}
+                          Forgot Password?
                         </Button>
                       </NextLink>
                     </Stack>
@@ -233,9 +240,3 @@ export default function Login() {
     </>
   );
 }
-
-export const getStaticProps = async ({ locale }) => ({
-  props: {
-    ...(await serverSideTranslations(locale ?? "en", ["common"])),
-  },
-});

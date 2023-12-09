@@ -1,4 +1,5 @@
 {
+  "title": "App",
   "welcome": "Welcome {{name}}!",
   "selectMenus": {
     "guild": {
@@ -8,8 +9,8 @@
     }
   },
   "slowLoading": {
-    "message": "It looks like we're taking a while to connect to our servers. They might be down. You can check our status page",
-    "here": "here"
+    "message": "It looks like we're taking a while to connect to our servers.",
+    "button": "Status Page"
   },
   "quotes": [
     {

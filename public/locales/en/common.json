@@ -12,7 +12,7 @@
   },
   "notfound": {
     "title": "Page Not Found",
-    "message": "You just hit a route that doesn&apos;t exist...",
+    "message": "You just hit a route that doesn't exist...",
     "home": "Back to Home"
   },
   "register": {

@@ -2,7 +2,7 @@ import { BaseChannel, BaseGuild, Client } from "@kastelll/wrapper";
 import { RecoilState, SetterOrUpdater } from "recoil";
 
 export interface LastChannelCache {
-    [key: string]: string;
+  [key: string]: string;
 }
 
 export type ReadyState = RecoilState<boolean>;
@@ -16,11 +16,11 @@ export type CurrentGuildAtomType = RecoilState<BaseGuild | null>;
 export type CurrentChannelAtomType = RecoilState<BaseChannel | null>;
 
 export type Options = {
-    ready: SetterOrUpdater<BaseGuild[]>;
-    client: SetterOrUpdater<Client | null>;
-    token: SetterOrUpdater<string | null>;
-    channelBaseStore: SetterOrUpdater<BaseChannel[]>;
-    guildBaseStore: SetterOrUpdater<BaseGuild[]>;
-    currentGuild: SetterOrUpdater<BaseGuild | null>;
-    currentChannel: SetterOrUpdater<BaseChannel | null>;
-}
+  ready: SetterOrUpdater<BaseGuild[]>;
+  client: SetterOrUpdater<Client | null>;
+  token: SetterOrUpdater<string | null>;
+  channelBaseStore: SetterOrUpdater<BaseChannel[]>;
+  guildBaseStore: SetterOrUpdater<BaseGuild[]>;
+  currentGuild: SetterOrUpdater<BaseGuild | null>;
+  currentChannel: SetterOrUpdater<BaseChannel | null>;
+};

@@ -2,13 +2,13 @@ import { Box, Flex, useColorModeValue } from "@chakra-ui/react";
 
 const confetti = {
   light: {
-    primary: "4299E1", // blue.400
-    secondary: "BEE3F8", // blue.100
+    primary: "F56565", // red.400
+    secondary: "ED64A6", // pink.400
   },
 
   dark: {
-    primary: "1A365D", // blue.900
-    secondary: "2A4365", // blue.800
+    primary: "ED64A6", // blue.900
+    secondary: "F56565", // blue.800
   },
 };
 
@@ -28,11 +28,7 @@ const Layout = ({ children }) => {
         }}
         id="layout"
       >
-        <Box
-          borderRadius="lg"
-          m={{ base: 5, md: 16, lg: 10 }}
-          p={{ base: 5, lg: 16 }}
-        >
+        <Box borderRadius="lg" p={{ base: 5, lg: 16 }}>
           {children}
         </Box>
       </Flex>

@@ -1,32 +1,34 @@
-import { useTranslation } from "next-i18next";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useRouter } from "next/router";
-// import {initClient} from "@/utils/client";
 import { useRecoilState } from "recoil";
 import { clientStore, readyStore, tokenStore } from "@/utils/stores";
+import Loading from "@/components/app/loading";
+import SEO from "@/components/seo";
+import AppNavbar from "@/components/app/navbar";
+import { Box } from "@chakra-ui/react";
 
 export default function App() {
-  const { t } = useTranslation("app");
   const router = useRouter();
   const [token] = useRecoilState(tokenStore);
   const [client] = useRecoilState(clientStore);
-  const [ready] = useRecoilState(readyStore)
-  const [user, setUser] = useState(null);
+  const [ready] = useRecoilState(readyStore);
 
   useEffect(() => {
-    if (!token) {
-      return router.push("/login");
-    }
-
-    setUser(client?.users?.getCurrentUser())
+    if (!token) router.push("/login");
   }, [ready]);
 
-  return <>{t("welcome", { name: user?.username })}</>;
+  return (
+    <>
+      <SEO title={"App"} />
+      {ready ? (
+        <>
+          <Box>
+            <AppNavbar userInfo={client?.users?.getCurrentUser()} />
+          </Box>
+        </>
+      ) : (
+        <Loading />
+      )}
+    </>
+  );
 }
-
-export const getStaticProps = async ({ locale }) => ({
-  props: {
-    ...(await serverSideTranslations(locale ?? "en", ["app"])),
-  },
-});

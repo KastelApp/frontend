@@ -1,5 +1,3 @@
-import { useTranslation } from "next-i18next";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import SEO from "@/components/seo";
 import Layout from "@/components/layout";
 import {
@@ -21,15 +19,15 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { useRecoilState } from "recoil";
 import { clientStore, tokenStore } from "@/utils/stores";
+import Navbar from "@/components/navbar";
 
 export default function Register() {
-  const { t } = useTranslation("common");
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [terms, setTerms] = useState(false);
   const [error, setError] = useState(null);
   const [client] = useRecoilState(clientStore);
-  const [token] = useRecoilState(tokenStore);
+  const [token, setToken] = useRecoilState(tokenStore);
 
   useEffect(() => {
     router.prefetch("/app");
@@ -38,68 +36,90 @@ export default function Register() {
 
     if (token) {
       router.push("/app");
-
-      return;
-    } 
+    }
   }, [router, token]);
 
   const register = async (event) => {
     event.preventDefault();
     setLoading(true);
     setError(null);
-    console.log(terms);
 
-    let username = event.target.username.value;
-    let email = event.target.email.value;
-    let password = event.target.password.value;
-    let confirmPassword = event.target.confirmpassword.value;
+    const username = event.target.username.value;
+    const email = event.target.email.value;
+    const password = event.target.password.value;
+    const confirmPassword = event.target.confirmpassword.value;
 
     if (password !== confirmPassword) {
       setError({ password: { Message: "Passwords do not match." } });
       setLoading(false);
-    } else if (!terms) {
+    }
+
+    // Testing against the regexes (which should be the same that the backend uses) helps prevent unnecessary requests.
+    if (!client.EmailRegex.test(email)) {
+      setError({ email: { Message: "Invalid email." } });
+      setLoading(false);
+
+      return;
+    }
+
+    if (!client.PasswordRegex.test(password)) {
+      setError({ password: { Message: "Invalid password." } });
+      setLoading(false);
+
+      return;
+    }
+
+    if (!terms) {
       setError({ terms: { Message: "You must accept the terms of service." } });
       setLoading(false);
-    } else {
-      client
-        .registerAccount({ email, password, username, resetClient: true })
-        .then((data) => {
-          console.log(data);
-          if (data.success) {
-            console.log(data.token);
-            token.set(data.token);
 
-            client.connect();
-
-            router.push("/app");
-          }
-
-          if (data.errors) {
-            setLoading(false);
-            if (data.errors.email) {
-              setError({ email: { Message: "Invalid Email and or Password" } });
-            } else if (data.errors.password) {
-              setError({ email: { Message: "Invalid Email and or Password" } });
-            } else {
-              setError({ other: { Message: "Unknown error occurred." } });
-            }
-          }
-
-          setLoading(false);
-          setError({ other: { Message: "Unknown error occurred." } });
-        })
-        .catch((err) => {
-          console.log("Register Client Error:\n", err);
-          setError({ other: { Message: "Unknown error occurred." } });
-          setLoading(false);
-        });
+      return;
     }
+
+    const registeredAccount = await client.registerAccount({
+      email,
+      password,
+      username,
+      resetClient: true,
+    });
+
+    if (registeredAccount.success) {
+      setToken(registeredAccount.token);
+
+      client.connect();
+
+      router.push("/app");
+
+      return;
+    }
+
+    if (registeredAccount.errors.email || registeredAccount.errors.password) {
+      setError({ email: { Message: "Invalid Email and or Password" } });
+    } else if (registeredAccount.errors.username) {
+      setError({
+        username: {
+          Message: "Invalid Username (This username may be maxed out)",
+        },
+      });
+    } else if (registeredAccount.errors.unknown) {
+      setError({
+        other: {
+          Message: `${Object.entries(registeredAccount.errors.unknown).map(
+            ([k, obj]) => `${k} - ${obj.Message}`,
+          )}`,
+        },
+      });
+    } else {
+      setError({ other: { Message: "Unknown error occurred." } });
+    }
+
+    setLoading(false);
   };
 
   return (
     <>
-      <SEO title={t("register.title")} />
-
+      <SEO title={"Register"} />
+      <Navbar />
       <Layout>
         <form onSubmit={register}>
           <Box align={"center"} justify={"center"} position={"relative"}>
@@ -109,7 +129,7 @@ export default function Register() {
                   lineHeight={1.1}
                   fontSize={{ base: "3xl", sm: "4xl", md: "5xl", lg: "6xl" }}
                 >
-                  {t("register.message")}{" "}
+                  Register for{" "}
                   <Text
                     as={"span"}
                     bgGradient="linear(to-r, red.400,pink.400)"
@@ -144,7 +164,7 @@ export default function Register() {
                       )}
 
                       <FormControl id="username">
-                        <FormLabel>{t("register.username")}</FormLabel>
+                        <FormLabel>Username</FormLabel>
                         <Input
                           id={"username"}
                           required={true}
@@ -160,7 +180,7 @@ export default function Register() {
                       </FormControl>
 
                       <FormControl id="email">
-                        <FormLabel>{t("register.email")}</FormLabel>
+                        <FormLabel>Your Email</FormLabel>
                         <Input
                           id={"email"}
                           required={true}
@@ -176,7 +196,7 @@ export default function Register() {
                       </FormControl>
 
                       <FormControl id="password">
-                        <FormLabel>{t("register.password")}</FormLabel>
+                        <FormLabel>Password</FormLabel>
                         <Input
                           id={"password"}
                           required={true}
@@ -192,7 +212,7 @@ export default function Register() {
                       </FormControl>
 
                       <FormControl id="confirmpassword">
-                        <FormLabel>{t("register.confirmPassword")}</FormLabel>
+                        <FormLabel>Confirm Password</FormLabel>
                         <Input
                           id={"confirmpassword"}
                           required={true}
@@ -209,7 +229,7 @@ export default function Register() {
 
                       <Flex>
                         <Checkbox onChange={() => setTerms(!terms)}>
-                          {t("register.terms")}
+                          I agree to the Terms and Conditions
                         </Checkbox>
                       </Flex>
                     </Stack>
@@ -251,7 +271,7 @@ export default function Register() {
                       mt={2}
                       direction={["column", "row"]}
                     >
-                      <NextLink href={"/login"}>
+                      <NextLink prefetch={false} href={"/login"}>
                         <Button
                           fontFamily={"heading"}
                           w={"full"}
@@ -262,11 +282,11 @@ export default function Register() {
                             boxShadow: "xl",
                           }}
                         >
-                          {t("register.button")}
+                          Have an Account?
                         </Button>
                       </NextLink>
 
-                      <NextLink href={"/reset-password"}>
+                      <NextLink prefetch={false} href={"/reset-password"}>
                         <Button
                           fontFamily={"heading"}
                           w={"full"}
@@ -277,7 +297,7 @@ export default function Register() {
                             boxShadow: "xl",
                           }}
                         >
-                          {t("forgotPass")}
+                          Forgot Password?
                         </Button>
                       </NextLink>
                     </Stack>
@@ -291,9 +311,3 @@ export default function Register() {
     </>
   );
 }
-
-export const getStaticProps = async ({ locale }) => ({
-  props: {
-    ...(await serverSideTranslations(locale ?? "en", ["common"])),
-  },
-});
