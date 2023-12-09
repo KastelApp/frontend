@@ -28,10 +28,9 @@ refactoring code, etc)
 
 This project is licensed under the GPL-3.0 License, For more info please check [LICENSE.md](/LICENSE.md)
 
-# Analytics Information
+# Error Tracking Information
 
-Our analytics software is [Umami](https://umami.is/), We use it to track how many people visit our website and how many
-people use our app, We do not track any personal information, We only track the following:
+Our Tracking software is [Sentry](https://sentry.io), We use it to monitor and track errors that occur on our platform, We only track the following:
 
 - Browser
 - Operating System
