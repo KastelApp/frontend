@@ -51,16 +51,15 @@ const Navbar = () => {
           </Flex>
           <HStack display="flex" alignItems="center" spacing={1}>
             <HStack
-              spacing={1}
-              mr={1}
-              color="brand.500"
-              display={{
-                base: "none",
-                md: "inline-flex",
+                spacing={1}
+                mr={1}
+                color="brand.500"
+                display={{
+                  base: "none",
+                  md: "inline-flex",
               }}
             >
               <NextLink
-                isExternal
                 target={"_blank"}
                 href={"https://docs.kastelapp.com"}
               >
@@ -68,7 +67,6 @@ const Navbar = () => {
               </NextLink>
 
               <NextLink
-                isExternal
                 target={"_blank"}
                 href={"https://github.com/KastelApp"}
               >
@@ -76,7 +74,6 @@ const Navbar = () => {
               </NextLink>
 
               <NextLink
-                isExternal
                 target={"_blank"}
                 href={"https://discord.gg/f5HgvkRbVP"}
               >
