@@ -29,7 +29,10 @@ export default function AtMeMessages() {
       {ready ? (
         <>
           <Box>
-            <AppNavbar userInfo={client?.users?.getCurrentUser()} guilds={guilds} />
+            <AppNavbar
+              userInfo={client?.users?.getCurrentUser()}
+              guilds={guilds}
+            />
           </Box>
         </>
       ) : (

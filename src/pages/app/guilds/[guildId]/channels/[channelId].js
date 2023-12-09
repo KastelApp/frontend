@@ -6,7 +6,8 @@ import {
   guildStore,
   readyStore,
   currentGuild,
-  currentChannel, tokenStore,
+  currentChannel,
+  tokenStore,
 } from "@/utils/stores";
 import { Box, Text } from "@chakra-ui/react";
 import AppNavbar from "@/components/app/navbar";
@@ -56,7 +57,10 @@ const GuildChannelPage = () => {
       {ready ? (
         <>
           <Box>
-            <AppNavbar userInfo={client?.users?.getCurrentUser()} guilds={guilds} />
+            <AppNavbar
+              userInfo={client?.users?.getCurrentUser()}
+              guilds={guilds}
+            />
             <SEO title={guild?.name || "Loading"} />
             <GuildSideBar userInfo={client?.users?.getCurrentUser()}>
               <Text>
