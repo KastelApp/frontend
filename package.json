@@ -1,6 +1,6 @@
 {
   "name": "kastel-frontend",
-  "version": "0.0.39",
+  "version": "0.0.40",
   "scripts": {
     "git-info": "node src/gitInfo.js",
     "dev": "npm run git-info && next dev",
@@ -18,7 +18,7 @@
     "@chakra-ui/theme-tools": "^2.1.2",
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
-    "@kastelll/wrapper": "0.1.9-beta.9",
+    "@kastelll/wrapper": "0.1.9-beta.18",
     "@sentry/nextjs": "^7.80.1",
     "framer-motion": "^10.16.4",
     "i18next": "^23.7.6",
