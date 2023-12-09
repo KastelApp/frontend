@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useRouter } from "next/router";
 import { useRecoilState } from "recoil";
 import {
@@ -17,12 +17,10 @@ export default function App() {
   const [token] = useRecoilState(tokenStore);
   const [client] = useRecoilState(clientStore);
   const [ready] = useRecoilState(readyStore);
-  const [user, setUser] = useState(null);
   const [guilds] = useRecoilState(guildStore);
 
   useEffect(() => {
-    if (!token) return router.push("/login");
-    setUser(client?.users?.getCurrentUser());
+    if (!token) router.push("/login");
   }, [ready]);
 
   return (
@@ -31,7 +29,7 @@ export default function App() {
       {ready ? (
         <>
           <Box>
-            <AppNavbar userInfo={user} guilds={guilds} />
+            <AppNavbar userInfo={client?.users?.getCurrentUser()} guilds={guilds} />
           </Box>
         </>
       ) : (
