@@ -19,6 +19,7 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { useRecoilState } from "recoil";
 import { clientStore, tokenStore } from "@/utils/stores";
+import Navbar from "@/components/navbar";
 
 export default function Register() {
   const router = useRouter();
@@ -118,7 +119,7 @@ export default function Register() {
   return (
     <>
       <SEO title={"Register"} />
-
+      <Navbar />
       <Layout>
         <form onSubmit={register}>
           <Box align={"center"} justify={"center"} position={"relative"}>

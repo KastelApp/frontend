@@ -15,6 +15,7 @@ import NextLink from "next/link";
 import Layout from "@/components/layout";
 import { useRecoilState } from "recoil";
 import { clientStore, tokenStore } from "@/utils/stores";
+import Navbar from "@/components/navbar";
 
 export default function Login() {
   const router = useRouter();
@@ -92,7 +93,7 @@ export default function Login() {
   return (
     <>
       <SEO title={"Login"} />
-
+      <Navbar />
       <Layout>
         <form onSubmit={login}>
           <Box align={"center"} justify={"center"} position={"relative"}>

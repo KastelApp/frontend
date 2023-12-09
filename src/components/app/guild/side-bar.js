@@ -4,10 +4,10 @@ import {
   Flex,
   Menu,
   MenuButton,
-  Button,
   MenuList,
   MenuItem,
   useDisclosure,
+  HStack,
 } from "@chakra-ui/react";
 
 import {
@@ -49,8 +49,8 @@ export default function GuildSideBar() {
   } = useDisclosure();
 
   function getGuildName(name) {
-    if (name.length > 12) {
-      return name.slice(0, 12) + "...";
+    if (name.length > 10) {
+      return name.slice(0, 10);
     } else {
       return name;
     }
@@ -90,20 +90,18 @@ export default function GuildSideBar() {
         w={"191px"}
       >
         <Flex px="4" py="5" align="center">
-          <Menu as={Button} zIndex={100}>
-            <MenuButton>
-              <Text
-                fontSize="2xl"
-                ml="2"
-                color="brand.500"
-                _dark={{
-                  color: "white",
-                }}
-                fontWeight="semibold"
-              >
-                {getGuildName(guild?.name || "Loading")}
-                <ChevronDownIcon ml={5} />
-              </Text>
+          <Menu>
+            <MenuButton
+              as={HStack}
+              fontSize="2xl"
+              color="brand.500"
+              _dark={{ color: "white" }}
+              fontWeight="semibold"
+              justifyContent="space-between"
+              overflow="hidden"
+            >
+              <Text isTruncated>{getGuildName(guild?.name || "Loading")}</Text>
+              <ChevronDownIcon />
             </MenuButton>
             <MenuList>
               <MenuItem onClick={settingsOnOpen} icon={<SettingsIcon />}>

@@ -8,6 +8,7 @@ import {
 } from "@chakra-ui/react";
 import NextLink from "next/link";
 import SEO from "@/components/seo";
+import Navbar from "@/components/navbar";
 
 const confetti = {
   light: {
@@ -28,13 +29,13 @@ function NotFoundPage() {
   return (
     <>
       <SEO title={"Page Not Found"} />
-
+      <Navbar />
       <Flex
         css={{
           backgroundImage: useColorModeValue(CONFETTI_LIGHT, CONFETTI_DARK),
           backgroundAttachment: "fixed",
         }}
-        minH={"100vh"}
+        minH={"80vh"}
         align={"center"}
         justify={"center"}
       >
