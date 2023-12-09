@@ -17,7 +17,7 @@ import { useEffect, useState } from "react";
 const Navbar = () => {
   const bg = useColorModeValue("white", "gray.900");
   const mobileNav = useDisclosure();
-  const [ token, setToken ] = useState(false);
+  const [token, setToken] = useState(false);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
