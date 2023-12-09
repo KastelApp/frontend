@@ -24,7 +24,7 @@ import {
 } from "react-icons/fa";
 import Settings from "@/components/app/settings";
 import { useRecoilState } from "recoil";
-import { clientStore, tokenStore } from "@/utils/stores";
+import {clientStore, guildStore, tokenStore} from "@/utils/stores";
 import { useRouter } from "next/router";
 import NewGuild from "@/components/app/new-guild";
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
@@ -40,30 +40,14 @@ const reorder = (list, startIndex, endIndex) => {
   return result;
 };
 
-export default function AppNavbar({ userInfo, guilds }) {
+export default function AppNavbar({ userInfo }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [client] = useRecoilState(clientStore);
   // eslint-disable-next-line no-unused-vars
   const [_, setToken] = useRecoilState(tokenStore);
   const router = useRouter();
   const isSmallScreen = useBreakpointValue({ base: true, sm: false });
-  const [guildList, setGuildList] = useState(guilds);
-
-  useEffect(() => {
-    // Check if the guilds you want to add isn't already in the guildList
-    if (!guildList.some((guild) => guild.id === guilds.id)) {
-      // Use the spread operator to create a new array with the existing guildList and the new guilds
-      setGuildList((prevGuildList) => [...prevGuildList, guilds]);
-    }
-  }, []);
-
-  useEffect(() => {
-    // on guild list update check for dupes
-    if (!guildList.some((guild) => guild.id === guilds.id)) {
-      // Use the spread operator to create a new array with the existing guildList and the new guilds
-      setGuildList((prevGuildList) => [...prevGuildList, guilds]);
-    }
-  }, [guilds]);
+  const [guilds, setGuilds] = useRecoilState(guildStore);
 
   function handleLogout() {
     client.logout();
@@ -79,12 +63,12 @@ export default function AppNavbar({ userInfo, guilds }) {
     }
 
     const items = reorder(
-      guildList,
+        guilds,
       result.source.index,
       result.destination.index,
     );
 
-    setGuildList(items);
+    setGuilds(items);
 
     // todo - save new positioned guilds
   }
@@ -160,8 +144,8 @@ export default function AppNavbar({ userInfo, guilds }) {
                       {...provided.droppableProps}
                     >
                       {provided.placeholder}
-                      {guildList &&
-                        guildList.map((guild, index) => {
+                      {guilds &&
+                        guilds.map((guild, index) => {
                           if (!guild?.id) return;
                           return (
                             <Draggable

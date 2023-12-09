@@ -3,7 +3,6 @@ import { useRouter } from "next/router";
 import { useRecoilState } from "recoil";
 import {
   clientStore,
-  guildStore,
   readyStore,
   tokenStore,
 } from "@/utils/stores";
@@ -17,7 +16,6 @@ export default function AtMeMessages() {
   const [token] = useRecoilState(tokenStore);
   const [client] = useRecoilState(clientStore);
   const [ready] = useRecoilState(readyStore);
-  const [guilds] = useRecoilState(guildStore);
 
   useEffect(() => {
     if (!token) router.push("/login");
@@ -31,7 +29,6 @@ export default function AtMeMessages() {
           <Box>
             <AppNavbar
               userInfo={client?.users?.getCurrentUser()}
-              guilds={guilds}
             />
           </Box>
         </>

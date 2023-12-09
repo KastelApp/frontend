@@ -3,7 +3,6 @@ import { useEffect } from "react";
 import { useRecoilState } from "recoil";
 import {
   clientStore,
-  guildStore,
   readyStore,
   currentGuild,
   currentChannel,
@@ -21,7 +20,6 @@ const GuildChannelPage = () => {
   const [token] = useRecoilState(tokenStore);
   const [client] = useRecoilState(clientStore);
   const [ready] = useRecoilState(readyStore);
-  const [guilds] = useRecoilState(guildStore);
   // const [token, setToken] = useRecoilState(tokenStore);
   const [guild, setGuild] = useRecoilState(currentGuild);
   const [channel, setChannel] = useRecoilState(currentChannel);
@@ -59,7 +57,6 @@ const GuildChannelPage = () => {
           <Box>
             <AppNavbar
               userInfo={client?.users?.getCurrentUser()}
-              guilds={guilds}
             />
             <SEO title={guild?.name || "Loading"} />
             <GuildSideBar userInfo={client?.users?.getCurrentUser()}>
