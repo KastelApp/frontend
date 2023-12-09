@@ -12,10 +12,17 @@ import {
 } from "@chakra-ui/react";
 import { AiOutlineMenu } from "react-icons/ai";
 import NextLink from "next/link";
+import { useEffect, useState } from "react";
 
 const Navbar = () => {
   const bg = useColorModeValue("white", "gray.900");
   const mobileNav = useDisclosure();
+  const [ token, setToken ] = useState(false);
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) setToken(true);
+  }, []);
 
   return (
     <>
@@ -76,7 +83,7 @@ const Navbar = () => {
                 <Button variant="ghost">Discord</Button>
               </NextLink>
             </HStack>
-            <NextLink href={"/login"}>
+            <NextLink href={token ? "/app" : "/login"}>
               <Button
                 _hover={{
                   bgGradient: "linear(to-r, red.400,pink.400)",
@@ -86,7 +93,7 @@ const Navbar = () => {
                 color={"white"}
                 size="sm"
               >
-                Login!
+                {token ? "Open App" : "Login"}
               </Button>
             </NextLink>
             <Box
