@@ -55,9 +55,7 @@ const GuildChannelPage = () => {
       {ready ? (
         <>
           <Box>
-            <AppNavbar
-              userInfo={client?.users?.getCurrentUser()}
-            />
+            <AppNavbar userInfo={client?.users?.getCurrentUser()} />
             <SEO title={guild?.name || "Loading"} />
             <GuildSideBar userInfo={client?.users?.getCurrentUser()}>
               <Text>

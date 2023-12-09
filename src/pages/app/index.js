@@ -1,11 +1,7 @@
 import { useEffect } from "react";
 import { useRouter } from "next/router";
 import { useRecoilState } from "recoil";
-import {
-  clientStore,
-  readyStore,
-  tokenStore,
-} from "@/utils/stores";
+import { clientStore, readyStore, tokenStore } from "@/utils/stores";
 import Loading from "@/components/app/loading";
 import SEO from "@/components/seo";
 import AppNavbar from "@/components/app/navbar";
@@ -27,9 +23,7 @@ export default function App() {
       {ready ? (
         <>
           <Box>
-            <AppNavbar
-              userInfo={client?.users?.getCurrentUser()}
-            />
+            <AppNavbar userInfo={client?.users?.getCurrentUser()} />
           </Box>
         </>
       ) : (

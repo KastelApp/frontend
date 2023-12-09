@@ -24,11 +24,10 @@ import {
 } from "react-icons/fa";
 import Settings from "@/components/app/settings";
 import { useRecoilState } from "recoil";
-import {clientStore, guildStore, tokenStore} from "@/utils/stores";
+import { clientStore, guildStore, tokenStore } from "@/utils/stores";
 import { useRouter } from "next/router";
 import NewGuild from "@/components/app/new-guild";
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
-import { useEffect, useState } from "react";
 import NextLink from "next/link";
 import getInitials from "@/utils/getGuildInitals";
 
@@ -63,7 +62,7 @@ export default function AppNavbar({ userInfo }) {
     }
 
     const items = reorder(
-        guilds,
+      guilds,
       result.source.index,
       result.destination.index,
     );
