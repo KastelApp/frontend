@@ -15,12 +15,14 @@ import {
 } from "@chakra-ui/react";
 import { useRecoilState } from "recoil";
 import { currentChannel, currentGuild } from "@/utils/stores";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 export default function GuildInvites({ isOpen, onClose }) {
   const { onCopy, value, setValue, hasCopied } = useClipboard("");
   const [guild] = useRecoilState(currentGuild);
   const [channel] = useRecoilState(currentChannel);
+  const [, setInvites] = useState([]);
+  const [invite, setInvite] = useState(null);
 
   function getGuildName(name) {
     if (name.length > 10) {
@@ -34,13 +36,30 @@ export default function GuildInvites({ isOpen, onClose }) {
     async function getInvite() {
       if (guild) {
 
-        let invite = await channel.createInvite({});
+        if (invite) {
+          setValue(invite);
+
+          return;
+        }
+
+        const invites = await guild.fetchMyInvites();
+
+        setInvites(invites); // darkerink: display these invites, these are invites already made
+
+        let createdInvite = await channel.createInvite({
+          expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7), // 7 days
+          maxUses: 0 // unlimited
+        });
         
-        if (invite.success) {
-          setValue(`${document.location.protocol}//${document.location.hostname}/invite/${invite.code}`);
+        if (createdInvite.success) {
+          const inv = `${document.location.protocol}//${document.location.hostname}/invite/${createdInvite.code}`;
+
+          setValue(inv);
+          setInvite(inv); // darkerink: we set the invite so we don't keep creating em.
         }
       }
     }
+    
     if (isOpen) {
       getInvite();
     }
