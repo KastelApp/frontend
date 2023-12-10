@@ -1,5 +1,3 @@
-const fs = require("fs");
-const path = require("path");
 const { execSync } = require("child_process");
 
 const execSyncWrapper = (command) => {
@@ -12,7 +10,7 @@ const execSyncWrapper = (command) => {
   return stdout;
 };
 
-const main = () => {
+const fetchInfo = () => {
   let gitBranch = execSyncWrapper("git rev-parse --abbrev-ref HEAD");
   let gitCommitHash = execSyncWrapper("git rev-parse --short=7 HEAD");
 
@@ -21,11 +19,9 @@ const main = () => {
     gitCommitHash,
   };
 
-  const filePath = path.resolve("src", "generatedGitInfo.json");
-  const fileContents = JSON.stringify(obj, null, 2);
-
-  fs.writeFileSync(filePath, fileContents);
-  console.log(`Wrote the following contents to ${filePath}\n${fileContents}`);
+  return obj;
 };
 
-main();
+module.exports = {
+  fetchInfo,
+}

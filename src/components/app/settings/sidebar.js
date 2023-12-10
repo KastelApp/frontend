@@ -12,7 +12,6 @@ import {
 } from "@chakra-ui/react";
 import { FiMenu } from "react-icons/fi";
 import pack from "../../../../package.json";
-import generatedGitInfo from "../../../generatedGitInfo.json";
 
 const data = [
   {
@@ -212,8 +211,8 @@ const SidebarContent = ({
           mb="5"
           textTransform="uppercase"
         >
-          {generatedGitInfo.gitBranch} {pack?.version || "0.0.0"} (
-          {generatedGitInfo.gitCommitHash})
+          {process.env.PUBLIC_GIT_BRANCH} {pack?.version || "0.0.0"} (
+          {process.env.PUBLIC_GIT_COMMIT})
         </Text>
       </Box>
     </Box>

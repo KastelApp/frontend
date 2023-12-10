@@ -2,12 +2,11 @@
   "name": "kastel-frontend",
   "version": "0.0.46",
   "scripts": {
-    "git-info": "node src/gitInfo.js",
-    "dev": "npm run git-info && next dev",
-    "build": "npm run git-info && next build",
+    "dev": "next dev",
+    "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "format": "npm run git-info && prettier --write . && eslint src --ext .js,.ts --fix"
+    "format": "prettier --write . && eslint src --ext .js,.ts --fix"
   },
   "dependencies": {
     "@chakra-ui/anatomy": "^2.2.2",
