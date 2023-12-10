@@ -31,7 +31,7 @@ export default function Home() {
               <br />
               On the {generatedGitInfo?.gitBranch || "Development"} branch
 
-              Testing - {process.env.CF_PAGES_BRANCH}
+              Testing - {process.env.PUBLIC_GIT_BRANCH}
             </Text>
 
             <NextLink href={"/register"}>
