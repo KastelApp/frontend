@@ -28,6 +28,7 @@ import { FiPlus } from "react-icons/fi";
 import { useRef, useState } from "react";
 import { useRecoilState } from "recoil";
 import { clientStore } from "@/utils/stores";
+import { useRouter } from "next/router";
 
 const NewGuild = () => {
   const modal = useDisclosure();
@@ -275,21 +276,78 @@ function NewServerForm({ modal, setForm }) {
   );
 }
 
-function JoinServer({ /* modal, */ setForm }) {
+function JoinServer({ modal, setForm }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  // const [client] = useRecoilState(clientStore);
+  const [client] = useRecoilState(clientStore);
+  const router = useRouter();
+
+  function getLastParam(link) {
+    const parts = link.split("/");
+    const lastPart = parts[parts.length - 1];
+
+    if (lastPart !== link) {
+      return lastPart; // Return the last part if '/' is present
+    } else {
+      return link; // Return the input as it is (no '/' found)
+    }
+  }
 
   const submit = async (event) => {
     event.preventDefault();
     setLoading(true);
-    setLoading(false);
-    setError([
-      {
-        code: "TBA",
-        message: "This is not done yet.",
-      },
-    ]);
+    setError(null);
+
+    let inviteLink = event.target.invite.value;
+    if (!inviteLink) {
+      setLoading(false);
+      setError([
+        {
+          code: "MISSING_INVITE",
+          message: "Please enter a invite link.",
+        },
+      ]);
+    }
+    try {
+      let inviteCode = getLastParam(inviteLink);
+      let inviteFetch = await client.fetchInvite(inviteCode);
+      if (inviteFetch.success) {
+        let join = await client.joinInvite(inviteCode);
+        if (join) {
+          setLoading(false);
+          setError(null);
+          modal.onClose();
+          router.push(
+            `/app/guilds/${inviteFetch?.guild?.id}/channels/${inviteFetch?.channel?.id}}`,
+          );
+          return;
+        }
+        setLoading(false);
+        setError([
+          {
+            code: "INVITE",
+            message: "The invite link is invalid or expired.",
+          },
+        ]);
+        return;
+      }
+      setLoading(false);
+      setError([
+        {
+          code: "INVITE",
+          message: "The invite link is invalid or expired.",
+        },
+      ]);
+    } catch (e) {
+      console.log(e);
+      setLoading(false);
+      setError([
+        {
+          code: "UNKNOWN",
+          message: "An error occurred, check logs.",
+        },
+      ]);
+    }
   };
 
   return (
