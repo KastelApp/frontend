@@ -33,6 +33,9 @@ export default function GuildInvites({ isOpen, onClose }) {
   useEffect(() => {
     async function getInvite() {
       if (guild) {
+
+        console.log(channel);
+
         let invite = await channel.createInvite({});
         if (invite.success) {
           setValue(`https://development.kastelapp.com/invite/${invite.code}`);

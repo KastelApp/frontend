@@ -29,7 +29,7 @@ export default function Home() {
             <Text fontSize={"xl"} color={"gray.500"}>
               You are viewing version {pack?.version || "0.0.0"}
               <br />
-              On the {generatedGitInfo?.gitBranch || "Development"} branch
+              On the {process.env.PUBLIC_GIT_BRANCH} branch
             </Text>
 
             <NextLink href={"/register"}>
