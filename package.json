@@ -2,12 +2,11 @@
   "name": "kastel-frontend",
   "version": "0.0.46",
   "scripts": {
-    "git-info": "node src/gitInfo.js",
-    "dev": "npm run git-info && next dev",
-    "build": "npm run git-info && next build",
+    "dev": "next dev",
+    "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "format": "npm run git-info && prettier --write . && eslint src --ext .js,.ts --fix"
+    "format": "prettier --write . && eslint src --ext .js,.ts --fix"
   },
   "dependencies": {
     "@chakra-ui/anatomy": "^2.2.2",
@@ -18,7 +17,7 @@
     "@chakra-ui/theme-tools": "^2.1.2",
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
-    "@kastelll/wrapper": "0.1.9-beta.18",
+    "@kastelll/wrapper": "0.1.9-beta.25",
     "@sentry/nextjs": "^7.80.1",
     "framer-motion": "^10.16.4",
     "i18next": "^23.7.6",
