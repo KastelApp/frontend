@@ -1,6 +1,6 @@
 import SEO from "@/components/seo";
 import Layout from "@/components/layout";
-import { Box, Button, Container, Heading, Stack } from "@chakra-ui/react";
+import { Button, Container, Heading, Stack, Text } from "@chakra-ui/react";
 import Navbar from "@/components/navbar";
 import { useRecoilState } from "recoil";
 import { clientStore, tokenStore } from "@/utils/stores";
@@ -13,8 +13,8 @@ export default function Invite() {
   const [token] = useRecoilState(tokenStore);
   const [loading, setLoading] = useState(true);
   const [client] = useRecoilState(clientStore);
-  const [guild, setGuild] = useState(null);
   const [error, setError] = useState(null);
+  const [inviteInfo, setInviteInfo] = useState(null);
 
   useEffect(() => {
     if (!token) {
@@ -26,55 +26,97 @@ export default function Invite() {
   useEffect(() => {
     async function processInvite() {
       if (router.query.code) {
-        // todo - if valid, join guild
         let inviteCode = router.query.code;
         let inviteFetch = await client.fetchInvite(inviteCode);
         if (inviteFetch.success) {
           if (inviteFetch.guild) {
-            setGuild(inviteFetch.guild);
+            setInviteInfo(inviteFetch);
+            setLoading(false);
+            return;
           }
         }
         setLoading(false);
-        setError(0); // invite invalid or expired.
+        setError(1); // invite invalid or expired.
       }
     }
     processInvite();
   }, [router.query.code]);
 
+  async function joinGuild() {
+    let join = await client.joinInvite(inviteInfo?.code);
+    if (join) {
+      setError(null);
+      router.push(
+        `/app/guilds/${inviteInfo?.guild?.id}/channels/${inviteInfo?.channel?.id}}`,
+      );
+    } else {
+      setError(1);
+    }
+  }
+
   return (
     <>
-      <SEO title={guild ? `${guild?.name}` : "Invite"} />
+      <SEO title={inviteInfo?.guild ? `${inviteInfo.guild?.name}` : "Invite"} />
       <Navbar />
       <Layout>
         <Container maxW={"3xl"}>
-          <Stack
-            as={Box}
-            textAlign={"center"}
-            align={"center"}
-            spacing={{ base: 4, md: 10 }}
-          >
-            <Heading fontWeight={600} lineHeight={"110%"}>
-              Still under construction!
-            </Heading>
-
-            <NextLink href={"/app"}>
-              <Button
-                rounded={"full"}
-                px={6}
-                _hover={{
-                  bgGradient: "linear(to-r, red.400,pink.400)",
-                  boxShadow: "xl",
-                }}
-                bgGradient="linear(to-r, red.400,pink.400)"
-              >
-                Enter App
-              </Button>
-            </NextLink>
-          </Stack>
-
-          {/* temp */}
-          {error ? "" : ""}
-          {loading ? "" : ""}
+          {loading ? (
+            <>
+              <Heading as={"h1"} size={"lg"} mb={4}>
+                Loading...
+              </Heading>
+            </>
+          ) : (
+            <>
+              {error ? (
+                <>
+                  {error === 1 && (
+                    <>
+                      <Stack justify={"center"} align={"center"} spacing={4}>
+                        <Heading as={"h1"} size={"lg"} mb={4}>
+                          Invite Invalid or Expired.
+                        </Heading>
+                        <NextLink href={"/"} passHref>
+                          <Button
+                            _hover={{
+                              bgGradient: "linear(to-r, red.400,pink.400)",
+                              boxShadow: "xl",
+                            }}
+                            bgGradient="linear(to-r, red.400,pink.400)"
+                          >
+                            Back to Home
+                          </Button>
+                        </NextLink>
+                      </Stack>
+                    </>
+                  )}
+                </>
+              ) : (
+                <>
+                  {inviteInfo?.guild && (
+                    <>
+                      <Stack justify={"center"} align={"center"} spacing={4}>
+                        <Heading as={"h1"} size={"lg"} mb={2}>
+                          {inviteInfo.guild?.name}
+                        </Heading>
+                        <Text>Invited by {inviteInfo.creator.username}</Text>
+                        <Button
+                          _hover={{
+                            bgGradient: "linear(to-r, red.400,pink.400)",
+                            boxShadow: "xl",
+                          }}
+                          bgGradient="linear(to-r, red.400,pink.400)"
+                          onClick={joinGuild}
+                        >
+                          Join Guild
+                        </Button>
+                      </Stack>
+                    </>
+                  )}
+                </>
+              )}
+            </>
+          )}
         </Container>
       </Layout>
     </>
