@@ -35,7 +35,7 @@ export default function GuildInvites({ isOpen, onClose }) {
       if (guild) {
         let invite = await channel.createInvite({});
         if (invite.success) {
-          setValue(`https://kastelapp.com/invite/${invite.code}`);
+          setValue(`https://development.kastelapp.com/invite/${invite.code}`);
         }
       }
     }
