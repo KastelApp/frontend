@@ -18,7 +18,7 @@
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
     "@kastelll/wrapper": "0.1.9-beta.25",
-    "@sentry/nextjs": "^7.80.1",
+    "@sentry/nextjs": "^7.86.0",
     "framer-motion": "^10.16.4",
     "i18next": "^23.7.6",
     "next": "14.0.2",
