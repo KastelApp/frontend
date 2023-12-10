@@ -35,6 +35,7 @@ const NewGuild = () => {
   const [form, setForm] = useState(0);
 
   function handleClose() {
+    setForm(0);
     modal.onClose();
   }
 
