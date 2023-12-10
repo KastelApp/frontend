@@ -39,7 +39,9 @@ export default function GuildInvites({ isOpen, onClose }) {
         }
       }
     }
-    getInvite();
+    if (isOpen) {
+      getInvite();
+    }
   }, [isOpen]);
 
   return (
