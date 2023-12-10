@@ -3,7 +3,6 @@ import Layout from "@/components/layout";
 import { Box, Button, Container, Heading, Stack, Text } from "@chakra-ui/react";
 import Navbar from "@/components/navbar";
 import pack from "../../package.json";
-import generatedGitInfo from "../generatedGitInfo.json";
 import NextLink from "next/link";
 
 export default function Home() {
