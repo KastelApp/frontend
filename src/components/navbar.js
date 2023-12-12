@@ -34,7 +34,6 @@ const Navbar = () => {
           sm: 4,
         }}
         py={4}
-        shadow="md"
       >
         <Flex alignItems="center" justifyContent="space-between" mx="auto">
           <Flex>

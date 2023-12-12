@@ -19,7 +19,6 @@ const Layout = ({ children }) => {
   return (
     <>
       <Flex
-        bg={useColorModeValue("gray.100", "gray.900")}
         align="center"
         justify="center"
         minHeight="80vh"
