@@ -14,14 +14,12 @@ const fetchInfo = () => {
   let gitBranch = execSyncWrapper("git rev-parse --abbrev-ref HEAD");
   let gitCommitHash = execSyncWrapper("git rev-parse --short=7 HEAD");
 
-  const obj = {
+  return {
     gitBranch,
     gitCommitHash,
   };
-
-  return obj;
 };
 
 module.exports = {
   fetchInfo,
-}
+};

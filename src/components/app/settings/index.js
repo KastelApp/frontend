@@ -3,6 +3,7 @@ import {
   ModalCloseButton,
   ModalContent,
   ModalOverlay,
+  useColorModeValue,
 } from "@chakra-ui/react";
 import Settings_Sidebar from "@/components/app/settings/sidebar";
 import { useState } from "react";
@@ -35,7 +36,12 @@ export default function Settings({ userInfo, isOpen, onClose }) {
    */
 
   return (
-    <Modal variant={"dark"} isOpen={isOpen} onClose={onClose} size="full">
+    <Modal
+      variant={useColorModeValue("light", "dark")}
+      isOpen={isOpen}
+      onClose={onClose}
+      size="full"
+    >
       <ModalOverlay />
       <ModalContent margin={0} rounded="none">
         <ModalCloseButton />

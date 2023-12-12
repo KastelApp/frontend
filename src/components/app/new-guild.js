@@ -44,7 +44,7 @@ const NewGuild = () => {
       <Box>
         <IconButton
           onClick={modal.onOpen}
-          colorScheme="teal"
+          colorScheme="blue"
           aria-label="New"
           boxSize="40px"
           borderRadius="full"

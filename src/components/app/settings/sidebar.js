@@ -131,7 +131,7 @@ const SidebarContent = ({
 }) => {
   return (
     <Box
-      bg={useColorModeValue("white", "gray.900")}
+      bg={useColorModeValue("white", "gray.800")}
       borderRight="1px"
       borderRightColor={useColorModeValue("gray.200", "gray.700")}
       w={{ base: "full", md: 60 }}
@@ -220,6 +220,9 @@ const SidebarContent = ({
 };
 
 const NavItem = ({ selectedPage, id, icon, children, ...rest }) => {
+  let background = useColorModeValue("gray.100", "gray.700");
+  let backgroundHover = useColorModeValue("gray.200", "gray.600");
+
   return (
     <Box
       as="a"
@@ -234,11 +237,9 @@ const NavItem = ({ selectedPage, id, icon, children, ...rest }) => {
           borderRadius="lg"
           role="group"
           cursor="pointer"
-          bg={"gray.700"}
-          color={"white"}
+          bg={background}
           _hover={{
-            bg: "gray.600",
-            color: "white",
+            bg: backgroundHover,
           }}
           {...rest}
         >
@@ -263,8 +264,7 @@ const NavItem = ({ selectedPage, id, icon, children, ...rest }) => {
           role="group"
           cursor="pointer"
           _hover={{
-            bg: "gray.800",
-            color: "white",
+            bg: background,
           }}
           {...rest}
         >

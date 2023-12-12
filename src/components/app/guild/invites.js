@@ -35,7 +35,6 @@ export default function GuildInvites({ isOpen, onClose }) {
   useEffect(() => {
     async function getInvite() {
       if (guild) {
-
         if (invite) {
           setValue(invite);
 
@@ -48,9 +47,9 @@ export default function GuildInvites({ isOpen, onClose }) {
 
         let createdInvite = await channel.createInvite({
           expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7), // 7 days
-          maxUses: 0 // unlimited
+          maxUses: 0, // unlimited
         });
-        
+
         if (createdInvite.success) {
           const inv = `${document.location.protocol}//${document.location.hostname}/invite/${createdInvite.code}`;
 
@@ -59,7 +58,7 @@ export default function GuildInvites({ isOpen, onClose }) {
         }
       }
     }
-    
+
     if (isOpen) {
       getInvite();
     }

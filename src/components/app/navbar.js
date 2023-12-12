@@ -12,6 +12,7 @@ import {
   PopoverTrigger,
   Stack,
   useBreakpointValue,
+  useColorModeValue,
   useDisclosure,
 } from "@chakra-ui/react";
 import Link from "next/link";
@@ -78,7 +79,8 @@ export default function AppNavbar({ userInfo }) {
 
       <Flex w="full" h="14" alignItems="center" pos="fixed" bottom="2" px="3">
         <Flex
-          bg={"gray.700"}
+          bg={useColorModeValue("gray.100", "gray.800")}
+          color={useColorModeValue("gray.700", "gray.200")}
           boxShadow="xl"
           px="5"
           w="full"
@@ -292,17 +294,21 @@ function Guild({ provided, guild }) {
             flexDirection="column"
             justifyContent="center"
             alignItems="center"
-            bg={"gray.600"}
+            bg={useColorModeValue("gray.200", "gray.700")}
             rounded={"50px"}
             w={"40px"}
             h={"40px"}
             textAlign="center"
             _hover={{
-              bg: "gray.500",
-              rounded: "40px",
+              bg: useColorModeValue("gray.300", "gray.600"),
+              rounded: "10px",
             }}
           >
-            <Image src={guild?.Icon} alt={getInitials(guild?.name)} />
+            <Image
+              color={useColorModeValue("gray.700", "gray.200")}
+              src={guild?.Icon}
+              alt={getInitials(guild?.name)}
+            />
           </Flex>
         </Box>
       </Box>
