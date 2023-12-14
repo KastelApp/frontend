@@ -13,6 +13,7 @@ import {
 } from "@chakra-ui/react";
 
 import {
+  AddIcon,
   BellIcon,
   ChevronDownIcon,
   ChevronUpIcon,
@@ -74,8 +75,6 @@ export default function GuildSideBar() {
 
       const canAccess = guild.permissions.hasAnyRole("ManageGuild");
 
-      console.log(canAccess);
-
       setAccessSettings(canAccess);
     }
   }, [currentGuild, guild]);
@@ -113,22 +112,28 @@ export default function GuildSideBar() {
                       {isOpen ? <ChevronUpIcon /> : <ChevronDownIcon />}
                     </HStack>
                   </MenuButton>
-                  <MenuList maxW={"10%"}>
+                  <MenuList>
                     {canAccessSettings && (
                       <MenuItem
                         onClick={settingsOnOpen}
                         icon={<SettingsIcon />}
                       >
-                        Settings
+                        Guild Settings
                       </MenuItem>
                     )}
 
-                    <MenuItem onClick={invitesOnOpen} icon={<SettingsIcon />}>
-                      Invite
+                    <MenuItem onClick={invitesOnOpen} icon={<AddIcon />}>
+                      Invite Friends
                     </MenuItem>
                     <MenuItem icon={<BellIcon />}>Notifications</MenuItem>
-                    <MenuDivider />
-                    <MenuItem icon={<DeleteIcon />}>Leave</MenuItem>
+                    {!guild?.owner && (
+                      <>
+                        <MenuDivider />
+                        <MenuItem icon={<DeleteIcon color={"red.500"} />}>
+                          <Text color={"red.500"}>Leave Server</Text>
+                        </MenuItem>
+                      </>
+                    )}
                   </MenuList>
                 </>
               )}
