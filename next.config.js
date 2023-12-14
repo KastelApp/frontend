@@ -4,7 +4,9 @@ const { fetchInfo } = require("./src/gitInfo.js");
 
 const fetchedData = fetchInfo();
 
-const sha = (process.env.CF_PAGES_COMMIT_SHA ?? fetchedData.gitCommitHash).slice(0, 7)
+const sha = (
+  process.env.CF_PAGES_COMMIT_SHA ?? fetchedData.gitCommitHash
+).slice(0, 7);
 
 const nextConfig = {
   reactStrictMode: false,
