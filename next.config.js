@@ -4,8 +4,6 @@ const { fetchInfo } = require("./src/gitInfo.js");
 
 const fetchedData = fetchInfo();
 
-const sha = (process.env.CF_PAGES_COMMIT_SHA ?? fetchedData.gitCommitHash).slice(0, 7)
-
 const nextConfig = {
   reactStrictMode: false,
 
@@ -14,7 +12,8 @@ const nextConfig = {
     PUBLIC_API_VERSION: process.env.PUBLIC_API_VERSION,
     PUBLIC_API_WS_URL: process.env.PUBLIC_API_WS_URL,
     PUBLIC_GIT_BRANCH: process.env.CF_PAGES_BRANCH ?? fetchedData.gitBranch,
-    PUBLIC_GIT_COMMIT: sha,
+    PUBLIC_GIT_COMMIT:
+      process.env.CF_PAGES_COMMIT_SHA ?? fetchedData.gitCommitHash,
   },
   sentry: {
     disableServerWebpackPlugin: true,
