@@ -174,7 +174,10 @@ const SidebarContent = ({
                 key={option.name}
                 selectedPage={selectedPage}
                 id={option.id}
-                onClick={() => setSelectedPage(option.id)}
+                onClick={() => {
+                  onClose();
+                  setSelectedPage(option.id);
+                }}
                 icon={option.icon}
               >
                 {option.name}

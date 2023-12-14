@@ -11,7 +11,7 @@ import {
   PopoverContent,
   PopoverTrigger,
   Stack,
-  useBreakpointValue,
+  useBreakpointValue, useColorMode,
   useColorModeValue,
   useDisclosure,
 } from "@chakra-ui/react";
@@ -31,6 +31,7 @@ import NewGuild from "@/components/app/new-guild";
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 import NextLink from "next/link";
 import getInitials from "@/utils/getGuildInitals";
+import { useEffect } from "react";
 
 const reorder = (list, startIndex, endIndex) => {
   const result = Array.from(list);
@@ -48,6 +49,7 @@ export default function AppNavbar({ userInfo }) {
   const router = useRouter();
   const isSmallScreen = useBreakpointValue({ base: true, sm: false });
   const [guilds, setGuilds] = useRecoilState(guildStore);
+  let { toggleColorMode } = useColorMode();
 
   function handleLogout() {
     client.logout();
@@ -72,6 +74,13 @@ export default function AppNavbar({ userInfo }) {
 
     // todo - save new positioned guilds
   }
+
+  useEffect(() => {
+    const mode = localStorage.getItem("chakra-ui-color-mode");
+    if (mode !== userInfo?.theme) {
+      toggleColorMode();
+    }
+  }, [userInfo]);
 
   return (
     <>
