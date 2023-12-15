@@ -12,6 +12,8 @@ import {
 } from "@chakra-ui/react";
 import { FiMenu } from "react-icons/fi";
 import pack from "../../../../package.json";
+import { useRecoilState } from "recoil";
+import { isDesktop } from "../../../utils/stores.js";
 
 const data = [
   {
@@ -129,6 +131,8 @@ const SidebarContent = ({
   onClose,
   ...rest
 }) => {
+  const [desktop] = useRecoilState(isDesktop);
+
   return (
     <Box
       bg={useColorModeValue("white", "gray.800")}
@@ -214,7 +218,7 @@ const SidebarContent = ({
           mb="5"
           textTransform="uppercase"
         >
-          {process.env.PUBLIC_GIT_BRANCH} {pack?.version || "0.0.0"} (
+          {process.env.PUBLIC_GIT_BRANCH}{desktop ? "/desktop" : ""} {pack?.version || "0.0.0"} (
           {process.env.PUBLIC_GIT_COMMIT})
         </Text>
       </Box>
