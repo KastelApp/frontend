@@ -22,6 +22,9 @@ const nextConfig = {
     disableServerWebpackPlugin: true,
     disableClientWebpackPlugin: true,
   },
+  ...(process.env.KASTEL_DESKTOP_APP === "true" && {
+    output: "export"
+  })
 };
 
 module.exports = withSentryConfig(nextConfig);

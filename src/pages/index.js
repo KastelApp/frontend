@@ -4,8 +4,12 @@ import { Box, Button, Container, Heading, Stack, Text } from "@chakra-ui/react";
 import Navbar from "@/components/navbar";
 import pack from "../../package.json";
 import NextLink from "next/link";
+import { useRecoilState } from "recoil";
+import { isDesktop } from "../utils/stores.js";
 
 export default function Home() {
+  const [desktop] = useRecoilState(isDesktop);
+
   return (
     <>
       <SEO title={"Home"} />
@@ -29,6 +33,12 @@ export default function Home() {
               You are viewing version {pack?.version || "0.0.0"}
               <br />
               On the {process.env.PUBLIC_GIT_BRANCH || "Development"} branch
+              {desktop && (
+                <>
+                  <br />
+                  You are using the desktop app! :3
+                </>
+              )}
             </Text>
 
             <NextLink href={"/register"}>

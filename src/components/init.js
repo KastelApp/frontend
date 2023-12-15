@@ -3,6 +3,7 @@ import {
   channelStore,
   clientStore,
   guildStore,
+  isDesktop,
   readyStore,
   tokenStore,
 } from "@/utils/stores";
@@ -15,9 +16,14 @@ const Init = () => {
   const [, setReady] = useRecoilState(readyStore);
   const [, setGuilds] = useRecoilState(guildStore);
   const [, setChannels] = useRecoilState(channelStore);
+  const [, setIsDesktop] = useRecoilState(isDesktop);
 
   useEffect(() => {
     if (client) return;
+
+    if (window.__TAURI__) {
+      setIsDesktop(true);
+    }
 
     const newClient = new Client({
       apiUrl: process.env.PUBLIC_API_URL,

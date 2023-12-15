@@ -80,3 +80,8 @@ export const collapsedChannels = atom({
   default: [],
   effects: [localStorageEffect("collapsedChannels")],
 });
+
+export const isDesktop = atom({
+  key: "isDesktop",
+  default: false
+});
