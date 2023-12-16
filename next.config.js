@@ -17,6 +17,8 @@ const nextConfig = {
     PUBLIC_API_WS_URL: process.env.PUBLIC_API_WS_URL,
     PUBLIC_GIT_BRANCH: process.env.CF_PAGES_BRANCH ?? fetchedData.gitBranch,
     PUBLIC_GIT_COMMIT: sha,
+    PUBLIC_MEDIA_URL: process.env.PUBLIC_MEDIA_URL,
+    PUBLIC_MEDIA_CDN_URL: process.env.PUBLIC_MEDIA_CDN_URL,
   },
   sentry: {
     disableServerWebpackPlugin: true,

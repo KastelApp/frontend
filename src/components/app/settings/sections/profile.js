@@ -35,7 +35,7 @@ export default function Settings_Profile({ userInfo }) {
             <FormLabel>User Icon</FormLabel>
             <Stack direction={["column", "row"]} spacing={6}>
               <Center>
-                <Avatar size="xl" src="">
+                <Avatar size="xl" src={userInfo?.getAvatarUrl({})}>
                   <AvatarBadge
                     as={IconButton}
                     size="sm"

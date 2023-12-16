@@ -204,7 +204,7 @@ export default function AppNavbar({ userInfo }) {
                     >
                       <Image
                         borderRadius={"full"}
-                        src={userInfo?.avatarURL}
+                        src={userInfo?.getAvatarUrl({})}
                         fallbackSrc={"/icon-1.png"}
                         alt={userInfo?.username || "Loading"}
                         fit="cover"
