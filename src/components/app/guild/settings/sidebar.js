@@ -11,78 +11,8 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 import { FiMenu } from "react-icons/fi";
-import pack from "../../../../package.json";
 
-const data = [
-  {
-    name: "Profile",
-    options: [
-      {
-        name: "My Profile",
-        badges: [],
-        id: 0,
-      },
-      {
-        name: "Privacy & Safety",
-        badges: [],
-        id: 1,
-      },
-      {
-        name: "Sessions",
-        badges: [
-          {
-            name: "Beta",
-            color: "#4F2D7C",
-          },
-        ],
-        id: 2,
-      },
-    ],
-  },
-  {
-    name: "General Settings",
-    options: [
-      {
-        name: "Appearance",
-        badges: [],
-        id: 3,
-      },
-      {
-        name: "Accessibility",
-        badges: [],
-        id: 4,
-      },
-      {
-        name: "Text & Language",
-        badges: [],
-        id: 5,
-      },
-    ],
-  },
-  {
-    name: "Billing",
-    options: [
-      {
-        name: "Subscriptions",
-        badges: [],
-        id: 6,
-      },
-
-      {
-        name: "Shards",
-        badges: [],
-        id: 7,
-      },
-      {
-        name: "Details & History",
-        badges: [],
-        id: 8,
-      },
-    ],
-  },
-];
-
-export default function Settings_Sidebar({
+export default function Guild_Settings_Sidebar({
   selectedPage,
   setSelectedPage,
   children,
@@ -150,68 +80,99 @@ const SidebarContent = ({
             onClick={onClose}
           />
         </Flex>
-        {data.map((section, index) => (
-          <div key={index}>
-            <Text
-              ml="8"
-              mt="4"
-              mb="2"
-              fontSize="xs"
-              fontWeight="bold"
-              textTransform="uppercase"
-              letterSpacing="wide"
-              color="gray.500"
-            >
-              {section.name}
-            </Text>
-            {section.options.map((option) => (
-              <NavItem
-                mt={1}
-                key={option.name}
-                selectedPage={selectedPage}
-                id={option.id}
-                onClick={() => {
-                  onClose();
-                  setSelectedPage(option.id);
-                }}
-                icon={option.icon}
-              >
-                {option.name}
-                {option.badges && option.badges.length === 1 && (
-                  <Box
-                    bg={option.badges[0].color}
-                    ml="auto"
-                    mr="2"
-                    borderRadius="lg"
-                    px="2"
-                    py="1"
-                    fontSize="xs"
-                    fontWeight="bold"
-                    color="white"
-                  >
-                    {option.badges[0].name}
-                  </Box>
-                )}
-              </NavItem>
-            ))}
-          </div>
-        ))}
-      </Box>
 
-      {/* Build info very bottom of sidebar */}
-      <Box>
+        {/* Guild Settings */}
         <Text
-          as="sub"
           ml="8"
+          mt="4"
+          mb="2"
           fontSize="xs"
           fontWeight="bold"
+          textTransform="uppercase"
           letterSpacing="wide"
           color="gray.500"
-          textTransform="uppercase"
         >
-          {process.env.PUBLIC_GIT_BRANCH} {pack?.version || "0.0.0"} (
-          {process.env.PUBLIC_GIT_COMMIT})
+          Guild Settings
         </Text>
+        <NavItem
+          mt={1}
+          selectedPage={selectedPage}
+          onClick={() => {
+            onClose();
+            setSelectedPage(0);
+          }}
+        >
+          Overview
+        </NavItem>
+
+        <NavItem
+          mt={1}
+          selectedPage={selectedPage}
+          onClick={() => {
+            onClose();
+            setSelectedPage(1);
+          }}
+        >
+          Roles
+        </NavItem>
+
+        {/* User Management */}
+        <Text
+          ml="8"
+          mt="4"
+          mb="2"
+          fontSize="xs"
+          fontWeight="bold"
+          textTransform="uppercase"
+          letterSpacing="wide"
+          color="gray.500"
+        >
+          User Management
+        </Text>
+
+        <NavItem
+          mt={1}
+          selectedPage={selectedPage}
+          onClick={() => {
+            onClose();
+            setSelectedPage(2);
+          }}
+        >
+          Co Owners
+        </NavItem>
+
+        <NavItem
+          mt={1}
+          selectedPage={selectedPage}
+          onClick={() => {
+            onClose();
+            setSelectedPage(3);
+          }}
+        >
+          Invites
+        </NavItem>
+
+        <NavItem
+          mt={1}
+          selectedPage={selectedPage}
+          onClick={() => {
+            onClose();
+            setSelectedPage(4);
+          }}
+        >
+          Bans
+        </NavItem>
+
+        <NavItem
+          mt={1}
+          selectedPage={selectedPage}
+          onClick={() => {
+            onClose();
+            setSelectedPage(5);
+          }}
+        >
+          Members
+        </NavItem>
       </Box>
     </Box>
   );

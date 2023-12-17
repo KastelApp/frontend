@@ -1,6 +1,6 @@
 {
   "name": "kastel-frontend",
-  "version": "0.0.50",
+  "version": "0.0.51",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
