@@ -28,14 +28,7 @@ const Init = () => {
       setIsDesktop(true);
     }
 
-    if ([
-      "/login",
-      "/register",
-      "/",
-      "/404",
-      "/login/",
-      "/register/",
-      "/404/",].includes(window.location.pathname)) {
+    if (["/", "/404/",].includes(window.location.pathname)) {
       return;
     }
 
