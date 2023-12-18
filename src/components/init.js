@@ -26,6 +26,8 @@ const Init = () => {
       version: process.env.PUBLIC_API_VERSION,
       wsUrl: process.env.PUBLIC_API_WS_URL,
       worker: new Worker("/workers/interval.worker.js"),
+      cdnUrl: process.env.PUBLIC_MEDIA_CDN_URL,
+      mediaUrl: process.env.PUBLIC_MEDIA_URL,
     });
 
     newClient.guilds.guilds.subscribe((guild, type) => {

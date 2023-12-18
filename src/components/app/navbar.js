@@ -77,7 +77,10 @@ export default function AppNavbar({ userInfo }) {
   }
 
   useEffect(() => {
+    if (!userInfo) return;
+
     const mode = localStorage.getItem("chakra-ui-color-mode");
+
     if (mode !== userInfo?.theme) {
       toggleColorMode();
     }
@@ -204,7 +207,9 @@ export default function AppNavbar({ userInfo }) {
                     >
                       <Image
                         borderRadius={"full"}
-                        src={userInfo?.avatarURL}
+                        src={userInfo?.getAvatarUrl({
+                          size: 256,
+                        })}
                         fallbackSrc={"/icon-1.png"}
                         alt={userInfo?.username || "Loading"}
                         fit="cover"
