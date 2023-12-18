@@ -37,3 +37,5 @@ yarn-error.log*
 next-env.d.ts
 
 .yarn/cache
+.idea
+package-lock.json

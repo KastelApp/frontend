@@ -1,7 +1,6 @@
 {
   "name": "frontend-typescript",
-  "version": "0.1.0",
-  "private": true,
+  "version": "0.0.52",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
