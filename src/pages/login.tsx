@@ -21,23 +21,10 @@ const Login = () => {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<{
-    password?: {
-      message: string;
-    },
-    email?: {
-      message: string;
-    },
-    terms?: {
-      message: string;
-    },
-    username?: {
-      message: string;
-    },
-    other?: {
-      message: string;
-    };
-  }>(
-    {}
+    code: string;
+    message: string;
+  }[]>(
+    []
   );
   const [client] = useRecoilState(clientStore);
   const [token, setToken] = useRecoilState(tokenStore);
@@ -64,20 +51,20 @@ const Login = () => {
   }) => {
     event.preventDefault();
     setLoading(true);
-    setError({});
+    setError([]);
 
     const email = event.target.email.value;
     const password = event.target.password.value;
 
     if (!client.EmailRegex.test(email)) {
-      setError({ email: { message: "Invalid email." } });
+      setError([{ code: "INVALID_EMAIL", message: "Invalid email." }]);
       setLoading(false);
 
       return;
     }
 
     if (!client.PasswordRegex.test(password)) {
-      setError({ password: { message: "Invalid password." } });
+      setError([{ code: "INVALID_PASSWORD", message: "Invalid password." }]);
       setLoading(false);
 
       return;
@@ -90,7 +77,7 @@ const Login = () => {
     });
 
     if (!loggedInAccount) {
-      setError({ other: { message: "Unknown error occurred." } });
+      setError([{ code: "UNKNOWN", message: "Unknown error occurred." }]);
       setLoading(false);
 
       return;
@@ -106,17 +93,15 @@ const Login = () => {
     }
 
     if (loggedInAccount.errors.email || loggedInAccount.errors.password) {
-      setError({ email: { message: "Invalid Email and or Password" } });
+      setError([{ code: "INVALID_EMAIL_PASSWORD", message: "Invalid Email and or Password" }]);
     } else if (loggedInAccount.errors.unknown) {
-      setError({
-        other: {
-          message: `${Object.entries(loggedInAccount.errors.unknown).map(
-            ([k, obj]) => `${k} - ${obj.Message}`,
-          )}`,
-        },
-      });
+      setError([{
+        code: "UNKNOWN", message: `${Object.entries(loggedInAccount.errors.unknown).map(
+          ([k, obj]) => `${k} - ${obj.Message}`,
+        )}`
+      }]);
     } else {
-      setError({ other: { message: "Unknown error occurred." } });
+      setError([{ code: "UNKNOWN", message: "Unknown error occurred." }]);
     }
 
     setLoading(false);
@@ -130,7 +115,7 @@ const Login = () => {
         <form onSubmit={login}>
           {/* @ts-expect-error -- (no clue what the issue is here) */}
           <Box align={"center"} justify={"center"} position={"relative"}>
-          {/* @ts-expect-error -- (no clue what the issue is here) */}
+            {/* @ts-expect-error -- (no clue what the issue is here) */}
             <Container maxW={"7xl"} columns={{ base: 1, md: 2 }}>
               <>
                 <Heading
@@ -160,15 +145,16 @@ const Login = () => {
                 >
                   <Box mt={5}>
                     <Stack spacing={4}>
-                      {error && (
+                      {error.length > 0 && (
                         <Text
                           mt={-3}
                           as={"span"}
                           bgGradient="linear(to-r, red.400,pink.400)"
                           bgClip="text"
                         >
-                          {Object.values(error)?.[0]?.message ||
-                            "Unknown error occurred."}
+                          {error.map((err) => {
+                            return err.message;
+                          })}
                         </Text>
                       )}
 

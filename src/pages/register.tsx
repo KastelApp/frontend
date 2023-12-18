@@ -26,23 +26,10 @@ const Register = () => {
   const [loading, setLoading] = useState(false);
   const [terms, setTerms] = useState(false);
   const [error, setError] = useState<{
-    password?: {
-      message: string;
-    },
-    email?: {
-      message: string;
-    },
-    terms?: {
-      message: string;
-    },
-    username?: {
-      message: string;
-    },
-    other?: {
-      message: string;
-    }
-  }>(
-    {}
+    code: string;
+    message: string;
+  }[]>(
+    []
   );
   const [client] = useRecoilState(clientStore);
   const [token, setToken] = useRecoilState(tokenStore);
@@ -75,7 +62,7 @@ const Register = () => {
   }) => {
     event.preventDefault();
     setLoading(true);
-    setError({});
+    setError([]);
 
     const username = event.target.username.value;
     const email = event.target.email.value;
@@ -83,28 +70,28 @@ const Register = () => {
     const confirmPassword = event.target.confirmpassword.value;
 
     if (password !== confirmPassword) {
-      setError({ password: { message: "Passwords do not match." } });
-      
+      setError([{ code: "PASSWORDS_DO_NOT_MATCH", message: "Passwords do not match." }]);
+
       setLoading(false);
     }
 
     // Testing against the regexes (which should be the same that the backend uses) helps prevent unnecessary requests.
     if (!client.EmailRegex.test(email)) {
-      setError({ email: { message: "Invalid email." } });
+      setError([{ code: "INVALID_EMAIL", message: "Invalid email." }]);
       setLoading(false);
 
       return;
     }
 
     if (!client.PasswordRegex.test(password)) {
-      setError({ password: { message: "Invalid password." } });
+      setError([{ code: "INVALID_PASSWORD", message: "Invalid password." }]);
       setLoading(false);
 
       return;
     }
 
     if (!terms) {
-      setError({ terms: { message: "You must accept the terms of service." } });
+      setError([{ code: "TERMS_NOT_ACCEPTED", message: "You must accept the terms of service." }]);
       setLoading(false);
 
       return;
@@ -118,11 +105,7 @@ const Register = () => {
     });
 
     if (!registeredAccount) {
-      setError({
-        other: {
-          message: "An unknown error occurred.",
-        }
-      })
+      setError([{ code: "UNKNOWN", message: "Unknown error occurred." }]);
       setLoading(false);
 
       return;
@@ -139,23 +122,17 @@ const Register = () => {
     }
 
     if (registeredAccount.errors.email || registeredAccount.errors.password) {
-      setError({ email: { message: "Invalid Email and or Password" } });
+      setError([{ code: "INVALID_EMAIL_PASSWORD", message: "Invalid Email and or Password" }]);
     } else if (registeredAccount.errors.username) {
-      setError({
-        username: {
-          message: "Invalid Username (This username may be maxed out)",
-        },
-      });
+      setError([{ code: "INVALID_USERNAME", message: "Invalid Username (This username may be maxed out)" }]);
     } else if (registeredAccount.errors.unknown) {
-      setError({
-        other: {
-          message: `${Object.entries(registeredAccount.errors.unknown).map(
-            ([k, obj]) => `${k} - ${obj.Message}`,
-          )}`,
-        },
-      });
+      setError([{
+        code: "UNKNOWN", message: `${Object.entries(registeredAccount.errors.unknown).map(
+          ([k, obj]) => `${k} - ${obj.Message}`,
+        )}`
+      }]);
     } else {
-      setError({ other: { message: "Unknown error occurred." } });
+      setError([{ code: "UNKNOWN", message: "Unknown error occurred." }]);
     }
 
     setLoading(false);
@@ -169,7 +146,7 @@ const Register = () => {
         <form onSubmit={register}>
           {/* @ts-expect-error -- (no clue what the issue is here) */}
           <Box align={"center"} justify={"center"} position={"relative"}>
-          {/* @ts-expect-error -- (no clue what the issue is here) */}
+            {/* @ts-expect-error -- (no clue what the issue is here) */}
             <Container maxW={"7xl"} columns={{ base: 1, md: 2 }}>
               <>
                 <Heading
@@ -199,15 +176,16 @@ const Register = () => {
                 >
                   <Box mt={5}>
                     <Stack spacing={4}>
-                      {error && (
+                      {error.length > 0 && (
                         <Text
                           mt={-3}
                           as={"span"}
                           bgGradient="linear(to-r, red.400,pink.400)"
                           bgClip="text"
                         >
-                          {Object.values(error)?.[0]?.message ||
-                            "Unknown error occurred."}
+                          {error.map((err) => {
+                            return err.message;
+                          })}
                         </Text>
                       )}
 
@@ -358,6 +336,6 @@ const Register = () => {
       </Layout>
     </>
   );
-}
+};
 
 export default Register;
