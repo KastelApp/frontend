@@ -1,8 +1,50 @@
 {
-  "extends": ["next/core-web-vitals", "eslint:recommended"],
+  "extends": [
+    "next/core-web-vitals",
+    "eslint:recommended",
+    "plugin:@typescript-eslint/recommended"
+  ],
+  "plugins": [
+    "prefer-arrow",
+    "@typescript-eslint"
+  ],
   "rules": {
-    "quotes": ["error", "double", { "avoidEscape": true }],
-    "object-curly-spacing": ["error", "always"],
-    "react-hooks/exhaustive-deps": "off"
-  }
+    "quotes": [
+      "error",
+      "double",
+      {
+        "avoidEscape": true
+      }
+    ],
+    "object-curly-spacing": [
+      "error",
+      "always"
+    ],
+    "react-hooks/exhaustive-deps": "off",
+    "prefer-arrow/prefer-arrow-functions": "error",
+    "camelcase": "error",
+    "@typescript-eslint/naming-convention": [
+      "error",
+      {
+        "selector": "variable",
+        "types": [
+          "function"
+        ],
+        "format": [
+          "camelCase",
+          "PascalCase"
+        ]
+      },
+      {
+        "selector": "variable",
+        "format": [
+          "camelCase"
+        ]
+      }
+    ]
+  },
+  "parserOptions": {
+    "project": "./tsconfig.json"
+  },
+  "root": true
 }

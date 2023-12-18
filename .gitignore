@@ -36,7 +36,4 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# IDE
-.idea
-
-src/generatedGitInfo.json
+.yarn/cache
