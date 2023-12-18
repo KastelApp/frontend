@@ -39,3 +39,4 @@ next-env.d.ts
 .yarn/cache
 .idea
 package-lock.json
+yarn.lock
