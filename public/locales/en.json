@@ -1,0 +1,21 @@
+{
+    "_meta": {
+        "name": "English",
+        "code": "en",
+        "contributors": [
+            {
+                "name": "DarkerInk",
+                "id": "1234567890"
+            }
+        ]
+    },
+    "hello": "Hello",
+    "goodbye": "Goodbye {{user.username}}",
+    "group": {
+        "hello": "Hello"
+    },
+    "array": [
+        "Hello",
+        "Goodbye"
+    ]
+}
