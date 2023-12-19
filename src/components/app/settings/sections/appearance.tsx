@@ -1,19 +1,10 @@
-import { useState, useEffect } from "react";
-import {
-  Box,
-  Button,
-  Circle,
-  HStack,
-  Text,
-  Tooltip,
-  useColorMode,
-  useColorModeValue,
-} from "@chakra-ui/react";
-import { BsSun, BsMoonStarsFill } from "react-icons/bs";
+import { useState } from "react";
+import { Box, Circle, HStack, Text, useColorMode } from "@chakra-ui/react";
+import { BsMoonStarsFill, BsSun } from "react-icons/bs";
 
 const SettingsAppearance = () => {
   const { colorMode, toggleColorMode } = useColorMode();
-  const [selectedTheme, setSelectedTheme] = useState<string>(colorMode);
+  const [selectedTheme] = useState<string>(colorMode);
 
   return (
     <>
