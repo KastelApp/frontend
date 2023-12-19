@@ -1,6 +1,6 @@
 import { Dispatch, FormEvent, SetStateAction, useState } from "react";
 import { useRecoilState } from "recoil";
-import { clientStore } from "../../utils/stores.ts";
+import { clientStore } from "@/utils/stores.ts";
 import { useRouter } from "next/router";
 import { Button, FormControl, FormHelperText, FormLabel, Input, ListItem, ModalBody, ModalCloseButton, ModalFooter, ModalHeader, Stack, Text, UnorderedList, useColorModeValue } from "@chakra-ui/react";
 
