@@ -106,14 +106,18 @@ const Loading = () => {
                 It looks like we&apos;re taking a while to connect to our
                 servers.
               </Text>
-              <Button size={"md"}>
+              <center>
                 <NextLink
-                  href={"https://status.kastelapp.com?redir=slow"}
-                  target={"_blank"}
+                    href={"https://status.kastelapp.com"}
+                    target={"_blank"}
                 >
-                  Status Page
+                  <Button size={"md"}>
+
+                    Status Page
+
+                  </Button>
                 </NextLink>
-              </Button>
+              </center>
             </>
           )}
         </Stack>
