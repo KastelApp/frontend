@@ -8,15 +8,26 @@ import {
   FormLabel,
   IconButton,
   Input,
+  SimpleGrid,
   Stack,
+  Text,
   useColorModeValue,
+  FormHelperText,
+  Grid,
+  Flex,
+  InputRightElement,
+  InputGroup,
+  Divider,
+  Spacer,
 } from "@chakra-ui/react";
-import { SmallCloseIcon } from "@chakra-ui/icons";
+import { SmallCloseIcon, ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
 import { ChangeEvent, useRef, useState } from "react";
 import { clientStore } from "@/utils/stores.ts";
 import { useRecoilState } from "recoil";
 
 const SettingsProfile = () => {
+  const [changePassword, setChangePassword] = useState<boolean>(false);
+  const [showPassword, setShowPassword] = useState<boolean>(false);
   const [client] = useRecoilState(clientStore);
   const [selectedImage, setSelectedImage] = useState<string | undefined>(
     undefined,
@@ -42,12 +53,15 @@ const SettingsProfile = () => {
 
   return (
     <>
-      <Box p={6} mt={10} as="form">
+      <Text fontSize="xl" fontWeight="bold">
+        My Profile
+      </Text>
+
+      <Box mt={50} as="form">
         <Stack
           spacing={4}
           w={"full"}
-          maxW={"md"}
-          bg={useColorModeValue("white", "gray.700")}
+          bg={useColorModeValue("white", "gray.800")}
           rounded={"xl"}
           boxShadow={"lg"}
           p={6}
@@ -102,15 +116,80 @@ const SettingsProfile = () => {
                   zIndex="-1"
                 />
               </Center>
-              <Center w="full">
-                <Button w="full">Change Icon</Button>
-              </Center>
             </Stack>
           </FormControl>
+
+          <Flex gap={"2"}>
+            <FormControl>
+              <FormLabel>Username</FormLabel>
+              <Input defaultValue={client?.user?.username} type="text" />
+            </FormControl>
+            <FormControl>
+              <FormLabel>Discriminator</FormLabel>
+              <InputGroup>
+                <Input
+                  readOnly={true}
+                  defaultValue={client?.user?.discriminator}
+                  type="text"
+                />
+                <InputRightElement width="4.5rem">
+                  <Button mr={2} h="1.75rem" size="sm">
+                    Update
+                  </Button>
+                </InputRightElement>
+              </InputGroup>
+            </FormControl>
+          </Flex>
+
+          <FormControl>
+            <FormLabel>Email address</FormLabel>
+            <Input type="email" />
+          </FormControl>
+
+          {changePassword && (
+            <>
+              <Divider my={4} />
+              <FormControl>
+                <FormLabel>Current Password</FormLabel>
+                <InputGroup>
+                  <Input type={showPassword ? "text" : "password"} />
+                  <InputRightElement h={"full"}>
+                    <Button
+                      variant={"ghost"}
+                      onClick={() =>
+                        setShowPassword((showPassword) => !showPassword)
+                      }
+                    >
+                      {showPassword ? <ViewIcon /> : <ViewOffIcon />}
+                    </Button>
+                  </InputRightElement>
+                </InputGroup>
+              </FormControl>
+              <FormControl>
+                <FormLabel>New Password</FormLabel>
+                <Input type={showPassword ? "text" : "password"} />
+              </FormControl>
+              <FormControl>
+                <FormLabel>Confirm New Password</FormLabel>
+                <Input type={showPassword ? "text" : "password"} />
+              </FormControl>
+            </>
+          )}
+
+          <Center>
+            <Flex gap="2">
+              <Button
+                onClick={() => {
+                  setChangePassword(!changePassword);
+                }}
+              >
+                {changePassword ? "Cancel Password Change" : "Change Password"}
+              </Button>
+              <Button>Save Changes</Button>
+            </Flex>
+          </Center>
         </Stack>
       </Box>
-
-      {client.user.username}
     </>
   );
 };
