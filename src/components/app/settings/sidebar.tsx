@@ -143,10 +143,10 @@ const SidebarContent = ({
       </Box>
 
       {/* Build info very bottom of sidebar */}
-      <Box>
+      <Box mt={5} mb={5}>
         <Text
           as="sub"
-          ml="8"
+          ml="5"
           fontSize="xs"
           fontWeight="bold"
           letterSpacing="wide"
