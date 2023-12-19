@@ -20,12 +20,12 @@ import Navbar from "@/components/navbar";
 const Login = () => {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<{
-    code: string;
-    message: string;
-  }[]>(
-    []
-  );
+  const [error, setError] = useState<
+    {
+      code: string;
+      message: string;
+    }[]
+  >([]);
   const [client] = useRecoilState(clientStore);
   const [token, setToken] = useRecoilState(tokenStore);
 
@@ -39,16 +39,18 @@ const Login = () => {
     }
   }, []);
 
-  const login = async (event: FormEvent<HTMLFormElement> & {
-    target: {
-      email: {
-        value: string;
+  const login = async (
+    event: FormEvent<HTMLFormElement> & {
+      target: {
+        email: {
+          value: string;
+        };
+        password: {
+          value: string;
+        };
       };
-      password: {
-        value: string;
-      };
-    };
-  }) => {
+    },
+  ) => {
     event.preventDefault();
     setLoading(true);
     setError([]);
@@ -93,13 +95,21 @@ const Login = () => {
     }
 
     if (loggedInAccount.errors.email || loggedInAccount.errors.password) {
-      setError([{ code: "INVALID_EMAIL_PASSWORD", message: "Invalid Email and or Password" }]);
+      setError([
+        {
+          code: "INVALID_EMAIL_PASSWORD",
+          message: "Invalid Email and or Password",
+        },
+      ]);
     } else if (loggedInAccount.errors.unknown) {
-      setError([{
-        code: "UNKNOWN", message: `${Object.entries(loggedInAccount.errors.unknown).map(
-          ([k, obj]) => `${k} - ${obj.Message}`,
-        )}`
-      }]);
+      setError([
+        {
+          code: "UNKNOWN",
+          message: `${Object.entries(loggedInAccount.errors.unknown).map(
+            ([k, obj]) => `${k} - ${obj.Message}`,
+          )}`,
+        },
+      ]);
     } else {
       setError([{ code: "UNKNOWN", message: "Unknown error occurred." }]);
     }

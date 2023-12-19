@@ -1,12 +1,12 @@
 {
-    "_meta": {
-        "name": "English",
-        "code": "en",
-        "contributors": [
-            {
-                "name": "DarkerInk",
-                "id": "1234567890"
-            }
-        ]
-    }
+  "_meta": {
+    "name": "English",
+    "code": "en",
+    "contributors": [
+      {
+        "name": "DarkerInk",
+        "id": "1234567890"
+      }
+    ]
+  }
 }

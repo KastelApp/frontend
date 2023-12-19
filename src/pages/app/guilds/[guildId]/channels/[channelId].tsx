@@ -16,7 +16,10 @@ import GuildSideBar from "@/components/app/guild/side-bar";
 
 const GuildChannelPage = () => {
   const router = useRouter();
-  const { guildId, channelId } = router.query as { guildId: string; channelId: string; };
+  const { guildId, channelId } = router.query as {
+    guildId: string;
+    channelId: string;
+  };
   const [token] = useRecoilState(tokenStore);
   const [client] = useRecoilState(clientStore);
   const [ready] = useRecoilState(readyStore);
@@ -40,16 +43,13 @@ const GuildChannelPage = () => {
       return;
     }
 
-    const channel = foundGuild.channels.find(
-      (channel) => channel.id === channelId,
-    ) ?? foundGuild.channels.find(
-      (channel) => [
-        "GuildText",
-        "GuildNews",
-        "GuildRules",
-        "GuildNewMember",
-      ].includes(channel.type)
-    );
+    const channel =
+      foundGuild.channels.find((channel) => channel.id === channelId) ??
+      foundGuild.channels.find((channel) =>
+        ["GuildText", "GuildNews", "GuildRules", "GuildNewMember"].includes(
+          channel.type,
+        ),
+      );
 
     if (!channel) {
       console.log("no channel found");
@@ -68,7 +68,12 @@ const GuildChannelPage = () => {
 
   return (
     <>
-      <SEO title={"App"} description={"Kastel is a fresh take on chat apps. With a unique look and feel, it's the perfect way to connect with friends, family, and communities."} />
+      <SEO
+        title={"App"}
+        description={
+          "Kastel is a fresh take on chat apps. With a unique look and feel, it's the perfect way to connect with friends, family, and communities."
+        }
+      />
       {areWeReady ? (
         <>
           <Box>

@@ -1,5 +1,5 @@
 import { withSentryConfig } from "@sentry/nextjs";
-import fetchInfo  from "./src/gitInfo.mjs";
+import fetchInfo from "./src/gitInfo.mjs";
 
 const fetchedData = fetchInfo();
 
@@ -26,8 +26,8 @@ const nextConfig = {
     disableClientWebpackPlugin: true,
   },
   ...(process.env.KASTEL_DESKTOP_APP === "true" && {
-    output: "export"
-  })
+    output: "export",
+  }),
 };
 
 export default withSentryConfig(nextConfig);

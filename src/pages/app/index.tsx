@@ -18,7 +18,12 @@ const App = () => {
 
   return (
     <>
-      <SEO title={"App"} description={"Kastel is a fresh take on chat apps. With a unique look and feel, it's the perfect way to connect with friends, family, and communities."} />
+      <SEO
+        title={"App"}
+        description={
+          "Kastel is a fresh take on chat apps. With a unique look and feel, it's the perfect way to connect with friends, family, and communities."
+        }
+      />
       {ready ? (
         <>
           <Box>
@@ -30,6 +35,6 @@ const App = () => {
       )}
     </>
   );
-}
+};
 
 export default App;

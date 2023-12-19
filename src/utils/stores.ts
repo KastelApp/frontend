@@ -62,10 +62,10 @@ export const collapsedChannels = atom<string[]>({
 
 export const isDesktop = atom({
   key: "isDesktop",
-  default: false
+  default: false,
 });
 
 export const translationStore = atom({
   key: "translation",
-  default: new Translation()
-})
+  default: new Translation(),
+});

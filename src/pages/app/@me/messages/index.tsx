@@ -28,6 +28,6 @@ const AtMeMessages = () => {
       )}
     </>
   );
-}
+};
 
 export default AtMeMessages;

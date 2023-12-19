@@ -18,7 +18,10 @@ import { currentChannel, currentGuild } from "@/utils/stores";
 import { useEffect, useState } from "react";
 import { Invite } from "@kastelll/wrapper";
 
-const GuildInvites = ({ isOpen, onClose }: {
+const GuildInvites = ({
+  isOpen,
+  onClose,
+}: {
   isOpen: boolean;
   onClose: () => void;
 }) => {
@@ -88,7 +91,6 @@ const GuildInvites = ({ isOpen, onClose }: {
       } else {
         setValue("Error creating invite");
       }
-
     };
 
     getInvite();
@@ -98,9 +100,7 @@ const GuildInvites = ({ isOpen, onClose }: {
     <Modal isOpen={isOpen} onClose={onClose} size={"sm"}>
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>
-          Invite friends to {getGuildName(guild?.name)}
-        </ModalHeader>
+        <ModalHeader>Invite friends to {getGuildName(guild?.name)}</ModalHeader>
         <ModalCloseButton />
 
         <ModalBody>
@@ -120,7 +120,8 @@ const GuildInvites = ({ isOpen, onClose }: {
               </InputRightElement>
             </InputGroup>
             <FormHelperText>
-              Your invite link expires in {getExpiresAt(expire)}. Edit invite link.
+              Your invite link expires in {getExpiresAt(expire)}. Edit invite
+              link.
             </FormHelperText>
           </FormControl>
         </ModalBody>

@@ -23,7 +23,14 @@ import {
   Center,
 } from "@chakra-ui/react";
 import { FiPlus } from "react-icons/fi";
-import { ChangeEvent, Dispatch, FormEvent, SetStateAction, useRef, useState } from "react";
+import {
+  ChangeEvent,
+  Dispatch,
+  FormEvent,
+  SetStateAction,
+  useRef,
+  useState,
+} from "react";
 import { useRecoilState } from "recoil";
 import { clientStore } from "@/utils/stores";
 import JoinServer from "./joinGuild.tsx";
@@ -92,28 +99,34 @@ const NewGuild = () => {
   );
 };
 
-const NewServerForm = ({ modal, setForm }: {
+const NewServerForm = ({
+  modal,
+  setForm,
+}: {
   modal: {
     onClose: () => void;
   };
   setForm: Dispatch<SetStateAction<number>>;
 }) => {
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<{
-    code: string;
-    message: string;
-  }[]>([]);
+  const [error, setError] = useState<
+    {
+      code: string;
+      message: string;
+    }[]
+  >([]);
   const [client] = useRecoilState(clientStore);
   const router = useRouter();
 
-  const submit = async (event: FormEvent<HTMLFormElement> & {
-    target: {
-      name: {
-        value: string;
+  const submit = async (
+    event: FormEvent<HTMLFormElement> & {
+      target: {
+        name: {
+          value: string;
+        };
       };
-    };
-  }) => {
-
+    },
+  ) => {
     if (!event.target) return;
 
     event.preventDefault();
@@ -155,7 +168,7 @@ const NewServerForm = ({ modal, setForm }: {
     }
 
     const firstChannel = guild.guild.channels.find(
-      (channel) => channel.type === "GuildText"
+      (channel) => channel.type === "GuildText",
     );
 
     if (firstChannel) {
@@ -166,7 +179,9 @@ const NewServerForm = ({ modal, setForm }: {
     modal.onClose();
   };
 
-  const [selectedImage, setSelectedImage] = useState<string | undefined>(undefined);
+  const [selectedImage, setSelectedImage] = useState<string | undefined>(
+    undefined,
+  );
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const handleImageChange = (event: ChangeEvent<HTMLInputElement>) => {

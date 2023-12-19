@@ -54,7 +54,7 @@ const Loading = () => {
       "The code works on my machine!",
       "I like chicken ~ Random Person Probably",
       "Todo: Add a quote here",
-      "I'll chat to you on Dis... I mean Kastel"
+      "I'll chat to you on Dis... I mean Kastel",
     ];
 
     setQuote1(quotes[Math.floor(Math.random() * quotes.length)]);
@@ -103,7 +103,8 @@ const Loading = () => {
           {slow && (
             <>
               <Text fontSize={"xl"} color={"gray.600"}>
-                It looks like we&apos;re taking a while to connect to our servers.
+                It looks like we&apos;re taking a while to connect to our
+                servers.
               </Text>
               <Button size={"md"}>
                 <NextLink

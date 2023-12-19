@@ -1,4 +1,3 @@
-
 const store = typeof window !== "undefined" ? window.localStorage : null;
 
 const localStorageEffect = (key: string) => {

@@ -17,7 +17,6 @@ const SettingsAppearance = () => {
       </Button>
     </>
   );
-}
-
+};
 
 export default SettingsAppearance;

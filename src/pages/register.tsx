@@ -25,12 +25,12 @@ const Register = () => {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [terms, setTerms] = useState(false);
-  const [error, setError] = useState<{
-    code: string;
-    message: string;
-  }[]>(
-    []
-  );
+  const [error, setError] = useState<
+    {
+      code: string;
+      message: string;
+    }[]
+  >([]);
   const [client] = useRecoilState(clientStore);
   const [token, setToken] = useRecoilState(tokenStore);
 
@@ -44,22 +44,24 @@ const Register = () => {
     }
   }, [router, token]);
 
-  const register = async (event: FormEvent<HTMLFormElement> & {
-    target: {
-      email: {
-        value: string;
+  const register = async (
+    event: FormEvent<HTMLFormElement> & {
+      target: {
+        email: {
+          value: string;
+        };
+        password: {
+          value: string;
+        };
+        username: {
+          value: string;
+        };
+        confirmpassword: {
+          value: string;
+        };
       };
-      password: {
-        value: string;
-      };
-      username: {
-        value: string;
-      };
-      confirmpassword: {
-        value: string;
-      };
-    };
-  }) => {
+    },
+  ) => {
     event.preventDefault();
     setLoading(true);
     setError([]);
@@ -70,7 +72,9 @@ const Register = () => {
     const confirmPassword = event.target.confirmpassword.value;
 
     if (password !== confirmPassword) {
-      setError([{ code: "PASSWORDS_DO_NOT_MATCH", message: "Passwords do not match." }]);
+      setError([
+        { code: "PASSWORDS_DO_NOT_MATCH", message: "Passwords do not match." },
+      ]);
 
       setLoading(false);
     }
@@ -91,7 +95,12 @@ const Register = () => {
     }
 
     if (!terms) {
-      setError([{ code: "TERMS_NOT_ACCEPTED", message: "You must accept the terms of service." }]);
+      setError([
+        {
+          code: "TERMS_NOT_ACCEPTED",
+          message: "You must accept the terms of service.",
+        },
+      ]);
       setLoading(false);
 
       return;
@@ -122,15 +131,28 @@ const Register = () => {
     }
 
     if (registeredAccount.errors.email || registeredAccount.errors.password) {
-      setError([{ code: "INVALID_EMAIL_PASSWORD", message: "Invalid Email and or Password" }]);
+      setError([
+        {
+          code: "INVALID_EMAIL_PASSWORD",
+          message: "Invalid Email and or Password",
+        },
+      ]);
     } else if (registeredAccount.errors.username) {
-      setError([{ code: "INVALID_USERNAME", message: "Invalid Username (This username may be maxed out)" }]);
+      setError([
+        {
+          code: "INVALID_USERNAME",
+          message: "Invalid Username (This username may be maxed out)",
+        },
+      ]);
     } else if (registeredAccount.errors.unknown) {
-      setError([{
-        code: "UNKNOWN", message: `${Object.entries(registeredAccount.errors.unknown).map(
-          ([k, obj]) => `${k} - ${obj.Message}`,
-        )}`
-      }]);
+      setError([
+        {
+          code: "UNKNOWN",
+          message: `${Object.entries(registeredAccount.errors.unknown).map(
+            ([k, obj]) => `${k} - ${obj.Message}`,
+          )}`,
+        },
+      ]);
     } else {
       setError([{ code: "UNKNOWN", message: "Unknown error occurred." }]);
     }

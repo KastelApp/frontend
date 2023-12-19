@@ -20,7 +20,7 @@ const GuildSettingsSidebar = ({
   selectedPage: number;
   setSelectedPage: (page: number) => void;
   children?: React.ReactNode;
-} )=> {
+}) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   return (
@@ -56,7 +56,7 @@ const GuildSettingsSidebar = ({
       </Box>
     </>
   );
-}
+};
 
 const SidebarContent = ({
   selectedPage,
@@ -169,7 +169,6 @@ const SidebarContent = ({
             onClose();
             setSelectedPage(4);
           }}
-
         >
           Bans
         </NavItem>
@@ -181,7 +180,6 @@ const SidebarContent = ({
             onClose();
             setSelectedPage(5);
           }}
-
         >
           Members
         </NavItem>
@@ -190,7 +188,13 @@ const SidebarContent = ({
   );
 };
 
-const NavItem = ({ selectedPage, id, icon, children, ...rest }: {
+const NavItem = ({
+  selectedPage,
+  id,
+  icon,
+  children,
+  ...rest
+}: {
   selectedPage: number;
   id?: number;
   icon?: React.ElementType | null;
@@ -262,7 +266,10 @@ const NavItem = ({ selectedPage, id, icon, children, ...rest }: {
   );
 };
 
-const MobileNav = ({ onOpen, ...rest }: {
+const MobileNav = ({
+  onOpen,
+  ...rest
+}: {
   onOpen: () => void;
   [x: string]: unknown;
 }) => {

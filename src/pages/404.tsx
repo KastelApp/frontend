@@ -61,6 +61,6 @@ const NotFoundPage = () => {
       </Flex>
     </>
   );
-}
+};
 
 export default NotFoundPage;

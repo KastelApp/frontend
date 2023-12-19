@@ -10,17 +10,22 @@ import { isDesktop } from "@/utils/stores.ts";
 
 const Home = () => {
   const [hasToken, setHasToken] = useState(false);
-  const [desktop] = useRecoilState(isDesktop)
+  const [desktop] = useRecoilState(isDesktop);
 
   useEffect(() => {
-    const token = localStorage.getItem("token")
+    const token = localStorage.getItem("token");
 
-    if (token && token !== "null") setHasToken(true)
-  }, [])
+    if (token && token !== "null") setHasToken(true);
+  }, []);
 
   return (
     <>
-      <SEO title={"Home"} description={"Kastel is a fresh take on chat apps. With a unique look and feel, it's the perfect way to connect with friends, family, and communities."} />
+      <SEO
+        title={"Home"}
+        description={
+          "Kastel is a fresh take on chat apps. With a unique look and feel, it's the perfect way to connect with friends, family, and communities."
+        }
+      />
       <Navbar />
       <Layout>
         <Container maxW={"3xl"}>
@@ -68,6 +73,6 @@ const Home = () => {
       </Layout>
     </>
   );
-}
+};
 
 export default Home;

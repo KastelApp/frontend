@@ -130,10 +130,7 @@ const Navbar = () => {
                   onClick={mobileNav.onClose}
                 />
 
-                <NextLink
-                  target={"_blank"}
-                  href={"https://docs.kastelapp.com"}
-                >
+                <NextLink target={"_blank"} href={"https://docs.kastelapp.com"}>
                   <Button w={"full"} variant="ghost">
                     Docs
                   </Button>

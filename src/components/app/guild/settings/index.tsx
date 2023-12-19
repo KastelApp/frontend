@@ -8,7 +8,10 @@ import {
 import { useState } from "react";
 import GuildSettingsSidebar from "./sidebar.tsx";
 
-const GuildSettings = ({ isOpen, onClose }: {
+const GuildSettings = ({
+  isOpen,
+  onClose,
+}: {
   isOpen: boolean;
   onClose: () => void;
 }) => {
@@ -31,6 +34,6 @@ const GuildSettings = ({ isOpen, onClose }: {
       </ModalContent>
     </Modal>
   );
-}
+};
 
 export default GuildSettings;

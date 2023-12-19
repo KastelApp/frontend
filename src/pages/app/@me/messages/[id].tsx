@@ -28,6 +28,6 @@ const AtMeMessagesId = () => {
       )}
     </>
   );
-}
+};
 
 export default AtMeMessagesId;

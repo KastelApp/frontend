@@ -15,11 +15,14 @@ import {
   SettingsSessions,
   SettingsShards,
   SettingsSubscriptions,
-  SettingsText
+  SettingsText,
 } from "@/components/app/settings/sections";
 import SettingsSidebar from "./sidebar.tsx";
 
-const Settings = ({ isOpen, onClose }: {
+const Settings = ({
+  isOpen,
+  onClose,
+}: {
   isOpen: boolean;
   onClose: () => void;
 }) => {
@@ -65,6 +68,6 @@ const Settings = ({ isOpen, onClose }: {
       </ModalContent>
     </Modal>
   );
-}
+};
 
 export default Settings;

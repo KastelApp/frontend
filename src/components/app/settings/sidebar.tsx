@@ -57,7 +57,7 @@ const SettingsSidebar = ({
       </Box>
     </>
   );
-}
+};
 
 const SidebarContent = ({
   selectedPage,
@@ -71,7 +71,7 @@ const SidebarContent = ({
   display?: {
     base: string;
     md: string;
-  }
+  };
 }) => {
   return (
     <Box
@@ -161,7 +161,13 @@ const SidebarContent = ({
   );
 };
 
-const NavItem = ({ selectedPage, id, icon, children, ...rest }: {
+const NavItem = ({
+  selectedPage,
+  id,
+  icon,
+  children,
+  ...rest
+}: {
   selectedPage: number;
   id: number;
   icon: React.ElementType | null;
@@ -234,12 +240,15 @@ const NavItem = ({ selectedPage, id, icon, children, ...rest }: {
   );
 };
 
-const MobileNav = ({ onOpen, ...rest }: {
+const MobileNav = ({
+  onOpen,
+  ...rest
+}: {
   onOpen: () => void;
   display: {
     base: string;
     md: string;
-  }
+  };
 }) => {
   return (
     <Flex

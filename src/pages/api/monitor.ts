@@ -13,7 +13,7 @@ const readRequestBody = async (body: ReadableStream<Uint8Array> | null) => {
 
     if (done) {
       waiting = false;
-      
+
       continue;
     }
 
@@ -22,7 +22,7 @@ const readRequestBody = async (body: ReadableStream<Uint8Array> | null) => {
   }
 
   return decodedData;
-}
+};
 
 const handler = async (request: Request) => {
   const { method, body } = request;
@@ -56,7 +56,6 @@ const handler = async (request: Request) => {
       headers: { "Content-Type": "application/json" },
     });
   } catch (err) {
-
     // @ts-expect-error -- error may or may not have this who knows
     const error = err?.response ?? err?.message;
 
@@ -65,9 +64,7 @@ const handler = async (request: Request) => {
       headers: { "Content-Type": "application/json" },
     });
   }
-}
-
-
+};
 
 export const runtime = "edge";
 

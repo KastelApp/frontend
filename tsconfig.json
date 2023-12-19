@@ -18,6 +18,16 @@
     },
     "allowImportingTsExtensions": true
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "next.config.mjs", "sentry.client.config.ts", "sentry.server.config.ts", "sentry.edge.config.ts", "next-seo.config.mjs", "gitinfo.mjs"],
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    "next.config.mjs",
+    "sentry.client.config.ts",
+    "sentry.server.config.ts",
+    "sentry.edge.config.ts",
+    "next-seo.config.mjs",
+    "gitinfo.mjs"
+  ],
   "exclude": ["node_modules"]
 }

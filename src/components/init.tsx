@@ -28,7 +28,7 @@ const Init = () => {
       setIsDesktop(true);
     }
 
-    if (["/", "/404",].includes(window.location.pathname)) {
+    if (["/", "/404"].includes(window.location.pathname)) {
       return;
     }
 
@@ -40,7 +40,7 @@ const Init = () => {
       mediaUrl: process.env.PUBLIC_MEDIA_URL as string,
       wsUrl: process.env.PUBLIC_API_WS_URL as string,
       token: token ? token : null,
-      unAuthed: token ? false : true
+      unAuthed: token ? false : true,
     } as ClientOptions);
 
     newClient.guilds.guilds.subscribe((guild, type) => {

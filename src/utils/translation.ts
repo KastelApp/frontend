@@ -32,171 +32,182 @@
 // we want to od translation("goodbye", { user: { username: "DarkerInk" } })
 
 type TranslationType = {
-    [key: string]: string | TranslationType;
+  [key: string]: string | TranslationType;
 };
 
 class Translation {
-    private currentLanguage: string = "en";
-    private translations: Map<string, TranslationType> = new Map();
-    private metaData: Map<string, string | boolean> = new Map();
+  private currentLanguage: string = "en";
+  private translations: Map<string, TranslationType> = new Map();
+  private metaData: Map<string, string | boolean> = new Map();
 
-    public constructor() {
-        this.load();
+  public constructor() {
+    this.load();
+  }
+
+  public async load() {
+    if (this.metaData.get("loaded")) return this;
+    const fetched = await fetch("/locales/meta.json");
+    const text = await fetched.text();
+    const metaData: {
+      languages: {
+        code: string; // This is basically the name of the file (DO NOT ADD .json)
+        status: "complete" | "wip" | "planned";
+        notes?: string[];
+      }[];
+    } | null = this.trytoparse(text);
+
+    if (!metaData) throw new Error("Failed to load meta.json");
+
+    for (const language of metaData.languages) {
+      if (language.status === "planned") continue;
+
+      const fetched = await fetch(`/locales/${language.code}.json`);
+      const text = await fetched.text();
+      const translations: TranslationType | null = this.trytoparse(text);
+
+      if (!translations)
+        throw new Error(`Failed to load ${language.code}.json`);
+
+      this.translations.set(language.code, translations);
     }
 
-    public async load() {
-        if (this.metaData.get("loaded")) return this;
-        const fetched = await fetch("/locales/meta.json");
-        const text = await fetched.text();
-        const metaData: {
-            languages: {
-                code: string; // This is basically the name of the file (DO NOT ADD .json)
-                status: "complete" | "wip" | "planned";
-                notes?: string[];
-            }[];
-        } | null = this.trytoparse(text);
+    this.metaData.set("loaded", true);
 
-        if (!metaData) throw new Error("Failed to load meta.json");
+    return this;
+  }
 
-        for (const language of metaData.languages) {
-            if (language.status === "planned") continue;
+  private trytoparse(str: string) {
+    try {
+      return JSON.parse(str);
+    } catch (e) {
+      return null;
+    }
+  }
 
-            const fetched = await fetch(`/locales/${language.code}.json`);
-            const text = await fetched.text();
-            const translations: TranslationType | null = this.trytoparse(text);
+  public setLanguage(language: string) {
+    this.currentLanguage = language;
+  }
 
-            if (!translations) throw new Error(`Failed to load ${language.code}.json`);
+  public t(key: string, ...anything: any[]) {
+    const translation =
+      this.translations.get(this.currentLanguage) ??
+      this.translations.get("en");
 
-            this.translations.set(language.code, translations);
-        }
+    console.log(translation, this.translations);
 
-        this.metaData.set("loaded", true);
+    if (!translation) return key;
 
-        return this;
+    const keys = key.split(".");
+
+    let current: string | TranslationType = translation;
+
+    for (const key of keys) {
+      if (typeof current === "string") break;
+
+      const found: TranslationType | string | null = current?.[key];
+
+      if (!found) return key;
+
+      current = found;
     }
 
-    private trytoparse(str: string) {
-        try {
-            return JSON.parse(str);
-        } catch (e) {
-            return null;
-        }
+    if (typeof current === "string") {
+      return this.parse(current, ...anything);
     }
 
-    public setLanguage(language: string) {
-        this.currentLanguage = language;
+    return key;
+  }
+
+  private parse(str: string, ...anything: any[]) {
+    const defaultFunctions = {
+      date: {
+        now: (type: "uk" | "us" = "us") => {
+          const date = new Date();
+
+          return type === "us"
+            ? `${
+                date.getMonth() + 1
+              }/${date.getDate()}/${date.getFullYear()} ${date.toLocaleTimeString()}`
+            : `${date.getDate()}/${
+                date.getMonth() + 1
+              }/${date.getFullYear()} ${date.toLocaleTimeString()}`;
+        },
+        time: (format: "12" | "24" = "12") => {
+          const date = new Date();
+          return format === "12"
+            ? date.toLocaleTimeString()
+            : `${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;
+        },
+      },
+    };
+
+    const functions = {
+      ...defaultFunctions,
+      ...anything.reduce((acc, cur) => ({ ...acc, ...cur }), {}),
+    };
+
+    let newString = str;
+
+    const matches = newString.match(/{{(.*?)}}/g);
+
+    if (!matches) return newString;
+
+    for (const match of matches) {
+      // heres two examples of a match:
+      // {{user.username}} - This is just a simple look through the object
+      // or {{date:now}} - This is a function call
+      const matchWithoutBrackets = match.replace("{{", "").replace("}}", "");
+      const split = matchWithoutBrackets.split(":");
+      const key = split[0];
+      const args = split.slice(1);
+
+      const splitKey = key.split(".");
+
+      let current: any = functions;
+
+      for (const key of splitKey) {
+        if (typeof current === "string") break;
+
+        const found = current?.[key];
+
+        if (!found) return key;
+
+        current = found;
+      }
+
+      if (typeof current === "function") {
+        newString = newString.replace(match, current(...args));
+      } else {
+        newString = newString.replace(match, current);
+      }
     }
 
-    public t(key: string, ...anything: any[]) {
-        const translation = this.translations.get(this.currentLanguage) ?? this.translations.get("en");
+    return newString;
+  }
 
-        console.log(translation, this.translations);
+  public getMetaData(language = "us"): {
+    name: string;
+    code: string;
+    contributors: {
+      name: string;
+      id: string;
+    }[];
+  } | null {
+    const foundLanguage = this.translations.get(language);
 
-        if (!translation) return key;
+    const metaData = foundLanguage?._meta;
 
-        const keys = key.split(".");
+    if (!metaData) return null;
 
-        let current: string | TranslationType = translation;
-
-        for (const key of keys) {
-            if (typeof current === "string") break;
-
-            const found: TranslationType | string | null = current?.[key];
-
-            if (!found) return key;
-
-            current = found;
-        }
-
-        if (typeof current === "string") {
-            return this.parse(current, ...anything);
-        }
-
-        return key;
-    }
-
-    private parse(str: string, ...anything: any[]) {
-        const defaultFunctions = {
-            date: {
-                now: (type: "uk" | "us" = "us") => {
-                    const date = new Date();
-
-                    return type === "us" ? `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()} ${date.toLocaleTimeString()}` : `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()} ${date.toLocaleTimeString()}`;
-                },
-                time: (format: "12" | "24" = "12") => {
-                    const date = new Date();
-                    return format === "12" ? date.toLocaleTimeString() : `${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;
-                }
-            }
-        };
-
-        const functions = {
-            ...defaultFunctions,
-            ...(anything.reduce((acc, cur) => ({ ...acc, ...cur }), {}))
-        };
-
-        let newString = str;
-
-        const matches = newString.match(/{{(.*?)}}/g);
-
-        if (!matches) return newString;
-
-        for (const match of matches) {
-            // heres two examples of a match:
-            // {{user.username}} - This is just a simple look through the object
-            // or {{date:now}} - This is a function call
-            const matchWithoutBrackets = match.replace("{{", "").replace("}}", "");
-            const split = matchWithoutBrackets.split(":");
-            const key = split[0];
-            const args = split.slice(1);
-
-            const splitKey = key.split(".");
-
-            let current: any = functions;
-
-            for (const key of splitKey) {
-                if (typeof current === "string") break;
-
-                const found = current?.[key];
-
-                if (!found) return key;
-
-                current = found;
-            }
-
-            if (typeof current === "function") {
-                newString = newString.replace(match, current(...args));
-            } else {
-                newString = newString.replace(match, current);
-            }
-        }
-
-        return newString;
-    }
-
-    public getMetaData(language = "us"): {
-        name: string
-        code: string
-        contributors: {
-            name: string
-            id: string
-        }[]
-    } | null {
-        const foundLanguage = this.translations.get(language);
-
-        const metaData = foundLanguage?._meta;
-
-        if (!metaData) return null;
-
-        return metaData as unknown as {
-            name: string
-            code: string
-            contributors: {
-                name: string
-                id: string
-            }[]
-        }
-    }
+    return metaData as unknown as {
+      name: string;
+      code: string;
+      contributors: {
+        name: string;
+        id: string;
+      }[];
+    };
+  }
 }
 
 export default Translation;

@@ -1,16 +1,14 @@
 {
-    "languages": [
-        {
-            "code": "en",
-            "status": "complete",
-            "notes": []
-        },
-        {
-            "code": "fr",
-            "status": "planned",
-            "notes": [
-                "missing everything"
-            ]
-        }
-    ]
+  "languages": [
+    {
+      "code": "en",
+      "status": "complete",
+      "notes": []
+    },
+    {
+      "code": "fr",
+      "status": "planned",
+      "notes": ["missing everything"]
+    }
+  ]
 }

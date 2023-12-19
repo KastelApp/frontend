@@ -4,7 +4,10 @@ import { type BaseChannel } from "@kastelll/wrapper";
 /**
  * Sorts through the channels and returns a sorted array of channels. (Stolen from Backend)
  */
-export const sortChannels = (existingChannels: BaseChannel[], ignoreParent = false): BaseChannel[] => {
+export const sortChannels = (
+  existingChannels: BaseChannel[],
+  ignoreParent = false,
+): BaseChannel[] => {
   /* position 0 = top
     So for example, with four channels:
         test1 = 0
@@ -63,5 +66,5 @@ export const sortChannels = (existingChannels: BaseChannel[], ignoreParent = fal
     return sortChannels(categoryChannels, true);
   });
 
-  return [...sortedChannels, ...sortedCategories].flat(8)
+  return [...sortedChannels, ...sortedCategories].flat(8);
 };
