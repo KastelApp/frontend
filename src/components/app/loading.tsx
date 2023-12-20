@@ -108,14 +108,10 @@ const Loading = () => {
               </Text>
               <center>
                 <NextLink
-                    href={"https://status.kastelapp.com"}
-                    target={"_blank"}
+                  href={"https://status.kastelapp.com"}
+                  target={"_blank"}
                 >
-                  <Button size={"md"}>
-
-                    Status Page
-
-                  </Button>
+                  <Button size={"md"}>Status Page</Button>
                 </NextLink>
               </center>
             </>
