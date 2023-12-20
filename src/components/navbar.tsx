@@ -23,7 +23,7 @@ const Navbar = () => {
     const token = localStorage.getItem("token");
 
     if (token) setToken(true);
-    if (token === "") setToken(false);
+    if (token === '""') setToken(false);
   }, []);
 
   return (
@@ -75,7 +75,7 @@ const Navbar = () => {
                 <Button variant="ghost">Discord</Button>
               </NextLink>
             </HStack>
-            <NextLink href={token ? "/app" : "/login"}>
+            <a href={token ? "/app" : "/login"}>
               <Button
                 _hover={{
                   bgGradient: "linear(to-r, red.400,pink.400)",
@@ -87,7 +87,7 @@ const Navbar = () => {
               >
                 {token ? "Open App" : "Login"}
               </Button>
-            </NextLink>
+            </a>
             <Box
               display={{
                 base: "inline-flex",
