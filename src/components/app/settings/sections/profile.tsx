@@ -15,6 +15,7 @@ import {
   Stack,
   Text,
   useColorModeValue,
+  useToast,
 } from "@chakra-ui/react";
 import { SmallCloseIcon, ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
 import { ChangeEvent, FormEvent, useRef, useState } from "react";
@@ -23,6 +24,7 @@ import { useRecoilState } from "recoil";
 import { hideEmail } from "@/utils/hideEmail.ts";
 
 const SettingsProfile = () => {
+  const toast = useToast();
   const [changePassword, setChangePassword] = useState<boolean>(false);
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [changeEmail, setChangeEmail] = useState<boolean>(false);
@@ -56,6 +58,13 @@ const SettingsProfile = () => {
     if (hash.success) {
       await client.user.updateUser({
         avatar: hash.hash,
+      });
+      toast({
+        title: "Avatar updated.",
+        description: "Your avatar has been updated.",
+        status: "success",
+        duration: 9000,
+        isClosable: true,
       });
     }
     console.log(hash);
@@ -147,6 +156,13 @@ const SettingsProfile = () => {
     console.log(res);
 
     setLoading(false);
+    toast({
+      title: "Profile updated.",
+      description: "Your profile has been updated.",
+      status: "success",
+      duration: 9000,
+      isClosable: true,
+    });
   };
 
   return (
