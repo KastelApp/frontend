@@ -17,18 +17,28 @@ import {
   useColorModeValue,
 } from "@chakra-ui/react";
 import { SmallCloseIcon, ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
-import { ChangeEvent, useRef, useState } from "react";
+import { ChangeEvent, FormEvent, useRef, useState } from "react";
 import { clientStore } from "@/utils/stores.ts";
 import { useRecoilState } from "recoil";
+import { hideEmail } from "@/utils/hideEmail.ts";
 
 const SettingsProfile = () => {
   const [changePassword, setChangePassword] = useState<boolean>(false);
   const [showPassword, setShowPassword] = useState<boolean>(false);
+  const [changeEmail, setChangeEmail] = useState<boolean>(false);
+  const [detectedChanges, setDetectedChanges] = useState<boolean>(false);
   const [client] = useRecoilState(clientStore);
   const [selectedImage, setSelectedImage] = useState<string | undefined>(
     undefined,
   );
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<
+    {
+      code: string;
+      message: string;
+    }[]
+  >([]);
 
   const handleImageChange = async (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -43,8 +53,100 @@ const SettingsProfile = () => {
     reader.readAsDataURL(file);
 
     const hash = await client.user.uploadAvatar(file); // todo: fix cors error
-
+    if (hash.success) {
+      await client.user.updateUser({
+        avatar: hash.hash,
+      });
+    }
     console.log(hash);
+  };
+
+  const handleSubmit = async (
+    event: FormEvent<HTMLFormElement> & {
+      target: {
+        username: {
+          value: string;
+        };
+        email: {
+          value: string;
+        };
+        currentPassword: {
+          value: string;
+        };
+        newPassword: {
+          value: string;
+        };
+        confirmNewPassword: {
+          value: string;
+        };
+      };
+    },
+  ) => {
+    event.preventDefault();
+    setLoading(true);
+    setError([]);
+
+    const currentPassword = event.target.currentPassword.value;
+    if (!currentPassword) {
+      setError([
+        {
+          code: "MISSING_CURRENT_PASSWORD",
+          message: "Please enter your password to make changes",
+        },
+      ]);
+      setLoading(false);
+      return;
+    }
+
+    let data: {
+      username?: string;
+      email?: string;
+      newPassword?: string;
+      password: string;
+    } = {
+      password: currentPassword,
+    };
+
+    if (event.target.username) {
+      data = {
+        ...data,
+        username: event.target.username.value,
+      };
+    }
+
+    if (event.target.email) {
+      data = {
+        ...data,
+        email: event.target.email.value,
+      };
+    }
+
+    if (event.target.newPassword) {
+      const newPassword = event.target.newPassword.value;
+      const confirmNewPassword = event.target.confirmNewPassword.value;
+
+      if (newPassword !== confirmNewPassword) {
+        setError([
+          {
+            code: "PASSWORDS_DONT_MATCH",
+            message: "Passwords don't match",
+          },
+        ]);
+        setLoading(false);
+        return;
+      } else {
+        data = {
+          ...data,
+          newPassword: newPassword,
+        };
+      }
+    }
+
+    const res = await client.user.updateUser(data);
+
+    console.log(res);
+
+    setLoading(false);
   };
 
   return (
@@ -53,7 +155,7 @@ const SettingsProfile = () => {
         My Profile
       </Text>
 
-      <Box mt={50} as="form">
+      <Box mt={50} as="form" onSubmit={handleSubmit}>
         <Stack
           spacing={4}
           w={"full"}
@@ -98,7 +200,7 @@ const SettingsProfile = () => {
                 </Avatar>
                 <Input
                   type="file"
-                  id="avatar-input"
+                  id="avatar"
                   ref={fileInputRef}
                   onChange={handleImageChange}
                   accept="image/*"
@@ -111,14 +213,43 @@ const SettingsProfile = () => {
                   cursor="pointer"
                   zIndex="-1"
                 />
+                <Box ml={2}>
+                  <Text fontSize="sm" fontWeight="bold">
+                    {client?.user?.username || ""}#
+                    {client?.user?.discriminator || ""}
+                  </Text>
+                  <Text fontSize="sm" color="gray.500">
+                    cool description
+                  </Text>
+                </Box>
               </Center>
             </Stack>
           </FormControl>
 
+          {error.length > 0 && (
+            <center>
+              <Text
+                mt={-3}
+                as={"span"}
+                bgGradient="linear(to-r, red.400,pink.400)"
+                bgClip="text"
+              >
+                {error.map((err) => {
+                  return err.message;
+                })}
+              </Text>
+            </center>
+          )}
+
           <Flex gap={"2"}>
             <FormControl>
               <FormLabel>Username</FormLabel>
-              <Input defaultValue={client?.user?.username} type="text" />
+              <Input
+                onChange={() => setDetectedChanges(true)}
+                id={"username"}
+                defaultValue={client?.user?.username}
+                type="text"
+              />
             </FormControl>
             <FormControl>
               <FormLabel>Discriminator</FormLabel>
@@ -139,35 +270,81 @@ const SettingsProfile = () => {
 
           <FormControl>
             <FormLabel>Email address</FormLabel>
-            <Input type="email" />
+            <InputGroup>
+              <Input
+                type={"email"}
+                readOnly={true}
+                defaultValue={hideEmail(client?.user?.email || "")}
+              />
+              <InputRightElement w={"fit-content"}>
+                <Button
+                  mr={2}
+                  h="1.75rem"
+                  onClick={() => setChangeEmail((changeEmail) => !changeEmail)}
+                >
+                  {changeEmail ? "Cancel Email Change" : "Change Email"}
+                </Button>
+              </InputRightElement>
+            </InputGroup>
           </FormControl>
+
+          {changeEmail && (
+            <>
+              <FormControl>
+                <FormLabel>New Email address</FormLabel>
+                <InputGroup>
+                  <Input
+                    onChange={() => setDetectedChanges(true)}
+                    type={"email"}
+                    id={"email"}
+                  />
+                  <InputRightElement w={"fit-content"}></InputRightElement>
+                </InputGroup>
+              </FormControl>
+            </>
+          )}
+
+          {detectedChanges && <Divider my={4} />}
+
+          {detectedChanges && (
+            <FormControl>
+              <FormLabel>Current Password</FormLabel>
+              <InputGroup>
+                <Input
+                  id={"currentPassword"}
+                  type={showPassword ? "text" : "password"}
+                />
+                <InputRightElement h={"full"}>
+                  <Button
+                    mr={2}
+                    h="1.75rem"
+                    onClick={() =>
+                      setShowPassword((showPassword) => !showPassword)
+                    }
+                  >
+                    {showPassword ? <ViewIcon /> : <ViewOffIcon />}
+                  </Button>
+                </InputRightElement>
+              </InputGroup>
+            </FormControl>
+          )}
 
           {changePassword && (
             <>
-              <Divider my={4} />
-              <FormControl>
-                <FormLabel>Current Password</FormLabel>
-                <InputGroup>
-                  <Input type={showPassword ? "text" : "password"} />
-                  <InputRightElement h={"full"}>
-                    <Button
-                      variant={"ghost"}
-                      onClick={() =>
-                        setShowPassword((showPassword) => !showPassword)
-                      }
-                    >
-                      {showPassword ? <ViewIcon /> : <ViewOffIcon />}
-                    </Button>
-                  </InputRightElement>
-                </InputGroup>
-              </FormControl>
               <FormControl>
                 <FormLabel>New Password</FormLabel>
-                <Input type={showPassword ? "text" : "password"} />
+                <Input
+                  onChange={() => setDetectedChanges(true)}
+                  id={"newPassword"}
+                  type={showPassword ? "text" : "password"}
+                />
               </FormControl>
               <FormControl>
                 <FormLabel>Confirm New Password</FormLabel>
-                <Input type={showPassword ? "text" : "password"} />
+                <Input
+                  id={"confirmNewPassword"}
+                  type={showPassword ? "text" : "password"}
+                />
               </FormControl>
             </>
           )}
@@ -181,7 +358,13 @@ const SettingsProfile = () => {
               >
                 {changePassword ? "Cancel Password Change" : "Change Password"}
               </Button>
-              <Button>Save Changes</Button>
+              <Button
+                isDisabled={!detectedChanges}
+                isLoading={loading}
+                type={detectedChanges ? "submit" : "button"}
+              >
+                Save Changes
+              </Button>
             </Flex>
           </Center>
         </Stack>
