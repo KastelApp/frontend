@@ -17,7 +17,7 @@ import {
   useColorModeValue,
   useToast,
 } from "@chakra-ui/react";
-import {RepeatIcon, SmallCloseIcon, ViewIcon, ViewOffIcon} from "@chakra-ui/icons";
+import { RepeatIcon, SmallCloseIcon, ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
 import { ChangeEvent, FormEvent, useRef, useState } from "react";
 import { clientStore } from "@/utils/stores.ts";
 import { useRecoilState } from "recoil";
