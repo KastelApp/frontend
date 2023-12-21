@@ -17,7 +17,7 @@ import {
   useColorModeValue,
   useToast,
 } from "@chakra-ui/react";
-import { SmallCloseIcon, ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
+import {RepeatIcon, SmallCloseIcon, ViewIcon, ViewOffIcon} from "@chakra-ui/icons";
 import { ChangeEvent, FormEvent, useRef, useState } from "react";
 import { clientStore } from "@/utils/stores.ts";
 import { useRecoilState } from "recoil";
@@ -287,9 +287,9 @@ const SettingsProfile = () => {
                   defaultValue={client?.user?.discriminator}
                   type="text"
                 />
-                <InputRightElement width="4.5rem">
-                  <Button mr={2} h="1.75rem" size="sm">
-                    Update
+                <InputRightElement width="3rem">
+                  <Button h="1.75rem" size="sm">
+                    <RepeatIcon/>
                   </Button>
                 </InputRightElement>
               </InputGroup>
