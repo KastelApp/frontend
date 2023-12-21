@@ -165,6 +165,20 @@ const SettingsProfile = () => {
     });
   };
 
+  const handleDelete = async () => {
+    setSelectedImage("/icon-1.png");
+    await client.user.updateUser({
+      avatar: null,
+    });
+    toast({
+      title: "Avatar removed.",
+      description: "Your avatar has been removed.",
+      status: "success",
+      duration: 9000,
+      isClosable: true,
+    });
+  };
+
   return (
     <>
       <Text fontSize="xl" fontWeight="bold">
@@ -181,8 +195,8 @@ const SettingsProfile = () => {
           p={6}
           my={12}
         >
-          <FormControl id="userName">
-            <FormLabel>User Icon</FormLabel>
+          <FormControl id="avatar">
+            <FormLabel>User Avatar</FormLabel>
             <Stack direction={["column", "row"]} spacing={6}>
               <Center>
                 <Avatar
@@ -197,14 +211,9 @@ const SettingsProfile = () => {
                   name="avatar-preview"
                   mb={4}
                   cursor="pointer"
-                  onClick={() => {
-                    const input = fileInputRef.current;
-                    if (input) {
-                      input.click();
-                    }
-                  }}
                 >
                   <AvatarBadge
+                    onClick={handleDelete}
                     as={IconButton}
                     size="sm"
                     rounded="full"
@@ -230,13 +239,16 @@ const SettingsProfile = () => {
                   zIndex="-1"
                 />
                 <Box ml={2}>
-                  <Text fontSize="sm" fontWeight="bold">
-                    {client?.user?.username || ""}#
-                    {client?.user?.discriminator || ""}
-                  </Text>
-                  <Text fontSize="sm" color="gray.500">
-                    cool description
-                  </Text>
+                  <Button
+                    onClick={() => {
+                      const input = fileInputRef.current;
+                      if (input) {
+                        input.click();
+                      }
+                    }}
+                  >
+                    Change Avatar
+                  </Button>
                 </Box>
               </Center>
             </Stack>
