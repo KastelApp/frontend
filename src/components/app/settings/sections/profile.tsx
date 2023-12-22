@@ -12,12 +12,23 @@ import {
   Input,
   InputGroup,
   InputRightElement,
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalFooter,
+  ModalOverlay,
   Stack,
   Text,
   useColorModeValue,
+  useDisclosure,
   useToast,
 } from "@chakra-ui/react";
-import { RepeatIcon, SmallCloseIcon, ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
+import {
+  RepeatIcon,
+  SmallCloseIcon,
+  ViewIcon,
+  ViewOffIcon,
+} from "@chakra-ui/icons";
 import { ChangeEvent, FormEvent, useRef, useState } from "react";
 import { clientStore } from "@/utils/stores.ts";
 import { useRecoilState } from "recoil";
@@ -41,6 +52,9 @@ const SettingsProfile = () => {
       message: string;
     }[]
   >([]);
+  const [confirmDiscriminator, setConfirmDiscriminator] =
+    useState<boolean>(false);
+  const { isOpen, onToggle, onClose } = useDisclosure();
 
   const handleImageChange = async (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -269,6 +283,46 @@ const SettingsProfile = () => {
             </center>
           )}
 
+          <Modal isCentered={true} isOpen={isOpen} onClose={onClose}>
+            <center>
+              <ModalOverlay />
+              <ModalContent>
+                <ModalBody mt={5}>
+                  <Text>
+                    Are you sure you want to change your discriminator? Your new
+                    discriminator will be randomly generated.
+                  </Text>
+
+                  <Text as={"b"}>This is not reversible.</Text>
+                </ModalBody>
+
+                <ModalFooter display={"unset"}>
+                  <Button
+                    _hover={{
+                      bgGradient: "linear(to-r, red.300,pink.400)",
+                      boxShadow: "xl",
+                    }}
+                    bgGradient="linear(to-r, red.400,pink.400)"
+                    mr={3}
+                    onClick={() => {
+                      onClose();
+                      toast({
+                        title: "Not Done",
+                        description: "This is in progress.",
+                        status: "warning",
+                        duration: 9000,
+                        isClosable: true,
+                      });
+                    }}
+                  >
+                    Confirm
+                  </Button>
+                  <Button onClick={onClose}>Cancel</Button>
+                </ModalFooter>
+              </ModalContent>
+            </center>
+          </Modal>
+
           <Flex gap={"2"}>
             <FormControl>
               <FormLabel>Username</FormLabel>
@@ -288,8 +342,8 @@ const SettingsProfile = () => {
                   type="text"
                 />
                 <InputRightElement width="3rem">
-                  <Button h="1.75rem" size="sm">
-                    <RepeatIcon/>
+                  <Button onClick={onToggle} h="1.75rem" size="sm">
+                    <RepeatIcon />
                   </Button>
                 </InputRightElement>
               </InputGroup>
