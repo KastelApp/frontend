@@ -52,8 +52,6 @@ const SettingsProfile = () => {
       message: string;
     }[]
   >([]);
-  const [confirmDiscriminator, setConfirmDiscriminator] =
-    useState<boolean>(false);
   const { isOpen, onToggle, onClose } = useDisclosure();
 
   const handleImageChange = async (event: ChangeEvent<HTMLInputElement>) => {
