@@ -1,19 +1,10 @@
 import { Box, Stack, Text, useColorModeValue } from "@chakra-ui/react";
-import { useRecoilState } from "recoil";
-import { clientStore } from "@/utils/stores.ts";
-import { useEffect } from "react";
 
-const SettingsSessions = () => {
-  const [client] = useRecoilState(clientStore);
-
-  useEffect(() => {
-    if (!client) return;
-  }, [client]);
-
+const GuildSettingsBans = () => {
   return (
     <>
       <Text fontSize="xl" fontWeight="bold">
-        Sessions
+        Bans
       </Text>
 
       <Box mt={50} as="form">
@@ -31,4 +22,4 @@ const SettingsSessions = () => {
   );
 };
 
-export default SettingsSessions;
+export default GuildSettingsBans;

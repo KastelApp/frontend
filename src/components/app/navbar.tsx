@@ -1,4 +1,9 @@
 import {
+  Accordion,
+  AccordionButton,
+  AccordionIcon,
+  AccordionItem,
+  AccordionPanel,
   Badge,
   Box,
   Button,
@@ -10,6 +15,7 @@ import {
   PopoverBody,
   PopoverContent,
   PopoverTrigger,
+  SimpleGrid,
   Stack,
   useBreakpointValue,
   useColorMode,
@@ -28,7 +34,7 @@ import Settings from "@/components/app/settings";
 import { useRecoilState } from "recoil";
 import { clientStore, guildStore, tokenStore } from "@/utils/stores";
 import { useRouter } from "next/router";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Guild from "./guild/guild.tsx";
 import NewGuild from "./new-guild.tsx";
 
@@ -40,6 +46,7 @@ const AppNavbar = () => {
   const router = useRouter();
   const isSmallScreen = useBreakpointValue({ base: true, sm: false });
   const { toggleColorMode } = useColorMode();
+  const [status, setStatus] = useState<string>("green");
 
   const handleLogout = () => {
     if (!client) {
@@ -68,6 +75,29 @@ const AppNavbar = () => {
       toggleColorMode();
     }
   }, [client?.user.theme]);
+
+  useEffect(() => {
+    /*
+     * online - 0 - green
+     * idle - 1 - orange
+     * dnd - 2 - red
+     * offline -  3 - gray
+     */
+
+    if (client?.user.presence === "online") {
+      setStatus("green");
+    } else if (client?.user.presence === "idle") {
+      setStatus("orange");
+    } else if (client?.user.presence === "dnd") {
+      setStatus("red");
+    } else {
+      setStatus("gray");
+    }
+  }, [client?.user.presence]);
+
+  const handleStatusChange = (status: string) => {
+    console.log("new status has not been saved. " + status);
+  };
 
   return (
     <>
@@ -186,30 +216,13 @@ const AppNavbar = () => {
                       <Badge
                         boxSize="3"
                         borderRadius="full"
-                        bg="green.500"
+                        bg={status}
                         position="absolute"
                         bottom="-0.5"
                         right="-0.5"
                       />
                     </Box>
                   </Box>
-
-                  {/*<Box marginLeft={"2"} className="hidden sm:block">
-                      <Heading
-                        fontSize={"sm"}
-                        color={"gray.200"}
-                        className=" font-black "
-                      >
-                        {client?.user.username || "Loading"}
-                      </Heading>
-                      <Text
-                        fontSize={"xs"}
-                        color={"gray.400"}
-                        className="font-medium"
-                      >
-                        {userInfo?.activityMessage || ""}
-                      </Text>
-                    </Box>*/}
                 </PopoverTrigger>
 
                 <PopoverContent
@@ -220,6 +233,68 @@ const AppNavbar = () => {
                   <PopoverArrow />
                   <PopoverBody>
                     <Stack>
+                      <Accordion allowToggle>
+                        <AccordionItem>
+                          <AccordionButton>
+                            Status
+                            <AccordionIcon />
+                          </AccordionButton>
+                          <AccordionPanel>
+                            <center>
+                              <SimpleGrid columns={2} spacing={1}>
+                                <Badge
+                                  onClick={() => handleStatusChange("online")}
+                                  variant={
+                                    client?.user.presence === "online"
+                                      ? "solid"
+                                      : "subtle"
+                                  }
+                                  cursor={"pointer"}
+                                  colorScheme={"green"}
+                                >
+                                  Online
+                                </Badge>
+                                <Badge
+                                  onClick={() => handleStatusChange("idle")}
+                                  variant={
+                                    client?.user.presence === "idle"
+                                      ? "solid"
+                                      : "subtle"
+                                  }
+                                  cursor={"pointer"}
+                                  colorScheme={"orange"}
+                                >
+                                  Idle
+                                </Badge>
+                                <Badge
+                                  onClick={() => handleStatusChange("dnd")}
+                                  variant={
+                                    client?.user.presence === "dnd"
+                                      ? "solid"
+                                      : "subtle"
+                                  }
+                                  cursor={"pointer"}
+                                  colorScheme={"red"}
+                                >
+                                  DND
+                                </Badge>
+                                <Badge
+                                  onClick={() => handleStatusChange("offline")}
+                                  variant={
+                                    client?.user.presence === "offline"
+                                      ? "solid"
+                                      : "subtle"
+                                  }
+                                  cursor={"pointer"}
+                                >
+                                  Offline
+                                </Badge>
+                              </SimpleGrid>
+                            </center>
+                          </AccordionPanel>
+                        </AccordionItem>
+                      </Accordion>
+
                       <Button
                         w="194px"
                         variant="ghost"
