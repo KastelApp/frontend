@@ -78,6 +78,7 @@ const GuildChannelPage = () => {
         <>
           <Box>
             <AppNavbar />
+
             <GuildSideBar />
           </Box>
         </>

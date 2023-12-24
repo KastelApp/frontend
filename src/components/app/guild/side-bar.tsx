@@ -32,6 +32,7 @@ import { sortChannels } from "@/utils/sortChannels";
 import GuildSettings from "@/components/app/guild/settings";
 import GuildInvites from "@/components/app/guild/invites";
 import { BaseChannel } from "@kastelll/wrapper";
+import GuildMessage from "@/components/app/guild/message.tsx";
 
 const GuildSideBar = () => {
   const [guild] = useRecoilState(currentGuild);
@@ -258,6 +259,7 @@ const GuildSideBar = () => {
             </div>
           </Flex>
         </Box>
+        <GuildMessage />
       </Flex>
     </>
   ) : null;
