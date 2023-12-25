@@ -27,6 +27,7 @@ const SettingsProfile = () => {
   const toast = useToast();
   const [changePassword, setChangePassword] = useState<boolean>(false);
   const [showPassword, setShowPassword] = useState<boolean>(false);
+  const [showEmail, setShowEmail] = useState<boolean>(false);
   const [changeEmail, setChangeEmail] = useState<boolean>(false);
   const [detectedChanges, setDetectedChanges] = useState<boolean>(false);
   const [client] = useRecoilState(clientStore);
@@ -109,8 +110,6 @@ const SettingsProfile = () => {
       setLoading(false);
       return;
     }
-
-    console.log(event.target.discriminator.value);
 
     let data: {
       username?: string;
@@ -324,15 +323,19 @@ const SettingsProfile = () => {
               <Input
                 type={"email"}
                 readOnly={true}
-                defaultValue={hideEmail(client?.user?.email || "")}
+                value={
+                  showEmail
+                    ? client?.user?.email || ""
+                    : hideEmail(client?.user?.email || "")
+                }
               />
               <InputRightElement w={"fit-content"}>
                 <Button
                   mr={2}
                   h="1.75rem"
-                  onClick={() => setChangeEmail((changeEmail) => !changeEmail)}
+                  onClick={() => setShowEmail(!showEmail)}
                 >
-                  {changeEmail ? "Cancel Email Change" : "Change Email"}
+                  {showEmail ? "Hide" : "Show"}
                 </Button>
               </InputRightElement>
             </InputGroup>
@@ -401,6 +404,14 @@ const SettingsProfile = () => {
 
           <Center>
             <Flex gap="2">
+              <Button
+                onClick={() => {
+                  setChangeEmail(!changeEmail);
+                }}
+              >
+                {changeEmail ? "Cancel Email Change" : "Change Email"}
+              </Button>
+
               <Button
                 onClick={() => {
                   setChangePassword(!changePassword);
