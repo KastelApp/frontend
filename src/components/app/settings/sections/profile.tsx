@@ -117,7 +117,7 @@ const SettingsProfile = () => {
       email?: string;
       newPassword?: string;
       password: string;
-      discriminator?: string;
+      tag?: string;
     } = {
       password: currentPassword,
     };
@@ -135,7 +135,7 @@ const SettingsProfile = () => {
       }
       data = {
         ...data,
-        discriminator: event.target.discriminator.value,
+        tag: event.target.discriminator.value,
       };
     }
 
