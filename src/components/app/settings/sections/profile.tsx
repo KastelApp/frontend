@@ -12,23 +12,12 @@ import {
   Input,
   InputGroup,
   InputRightElement,
-  Modal,
-  ModalBody,
-  ModalContent,
-  ModalFooter,
-  ModalOverlay,
   Stack,
   Text,
   useColorModeValue,
-  useDisclosure,
   useToast,
 } from "@chakra-ui/react";
-import {
-  RepeatIcon,
-  SmallCloseIcon,
-  ViewIcon,
-  ViewOffIcon,
-} from "@chakra-ui/icons";
+import { SmallCloseIcon, ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
 import { ChangeEvent, FormEvent, useRef, useState } from "react";
 import { clientStore } from "@/utils/stores.ts";
 import { useRecoilState } from "recoil";
@@ -52,7 +41,6 @@ const SettingsProfile = () => {
       message: string;
     }[]
   >([]);
-  const { isOpen, onToggle, onClose } = useDisclosure();
 
   const handleImageChange = async (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -100,6 +88,9 @@ const SettingsProfile = () => {
         confirmNewPassword: {
           value: string;
         };
+        discriminator: {
+          value: string;
+        };
       };
     },
   ) => {
@@ -119,14 +110,34 @@ const SettingsProfile = () => {
       return;
     }
 
+    console.log(event.target.discriminator.value);
+
     let data: {
       username?: string;
       email?: string;
       newPassword?: string;
       password: string;
+      discriminator?: string;
     } = {
       password: currentPassword,
     };
+
+    if (event.target.discriminator) {
+      if (event.target.discriminator.value.length !== 4) {
+        setError([
+          {
+            code: "INVALID_DISCRIMINATOR",
+            message: "Discriminator must be 4 digits long",
+          },
+        ]);
+        setLoading(false);
+        return;
+      }
+      data = {
+        ...data,
+        discriminator: event.target.discriminator.value,
+      };
+    }
 
     if (event.target.username) {
       data = {
@@ -162,6 +173,8 @@ const SettingsProfile = () => {
         };
       }
     }
+
+    console.log(data);
 
     const res = await client.user.updateUser(data);
 
@@ -281,46 +294,6 @@ const SettingsProfile = () => {
             </center>
           )}
 
-          <Modal isCentered={true} isOpen={isOpen} onClose={onClose}>
-            <center>
-              <ModalOverlay />
-              <ModalContent>
-                <ModalBody mt={5}>
-                  <Text>
-                    Are you sure you want to change your discriminator? Your new
-                    discriminator will be randomly generated.
-                  </Text>
-
-                  <Text as={"b"}>This is not reversible.</Text>
-                </ModalBody>
-
-                <ModalFooter display={"unset"}>
-                  <Button
-                    _hover={{
-                      bgGradient: "linear(to-r, red.300,pink.400)",
-                      boxShadow: "xl",
-                    }}
-                    bgGradient="linear(to-r, red.400,pink.400)"
-                    mr={3}
-                    onClick={() => {
-                      onClose();
-                      toast({
-                        title: "Not Done",
-                        description: "This is in progress.",
-                        status: "warning",
-                        duration: 9000,
-                        isClosable: true,
-                      });
-                    }}
-                  >
-                    Confirm
-                  </Button>
-                  <Button onClick={onClose}>Cancel</Button>
-                </ModalFooter>
-              </ModalContent>
-            </center>
-          </Modal>
-
           <Flex gap={"2"}>
             <FormControl>
               <FormLabel>Username</FormLabel>
@@ -335,15 +308,12 @@ const SettingsProfile = () => {
               <FormLabel>Discriminator</FormLabel>
               <InputGroup>
                 <Input
-                  readOnly={true}
+                  onChange={() => setDetectedChanges(true)}
+                  id={"discriminator"}
                   defaultValue={client?.user?.discriminator}
                   type="text"
+                  maxLength={4}
                 />
-                <InputRightElement width="3rem">
-                  <Button onClick={onToggle} h="1.75rem" size="sm">
-                    <RepeatIcon />
-                  </Button>
-                </InputRightElement>
               </InputGroup>
             </FormControl>
           </Flex>

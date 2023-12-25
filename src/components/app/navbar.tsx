@@ -103,7 +103,15 @@ const AppNavbar = () => {
     <>
       <Settings isOpen={isOpen} onClose={onClose} />
 
-      <Flex zIndex={100} w="full" h="14" alignItems="center" pos="fixed" bottom="2" px="3">
+      <Flex
+        zIndex={100}
+        w="full"
+        h="14"
+        alignItems="center"
+        pos="fixed"
+        bottom="2"
+        px="3"
+      >
         <Flex
           bg={useColorModeValue("gray.100", "gray.800")}
           color={useColorModeValue("gray.700", "gray.200")}
