@@ -8,6 +8,8 @@ import {
   Flex,
   FormControl,
   FormLabel,
+  Grid,
+  GridItem,
   IconButton,
   Input,
   InputGroup,
@@ -293,53 +295,68 @@ const SettingsProfile = () => {
             </center>
           )}
 
-          <Flex gap={"2"}>
-            <FormControl>
-              <FormLabel>Username</FormLabel>
-              <Input
-                onChange={() => setDetectedChanges(true)}
-                id={"username"}
-                defaultValue={client?.user?.username}
-                type="text"
-              />
-            </FormControl>
-            <FormControl>
-              <FormLabel>Discriminator</FormLabel>
-              <InputGroup>
+          <Grid templateColumns="repeat(5, 1fr)" gap={5}>
+            <GridItem colSpan={2}>
+              <FormControl>
+                <FormLabel>Username</FormLabel>
                 <Input
                   onChange={() => setDetectedChanges(true)}
-                  id={"discriminator"}
-                  defaultValue={client?.user?.discriminator}
+                  id={"username"}
+                  defaultValue={client?.user?.username}
                   type="text"
-                  maxLength={4}
                 />
-              </InputGroup>
-            </FormControl>
-          </Flex>
+              </FormControl>
+            </GridItem>
+            <GridItem colStart={4} colEnd={6}>
+              <FormControl>
+                <FormLabel>Discriminator</FormLabel>
+                <InputGroup>
+                  <Input
+                    onChange={() => setDetectedChanges(true)}
+                    id={"discriminator"}
+                    defaultValue={client?.user?.discriminator}
+                    type="text"
+                    maxLength={4}
+                  />
+                </InputGroup>
+              </FormControl>
+            </GridItem>
+          </Grid>
+          <br />
+          <Grid templateColumns="repeat(5, 1fr)" gap={5}>
+            <GridItem colSpan={2}>
+              <FormControl>
+                <FormLabel>Email address</FormLabel>
+                <Flex>
+                  <Text>
+                    {showEmail
+                      ? client?.user?.email || ""
+                      : hideEmail(client?.user?.email || "")}
+                  </Text>
 
-          <FormControl>
-            <FormLabel>Email address</FormLabel>
-            <InputGroup>
-              <Input
-                type={"email"}
-                readOnly={true}
-                value={
-                  showEmail
-                    ? client?.user?.email || ""
-                    : hideEmail(client?.user?.email || "")
-                }
-              />
-              <InputRightElement w={"fit-content"}>
-                <Button
-                  mr={2}
-                  h="1.75rem"
-                  onClick={() => setShowEmail(!showEmail)}
-                >
-                  {showEmail ? "Hide" : "Show"}
-                </Button>
-              </InputRightElement>
-            </InputGroup>
-          </FormControl>
+                  <Button
+                    cursor={"pointer"}
+                    colorScheme={"cyan"}
+                    ml={2}
+                    variant="link"
+                    onClick={() => setShowEmail(!showEmail)}
+                  >
+                    {showEmail ? "Hide" : "Show"}
+                  </Button>
+                </Flex>
+              </FormControl>
+            </GridItem>
+
+            <GridItem colStart={4} colEnd={6}>
+              <Button
+                onClick={() => {
+                  setChangeEmail(!changeEmail);
+                }}
+              >
+                {changeEmail ? "Cancel Email Change" : "Change Email"}
+              </Button>
+            </GridItem>
+          </Grid>
 
           {changeEmail && (
             <>
@@ -403,15 +420,7 @@ const SettingsProfile = () => {
           )}
 
           <Center>
-            <Flex gap="2">
-              <Button
-                onClick={() => {
-                  setChangeEmail(!changeEmail);
-                }}
-              >
-                {changeEmail ? "Cancel Email Change" : "Change Email"}
-              </Button>
-
+            <Flex mt={5} gap="2">
               <Button
                 onClick={() => {
                   setChangePassword(!changePassword);
