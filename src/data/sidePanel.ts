@@ -16,6 +16,12 @@ const data: SidebarData[] = [
     name: "Profile",
     options: [
       { name: "My Profile", badges: [], id: 0, icon: null },
+      {
+        name: "Invites",
+        badges: [{ name: "New!", color: "#7c2d71" }],
+        id: 9,
+        icon: null,
+      },
       { name: "Privacy & Safety", badges: [], id: 1, icon: null },
       {
         name: "Sessions",

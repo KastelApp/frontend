@@ -10,6 +10,7 @@ import {
   SettingsAccessibility,
   SettingsAppearance,
   SettingsHistory,
+  SettingsInvites,
   SettingsPrivacy,
   SettingsProfile,
   SettingsSessions,
@@ -31,6 +32,7 @@ const Settings = ({
   /**
    * Page Selections
    * 0 - Profile
+   * 9 - Platform Invites
    * 1 - Privacy & Safety
    * 2 - Sessions
    * 3 - Appearance
@@ -56,6 +58,7 @@ const Settings = ({
           setSelectedPage={setSeletedPage}
         >
           {selectedPage === 0 && <SettingsProfile />}
+          {selectedPage === 9 && <SettingsInvites />}
           {selectedPage === 1 && <SettingsPrivacy />}
           {selectedPage === 2 && <SettingsSessions />}
           {selectedPage === 3 && <SettingsAppearance />}

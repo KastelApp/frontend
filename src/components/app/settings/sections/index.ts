@@ -8,6 +8,7 @@ import SettingsSubscriptions from "./subscriptions";
 import SettingsShards from "./shards";
 import SettingsHistory from "./history";
 import SettingsProfile from "./profile";
+import SettingsInvites from "@/components/app/settings/sections/invites.tsx";
 
 export {
   SettingsPrivacy,
@@ -19,4 +20,5 @@ export {
   SettingsShards,
   SettingsHistory,
   SettingsProfile,
+  SettingsInvites,
 };

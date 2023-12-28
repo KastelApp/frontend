@@ -13,6 +13,7 @@ import {
 import { FiMenu } from "react-icons/fi";
 import pack from "../../../../package.json";
 import data from "../../../data/sidePanel";
+import { ReactNode } from "react";
 
 const SettingsSidebar = ({
   selectedPage,
@@ -21,7 +22,7 @@ const SettingsSidebar = ({
 }: {
   selectedPage: number;
   setSelectedPage: (page: number) => void;
-  children: React.ReactNode;
+  children: ReactNode;
 }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   return (
