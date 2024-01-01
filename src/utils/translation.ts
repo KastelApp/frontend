@@ -1,35 +1,4 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-// default "functions"
-// {{date.now}} // returns a date like "12/18/2023 12:00:00 AM"
-// {{date.now:uk}} // returns a date like "18/12/2023 12:00:00 AM"
-// {{date.time}} // returns a date like "12:00:00 AM"
-// {{date.time:24}} // returns a date like "00:00:00"
-// now a user can provide their own functions so if you do {{user.username}} you m ust provide a user object
-
-// translations are stored in a json file like this:
-// {
-//     "_meta": {
-//         "name": "English",
-//         "code": "en",
-//         "contributors": [
-//             {
-//                 "name": "DarkerInk",
-//                 "id": "1234567890"
-//             }
-//         ]
-//     },
-//     "hello": "Hello",
-//     "goodbye": "Goodbye {{user.username}}",
-//     "group": {
-//         "hello": "Hello"
-//     },
-//     "array": [
-//         "Hello",
-//         "Goodbye"
-//     ]
-// }
-// HOW TO TRANSLATE:
-// we want to od translation("goodbye", { user: { username: "DarkerInk" } })
 
 type TranslationType = {
   [key: string]: string | TranslationType;
