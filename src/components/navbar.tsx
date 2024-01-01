@@ -54,25 +54,39 @@ const Navbar = () => {
             <HStack
               spacing={1}
               mr={1}
-              color="brand.500"
               display={{
                 base: "none",
                 md: "inline-flex",
               }}
             >
               <NextLink target={"_blank"} href={"https://docs.kastelapp.com"}>
-                <Button variant="ghost">Docs</Button>
+                <Button
+                  color={useColorModeValue("#000b2e", "#d1dcff")}
+                  variant="ghost"
+                >
+                  Docs
+                </Button>
               </NextLink>
 
               <NextLink target={"_blank"} href={"https://github.com/KastelApp"}>
-                <Button variant="ghost">Github</Button>
+                <Button
+                  color={useColorModeValue("#000b2e", "#d1dcff")}
+                  variant="ghost"
+                >
+                  Github
+                </Button>
               </NextLink>
 
               <NextLink
                 target={"_blank"}
                 href={"https://discord.gg/f5HgvkRbVP"}
               >
-                <Button variant="ghost">Discord</Button>
+                <Button
+                  color={useColorModeValue("#000b2e", "#d1dcff")}
+                  variant="ghost"
+                >
+                  Discord
+                </Button>
               </NextLink>
             </HStack>
             <a href={token ? "/app" : "/login"}>

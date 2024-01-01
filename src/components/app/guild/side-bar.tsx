@@ -45,6 +45,7 @@ const GuildSideBar = ({ children }: { children?: ReactNode }) => {
   const [currentChannelStore] = useRecoilState(currentChannel);
   const [canAccessSettings, setAccessSettings] = useState(false);
   const borderColor = useColorModeValue("gray.200", "gray.700");
+  const background = useColorModeValue("#e6e9ef", "#101319");
   const {
     isOpen: settingsIsOpen,
     onOpen: settingsOnOpen,
@@ -88,12 +89,11 @@ const GuildSideBar = ({ children }: { children?: ReactNode }) => {
       <GuildInvites isOpen={invitesIsOpen} onClose={invitesOnClose} />
       <Flex height="100vh">
         <Box
+          bg={background}
           pb="10"
           overflowX="hidden"
           overflowY="scroll"
           color="inherit"
-          borderRightWidth="1px"
-          borderRightColor={borderColor}
           w={"200px"}
         >
           <Flex px="4" py="5" align="center">
@@ -107,6 +107,8 @@ const GuildSideBar = ({ children }: { children?: ReactNode }) => {
                     fontWeight="semibold"
                     justifyContent="space-between"
                     overflow="hidden"
+                    borderBottomColor={borderColor}
+                    borderBottomWidth="1px"
                   >
                     <HStack>
                       <Text isTruncated>
@@ -269,12 +271,11 @@ const GuildSideBar = ({ children }: { children?: ReactNode }) => {
 
         {/* Ride side */}
         <Box
+          bg={background}
           pb="10"
           overflowX="hidden"
           overflowY="scroll"
           color="inherit"
-          borderLeftWidth="1px"
-          borderLeftColor={borderColor}
           w={"200px"}
         >
           <GuildMembers />

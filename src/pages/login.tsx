@@ -146,7 +146,7 @@ const Login = () => {
 
                 <Box
                   mt={5}
-                  bg={useColorModeValue("gray.100", "gray.700")}
+                  bg={useColorModeValue("gray.100", "#2D3748")}
                   rounded={"xl"}
                   p={{ base: 4, sm: 6, md: 8 }}
                   // @ts-expect-error -- (no clue what the issue is here)
@@ -173,11 +173,11 @@ const Login = () => {
                         required={true}
                         type={"email"}
                         placeholder="hello@example.com"
-                        bg={useColorModeValue("gray.200", "gray.600")}
+                        bg={useColorModeValue("gray.200", "#1A202C")}
                         border={0}
                         color={useColorModeValue("gray.900", "gray.100")}
                         _placeholder={{
-                          color: useColorModeValue("gray.500", "gray.100"),
+                          color: useColorModeValue("#000b2e", "#d1dcff"),
                         }}
                       />
                       <Input
@@ -185,11 +185,11 @@ const Login = () => {
                         required={true}
                         type={"password"}
                         placeholder="CoolPassword123!"
-                        bg={useColorModeValue("gray.200", "gray.600")}
+                        bg={useColorModeValue("gray.200", "#1A202C")}
                         border={0}
                         color={useColorModeValue("gray.900", "gray.100")}
                         _placeholder={{
-                          color: useColorModeValue("gray.500", "gray.100"),
+                          color: useColorModeValue("#000b2e", "#d1dcff"),
                         }}
                       />
                     </Stack>

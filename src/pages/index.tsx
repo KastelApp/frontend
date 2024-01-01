@@ -33,16 +33,16 @@ const Home = () => {
             as={Box}
             textAlign={"center"}
             align={"center"}
-            spacing={{ base: 4, md: 10 }}
+            spacing={{ base: 4, md: 5 }}
           >
             <Heading
               fontWeight={600}
               fontSize={{ base: "2xl", sm: "4xl", md: "6xl" }}
               lineHeight={"110%"}
             >
-              Welcome to Kastel! <br />
+              Welcome to Kastel!
             </Heading>
-            <Text fontSize={"xl"} color={"gray.500"}>
+            <Text fontSize={"xl"}>
               You are viewing version {pack?.version || "0.0.0"}
               <br />
               On the {process.env.PUBLIC_GIT_BRANCH || "Development"} branch
