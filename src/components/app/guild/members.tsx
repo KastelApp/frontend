@@ -24,6 +24,14 @@ const GuildMembers = () => {
     setMembers(guild?.members.toArray());
   }, [guild?.members]);
 
+  const avatars = [
+    "/icon.png",
+    "/icon-1.png",
+    "/icon-2.png",
+    "/icon-3.png",
+    "/icon-4.png",
+  ];
+
   return guild ? (
     <Box>
       {members?.map((member, index) => (
@@ -54,7 +62,14 @@ const GuildMembers = () => {
                     <Image
                       borderRadius={"full"}
                       src={member?.user?.getAvatarUrl({ size: 128 }) ?? ""}
-                      fallbackSrc={"/icon-1.png"}
+                      fallbackSrc={
+                        avatars[
+                          Number(
+                            BigInt(member?.user?.id || 1) %
+                              BigInt(avatars.length),
+                          )
+                        ] || "/icon-1.png"
+                      }
                       alt={member?.user?.username || "loading"}
                       fit="cover"
                     />
