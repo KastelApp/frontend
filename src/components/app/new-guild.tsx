@@ -2,6 +2,8 @@ import {
   Avatar,
   Box,
   Button,
+  Center,
+  Flex,
   FormControl,
   FormHelperText,
   FormLabel,
@@ -19,8 +21,6 @@ import {
   useColorModeValue,
   useDisclosure,
   VStack,
-  Flex,
-  Center,
 } from "@chakra-ui/react";
 import { FiPlus } from "react-icons/fi";
 import {

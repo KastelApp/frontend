@@ -3,9 +3,9 @@ import { useEffect, useState } from "react";
 import { useRecoilState } from "recoil";
 import {
   clientStore,
-  readyStore,
-  currentGuild,
   currentChannel,
+  currentGuild,
+  readyStore,
   tokenStore,
 } from "@/utils/stores";
 import { Box } from "@chakra-ui/react";

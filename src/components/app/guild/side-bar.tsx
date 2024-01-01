@@ -19,7 +19,7 @@ import {
   DeleteIcon,
   SettingsIcon,
 } from "@chakra-ui/icons";
-import React, { useEffect, useState } from "react";
+import React, { ReactNode, useEffect, useState } from "react";
 import {
   collapsedChannels,
   currentChannel,
@@ -33,8 +33,9 @@ import GuildSettings from "@/components/app/guild/settings";
 import GuildInvites from "@/components/app/guild/invites";
 import { BaseChannel } from "@kastelll/wrapper";
 import GuildMessage from "@/components/app/guild/message.tsx";
+import GuildMembers from "@/components/app/guild/members.tsx";
 
-const GuildSideBar = () => {
+const GuildSideBar = ({ children }: { children?: ReactNode }) => {
   const [guild] = useRecoilState(currentGuild);
   const [ready] = useRecoilState(readyStore);
   const [collapsedChannelsList] = useRecoilState(collapsedChannels);
@@ -259,7 +260,25 @@ const GuildSideBar = () => {
             </div>
           </Flex>
         </Box>
-        <GuildMessage />
+
+        {/* Main content */}
+        <Box flex="1" overflowY="scroll">
+          {children}
+          <GuildMessage />
+        </Box>
+
+        {/* Ride side */}
+        <Box
+          pb="10"
+          overflowX="hidden"
+          overflowY="scroll"
+          color="inherit"
+          borderLeftWidth="1px"
+          borderLeftColor={borderColor}
+          w={"200px"}
+        >
+          <GuildMembers />
+        </Box>
       </Flex>
     </>
   ) : null;

@@ -45,14 +45,6 @@ class Translation {
     return this;
   }
 
-  private trytoparse(str: string) {
-    try {
-      return JSON.parse(str);
-    } catch (e) {
-      return null;
-    }
-  }
-
   public setLanguage(language: string) {
     this.currentLanguage = language;
   }
@@ -85,6 +77,38 @@ class Translation {
     }
 
     return key;
+  }
+
+  public getMetaData(language = "us"): {
+    name: string;
+    code: string;
+    contributors: {
+      name: string;
+      id: string;
+    }[];
+  } | null {
+    const foundLanguage = this.translations.get(language);
+
+    const metaData = foundLanguage?._meta;
+
+    if (!metaData) return null;
+
+    return metaData as unknown as {
+      name: string;
+      code: string;
+      contributors: {
+        name: string;
+        id: string;
+      }[];
+    };
+  }
+
+  private trytoparse(str: string) {
+    try {
+      return JSON.parse(str);
+    } catch (e) {
+      return null;
+    }
   }
 
   private parse(str: string, ...anything: any[]) {
@@ -152,30 +176,6 @@ class Translation {
     }
 
     return newString;
-  }
-
-  public getMetaData(language = "us"): {
-    name: string;
-    code: string;
-    contributors: {
-      name: string;
-      id: string;
-    }[];
-  } | null {
-    const foundLanguage = this.translations.get(language);
-
-    const metaData = foundLanguage?._meta;
-
-    if (!metaData) return null;
-
-    return metaData as unknown as {
-      name: string;
-      code: string;
-      contributors: {
-        name: string;
-        id: string;
-      }[];
-    };
   }
 }
 

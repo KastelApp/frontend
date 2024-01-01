@@ -11,6 +11,7 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 import { FiMenu } from "react-icons/fi";
+import { ReactNode } from "react";
 
 const GuildSettingsSidebar = ({
   selectedPage,
@@ -19,7 +20,7 @@ const GuildSettingsSidebar = ({
 }: {
   selectedPage: number;
   setSelectedPage: (page: number) => void;
-  children?: React.ReactNode;
+  children?: ReactNode;
 }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
