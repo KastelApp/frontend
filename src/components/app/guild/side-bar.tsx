@@ -102,10 +102,7 @@ const GuildSideBar = ({ children }: { children?: ReactNode }) => {
                 <>
                   <MenuButton
                     fontSize="2xl"
-                    color="brand.500"
-                    _dark={{ color: "white" }}
                     fontWeight="semibold"
-                    justifyContent="space-between"
                     overflow="hidden"
                     borderBottomColor={borderColor}
                     borderBottomWidth="1px"
