@@ -274,6 +274,7 @@ const GuildSideBar = ({ children }: { children?: ReactNode }) => {
           overflowY="scroll"
           color="inherit"
           w={"200px"}
+          zIndex={20}
         >
           <GuildMembers />
         </Box>

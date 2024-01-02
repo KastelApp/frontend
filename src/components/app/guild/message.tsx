@@ -1,9 +1,9 @@
 import {
   Button,
   Flex,
-  Input,
   InputGroup,
   InputRightElement,
+  Textarea,
   useColorModeValue,
 } from "@chakra-ui/react";
 import { useRecoilState } from "recoil";
@@ -15,14 +15,19 @@ const GuildMessage = () => {
 
   return (
     <>
-      <Flex w="full" h="14" alignItems="center" marginTop={"500px"} px="3">
+      <Flex w={"full"} alignItems="center" pos="fixed" bottom="75" px="3">
         <InputGroup>
           {/*<InputLeftElement>
                 <Button w={"1rem"} h={"1.75rem"}>
                     <AddIcon/>
                 </Button>
             </InputLeftElement>*/}
-          <Input
+          <Textarea
+            data-gramm_editor="false"
+            rows={1}
+            css={{
+              resize: "none",
+            }}
             bg={useColorModeValue("gray.200", "gray.800")}
             border={0}
             color={useColorModeValue("gray.900", "gray.100")}

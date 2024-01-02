@@ -8,7 +8,14 @@ import {
   readyStore,
   tokenStore,
 } from "@/utils/stores";
-import { Box } from "@chakra-ui/react";
+import {
+  Avatar,
+  Box,
+  Center,
+  Stack,
+  Text,
+  useColorModeValue,
+} from "@chakra-ui/react";
 import AppNavbar from "@/components/app/navbar";
 import Loading from "@/components/app/loading";
 import SEO from "@/components/seo";
@@ -24,7 +31,7 @@ const GuildChannelPage = () => {
   const [client] = useRecoilState(clientStore);
   const [ready] = useRecoilState(readyStore);
   const [, setGuild] = useRecoilState(currentGuild);
-  const [, setChannel] = useRecoilState(currentChannel);
+  const [channel, setChannel] = useRecoilState(currentChannel);
   const [areWeReady, setAreWeReady] = useState(false);
 
   useEffect(() => {
@@ -66,6 +73,32 @@ const GuildChannelPage = () => {
     setAreWeReady(true); // we create our custom "ready" thing, since the "ready" for the client is well for when its ready, not when we are ready
   }, [ready, guildId, channelId]);
 
+  const messages = [
+    {
+      user: {
+        name: "Test #1",
+        avatar: "/icon-3.png",
+      },
+      content: "Hello world!",
+    },
+    {
+      user: {
+        name: "Test #2",
+        avatar: "/icon-4.png",
+      },
+      content: "Hello",
+    },
+    {
+      user: {
+        name: "Test #3",
+        avatar: "/icon-2.png",
+      },
+      content: "Whats up?",
+    },
+  ];
+
+  const background = useColorModeValue("#e6e9ef", "#101319");
+
   return (
     <>
       <SEO
@@ -79,7 +112,52 @@ const GuildChannelPage = () => {
           <Box>
             <AppNavbar />
 
-            <GuildSideBar />
+            <GuildSideBar>
+              <Box
+                pos={"fixed"}
+                zIndex={10}
+                h={10}
+                top={0}
+                w={"full"}
+                bg={background}
+              >
+                <Text mt={2} ml={2}>
+                  #{channel?.name}
+                </Text>
+              </Box>
+
+              {/* messages */}
+              <Box mt={20}>
+                {messages.map((message) => (
+                  <Box
+                    key={message.user.name}
+                    _hover={{
+                      bg: "gray.700",
+                    }}
+                  >
+                    <Stack
+                      ml={5}
+                      py="1.5"
+                      direction={["column", "row"]}
+                      spacing={6}
+                    >
+                      <Center>
+                        <Avatar
+                          size="sm"
+                          src={message.user.avatar || "/icon-1.png"}
+                          name={message?.user.name || "Loading"}
+                          mb={4}
+                          cursor="pointer"
+                        ></Avatar>
+                        <Box ml={2}>
+                          <Box fontWeight="semibold">{message.user.name}</Box>
+                        </Box>
+                      </Center>
+                    </Stack>
+                  </Box>
+                ))}
+              </Box>
+            </GuildSideBar>
           </Box>
         </>
       ) : (
