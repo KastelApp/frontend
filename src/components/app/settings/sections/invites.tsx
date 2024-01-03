@@ -6,6 +6,7 @@ import {
   Flex,
   Grid,
   GridItem,
+  IconButton,
   Spacer,
   Stack,
   Table,
@@ -21,6 +22,7 @@ import {
   useColorModeValue,
 } from "@chakra-ui/react";
 import { useState } from "react";
+import { CopyIcon } from "@chakra-ui/icons";
 
 const SettingsInvites = () => {
   const [show, setShow] = useState(false);
@@ -63,7 +65,7 @@ const SettingsInvites = () => {
           {show ? (
             <TableContainer>
               <Table>
-                <TableCaption>
+                <TableCaption color={"inherit"}>
                   <Text>You have 0 invites left.</Text>
                 </TableCaption>
                 <Thead>
@@ -78,13 +80,18 @@ const SettingsInvites = () => {
                     <Td>
                       <Flex>
                         <Text fontWeight="bold">123456</Text>
-                        <Badge
+                        <IconButton
+                          h={5}
+                          minW={"unset"}
+                          variant={"ghost"}
+                          aria-label={"copy"}
+                          bg={hasCopied ? "gray.900" : "inherit"}
+                          color={hasCopied ? "green.500" : "inherit"}
                           ml={2}
                           cursor={"pointer"}
                           onClick={() => handleCopy("1233456")}
-                        >
-                          {hasCopied ? "Copied" : "Copy"}
-                        </Badge>
+                          icon={<CopyIcon />}
+                        />
                       </Flex>
                     </Td>
                     <Td>
