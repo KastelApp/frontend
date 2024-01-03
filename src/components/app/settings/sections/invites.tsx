@@ -2,14 +2,26 @@ import {
   Box,
   Button,
   Center,
+  Flex,
   Grid,
   GridItem,
+  Spacer,
   Stack,
+  Table,
+  TableCaption,
+  TableContainer,
+  Tbody,
+  Td,
   Text,
+  Th,
+  Thead,
+  Tr,
   useColorModeValue,
 } from "@chakra-ui/react";
+import { useState } from "react";
 
 const SettingsInvites = () => {
+  const [show, setShow] = useState(false);
   return (
     <>
       <Text fontSize="xl" fontWeight="bold">
@@ -27,22 +39,50 @@ const SettingsInvites = () => {
           my={12}
         >
           <Grid templateColumns="repeat(5, 1fr)" gap={5}>
-            <GridItem colSpan={2} h="10" />
-            <GridItem colStart={5} colEnd={6}>
-              <Button>Create Invite</Button>
+            <GridItem colSpan={2}>
+              <Text fontSize="xl" fontWeight="bold">
+                Invite a friend!
+              </Text>
+            </GridItem>
+            <GridItem colEnd={6}>
+              <Button onClick={() => setShow(!show)}>Create Invite</Button>
             </GridItem>
           </Grid>
 
-          <Center>
-            <Text fontSize="xl" fontWeight="bold">
-              Coming soon, this will be used to invite users to Kastel App.
-            </Text>
-          </Center>
-          <Center>
-            <Text fontSize="sm" color="gray.500">
-              No invites have been created yet.
-            </Text>
-          </Center>
+          <Spacer />
+
+          {show ? (
+            <TableContainer>
+              <Table>
+                <TableCaption>
+                  <Text>You have 0 invites left.</Text>
+                </TableCaption>
+                <Thead>
+                  <Th>Invite Code</Th>
+                  <Th>Uses</Th>
+                  <Th>Last Used</Th>
+                </Thead>
+
+                <Tbody>
+                  <Tr>
+                    <Td>
+                      <Text fontWeight="bold">123456</Text>
+                    </Td>
+                    <Td>
+                      <Text fontWeight="bold">0 / 0</Text>
+                    </Td>
+                    <Td>
+                      <Text fontWeight="bold">Never</Text>
+                    </Td>
+                  </Tr>
+                </Tbody>
+              </Table>
+            </TableContainer>
+          ) : (
+            <Center>
+              <Text fontWeight="bold">No invites have been created yet.</Text>
+            </Center>
+          )}
         </Stack>
       </Box>
     </>
