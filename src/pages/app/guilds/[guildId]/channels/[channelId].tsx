@@ -10,9 +10,9 @@ import {
 } from "@/utils/stores";
 import {
   Avatar,
+  Badge,
   Box,
-  Center,
-  Stack,
+  Flex,
   Text,
   useColorModeValue,
 } from "@chakra-ui/react";
@@ -76,24 +76,27 @@ const GuildChannelPage = () => {
   const messages = [
     {
       user: {
-        name: "Test #1",
+        name: "Tea Cup",
         avatar: "/icon-3.png",
       },
       content: "Hello world!",
+      time: "Yesterday at 1:52 AM",
     },
     {
       user: {
-        name: "Test #2",
+        name: "Darkerink",
         avatar: "/icon-4.png",
       },
       content: "Hello",
+      time: "12/12/2020 1:52 AM",
     },
     {
       user: {
-        name: "Test #3",
+        name: "Test",
         avatar: "/icon-2.png",
       },
       content: "Whats up?",
+      time: "Today at 1:52 AM",
     },
   ];
 
@@ -134,26 +137,33 @@ const GuildChannelPage = () => {
                     _hover={{
                       bg: "gray.700",
                     }}
+                    mt={2}
                   >
-                    <Stack
-                      ml={5}
-                      py="1.5"
-                      direction={["column", "row"]}
-                      spacing={6}
-                    >
-                      <Center>
-                        <Avatar
-                          size="sm"
-                          src={message.user.avatar || "/icon-1.png"}
-                          name={message?.user.name || "Loading"}
-                          mb={4}
-                          cursor="pointer"
-                        ></Avatar>
-                        <Box ml={2}>
-                          <Box fontWeight="semibold">{message.user.name}</Box>
-                        </Box>
-                      </Center>
-                    </Stack>
+                    <Flex ml={5} py="1.5">
+                      <Avatar
+                          draggable={"false"}
+                        size="sm"
+                        src={message.user.avatar || "/icon-1.png"}
+                        name={message?.user.name || "Loading"}
+                        mb={4}
+                        cursor="pointer"
+                      ></Avatar>
+                      <Box ml="3">
+                        <Text>
+                          {message.user.name}
+                          <Badge
+                            bg={"unset"}
+                            color={"inherit"}
+                            textTransform={"unset"}
+                            fontWeight={"unset"}
+                            ml="1"
+                          >
+                            {message.time}
+                          </Badge>
+                        </Text>
+                        <Text fontSize="sm">{message.content}</Text>
+                      </Box>
+                    </Flex>
                   </Box>
                 ))}
               </Box>
