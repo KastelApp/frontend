@@ -1,5 +1,7 @@
 import {
+  Badge,
   Box,
+  Button,
   Stack,
   Table,
   TableContainer,
@@ -52,9 +54,17 @@ const SettingsSessions = () => {
                   <Th>12 hrs ago</Th>
                   <Th>Charlotte, NC, United States</Th>
                   <Th>
-                    <Stack direction="row">
-                      <Text color="red.500">Revoke</Text>
-                    </Stack>
+                    <Badge
+                      _hover={{
+                        cursor: "pointer",
+                        backgroundColor: "red.700",
+                        color: "white",
+                      }}
+                      cursor={"pointer"}
+                      colorScheme={"red"}
+                    >
+                      Revoke
+                    </Badge>
                   </Th>
                 </Tr>
               </Tbody>
