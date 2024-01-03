@@ -7,7 +7,7 @@ const SEO = ({
   description,
 }: {
   title: string;
-  description: string;
+  description?: string;
 }) => (
   <NextSeo
     title={title}
