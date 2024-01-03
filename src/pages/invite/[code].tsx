@@ -10,137 +10,136 @@ import { useRouter } from "next/router";
 import NextLink from "next/link";
 
 interface InviteSuccess {
-    channel: BaseChannel;
-    code: string;
-    creator: BaseUser;
-    guild: BaseGuild;
-    success: true;
+  channel: BaseChannel;
+  code: string;
+  creator: BaseUser;
+  guild: BaseGuild;
+  success: true;
 }
 
 const Invite = () => {
-    const router = useRouter();
-    const [token] = useRecoilState(tokenStore);
-    const [loading, setLoading] = useState(true);
-    const [client] = useRecoilState(clientStore);
-    const [error, setError] = useState<number | null>(null);
-    const [inviteInfo, setInviteInfo] = useState<InviteSuccess | null>(null);
+  const router = useRouter();
+  const [token] = useRecoilState(tokenStore);
+  const [loading, setLoading] = useState(true);
+  const [client] = useRecoilState(clientStore);
+  const [error, setError] = useState<number | null>(null);
+  const [inviteInfo, setInviteInfo] = useState<InviteSuccess | null>(null);
 
-    useEffect(() => {
-        if (!token) {
-            // todo store guild invite code in local storage
-            router.push("/login");
-        }
-    }, []);
+  useEffect(() => {
+    if (!token) {
+      // todo store guild invite code in local storage
+      router.push("/login");
+    }
+  }, []);
 
-    useEffect(() => {
-        const processInvite = async () => {
-            if (router.query.code) {
-                const inviteCode = router.query.code;
-                const inviteFetch = await client.fetchInvite(inviteCode as string);
+  useEffect(() => {
+    const processInvite = async () => {
+      if (router.query.code) {
+        const inviteCode = router.query.code;
+        const inviteFetch = await client.fetchInvite(inviteCode as string);
 
-                setLoading(false);
+        setLoading(false);
 
-                if (!inviteFetch.success) {
-                    setError(1);
+        if (!inviteFetch.success) {
+          setError(1);
 
-                    return;
-                }
-
-                setInviteInfo(inviteFetch as unknown as InviteSuccess);
-            }
-        };
-
-        processInvite();
-    }, [router.query.code]);
-
-    const joinGuild = async () => {
-
-        if (!inviteInfo) {
-            setError(1);
-
-            return;
+          return;
         }
 
-        const join = await client.joinInvite(inviteInfo.code);
-
-        if (!join) {
-            setError(1);
-
-            return;
-        }
-
-        router.push(
-            `/app/guilds/${inviteInfo?.guild?.id}/channels/${inviteInfo?.channel?.id}}`,
-        );
+        setInviteInfo(inviteFetch as unknown as InviteSuccess);
+      }
     };
 
-    return (
-        <>
-            <SEO title={inviteInfo?.guild ? `${inviteInfo.guild?.name}` : "Invite"} />
-            <Navbar />
-            <Layout>
-                <Container maxW={"3xl"}>
-                    {loading ? (
-                        <>
-                            <Heading as={"h1"} size={"lg"} mb={4}>
-                                Loading...
-                            </Heading>
-                        </>
-                    ) : (
-                        <>
-                            {error ? (
-                                <>
-                                    {error === 1 && (
-                                        <>
-                                            <Stack justify={"center"} align={"center"} spacing={4}>
-                                                <Heading as={"h1"} size={"lg"} mb={4}>
-                                                    Invite Invalid or Expired.
-                                                </Heading>
-                                                <NextLink href={"/"} passHref>
-                                                    <Button
-                                                        _hover={{
-                                                            bgGradient: "linear(to-r, red.400,pink.400)",
-                                                            boxShadow: "xl",
-                                                        }}
-                                                        bgGradient="linear(to-r, red.400,pink.400)"
-                                                    >
-                                                        Back to Home
-                                                    </Button>
-                                                </NextLink>
-                                            </Stack>
-                                        </>
-                                    )}
-                                </>
-                            ) : (
-                                <>
-                                    {inviteInfo?.guild && (
-                                        <>
-                                            <Stack justify={"center"} align={"center"} spacing={4}>
-                                                <Heading as={"h1"} size={"lg"} mb={2}>
-                                                    {inviteInfo.guild?.name}
-                                                </Heading>
-                                                <Text>Invited by {inviteInfo.creator.username}</Text>
-                                                <Button
-                                                    _hover={{
-                                                        bgGradient: "linear(to-r, red.400,pink.400)",
-                                                        boxShadow: "xl",
-                                                    }}
-                                                    bgGradient="linear(to-r, red.400,pink.400)"
-                                                    onClick={joinGuild}
-                                                >
-                                                    Join Guild
-                                                </Button>
-                                            </Stack>
-                                        </>
-                                    )}
-                                </>
-                            )}
-                        </>
-                    )}
-                </Container>
-            </Layout>
-        </>
+    processInvite();
+  }, [router.query.code]);
+
+  const joinGuild = async () => {
+    if (!inviteInfo) {
+      setError(1);
+
+      return;
+    }
+
+    const join = await client.joinInvite(inviteInfo.code);
+
+    if (!join) {
+      setError(1);
+
+      return;
+    }
+
+    router.push(
+      `/app/guilds/${inviteInfo?.guild?.id}/channels/${inviteInfo?.channel?.id}}`,
     );
+  };
+
+  return (
+    <>
+      <SEO title={inviteInfo?.guild ? `${inviteInfo.guild?.name}` : "Invite"} />
+      <Navbar />
+      <Layout>
+        <Container maxW={"3xl"}>
+          {loading ? (
+            <>
+              <Heading as={"h1"} size={"lg"} mb={4}>
+                Loading...
+              </Heading>
+            </>
+          ) : (
+            <>
+              {error ? (
+                <>
+                  {error === 1 && (
+                    <>
+                      <Stack justify={"center"} align={"center"} spacing={4}>
+                        <Heading as={"h1"} size={"lg"} mb={4}>
+                          Invite Invalid or Expired.
+                        </Heading>
+                        <NextLink href={"/"} passHref>
+                          <Button
+                            _hover={{
+                              bgGradient: "linear(to-r, red.400,pink.400)",
+                              boxShadow: "xl",
+                            }}
+                            bgGradient="linear(to-r, red.400,pink.400)"
+                          >
+                            Back to Home
+                          </Button>
+                        </NextLink>
+                      </Stack>
+                    </>
+                  )}
+                </>
+              ) : (
+                <>
+                  {inviteInfo?.guild && (
+                    <>
+                      <Stack justify={"center"} align={"center"} spacing={4}>
+                        <Heading as={"h1"} size={"lg"} mb={2}>
+                          {inviteInfo.guild?.name}
+                        </Heading>
+                        <Text>Invited by {inviteInfo.creator.username}</Text>
+                        <Button
+                          _hover={{
+                            bgGradient: "linear(to-r, red.400,pink.400)",
+                            boxShadow: "xl",
+                          }}
+                          bgGradient="linear(to-r, red.400,pink.400)"
+                          onClick={joinGuild}
+                        >
+                          Join Guild
+                        </Button>
+                      </Stack>
+                    </>
+                  )}
+                </>
+              )}
+            </>
+          )}
+        </Container>
+      </Layout>
+    </>
+  );
 };
 
 export default Invite;

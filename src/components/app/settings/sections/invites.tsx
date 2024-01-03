@@ -1,7 +1,9 @@
 import {
+  Badge,
   Box,
   Button,
   Center,
+  Flex,
   Grid,
   GridItem,
   Spacer,
@@ -15,12 +17,20 @@ import {
   Th,
   Thead,
   Tr,
+  useClipboard,
   useColorModeValue,
 } from "@chakra-ui/react";
 import { useState } from "react";
 
 const SettingsInvites = () => {
   const [show, setShow] = useState(false);
+  const { onCopy, setValue, hasCopied } = useClipboard("");
+
+  const handleCopy = (code: string) => {
+    setValue(`${code}`);
+    onCopy();
+  };
+
   return (
     <>
       <Text fontSize="xl" fontWeight="bold">
@@ -58,20 +68,33 @@ const SettingsInvites = () => {
                 </TableCaption>
                 <Thead>
                   <Th>Invite Code</Th>
-                  <Th>Uses</Th>
-                  <Th>Last Used</Th>
+                  <Th>Used By</Th>
+                  <Th>Used At</Th>
+                  <Th>Expires</Th>
                 </Thead>
 
                 <Tbody>
                   <Tr>
                     <Td>
-                      <Text fontWeight="bold">123456</Text>
+                      <Flex>
+                        <Text fontWeight="bold">123456</Text>
+                        <Badge
+                          ml={2}
+                          cursor={"pointer"}
+                          onClick={() => handleCopy("1233456")}
+                        >
+                          {hasCopied ? "Copied" : "Copy"}
+                        </Badge>
+                      </Flex>
                     </Td>
                     <Td>
-                      <Text fontWeight="bold">0 / 0</Text>
+                      <Text fontWeight="bold">User#0001</Text>
                     </Td>
                     <Td>
-                      <Text fontWeight="bold">Never</Text>
+                      <Text fontWeight="bold">N/A</Text>
+                    </Td>
+                    <Td>
+                      <Text fontWeight="bold">24hrs 30mins</Text>
                     </Td>
                   </Tr>
                 </Tbody>
