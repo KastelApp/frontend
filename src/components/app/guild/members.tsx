@@ -60,6 +60,7 @@ const GuildMembers = () => {
                     position="relative"
                   >
                     <Image
+                      draggable={"false"}
                       borderRadius={"full"}
                       src={member?.user?.getAvatarUrl({ size: 128 }) ?? ""}
                       fallbackSrc={

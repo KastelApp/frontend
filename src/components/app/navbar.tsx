@@ -223,6 +223,7 @@ const AppNavbar = () => {
                       position="relative"
                     >
                       <Image
+                        draggable={"false"}
                         borderRadius={"full"}
                         src={client?.user.getAvatarUrl({ size: 128 }) ?? ""}
                         fallbackSrc={

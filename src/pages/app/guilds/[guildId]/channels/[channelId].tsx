@@ -141,7 +141,7 @@ const GuildChannelPage = () => {
                   >
                     <Flex ml={5} py="1.5">
                       <Avatar
-                          draggable={"false"}
+                        draggable={"false"}
                         size="sm"
                         src={message.user.avatar || "/icon-1.png"}
                         name={message?.user.name || "Loading"}

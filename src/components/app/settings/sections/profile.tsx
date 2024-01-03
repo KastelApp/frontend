@@ -226,6 +226,7 @@ const SettingsProfile = () => {
             <Stack direction={["column", "row"]} spacing={6}>
               <Center>
                 <Avatar
+                  draggable={"false"}
                   size="xl"
                   src={
                     selectedImage ??
