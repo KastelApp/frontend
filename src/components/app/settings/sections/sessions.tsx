@@ -1,4 +1,15 @@
-import { Box, Stack, Text, useColorModeValue } from "@chakra-ui/react";
+import {
+  Box,
+  Stack,
+  Table,
+  TableContainer,
+  Tbody,
+  Text,
+  Th,
+  Thead,
+  Tr,
+  useColorModeValue,
+} from "@chakra-ui/react";
 import { useRecoilState } from "recoil";
 import { clientStore } from "@/utils/stores.ts";
 import { useEffect } from "react";
@@ -25,7 +36,31 @@ const SettingsSessions = () => {
           boxShadow={"lg"}
           p={6}
           my={12}
-        ></Stack>
+        >
+          <TableContainer>
+            <Table>
+              <Thead>
+                <Th>Device</Th>
+                <Th>Last Used</Th>
+                <Th>Reigon</Th>
+                <Th>Actions</Th>
+              </Thead>
+
+              <Tbody>
+                <Tr>
+                  <Th>Desktop Client</Th>
+                  <Th>12 hrs ago</Th>
+                  <Th>Charlotte, NC, United States</Th>
+                  <Th>
+                    <Stack direction="row">
+                      <Text color="red.500">Revoke</Text>
+                    </Stack>
+                  </Th>
+                </Tr>
+              </Tbody>
+            </Table>
+          </TableContainer>
+        </Stack>
       </Box>
     </>
   );
