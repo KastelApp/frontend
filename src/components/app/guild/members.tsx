@@ -3,6 +3,7 @@ import { currentGuild } from "@/utils/stores.ts";
 import {
   Badge,
   Box,
+  Center,
   Flex,
   Image,
   Popover,
@@ -33,7 +34,10 @@ const GuildMembers = () => {
   ];
 
   return guild ? (
-    <Box>
+    <Box mt={5}>
+      <Text ml={3}>
+        {members?.length === 1 ? "Member" : "Members"} - {members?.length}
+      </Text>
       {members?.map((member, index) => (
         <Box key={index}>
           <Popover placement={"left"}>
@@ -98,7 +102,56 @@ const GuildMembers = () => {
               </Flex>
             </PopoverTrigger>
             <PopoverContent>
-              <PopoverBody>coming soon</PopoverBody>
+              <PopoverBody>
+                <Center>
+                  <Box
+                    boxSize="50px"
+                    display="inline-flex"
+                    alignItems="center"
+                    justifyContent="center"
+                    overflow="visible"
+                    lineHeight="none"
+                    borderRadius="full"
+                    position="relative"
+                  >
+                    <Image
+                      draggable={"false"}
+                      borderRadius={"full"}
+                      src={member?.user?.getAvatarUrl({ size: 128 }) ?? ""}
+                      fallbackSrc={
+                        avatars[
+                          Number(
+                            BigInt(member?.user?.id || 1) %
+                              BigInt(avatars.length),
+                          )
+                        ] || "/icon-1.png"
+                      }
+                      alt={member?.user?.username || "loading"}
+                      fit="cover"
+                    />
+                    <Badge
+                      boxSize="5"
+                      borderRadius="full"
+                      bg={
+                        member?.user?.presence === "online"
+                          ? "green.500"
+                          : member?.user?.presence === "idle"
+                            ? "yellow.500"
+                            : member?.user?.presence === "dnd"
+                              ? "red.500"
+                              : "gray.500"
+                      }
+                      position="absolute"
+                      bottom="-0.5"
+                      right="-0.5"
+                    />
+                  </Box>
+
+                  <Text ml={2} mt={1}>
+                    {member?.user?.username}#{member?.user?.discriminator}
+                  </Text>
+                </Center>
+              </PopoverBody>
             </PopoverContent>
           </Popover>
         </Box>
