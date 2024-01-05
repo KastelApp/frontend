@@ -14,7 +14,6 @@ import {
   Text,
   useColorModeValue,
 } from "@chakra-ui/react";
-import NextLink from "next/link";
 import { useRouter } from "next/router";
 import { FormEvent, useEffect, useState } from "react";
 import { useRecoilState } from "recoil";
@@ -348,7 +347,7 @@ const Register = () => {
                       mt={2}
                       direction={["column", "row"]}
                     >
-                      <NextLink prefetch={false} href={"/login"}>
+                      <a href={"/login"}>
                         <Button
                           fontFamily={"heading"}
                           w={"full"}
@@ -361,9 +360,9 @@ const Register = () => {
                         >
                           Have an Account?
                         </Button>
-                      </NextLink>
+                      </a>
 
-                      <NextLink prefetch={false} href={"/reset-password"}>
+                      <a href={"/reset-password"}>
                         <Button
                           fontFamily={"heading"}
                           w={"full"}
@@ -376,7 +375,7 @@ const Register = () => {
                         >
                           Forgot Password?
                         </Button>
-                      </NextLink>
+                      </a>
                     </Stack>
                   </Box>
                 </Box>

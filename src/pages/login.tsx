@@ -11,7 +11,6 @@ import {
   Text,
   useColorModeValue,
 } from "@chakra-ui/react";
-import NextLink from "next/link";
 import Layout from "@/components/layout";
 import { useRecoilState } from "recoil";
 import { clientStore, tokenStore } from "@/utils/stores";
@@ -261,7 +260,7 @@ const Login = () => {
                       mt={2}
                       direction={["column", "row"]}
                     >
-                      <NextLink prefetch={false} href={"/register"}>
+                      <a href={"/register"}>
                         <Button
                           fontFamily={"heading"}
                           w={"full"}
@@ -274,9 +273,9 @@ const Login = () => {
                         >
                           Create an Account
                         </Button>
-                      </NextLink>
+                      </a>
 
-                      <NextLink prefetch={false} href={"/reset-password"}>
+                      <a href={"/reset-password"}>
                         <Button
                           fontFamily={"heading"}
                           w={"full"}
@@ -289,7 +288,7 @@ const Login = () => {
                         >
                           Forgot Password?
                         </Button>
-                      </NextLink>
+                      </a>
                     </Stack>
                   </Box>
                 </Box>
