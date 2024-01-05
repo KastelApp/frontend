@@ -183,7 +183,7 @@ const Register = () => {
         async={true}
         defer={true}
       />
-      <SEO title={"Register"} description={""} />
+      <SEO title={"Register"} />
       <Navbar />
       <Layout>
         <form onSubmit={register}>

@@ -141,7 +141,7 @@ const Login = () => {
         defer={true}
       />
 
-      <SEO title={"Login"} description={""} />
+      <SEO title={"Login"} />
       <Navbar />
       <Layout>
         <form onSubmit={login}>
