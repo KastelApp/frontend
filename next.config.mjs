@@ -20,6 +20,9 @@ const nextConfig = {
     PUBLIC_GIT_COMMIT: sha,
     PUBLIC_MEDIA_CDN_URL: process.env.PUBLIC_MEDIA_CDN_URL,
     PUBLIC_MEDIA_URL: process.env.PUBLIC_MEDIA_URL,
+    NEXT_PUBLIC_CLOUDFLARE_TURNSTILE_SITE_KEY:
+      process.env.NEXT_PUBLIC_CLOUDFLARE_TURNSTILE_SITE_KEY,
+    NEXT_PUBLIC_DEVELOPMENT: process.env.NEXT_PUBLIC_DEVELOPMENT,
   },
   sentry: {
     disableServerWebpackPlugin: true,

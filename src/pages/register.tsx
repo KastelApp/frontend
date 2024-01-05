@@ -20,6 +20,7 @@ import { FormEvent, useEffect, useState } from "react";
 import { useRecoilState } from "recoil";
 import { clientStore, tokenStore } from "@/utils/stores";
 import Navbar from "@/components/navbar";
+import Script from "next/script";
 
 const Register = () => {
   const router = useRouter();
@@ -59,6 +60,9 @@ const Register = () => {
         confirmpassword: {
           value: string;
         };
+        "cf-turnstile-response": {
+          value: string;
+        };
       };
     },
   ) => {
@@ -70,6 +74,19 @@ const Register = () => {
     const email = event.target.email.value;
     const password = event.target.password.value;
     const confirmPassword = event.target.confirmpassword.value;
+    const turnstile = event.target["cf-turnstile-response"].value;
+
+    if (!turnstile) {
+      setError([
+        {
+          code: "INVALID_TURNSTILE",
+          message: "Cloudflare turnstile not initiated.",
+        },
+      ]);
+      setLoading(false);
+
+      return;
+    }
 
     if (password !== confirmPassword) {
       setError([
@@ -162,6 +179,11 @@ const Register = () => {
 
   return (
     <>
+      <Script
+        src="https://challenges.cloudflare.com/turnstile/v0/api.js"
+        async={true}
+        defer={true}
+      />
       <SEO title={"Register"} description={""} />
       <Navbar />
       <Layout>
@@ -280,6 +302,13 @@ const Register = () => {
                           I agree to the Terms and Conditions
                         </Checkbox>
                       </Flex>
+
+                      <div
+                        className="cf-turnstile checkbox"
+                        data-sitekey={
+                          process.env.NEXT_PUBLIC_CLOUDFLARE_TURNSTILE_SITE_KEY
+                        }
+                      />
                     </Stack>
 
                     {loading ? (

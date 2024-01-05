@@ -16,6 +16,7 @@ import Layout from "@/components/layout";
 import { useRecoilState } from "recoil";
 import { clientStore, tokenStore } from "@/utils/stores";
 import Navbar from "@/components/navbar";
+import Script from "next/script";
 
 const Login = () => {
   const router = useRouter();
@@ -48,6 +49,9 @@ const Login = () => {
         password: {
           value: string;
         };
+        "cf-turnstile-response": {
+          value: string;
+        };
       };
     },
   ) => {
@@ -57,6 +61,19 @@ const Login = () => {
 
     const email = event.target.email.value;
     const password = event.target.password.value;
+    const turnstile = event.target["cf-turnstile-response"].value;
+
+    if (!turnstile) {
+      setError([
+        {
+          code: "INVALID_TURNSTILE",
+          message: "Cloudflare turnstile not initiated.",
+        },
+      ]);
+      setLoading(false);
+
+      return;
+    }
 
     if (!client.EmailRegex.test(email)) {
       setError([{ code: "INVALID_EMAIL", message: "Invalid email." }]);
@@ -119,6 +136,12 @@ const Login = () => {
 
   return (
     <>
+      <Script
+        src="https://challenges.cloudflare.com/turnstile/v0/api.js"
+        async={true}
+        defer={true}
+      />
+
       <SEO title={"Login"} description={""} />
       <Navbar />
       <Layout>
@@ -191,6 +214,13 @@ const Login = () => {
                         _placeholder={{
                           color: useColorModeValue("#000b2e", "#d1dcff"),
                         }}
+                      />
+
+                      <div
+                        className="cf-turnstile checkbox"
+                        data-sitekey={
+                          process.env.NEXT_PUBLIC_CLOUDFLARE_TURNSTILE_SITE_KEY
+                        }
                       />
                     </Stack>
 
