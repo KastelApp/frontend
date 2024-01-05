@@ -7,7 +7,6 @@ import { popoverTheme } from "./popover.tsx";
 const theme = extendTheme({
   config: {
     initialColorMode: "dark",
-    useSystemColorMode: true,
   },
   styles: {
     global: (props: Record<string, unknown>) => ({
