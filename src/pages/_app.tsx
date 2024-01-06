@@ -43,12 +43,13 @@ const App = ({ Component, pageProps }: AppProps) => {
         <ChakraProvider theme={theme}>
           {/* Fast forward the loading of the component, we only need to check anything else besides these (which shouldn't be much) */}
           {/* only issue is theres a tiny bit of flickering when it first loads (NOT NOTICEABLE AT ALL) */}
-          {((["/login", "/register"].includes(router.pathname) || router.pathname.startsWith("/app")) || ready) && (
+          {(!process.env.PUBLIC_DESKTOP_APP || process.env.PUBLIC_DESKTOP_APP === "false" || ["/login", "/register"].includes(router.pathname) || router.pathname.startsWith("/app") || ready) && (
             <>
               <Init />
               <Component {...pageProps} />
             </>
           )}
+
         </ChakraProvider>
       </RecoilRoot>
     </>
