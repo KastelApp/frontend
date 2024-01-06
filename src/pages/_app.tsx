@@ -6,15 +6,49 @@ import SEO from "@/components/seo";
 import theme from "@/utils/theme/index.tsx";
 import Init from "@/components/init.tsx";
 import { AppProps } from "next/app.js";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/router";
 
 const App = ({ Component, pageProps }: AppProps) => {
+  const router = useRouter();
+  const [ready, setReady] = useState(false);
+
+
+  useEffect(() => {
+    // @ts-expect-error -- this is fine.
+    if (!window.__TAURI__) { // not desktop
+      setReady(true);
+      return;
+    }
+
+    const token = localStorage.getItem("token");
+
+    if (["/login", "/register"].includes(router.pathname) || router.pathname.startsWith("/app")) { // already bypassed
+      return;
+    }
+
+    if (token) {
+      router.push("/app");
+    } else {
+      router.push("/login");
+    }
+
+    setTimeout(() => setReady(true), 500); // 500ms delay to prevent flickering & so that we can well connect to the gateway in time (sometimes it fails to connect if we don't add an delay)
+  }, [router]);
+
   return (
     <>
       <RecoilRoot>
         <DefaultSeo {...SEO} />
         <ChakraProvider theme={theme}>
-          <Init />
-          <Component {...pageProps} />
+          {/* Fast forward the loading of the component, we only need to check anything else besides these (which shouldn't be much) */}
+          {/* only issue is theres a tiny bit of flickering when it first loads (NOT NOTICEABLE AT ALL) */}
+          {((["/login", "/register"].includes(router.pathname) || router.pathname.startsWith("/app")) || ready) && (
+            <>
+              <Init />
+              <Component {...pageProps} />
+            </>
+          )}
         </ChakraProvider>
       </RecoilRoot>
     </>
