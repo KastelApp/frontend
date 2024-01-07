@@ -3,7 +3,6 @@ import { useRouter } from "next/router";
 import { useRecoilState } from "recoil";
 import { readyStore, tokenStore } from "@/utils/stores";
 import Loading from "@/components/app/loading";
-import AppNavbar from "@/components/app/navbar";
 import { Box } from "@chakra-ui/react";
 
 const AtMeMessages = () => {
@@ -20,7 +19,7 @@ const AtMeMessages = () => {
       {ready ? (
         <>
           <Box>
-            <AppNavbar />
+            Not Finished
           </Box>
         </>
       ) : (

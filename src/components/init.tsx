@@ -10,11 +10,12 @@ import {
 import { useEffect } from "react";
 import { Client, ClientOptions } from "@kastelll/wrapper";
 import { useRouter } from "next/router";
+import AppNavbar from "./app/navbar.tsx";
 
 const Init = () => {
   const [token, setToken] = useRecoilState(tokenStore);
   const [client, setClient] = useRecoilState(clientStore);
-  const [, setReady] = useRecoilState(readyStore);
+  const [ready, setReady] = useRecoilState(readyStore);
   const [, setGuilds] = useRecoilState(guildStore);
   const [, setChannels] = useRecoilState(channelStore);
   const [, setIsDesktop] = useRecoilState(isDesktop);
@@ -83,7 +84,15 @@ const Init = () => {
     setClient(newClient);
   }, [token]);
 
-  return <></>;
+  return (
+    <>
+    {router.pathname.startsWith("/app") && ready && (
+      <>
+        <AppNavbar />
+      </>
+    )}
+    </>
+  );
 };
 
 export default Init;

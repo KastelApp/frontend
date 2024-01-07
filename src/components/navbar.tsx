@@ -13,11 +13,15 @@ import {
 import { AiOutlineMenu } from "react-icons/ai";
 import NextLink from "next/link";
 import { useEffect, useState } from "react";
+import { useRecoilState } from "recoil";
+import { isDesktop } from "@/utils/stores.ts";
 
 const Navbar = () => {
   const bg = useColorModeValue("white", "gray.900");
+  const buttonColor = useColorModeValue("#000b2e", "#d1dcff");
   const mobileNav = useDisclosure();
   const [token, setToken] = useState(false);
+  const [desktop] = useRecoilState(isDesktop);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -28,133 +32,52 @@ const Navbar = () => {
 
   return (
     <>
-      <chakra.header
-        w="full"
-        px={{
-          base: 2,
-          sm: 4,
-        }}
-        py={4}
-      >
-        <Flex alignItems="center" justifyContent="space-between" mx="auto">
-          <Flex>
-            <chakra.a
-              as={NextLink}
-              href={"/"}
-              title="Choc Home Page"
-              display="flex"
-              alignItems="center"
-            >
-              <chakra.h1 fontSize="xl" fontWeight="medium" ml="2">
-                Kastel
-              </chakra.h1>
-            </chakra.a>
-          </Flex>
-          <HStack display="flex" alignItems="center" spacing={1}>
-            <HStack
-              spacing={1}
-              mr={1}
-              display={{
-                base: "none",
-                md: "inline-flex",
-              }}
-            >
-              <NextLink target={"_blank"} href={"https://docs.kastelapp.com"}>
-                <Button
-                  color={useColorModeValue("#000b2e", "#d1dcff")}
-                  variant="ghost"
-                >
-                  Docs
-                </Button>
-              </NextLink>
-
-              <NextLink target={"_blank"} href={"https://github.com/KastelApp"}>
-                <Button
-                  color={useColorModeValue("#000b2e", "#d1dcff")}
-                  variant="ghost"
-                >
-                  Github
-                </Button>
-              </NextLink>
-
-              <NextLink
-                target={"_blank"}
-                href={"https://discord.gg/f5HgvkRbVP"}
+      {!desktop && (
+        <chakra.header
+          w="full"
+          px={{
+            base: 2,
+            sm: 4,
+          }}
+          py={4}
+        >
+          <Flex alignItems="center" justifyContent="space-between" mx="auto">
+            <Flex>
+              <chakra.a
+                as={NextLink}
+                href={"/"}
+                title="Choc Home Page"
+                display="flex"
+                alignItems="center"
               >
-                <Button
-                  color={useColorModeValue("#000b2e", "#d1dcff")}
-                  variant="ghost"
-                >
-                  Discord
-                </Button>
-              </NextLink>
-            </HStack>
-            <a href={token ? "/app" : "/login"}>
-              <Button
-                _hover={{
-                  bgGradient: "linear(to-r, red.400,pink.400)",
-                  boxShadow: "xl",
-                }}
-                bgGradient="linear(to-r, red.400,pink.400)"
-                color={"white"}
-                size="sm"
-              >
-                {token ? "Open App" : "Login"}
-              </Button>
-            </a>
-            <Box
-              display={{
-                base: "inline-flex",
-                md: "none",
-              }}
-            >
-              <IconButton
+                <chakra.h1 fontSize="xl" fontWeight="medium" ml="2">
+                  Kastel
+                </chakra.h1>
+              </chakra.a>
+            </Flex>
+            <HStack display="flex" alignItems="center" spacing={1}>
+              <HStack
+                spacing={1}
+                mr={1}
                 display={{
-                  base: "flex",
-                  md: "none",
+                  base: "none",
+                  md: "inline-flex",
                 }}
-                aria-label="Open menu"
-                fontSize="20px"
-                color="gray.800"
-                _dark={{
-                  color: "inherit",
-                }}
-                variant="ghost"
-                icon={<AiOutlineMenu />}
-                onClick={mobileNav.onOpen}
-              />
-
-              <VStack
-                pos="absolute"
-                top={0}
-                left={0}
-                right={0}
-                display={mobileNav.isOpen ? "flex" : "none"}
-                flexDirection="column"
-                p={2}
-                pb={4}
-                m={2}
-                bg={bg}
-                spacing={3}
-                rounded="sm"
-                shadow="sm"
               >
-                <CloseButton
-                  aria-label="Close menu"
-                  onClick={mobileNav.onClose}
-                />
-
                 <NextLink target={"_blank"} href={"https://docs.kastelapp.com"}>
-                  <Button w={"full"} variant="ghost">
+                  <Button
+                    color={buttonColor}
+                    variant="ghost"
+                  >
                     Docs
                   </Button>
                 </NextLink>
 
-                <NextLink
-                  target={"_blank"}
-                  href={"https://github.com/KastelApp"}
-                >
-                  <Button w={"full"} variant="ghost">
+                <NextLink target={"_blank"} href={"https://github.com/KastelApp"}>
+                  <Button
+                    color={buttonColor}
+                    variant="ghost"
+                  >
                     Github
                   </Button>
                 </NextLink>
@@ -163,15 +86,98 @@ const Navbar = () => {
                   target={"_blank"}
                   href={"https://discord.gg/f5HgvkRbVP"}
                 >
-                  <Button w={"full"} variant="ghost">
+                  <Button
+                    color={buttonColor}
+                    variant="ghost"
+                  >
                     Discord
                   </Button>
                 </NextLink>
-              </VStack>
-            </Box>
-          </HStack>
-        </Flex>
-      </chakra.header>
+              </HStack>
+              <a href={token ? "/app" : "/login"}>
+                <Button
+                  _hover={{
+                    bgGradient: "linear(to-r, red.400,pink.400)",
+                    boxShadow: "xl",
+                  }}
+                  bgGradient="linear(to-r, red.400,pink.400)"
+                  color={"white"}
+                  size="sm"
+                >
+                  {token ? "Open App" : "Login"}
+                </Button>
+              </a>
+              <Box
+                display={{
+                  base: "inline-flex",
+                  md: "none",
+                }}
+              >
+                <IconButton
+                  display={{
+                    base: "flex",
+                    md: "none",
+                  }}
+                  aria-label="Open menu"
+                  fontSize="20px"
+                  color="gray.800"
+                  _dark={{
+                    color: "inherit",
+                  }}
+                  variant="ghost"
+                  icon={<AiOutlineMenu />}
+                  onClick={mobileNav.onOpen}
+                />
+
+                <VStack
+                  pos="absolute"
+                  top={0}
+                  left={0}
+                  right={0}
+                  display={mobileNav.isOpen ? "flex" : "none"}
+                  flexDirection="column"
+                  p={2}
+                  pb={4}
+                  m={2}
+                  bg={bg}
+                  spacing={3}
+                  rounded="sm"
+                  shadow="sm"
+                >
+                  <CloseButton
+                    aria-label="Close menu"
+                    onClick={mobileNav.onClose}
+                  />
+
+                  <NextLink target={"_blank"} href={"https://docs.kastelapp.com"}>
+                    <Button w={"full"} variant="ghost">
+                      Docs
+                    </Button>
+                  </NextLink>
+
+                  <NextLink
+                    target={"_blank"}
+                    href={"https://github.com/KastelApp"}
+                  >
+                    <Button w={"full"} variant="ghost">
+                      Github
+                    </Button>
+                  </NextLink>
+
+                  <NextLink
+                    target={"_blank"}
+                    href={"https://discord.gg/f5HgvkRbVP"}
+                  >
+                    <Button w={"full"} variant="ghost">
+                      Discord
+                    </Button>
+                  </NextLink>
+                </VStack>
+              </Box>
+            </HStack>
+          </Flex>
+        </chakra.header>
+      )}
     </>
   );
 };

@@ -22,6 +22,7 @@ const nextConfig = {
     PUBLIC_MEDIA_URL: process.env.PUBLIC_MEDIA_URL,
     NEXT_PUBLIC_CLOUDFLARE_TURNSTILE_SITE_KEY:
       process.env.NEXT_PUBLIC_CLOUDFLARE_TURNSTILE_SITE_KEY,
+    PUBLIC_DESKTOP_APP: process.env.KASTEL_DESKTOP_APP,
   },
   sentry: {
     disableServerWebpackPlugin: true,

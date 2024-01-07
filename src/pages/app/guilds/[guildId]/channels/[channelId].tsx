@@ -16,7 +16,6 @@ import {
   Text,
   useColorModeValue,
 } from "@chakra-ui/react";
-import AppNavbar from "@/components/app/navbar";
 import Loading from "@/components/app/loading";
 import SEO from "@/components/seo";
 import GuildSideBar from "@/components/app/guild/side-bar";
@@ -113,8 +112,6 @@ const GuildChannelPage = () => {
       {areWeReady ? (
         <>
           <Box>
-            <AppNavbar />
-
             <GuildSideBar>
               <Box
                 pos={"fixed"}
