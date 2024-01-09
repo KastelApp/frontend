@@ -103,7 +103,7 @@ const GuildMembers = () => {
             </PopoverTrigger>
             <PopoverContent>
               <PopoverBody>
-                <Center>
+                <Flex>
                   <Box
                     boxSize="50px"
                     display="inline-flex"
@@ -147,10 +147,10 @@ const GuildMembers = () => {
                     />
                   </Box>
 
-                  <Text ml={2} mt={1}>
+                  <Text ml={2} mt={3}>
                     {member?.user?.username}#{member?.user?.discriminator}
                   </Text>
-                </Center>
+                </Flex>
               </PopoverBody>
             </PopoverContent>
           </Popover>
