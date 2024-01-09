@@ -32,8 +32,8 @@ import { sortChannels } from "@/utils/sortChannels";
 import GuildSettings from "@/components/app/guild/settings";
 import GuildInvites from "@/components/app/guild/invites";
 import { BaseChannel } from "@kastelll/wrapper";
-import GuildMessage from "@/components/app/guild/message.tsx";
 import GuildMembers from "@/components/app/guild/members.tsx";
+import GuildMessageContainer from "@/components/app/guild/messageContainer.tsx";
 
 const GuildSideBar = ({ children }: { children?: ReactNode }) => {
   const [guild] = useRecoilState(currentGuild);
@@ -261,12 +261,20 @@ const GuildSideBar = ({ children }: { children?: ReactNode }) => {
         </Box>
 
         {/* Main content */}
-        <Box flex="1" overflowY="scroll">
-          {children}
-          <GuildMessage />
+
+        <Box flex="1" justifyContent="center" maxWidth="calc(100% - 400px)">
+          <Box pos="sticky" top={0} zIndex={10} bg={background} p={2}>
+            <Text>{`#${currentChannelStore?.name}`}</Text>
+          </Box>
+
+          <Box maxHeight="calc(100vh - 150px)" overflowY="auto" px={2}>
+            {children}
+          </Box>
+
+          <GuildMessageContainer />
         </Box>
 
-        {/* Ride side */}
+        {/* Right side */}
         <Box
           bg={background}
           pb="10"
