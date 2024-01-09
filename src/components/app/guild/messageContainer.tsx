@@ -13,8 +13,7 @@ import { ChatIcon } from "@chakra-ui/icons";
 const GuildMessageContainer = () => {
   const [currentChannelInfo] = useRecoilState(currentChannel);
 
-  let handleSendMessage = () => {};
-  const background = useColorModeValue("#e6e9ef", "#101319");
+  // let handleSendMessage = () => {};
 
   return (
     <>

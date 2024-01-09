@@ -1,9 +1,6 @@
 import { Avatar, Badge, Box, Flex, Text } from "@chakra-ui/react";
-import { useRecoilState } from "recoil";
-import { currentChannel } from "@/utils/stores.ts";
 
 const GuildMessages = () => {
-  const [currentChannelInfo] = useRecoilState(currentChannel);
 
   const messages = [
     {
