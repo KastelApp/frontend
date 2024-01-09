@@ -8,17 +8,11 @@ import {
   readyStore,
   tokenStore,
 } from "@/utils/stores";
-import {
-  Avatar,
-  Badge,
-  Box,
-  Flex,
-  Text,
-  useColorModeValue,
-} from "@chakra-ui/react";
+import { Box } from "@chakra-ui/react";
 import Loading from "@/components/app/loading";
 import SEO from "@/components/seo";
 import GuildSideBar from "@/components/app/guild/side-bar";
+import GuildMessages from "@/components/app/guild/messages.tsx";
 
 const GuildChannelPage = () => {
   const router = useRouter();
@@ -30,7 +24,7 @@ const GuildChannelPage = () => {
   const [client] = useRecoilState(clientStore);
   const [ready] = useRecoilState(readyStore);
   const [, setGuild] = useRecoilState(currentGuild);
-  const [channel, setChannel] = useRecoilState(currentChannel);
+  const [, setChannel] = useRecoilState(currentChannel);
   const [areWeReady, setAreWeReady] = useState(false);
 
   useEffect(() => {
@@ -72,35 +66,6 @@ const GuildChannelPage = () => {
     setAreWeReady(true); // we create our custom "ready" thing, since the "ready" for the client is well for when its ready, not when we are ready
   }, [ready, guildId, channelId]);
 
-  const messages = [
-    {
-      user: {
-        name: "Tea Cup",
-        avatar: "/icon-3.png",
-      },
-      content: "Hello world!",
-      time: "Yesterday at 1:52 AM",
-    },
-    {
-      user: {
-        name: "Darkerink",
-        avatar: "/icon-4.png",
-      },
-      content: "Hello",
-      time: "12/12/2020 1:52 AM",
-    },
-    {
-      user: {
-        name: "Test",
-        avatar: "/icon-2.png",
-      },
-      content: "Whats up?",
-      time: "Today at 1:52 AM",
-    },
-  ];
-
-  const background = useColorModeValue("#e6e9ef", "#101319");
-
   return (
     <>
       <SEO
@@ -113,57 +78,8 @@ const GuildChannelPage = () => {
         <>
           <Box>
             <GuildSideBar>
-              <Box
-                pos={"fixed"}
-                zIndex={10}
-                h={10}
-                top={0}
-                w={"full"}
-                bg={background}
-              >
-                <Text mt={2} ml={2}>
-                  #{channel?.name}
-                </Text>
-              </Box>
-
               {/* messages */}
-              <Box mt={20}>
-                {messages.map((message) => (
-                  <Box
-                    key={message.user.name}
-                    _hover={{
-                      bg: "gray.700",
-                    }}
-                    mt={2}
-                  >
-                    <Flex ml={5} py="1.5">
-                      <Avatar
-                        draggable={"false"}
-                        size="sm"
-                        src={message.user.avatar || "/icon-1.png"}
-                        name={message?.user.name || "Loading"}
-                        mb={4}
-                        cursor="pointer"
-                      ></Avatar>
-                      <Box ml="3">
-                        <Text>
-                          {message.user.name}
-                          <Badge
-                            bg={"unset"}
-                            color={"inherit"}
-                            textTransform={"unset"}
-                            fontWeight={"unset"}
-                            ml="1"
-                          >
-                            {message.time}
-                          </Badge>
-                        </Text>
-                        <Text fontSize="sm">{message.content}</Text>
-                      </Box>
-                    </Flex>
-                  </Box>
-                ))}
-              </Box>
+              <GuildMessages />
             </GuildSideBar>
           </Box>
         </>

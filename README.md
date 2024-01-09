@@ -11,7 +11,7 @@
 [![Stargazers][stars-shield]][stars-url]
 [![Issues][issues-shield]][issues-url]
 
-Kastel is an open-sourced real time chat application focused around the community & privacy.
+Kastel is an open-sourced real-time chat application focused on the community & privacy.
 
 # Contributing
 

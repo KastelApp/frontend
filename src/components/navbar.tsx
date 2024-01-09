@@ -65,19 +65,16 @@ const Navbar = () => {
                 }}
               >
                 <NextLink target={"_blank"} href={"https://docs.kastelapp.com"}>
-                  <Button
-                    color={buttonColor}
-                    variant="ghost"
-                  >
+                  <Button color={buttonColor} variant="ghost">
                     Docs
                   </Button>
                 </NextLink>
 
-                <NextLink target={"_blank"} href={"https://github.com/KastelApp"}>
-                  <Button
-                    color={buttonColor}
-                    variant="ghost"
-                  >
+                <NextLink
+                  target={"_blank"}
+                  href={"https://github.com/KastelApp"}
+                >
+                  <Button color={buttonColor} variant="ghost">
                     Github
                   </Button>
                 </NextLink>
@@ -86,10 +83,7 @@ const Navbar = () => {
                   target={"_blank"}
                   href={"https://discord.gg/f5HgvkRbVP"}
                 >
-                  <Button
-                    color={buttonColor}
-                    variant="ghost"
-                  >
+                  <Button color={buttonColor} variant="ghost">
                     Discord
                   </Button>
                 </NextLink>
@@ -149,7 +143,10 @@ const Navbar = () => {
                     onClick={mobileNav.onClose}
                   />
 
-                  <NextLink target={"_blank"} href={"https://docs.kastelapp.com"}>
+                  <NextLink
+                    target={"_blank"}
+                    href={"https://docs.kastelapp.com"}
+                  >
                     <Button w={"full"} variant="ghost">
                       Docs
                     </Button>

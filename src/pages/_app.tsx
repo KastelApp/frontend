@@ -13,17 +13,21 @@ const App = ({ Component, pageProps }: AppProps) => {
   const router = useRouter();
   const [ready, setReady] = useState(false);
 
-
   useEffect(() => {
     // @ts-expect-error -- this is fine.
-    if (!window.__TAURI__) { // not desktop
+    if (!window.__TAURI__) {
+      // not desktop
       setReady(true);
       return;
     }
 
     const token = localStorage.getItem("token");
 
-    if (["/login", "/register"].includes(router.pathname) || router.pathname.startsWith("/app")) { // already bypassed
+    if (
+      ["/login", "/register"].includes(router.pathname) ||
+      router.pathname.startsWith("/app")
+    ) {
+      // already bypassed
       return;
     }
 
@@ -43,13 +47,16 @@ const App = ({ Component, pageProps }: AppProps) => {
         <ChakraProvider theme={theme}>
           {/* Fast forward the loading of the component, we only need to check anything else besides these (which shouldn't be much) */}
           {/* As long as the PUBLIC_DESKTOP_APP is set correctly, there should no longer be a flicker */}
-          {(!process.env.PUBLIC_DESKTOP_APP || process.env.PUBLIC_DESKTOP_APP === "false" || ["/login", "/register"].includes(router.pathname) || router.pathname.startsWith("/app") || ready) && (
+          {(!process.env.PUBLIC_DESKTOP_APP ||
+            process.env.PUBLIC_DESKTOP_APP === "false" ||
+            ["/login", "/register"].includes(router.pathname) ||
+            router.pathname.startsWith("/app") ||
+            ready) && (
             <>
               <Init />
               <Component {...pageProps} />
             </>
           )}
-
         </ChakraProvider>
       </RecoilRoot>
     </>

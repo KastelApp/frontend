@@ -25,9 +25,7 @@ const App = () => {
       />
       {ready ? (
         <>
-          <Box>
-            Not Finished
-          </Box>
+          <Box>Not Finished</Box>
         </>
       ) : (
         <Loading />

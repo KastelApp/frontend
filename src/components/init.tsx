@@ -86,11 +86,11 @@ const Init = () => {
 
   return (
     <>
-    {router.pathname.startsWith("/app") && ready && (
-      <>
-        <AppNavbar />
-      </>
-    )}
+      {router.pathname.startsWith("/app") && ready && (
+        <>
+          <AppNavbar />
+        </>
+      )}
     </>
   );
 };
