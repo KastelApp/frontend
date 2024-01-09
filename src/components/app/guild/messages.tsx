@@ -1,7 +1,6 @@
 import { Avatar, Badge, Box, Flex, Text } from "@chakra-ui/react";
 
 const GuildMessages = () => {
-
   const messages = [
     {
       user: {
