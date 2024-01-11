@@ -28,35 +28,35 @@ const GuildMessages = () => {
     },
     {
       user: {
-        name: "Tea Cup",
+        name: "Someone",
         avatar: "/icon-3.png",
       },
-      content: "Hello world!",
-      time: "Yesterday at 1:52 AM",
+      content: "Howdy",
+      time: "Yesterday at 4:51 PM",
     },
     {
       user: {
-        name: "Darkerink",
+        name: "goop",
         avatar: "/icon-4.png",
       },
-      content: "Hello",
+      content: "true",
       time: "12/12/2020 1:52 AM",
     },
     {
       user: {
-        name: "Test",
+        name: "Taco",
         avatar: "/icon-2.png",
       },
-      content: "Whats up?",
+      content: "false",
       time: "Today at 1:52 AM",
     },
     {
       user: {
-        name: "Test",
+        name: "Apple",
         avatar: "/icon-2.png",
       },
-      content: "Whats up?",
-      time: "Today at 1:52 AM",
+      content: "Oh my...",
+      time: "Today at 8:15 AM",
     },
   ];
 
