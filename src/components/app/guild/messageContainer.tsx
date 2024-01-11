@@ -26,7 +26,6 @@ const GuildMessageContainer = () => {
         maxW="calc(100% - 400px)"
         left="50%"
         transform="translateX(-50%)"
-        zIndex={100}
       >
         <InputGroup>
           {/*<InputLeftElement>
