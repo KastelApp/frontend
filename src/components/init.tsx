@@ -11,6 +11,7 @@ import { useEffect } from "react";
 import { Client, ClientOptions } from "@kastelll/wrapper";
 import { useRouter } from "next/router";
 import AppNavbar from "./app/navbar.tsx";
+import pack from "../../package.json";
 
 const Init = () => {
   const [token, setToken] = useRecoilState(tokenStore);
@@ -20,6 +21,16 @@ const Init = () => {
   const [, setChannels] = useRecoilState(channelStore);
   const [, setIsDesktop] = useRecoilState(isDesktop);
   const router = useRouter();
+
+  useEffect(() => {
+    let stats = {
+      version: pack.version,
+      commit: process.env.PUBLIC_GIT_COMMIT as string,
+      branch: process.env.PUBLIC_GIT_BRANCH as string,
+    };
+    let string = JSON.stringify(stats);
+    console.log(Buffer.from(string).toString("base64"));
+  }, []);
 
   useEffect(() => {
     if (client) return;
