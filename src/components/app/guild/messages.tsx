@@ -131,7 +131,7 @@ const GuildMessages = () => {
                   <Text fontSize="sm">{message.content}</Text>
                 </Box>
               </Flex>
-              <PopoverContent>
+              <PopoverContent _focus={{ boxShadow: "none" }}>
                 <PopoverBody>
                   <Flex>
                     <Box

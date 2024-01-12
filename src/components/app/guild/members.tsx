@@ -100,7 +100,7 @@ const GuildMembers = () => {
                 </Text>
               </Flex>
             </PopoverTrigger>
-            <PopoverContent>
+            <PopoverContent _focus={{ boxShadow: "none" }}>
               <PopoverBody>
                 <Flex>
                   <Box
