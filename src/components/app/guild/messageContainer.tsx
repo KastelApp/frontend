@@ -3,17 +3,27 @@ import {
   Flex,
   InputGroup,
   InputRightElement,
-  Textarea,
   useColorModeValue,
 } from "@chakra-ui/react";
 import { useRecoilState } from "recoil";
 import { currentChannel } from "@/utils/stores.ts";
 import { ChatIcon } from "@chakra-ui/icons";
+// import { KeyboardEvent } from "react";
+import { AutoResizeTextarea } from "@/components/AutoResizeTextarea.tsx";
 
 const GuildMessageContainer = () => {
   const [currentChannelInfo] = useRecoilState(currentChannel);
 
-  // let handleSendMessage = () => {};
+  {
+    /*
+  const handleKeyDown = (event: KeyboardEvent) => {
+    if (event.key === "Enter") {
+        event.preventDefault();
+        // send message...
+    }
+  };
+  */
+  }
 
   return (
     <>
@@ -33,12 +43,9 @@ const GuildMessageContainer = () => {
                     <AddIcon/>
                 </Button>
             </InputLeftElement>*/}
-          <Textarea
+          <AutoResizeTextarea
             data-gramm_editor="false"
-            rows={1}
-            css={{
-              resize: "none",
-            }}
+            resize="none"
             bg={useColorModeValue("gray.200", "gray.800")}
             border={0}
             color={useColorModeValue("gray.900", "gray.100")}
