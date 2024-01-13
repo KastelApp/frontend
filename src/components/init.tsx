@@ -23,12 +23,12 @@ const Init = () => {
   const router = useRouter();
 
   useEffect(() => {
-    let stats = {
+    const stats = {
       version: pack.version,
       commit: process.env.PUBLIC_GIT_COMMIT as string,
       branch: process.env.PUBLIC_GIT_BRANCH as string,
     };
-    let string = JSON.stringify(stats);
+    const string = JSON.stringify(stats);
     console.log(Buffer.from(string).toString("base64"));
   }, []);
 
