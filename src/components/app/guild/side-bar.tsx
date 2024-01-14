@@ -34,6 +34,8 @@ import GuildInvites from "@/components/app/guild/invites";
 import { BaseChannel } from "@kastelll/wrapper";
 import GuildMembers from "@/components/app/guild/members.tsx";
 import GuildMessageContainer from "@/components/app/guild/messageContainer.tsx";
+import { IoPeople } from "react-icons/io5";
+import CreateChannel from "@/components/app/guild/createChannel.tsx";
 
 const GuildSideBar = ({ children }: { children?: ReactNode }) => {
   const [guild] = useRecoilState(currentGuild);
@@ -55,6 +57,11 @@ const GuildSideBar = ({ children }: { children?: ReactNode }) => {
     isOpen: invitesIsOpen,
     onOpen: invitesOnOpen,
     onClose: invitesOnClose,
+  } = useDisclosure();
+  const {
+    isOpen: createChannelIsOpen,
+    onOpen: createChannelOnOpen,
+    onClose: createChannelOnClose,
   } = useDisclosure();
 
   const getGuildName = (name: string) => {
@@ -87,6 +94,10 @@ const GuildSideBar = ({ children }: { children?: ReactNode }) => {
     <>
       <GuildSettings isOpen={settingsIsOpen} onClose={settingsOnClose} />
       <GuildInvites isOpen={invitesIsOpen} onClose={invitesOnClose} />
+      <CreateChannel
+        isOpen={createChannelIsOpen}
+        onClose={createChannelOnClose}
+      />
       <Flex height="100vh">
         <Box
           bg={background}
@@ -124,7 +135,16 @@ const GuildSideBar = ({ children }: { children?: ReactNode }) => {
                       </MenuItem>
                     )}
 
-                    <MenuItem onClick={invitesOnOpen} icon={<AddIcon />}>
+                    {guild.permissions.hasAnyRole("ManageChannels") && (
+                      <MenuItem
+                        onClick={createChannelOnOpen}
+                        icon={<AddIcon />}
+                      >
+                        Create Channel
+                      </MenuItem>
+                    )}
+
+                    <MenuItem onClick={invitesOnOpen} icon={<IoPeople />}>
                       Invite Friends
                     </MenuItem>
                     <MenuItem icon={<BellIcon />}>Notifications</MenuItem>
