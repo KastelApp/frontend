@@ -83,11 +83,12 @@ const CreateChannel = ({
                   onClick={() => handleButtonClick(channelType)}
                   mt={2}
                   w={"full"}
+                  h={"full"}
                   leftIcon={<>{channelType?.icon}</>}
                   justifyContent={"unset"}
                   isActive={channelType?.selected}
                 >
-                  <Box textAlign="left">
+                  <Box mt={1} mb={1.5} textAlign="left">
                     {/* Explicitly set text alignment to the left */}
                     <Text>{channelType?.name}</Text>
                     <Text fontSize="xs">{channelType?.description}</Text>
@@ -96,13 +97,13 @@ const CreateChannel = ({
               </Flex>
             ))}
 
-            <FormControl isRequired mt={2}>
+            <FormControl mt={2}>
               <FormLabel>Channel Name</FormLabel>
               <InputGroup>
                 <InputLeftElement pointerEvents="none">
                   {channelTypes.find((type) => type.selected)?.icon}
                 </InputLeftElement>
-                <Input placeholder="new-channel" />
+                <Input required={true} placeholder="new-channel" />
               </InputGroup>
             </FormControl>
           </form>
