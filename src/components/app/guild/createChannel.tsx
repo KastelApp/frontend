@@ -116,7 +116,11 @@ const CreateChannel = ({
           {loading ? (
             <Button isLoading={true}>Create Channel</Button>
           ) : (
-            <Button onClick={() => setLoading(true)} form={"create-channel"} type={"submit"}>
+            <Button
+              onClick={() => setLoading(true)}
+              form={"create-channel"}
+              type={"submit"}
+            >
               Create Channel
             </Button>
           )}
