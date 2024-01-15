@@ -35,11 +35,16 @@ const GuildSettings = ({
    * 5 - Members
    */
 
+  const handleClose = () => {
+    setSeletedPage(0);
+    onClose();
+  };
+
   return (
     <Modal
       variant={useColorModeValue("light", "dark")}
       isOpen={isOpen}
-      onClose={onClose}
+      onClose={handleClose}
       size="full"
     >
       <ModalOverlay />

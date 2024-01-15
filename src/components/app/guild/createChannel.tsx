@@ -18,7 +18,7 @@ import {
 } from "@chakra-ui/react";
 import { FaHashtag } from "react-icons/fa";
 import { HiSpeakerWave } from "react-icons/hi2";
-import {FormEvent, ReactNode, useState} from "react";
+import { FormEvent, ReactNode, useState } from "react";
 
 interface ChannelType {
   name: string;
@@ -71,7 +71,7 @@ const CreateChannel = ({
     onClose();
     setLoading(false);
     setDisabled(true);
-  }
+  };
 
   return (
     <Modal isOpen={isOpen} onClose={handleClose} size={"sm"}>
@@ -115,7 +115,11 @@ const CreateChannel = ({
                 <InputLeftElement pointerEvents="none">
                   {channelTypes.find((type) => type.selected)?.icon}
                 </InputLeftElement>
-                <Input onChange={handleChange} required={true} placeholder="new-channel" />
+                <Input
+                  onChange={handleChange}
+                  required={true}
+                  placeholder="new-channel"
+                />
               </InputGroup>
             </FormControl>
           </form>
@@ -130,7 +134,7 @@ const CreateChannel = ({
             <Button isLoading={true}>Create Channel</Button>
           ) : (
             <Button
-                isDisabled={disabled}
+              isDisabled={disabled}
               onClick={() => setLoading(true)}
               form={"create-channel"}
               type={"submit"}
