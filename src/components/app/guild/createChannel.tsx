@@ -18,7 +18,7 @@ import {
 } from "@chakra-ui/react";
 import { FaHashtag } from "react-icons/fa";
 import { HiSpeakerWave } from "react-icons/hi2";
-import { ReactNode, useState } from "react";
+import {FormEvent, ReactNode, useState} from "react";
 
 interface ChannelType {
   name: string;
@@ -52,6 +52,7 @@ const CreateChannel = ({
   const [channelTypes, setChannelTypes] =
     useState<ChannelType[]>(initialChannelTypes);
   const [loading, setLoading] = useState(false);
+  const [disabled, setDisabled] = useState(true);
 
   const handleButtonClick = (clickedType: ChannelType) => {
     const updatedChannelTypes = channelTypes.map((type) => ({
@@ -61,8 +62,19 @@ const CreateChannel = ({
     setChannelTypes(updatedChannelTypes);
   };
 
+  const handleChange = (event: FormEvent<HTMLInputElement>) => {
+    const { value } = event.currentTarget; // Use currentTarget to get the input element
+    setDisabled(!value);
+  };
+
+  const handleClose = () => {
+    onClose();
+    setLoading(false);
+    setDisabled(true);
+  }
+
   return (
-    <Modal isOpen={isOpen} onClose={onClose} size={"sm"}>
+    <Modal isOpen={isOpen} onClose={handleClose} size={"sm"}>
       <ModalOverlay />
       <ModalContent>
         <ModalHeader>Create Channel</ModalHeader>
@@ -103,14 +115,14 @@ const CreateChannel = ({
                 <InputLeftElement pointerEvents="none">
                   {channelTypes.find((type) => type.selected)?.icon}
                 </InputLeftElement>
-                <Input required={true} placeholder="new-channel" />
+                <Input onChange={handleChange} required={true} placeholder="new-channel" />
               </InputGroup>
             </FormControl>
           </form>
         </ModalBody>
 
         <ModalFooter display="flex">
-          <Button variant={"ghost"} onClick={onClose} mr={3}>
+          <Button variant={"ghost"} onClick={handleClose} mr={3}>
             Cancel
           </Button>
 
@@ -118,6 +130,7 @@ const CreateChannel = ({
             <Button isLoading={true}>Create Channel</Button>
           ) : (
             <Button
+                isDisabled={disabled}
               onClick={() => setLoading(true)}
               form={"create-channel"}
               type={"submit"}
