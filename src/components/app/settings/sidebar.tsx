@@ -76,9 +76,7 @@ const SidebarContent = ({
 }) => {
   return (
     <Box
-      bg={useColorModeValue("white", "gray.800")}
-      borderRight="1px"
-      borderRightColor={useColorModeValue("gray.200", "gray.700")}
+      bg={useColorModeValue("#e6e9ef", "#101319")}
       w={{ base: "full", md: 60 }}
       pos="fixed"
       h="full"
