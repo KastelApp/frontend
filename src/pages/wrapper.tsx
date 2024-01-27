@@ -1,4 +1,3 @@
-import { testStore } from "@/utils/stores.ts";
 import { Button } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { useRecoilState } from "recoil";
@@ -7,7 +6,6 @@ import WS, { testStatusStore } from "@/wrapper/WebSocket/WebSocket.ts";
 
 const Wrapper = () => {
     const [ws2, setWs2] = useState<WS | null>(null);
-    const [test] = useRecoilState(testStore);
     const [status] = useRecoilState(testStatusStore);
 
     useEffect(() => {
@@ -41,7 +39,7 @@ const Wrapper = () => {
                 <br />
                 Ready: {ws2?.status === "Ready" ? "true" : "false"}
                 <br />
-                User: {ws2?.user}
+                User:
             </div>
         </>
     );
