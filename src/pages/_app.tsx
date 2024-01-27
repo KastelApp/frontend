@@ -8,6 +8,7 @@ import Init from "@/components/init.tsx";
 import { AppProps } from "next/app.js";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
+import RecoilNexus from "recoil-nexus";
 
 const App = ({ Component, pageProps }: AppProps) => {
   const router = useRouter();
@@ -43,6 +44,7 @@ const App = ({ Component, pageProps }: AppProps) => {
   return (
     <>
       <RecoilRoot>
+        <RecoilNexus />
         <DefaultSeo {...SEO} />
         <ChakraProvider theme={theme}>
           {/* Fast forward the loading of the component, we only need to check anything else besides these (which shouldn't be much) */}
@@ -52,11 +54,11 @@ const App = ({ Component, pageProps }: AppProps) => {
             ["/login", "/register"].includes(router.pathname) ||
             router.pathname.startsWith("/app") ||
             ready) && (
-            <>
-              <Init />
-              <Component {...pageProps} />
-            </>
-          )}
+              <>
+                <Init />
+                <Component {...pageProps} />
+              </>
+            )}
         </ChakraProvider>
       </RecoilRoot>
     </>
