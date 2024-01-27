@@ -23,10 +23,9 @@ const Wrapper = () => {
 
     return (
         <>
-            {/* lol <Button onClick={() => ws2!.connect("temp")}>Connect</Button>
-        <br />
-        Current Status: {status} */}
-            {/* Simple page which lets us debug / work with the wrapper, should have two buttons one to disconnect and one to connect, and then a form to send custom ws data and an area to show the status */}
+            {/* Simple page which lets us debug / work with the wrapper, has two buttons one to disconnect and one to connect*/}
+            {/* In the future possibly more stuff (i.e disabling compression if theres an issue with it etc) */}
+            {/* TODO: Should be disabled in prod */}
             <div style={{
                 display: "flex",
                 flexDirection: "column",
