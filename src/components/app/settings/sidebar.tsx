@@ -13,7 +13,7 @@ import {
 import { FiMenu } from "react-icons/fi";
 import pack from "../../../../package.json";
 import data from "../../../data/sidePanel";
-import {ElementType, ReactNode} from "react";
+import { ElementType, ReactNode } from "react";
 
 const SettingsSidebar = ({
   selectedPage,
