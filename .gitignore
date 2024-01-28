@@ -40,3 +40,8 @@ next-env.d.ts
 .idea
 package-lock.json
 yarn.lock
+
+# sitemaps
+public/sitemap.xml
+public/sitemap-*.xml
+public/robots.txt
