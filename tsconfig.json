@@ -29,6 +29,6 @@
     "sentry.edge.config.ts",
     "next-seo.config.mjs",
     "gitinfo.mjs"
-  ],
+, "src/wrapper/WebSocket/heartbeat.worker.mjs"  ],
   "exclude": ["node_modules"]
 }

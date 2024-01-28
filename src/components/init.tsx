@@ -27,6 +27,7 @@ const Init = () => {
       version: pack.version,
       commit: process.env.PUBLIC_GIT_COMMIT as string,
       branch: process.env.PUBLIC_GIT_BRANCH as string,
+      paltform: process.env.PUBLIC_DESKTOP_APP ? "desktop" : "browser"
     };
     const string = JSON.stringify(stats);
     console.log(Buffer.from(string).toString("base64"));
@@ -43,6 +44,8 @@ const Init = () => {
     if (["/", "/404"].includes(window.location.pathname)) {
       return;
     }
+
+    return;
 
     const newClient = new Client({
       worker: new Worker("/workers/interval.worker.js"),
