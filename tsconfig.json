@@ -14,8 +14,8 @@
     "jsx": "preserve",
     "incremental": true,
     "paths": {
-      "@/*": ["./src/*"],
       "$/*": ["./src/wrapper/*"],
+      "@/*": ["./src/*"],
     },
     "allowImportingTsExtensions": true
   },

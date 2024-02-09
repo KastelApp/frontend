@@ -1,8 +1,6 @@
 import { useRecoilState } from "recoil";
 import {
-  channelStore,
   clientStore,
-  guildStore,
   isDesktop,
   readyStore,
   tokenStore,
@@ -12,22 +10,25 @@ import { Client, ClientOptions } from "@kastelll/wrapper";
 import { useRouter } from "next/router";
 import AppNavbar from "./app/navbar.tsx";
 import pack from "../../package.json";
+import { useColorMode } from "@chakra-ui/react";
+import { settingsStore } from "@/wrapper/utils/Stores.ts";
 
 const Init = () => {
   const [token, setToken] = useRecoilState(tokenStore);
   const [client, setClient] = useRecoilState(clientStore);
   const [ready, setReady] = useRecoilState(readyStore);
-  const [, setGuilds] = useRecoilState(guildStore);
-  const [, setChannels] = useRecoilState(channelStore);
   const [, setIsDesktop] = useRecoilState(isDesktop);
   const router = useRouter();
+  const { toggleColorMode } = useColorMode();
+  const [settings] = useRecoilState(settingsStore);
+
 
   useEffect(() => {
     const stats = {
       version: pack.version,
       commit: process.env.PUBLIC_GIT_COMMIT as string,
       branch: process.env.PUBLIC_GIT_BRANCH as string,
-      paltform: process.env.PUBLIC_DESKTOP_APP ? "desktop" : "browser"
+      paltform: process.env.PUBLIC_DESKTOP_APP === "true" ? "desktop" : "browser"
     };
     const string = JSON.stringify(stats);
     console.log(Buffer.from(string).toString("base64"));
@@ -58,22 +59,6 @@ const Init = () => {
       unAuthed: token ? false : true,
     } as ClientOptions);
 
-    newClient.guilds.guilds.subscribe((guild, type) => {
-      if (type === "A") {
-        setGuilds((old) => [...old, guild]);
-      } else if (type === "R") {
-        setGuilds((old) => old.filter((g) => g.id !== guild.id));
-      }
-    });
-
-    newClient.channels.channels.subscribe((channel, type) => {
-      if (type === "A") {
-        setChannels((old) => [...old, channel]);
-      } else if (type === "R") {
-        setChannels((old) => old.filter((c) => c.id !== channel.id));
-      }
-    });
-
     newClient.on("unReady", () => {
       setReady(false);
     });
@@ -97,6 +82,14 @@ const Init = () => {
 
     setClient(newClient);
   }, [token]);
+
+  useEffect(() => {
+    const mode = localStorage.getItem("chakra-ui-color-mode");
+
+    if (mode !== settings.theme) {
+      toggleColorMode();
+    }
+  }, [settings.theme]);
 
   return (
     <>

@@ -32,11 +32,12 @@ import {
 } from "react-icons/fa";
 import Settings from "@/components/app/settings";
 import { useRecoilState } from "recoil";
-import { clientStore, guildStore, tokenStore } from "@/utils/stores";
+import { clientStore, tokenStore } from "@/utils/stores";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import Guild from "./guild/guild.tsx";
 import NewGuild from "./new-guild.tsx";
+import { guildStore } from "@/wrapper/utils/Stores.ts";
 
 const AppNavbar = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -45,7 +46,6 @@ const AppNavbar = () => {
   const [, setToken] = useRecoilState(tokenStore);
   const router = useRouter();
   const isSmallScreen = useBreakpointValue({ base: true, sm: false });
-  const { toggleColorMode } = useColorMode();
   const [status, setStatus] = useState<string>("green");
 
   const handleLogout = () => {
@@ -64,17 +64,7 @@ const AppNavbar = () => {
     router.push("/");
   };
 
-  useEffect(() => {
-    const mode = localStorage.getItem("chakra-ui-color-mode");
-
-    const theme = client?.user.theme;
-
-    if (!theme) return;
-
-    if (mode !== theme) {
-      toggleColorMode();
-    }
-  }, [client?.user.theme]);
+  
 
   useEffect(() => {
     /*

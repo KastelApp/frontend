@@ -14,6 +14,8 @@ class Translation {
   }
 
   public async load() {
+    if (!("window" in globalThis)) return this;
+
     if (this.metaData.get("loaded")) return this;
     const fetched = await fetch("/locales/meta.json");
     const text = await fetched.text();
@@ -53,8 +55,6 @@ class Translation {
     const translation =
       this.translations.get(this.currentLanguage) ??
       this.translations.get("en");
-
-    console.log(translation, this.translations);
 
     if (!translation) return key;
 

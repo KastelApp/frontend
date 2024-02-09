@@ -1,11 +1,12 @@
 import { encoding, status, websocketSettings } from "$/types/ws.ts";
 import { atom } from "recoil";
-import StringFormatter from "../utils/StringFormatter.ts";
+import StringFormatter from "$/utils/StringFormatter.ts";
 import { getRecoil, setRecoil } from "recoil-nexus";
-import { opCodes } from "../utils/constants.ts";
-import { Identify } from "../types/events.ts";
+import { opCodes } from "$/utils/constants.ts";
+import { Identify } from "$/types/events.ts";
 import hello from "./Events/Hello.ts";
 import ready from "./Events/Ready.ts";
+import Client from "$/Client/Client.ts";
 
 export const testStatusStore = atom<status>({
     default: "Disconnected",
@@ -57,7 +58,9 @@ class Websocket {
 
     #_events: Map<string, (() => void)[]> = new Map();
 
-    public constructor(opts: websocketSettings) {
+    #client?: Client;
+
+    public constructor(opts: websocketSettings, client?: Client) {
         this.compression = opts.compress;
 
         this.encoding = opts.encoding;
@@ -65,6 +68,8 @@ class Websocket {
         this.url = opts.url;
 
         this.version = opts.version;
+
+        this.#client = client;
 
         if ("window" in globalThis) {
             window.addEventListener("offline", () => {
@@ -79,8 +84,6 @@ class Websocket {
                 this.emit("online");
             });
         }
-
-        // let lastStatusType: status = "Disconnected";
 
         setInterval(() => {
             const lastStatusType = getRecoil(testStatusStore);
@@ -181,6 +184,8 @@ class Websocket {
             const parsed = this.parseMessageData(event.data);
 
             if (parsed.seq) this.sequence = parsed.seq;
+
+            console.log(parsed);
 
             switch (parsed.op) {
                 case opCodes.hello: {
@@ -345,6 +350,14 @@ class Websocket {
         if (!this.#ws || this.status !== "Connected") return 0;
 
         return Date.now() - this.connectedAt;
+    }
+
+    public get client() {
+        return this.#client;
+    }
+
+    public set client(client: Client | undefined) {
+        this.#client = client;
     }
 }
 

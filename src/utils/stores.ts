@@ -1,7 +1,7 @@
-import { BaseChannel, BaseGuild, Client } from "@kastelll/wrapper";
 import { atom } from "recoil";
 import localStorageEffect from "./effects/localStorage.ts";
 import Translation from "./translation.ts";
+import Client from "$/Client/Client.ts";
 
 export const readyStore = atom<boolean>({
   key: "ready",
@@ -22,31 +22,6 @@ export const clientStore = atom<Client>({
   dangerouslyAllowMutability: true,
 });
 
-export const currentGuild = atom<BaseGuild>({
-  key: "currentGuild",
-  // @ts-expect-error -- this is fine
-  default: null,
-  dangerouslyAllowMutability: true,
-});
-
-export const currentChannel = atom<BaseChannel>({
-  key: "currentChannel",
-  // @ts-expect-error -- this is fine
-  default: null,
-  dangerouslyAllowMutability: true,
-});
-
-export const guildStore = atom<BaseGuild[]>({
-  key: "guilds",
-  default: [],
-  dangerouslyAllowMutability: true,
-});
-
-export const channelStore = atom<BaseChannel[]>({
-  key: "channels",
-  default: [],
-  dangerouslyAllowMutability: true,
-});
 
 export const lastChannelCache = atom<Record<string, string[]>>({
   key: "lastChannelCache",

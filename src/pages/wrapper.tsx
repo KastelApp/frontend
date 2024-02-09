@@ -1,26 +1,44 @@
-import { Button } from "@chakra-ui/react";
+import { Button, Input } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { useRecoilState } from "recoil";
-
-import WS, { beenConnectedSince, pingStore, testStatusStore } from "@/wrapper/WebSocket/WebSocket.ts";
+import { beenConnectedSince, pingStore, testStatusStore } from "@/wrapper/WebSocket/WebSocket.ts";
+import Client from "$/Client/Client.ts";
+import { userStore } from "@/wrapper/utils/Stores.ts";
 
 const Wrapper = () => {
-    const [ws2, setWs2] = useState<WS | null>(null);
+    const [ws2, setWs2] = useState<Client | null>(null);
     const [status] = useRecoilState(testStatusStore);
-    const [beenConnected] = useRecoilState(beenConnectedSince)
+    const [beenConnected] = useRecoilState(beenConnectedSince);
     const [ping] = useRecoilState(pingStore);
+    const [users] = useRecoilState(userStore);
     const [token, setToken] = useState("");
 
     useEffect(() => {
         if (ws2) return;
 
-        setWs2(new WS({
-            compress: true,
-            encoding: "json",
-            url: "ws://localhost:62240",
-            version: "1"
-        }));
+        const client = new Client({
+            wsOptions: {
+                compress: true,
+                encoding: "json",
+                url: "ws://localhost:62240",
+                version: "1"
+            }
+        });
+
+        setWs2(client);
+
+        const token = localStorage.getItem("devtoken");
+
+        if (token) {
+            setToken(token);
+
+            client.connect(token);
+        }
     }, []);
+
+    useEffect(() => {
+        console.log(users);
+    }, [users]);
 
     return (
         <>
@@ -34,20 +52,20 @@ const Wrapper = () => {
                 justifyContent: "center",
                 height: "50vh"
             }}>
-                <input value={token} onChange={(e) => setToken(e.target.value)} />
-                <Button onClick={() => ws2!.connect(token)}>Connect</Button>
+                <Input style={{ marginBottom: "10px", width: "55%" }} value={token} onChange={(e) => setToken(e.target.value)} />
+                <div style={{ display: "flex", justifyContent: "space-around", width: "50%" }}>
+                    <Button onClick={() => ws2!.connect(token)}>Connect</Button>
+                    <Button onClick={() => ws2!.ws.disconnect()}>Disconnect</Button>
+                    <Button onClick={() => console.log(users)}>Users</Button>
+                </div>
                 <br />
-                <Button onClick={() => ws2!.disconnect()}>Disconnect</Button>
-                <br />
-                Current Status: {status}
-                <br />
-                Ready: {ws2?.status === "Ready" ? "true" : "false"}
-                <br />
-                User:
-                <br />
-                Been Connected Since: {new Date(beenConnected).toLocaleString()}
-                <br />
-                Ping: {ping}ms
+                <div style={{ textAlign: "center", width: "80%" }}>
+                    <p>Current Status: {status}</p>
+                    <p>Ready: {ws2?.ws?.status === "Ready" ? "true" : "false"}</p>
+                    <p>User: {users.find((user) => user.isClient)?.fullUsername ?? "Unknown#0000"}</p>
+                    <p>Been Connected Since: {new Date(beenConnected).toLocaleString()}</p>
+                    <p>Ping: {ping}ms</p>
+                </div>
             </div>
         </>
     );
