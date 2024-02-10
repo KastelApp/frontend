@@ -34,7 +34,7 @@ import {
 import { useRecoilState } from "recoil";
 import { clientStore } from "@/utils/stores";
 import JoinServer from "./joinGuild.tsx";
-import { useRouter } from "next/router";
+// import { useRouter } from "next/router";
 
 const NewGuild = () => {
   const modal = useDisclosure();
@@ -116,7 +116,7 @@ const NewServerForm = ({
     }[]
   >([]);
   const [client] = useRecoilState(clientStore);
-  const router = useRouter();
+  // const router = useRouter();
 
   const submit = async (
     event: FormEvent<HTMLFormElement> & {
@@ -147,33 +147,33 @@ const NewServerForm = ({
       return;
     }
 
-    const guild = await client.guilds.createGuild({
+    const guild = await client.createGuild({
       name,
       description: "",
     });
 
     console.log(guild);
 
-    if (!guild.success) {
-      setLoading(false);
+    // if (!guild.success) {
+    //   setLoading(false);
 
-      setError([
-        {
-          code: "TBA",
-          message: "An error occurred, check logs.",
-        },
-      ]);
+    //   setError([
+    //     {
+    //       code: "TBA",
+    //       message: "An error occurred, check logs.",
+    //     },
+    //   ]);
 
-      return;
-    }
+    //   return;
+    // }
 
-    const firstChannel = guild.guild.channels.find(
-      (channel) => channel.type === "GuildText",
-    );
+    // const firstChannel = guild.guild.channels.find(
+    //   (channel) => channel.type === "GuildText",
+    // );
 
-    if (firstChannel) {
-      router.push(`/app/guilds/${guild.guild.id}/channels/${firstChannel.id}`);
-    }
+    // if (firstChannel) {
+    //   router.push(`/app/guilds/${guild.guild.id}/channels/${firstChannel.id}`);
+    // }
 
     setLoading(false);
     modal.onClose();

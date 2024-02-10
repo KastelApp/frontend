@@ -16,6 +16,7 @@ const Wrapper = () => {
     useEffect(() => {
         if (ws2) return;
 
+        // @ts-expect-error -- this is fine.
         const client = new Client({
             wsOptions: {
                 compress: true,

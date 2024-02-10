@@ -20,6 +20,7 @@ import { useRecoilState } from "recoil";
 import { clientStore, tokenStore } from "@/utils/stores";
 import Navbar from "@/components/navbar";
 import Script from "next/script";
+import t from "$/utils/typeCheck.ts";
 
 const Register = () => {
   const router = useRouter();
@@ -96,14 +97,14 @@ const Register = () => {
     }
 
     // Testing against the regexes (which should be the same that the backend uses) helps prevent unnecessary requests.
-    if (!client.EmailRegex.test(email)) {
+    if (!t(email, "email")) {
       setError([{ code: "INVALID_EMAIL", message: "Invalid email." }]);
       setLoading(false);
 
       return;
     }
 
-    if (!client.PasswordRegex.test(password)) {
+    if (!t(password, "string") || password.length < 4 || password.length > 72) {
       setError([{ code: "INVALID_PASSWORD", message: "Invalid password." }]);
       setLoading(false);
 
@@ -122,7 +123,7 @@ const Register = () => {
       return;
     }
 
-    const registeredAccount = await client.registerAccount({
+    const registeredAccount = await client.register({
       email,
       password,
       username,
@@ -139,7 +140,7 @@ const Register = () => {
     if (registeredAccount.success) {
       setToken(registeredAccount.token);
 
-      client.connect();
+      client.connect(registeredAccount.token);
 
       router.push("/app");
 
@@ -165,7 +166,7 @@ const Register = () => {
         {
           code: "UNKNOWN",
           message: `${Object.entries(registeredAccount.errors.unknown).map(
-            ([k, obj]) => `${k} - ${obj.Message}`,
+            ([k, obj]) => `${k} - ${obj.message}`,
           )}`,
         },
       ]);

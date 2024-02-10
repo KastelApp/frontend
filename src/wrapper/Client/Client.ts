@@ -143,6 +143,8 @@ class Client extends Events {
 
         return this.channels.find((c) => c.id === match[1]);
     }
+
+    public createGuild(options: { name: string; description: string }) {}
 }
 
 export default Client;

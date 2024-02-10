@@ -93,6 +93,25 @@ class User<IsClient extends boolean = false> {
     public get currentPresence() {
         return this.presence.some((p) => p.status === "invisible") ? "invisible" : this.presence.find((p) => p.current)?.status ?? "offline";
     }
+
+    public uploadAvatar(file: File) {
+        console.log(file);
+        return {
+            hash: "",
+            success: false
+        }
+    }
+
+    public updateUser(options: {
+        username?: string;
+        email?: string;
+        newPassword?: string;
+        password?: string;
+        tag?: string;
+        avatar?: string | null;
+      }) {
+        console.log(options);
+    }
 }
 
 export default User;

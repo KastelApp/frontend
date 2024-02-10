@@ -315,7 +315,7 @@ const SettingsProfile = () => {
                   <Input
                     onChange={() => setDetectedChanges(true)}
                     id={"discriminator"}
-                    defaultValue={client?.user?.discriminator}
+                    defaultValue={client?.user?.tag}
                     type="text"
                     maxLength={4}
                   />
