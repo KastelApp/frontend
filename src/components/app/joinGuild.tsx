@@ -1,7 +1,7 @@
 import { Dispatch, FormEvent, SetStateAction, useState } from "react";
-import { useRecoilState } from "recoil";
-import { clientStore } from "@/utils/stores.ts";
-import { useRouter } from "next/router";
+// import { useRecoilState } from "recoil";
+// import { clientStore } from "@/utils/stores.ts";
+// import { useRouter } from "next/router";
 import {
   Button,
   FormControl,
@@ -20,7 +20,7 @@ import {
 } from "@chakra-ui/react";
 
 const JoinServer = ({
-  modal,
+  // modal,
   setForm,
 }: {
   modal: {
@@ -38,19 +38,19 @@ const JoinServer = ({
       message: string;
     }[]
   >([]);
-  const [client] = useRecoilState(clientStore);
-  const router = useRouter();
+  // const [client] = useRecoilState(clientStore);
+  // const router = useRouter();
 
-  const getLastParam = (link: string) => {
-    const parts = link.split("/");
-    const lastPart = parts[parts.length - 1];
+  // const getLastParam = (link: string) => {
+  //   const parts = link.split("/");
+  //   const lastPart = parts[parts.length - 1];
 
-    if (lastPart !== link) {
-      return lastPart; // Return the last part if '/' is present
-    } else {
-      return link; // Return the input as it is (no '/' found)
-    }
-  };
+  //   if (lastPart !== link) {
+  //     return lastPart; // Return the last part if '/' is present
+  //   } else {
+  //     return link; // Return the input as it is (no '/' found)
+  //   }
+  // };
 
   const submit = async (
     event: FormEvent<HTMLFormElement> & {
@@ -82,46 +82,46 @@ const JoinServer = ({
       return;
     }
 
-    const inviteCode = getLastParam(inviteLink);
-    const inviteFetch = await client.fetchInvite(inviteCode);
+    // const inviteCode = getLastParam(inviteLink);
+    // const inviteFetch = await client.fetchInvite(inviteCode);
 
-    if (!inviteFetch.success) {
-      setLoading(false);
+    // if (!inviteFetch.success) {
+    //   setLoading(false);
 
-      setError([
-        {
-          code: "INVITE",
-          message: "The invite link is invalid or expired.",
-        },
-      ]);
+    //   setError([
+    //     {
+    //       code: "INVITE",
+    //       message: "The invite link is invalid or expired.",
+    //     },
+    //   ]);
 
-      return;
-    }
+    //   return;
+    // }
 
-    const join = await client.joinInvite(inviteCode);
+    // const join = await client.joinInvite(inviteCode);
 
-    if (!join) {
-      setLoading(false);
+    // if (!join) {
+    //   setLoading(false);
 
-      setError([
-        {
-          code: "INVITE",
-          message:
-            "The invite link is expired, invalid or you are banned from the guild.",
-        },
-      ]);
+    //   setError([
+    //     {
+    //       code: "INVITE",
+    //       message:
+    //         "The invite link is expired, invalid or you are banned from the guild.",
+    //     },
+    //   ]);
 
-      return;
-    }
+    //   return;
+    // }
 
-    setLoading(false);
-    setError([]);
+    // setLoading(false);
+    // setError([]);
 
-    modal.onClose();
+    // modal.onClose();
 
-    router.push(
-      `/app/guilds/${inviteFetch?.guild?.id}/channels/${inviteFetch?.channel?.id}}`,
-    );
+    // router.push(
+    //   `/app/guilds/${inviteFetch?.guild?.id}/channels/${inviteFetch?.channel?.id}}`,
+    // );
     return;
   };
 
