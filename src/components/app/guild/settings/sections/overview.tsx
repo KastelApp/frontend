@@ -16,10 +16,10 @@ import {
 import { SmallCloseIcon } from "@chakra-ui/icons";
 import { ChangeEvent, useRef, useState } from "react";
 import { useRecoilState } from "recoil";
-import { currentGuild } from "@/utils/stores.ts";
+import { clientStore } from "@/utils/stores.ts";
 
 const GuildSettingsOverview = () => {
-  const [guild] = useRecoilState(currentGuild);
+  const [client] = useRecoilState(clientStore);
   const [selectedImage, setSelectedImage] = useState<string | undefined>(
     undefined,
   );
@@ -60,8 +60,8 @@ const GuildSettingsOverview = () => {
                 <Center>
                   <Avatar
                     size="xl"
-                    src={selectedImage ?? guild?.icon ?? undefined}
-                    name={guild?.name ?? "not found"}
+                    src={selectedImage ?? client.currentGuild?.icon ?? undefined}
+                    name={client.currentGuild?.name ?? "not found"}
                     mb={4}
                     cursor="pointer"
                   >
@@ -108,7 +108,7 @@ const GuildSettingsOverview = () => {
 
             <FormControl>
               <FormLabel>Guild Name</FormLabel>
-              <Input type="text" defaultValue={guild?.name} />
+              <Input type="text" defaultValue={client.currentGuild?.name} />
             </FormControl>
           </Flex>
         </Stack>

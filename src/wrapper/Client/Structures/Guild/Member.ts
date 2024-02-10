@@ -1,6 +1,6 @@
 import Websocket from "$/WebSocket/WebSocket.ts";
 import { Member as RawMember } from "$/types/payloads/ready.ts";
-import { guildStore, roleStore } from "$/utils/Stores.ts";
+import { guildStore, roleStore, userStore } from "$/utils/Stores.ts";
 import { getRecoil } from "recoil-nexus";
 
 class Member {
@@ -28,6 +28,8 @@ class Member {
 
     public partial: boolean;
 
+    public joinedAt: Date;
+
     public constructor(ws: Websocket, data: Partial<RawMember>, guildId: string, partial = false) {
         this.#ws = ws;
 
@@ -44,6 +46,8 @@ class Member {
         this.coOwner = false
 
         this.partial = partial;
+
+        this.joinedAt = new Date(data.joinedAt ?? Date.now());
     }
 
     public get guild() {
@@ -52,6 +56,10 @@ class Member {
 
     public get roles() {
         return getRecoil(roleStore).filter((r) => this.roleIds.includes(r.id));
+    }
+
+    public get user() {
+        return getRecoil(userStore).find((m) => m.id === this.userId);
     }
 }
 

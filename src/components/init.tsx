@@ -1,17 +1,18 @@
 import { useRecoilState } from "recoil";
 import {
+  cantConnectStore,
   clientStore,
   isDesktop,
   readyStore,
   tokenStore,
 } from "@/utils/stores";
 import { useEffect } from "react";
-import { Client, ClientOptions } from "@kastelll/wrapper";
 import { useRouter } from "next/router";
 import AppNavbar from "./app/navbar.tsx";
 import pack from "../../package.json";
 import { useColorMode } from "@chakra-ui/react";
 import { settingsStore } from "@/wrapper/utils/Stores.ts";
+import Client from "$/Client/Client.ts";
 
 const Init = () => {
   const [token, setToken] = useRecoilState(tokenStore);
@@ -21,7 +22,15 @@ const Init = () => {
   const router = useRouter();
   const { toggleColorMode } = useColorMode();
   const [settings] = useRecoilState(settingsStore);
+  const [, setCantConnect] = useRecoilState(cantConnectStore);
 
+  const whitelistedPaths: (string | RegExp)[] = [
+    // ! we want to whitelist /app/* as well as /login and /register just so we can use the client in those spaces
+    /^\/app?\/.*/,
+    "/login",
+    "/register",
+    "/app"
+  ]
 
   useEffect(() => {
     const stats = {
@@ -42,11 +51,9 @@ const Init = () => {
       setIsDesktop(true);
     }
 
-    if (["/", "/404"].includes(window.location.pathname)) {
+    if (!whitelistedPaths.some((path) => path === router.pathname || path instanceof RegExp && path.test(router.pathname))) {
       return;
     }
-
-    return;
 
     const newClient = new Client({
       worker: new Worker("/workers/interval.worker.js"),
@@ -55,9 +62,9 @@ const Init = () => {
       cdnUrl: process.env.PUBLIC_MEDIA_CDN_URL as string,
       mediaUrl: process.env.PUBLIC_MEDIA_URL as string,
       wsUrl: process.env.PUBLIC_API_WS_URL as string,
-      token: token ? token : null,
       unAuthed: token ? false : true,
-    } as ClientOptions);
+      restOptions: {}
+    });
 
     newClient.on("unReady", () => {
       setReady(false);
@@ -78,7 +85,13 @@ const Init = () => {
       router.push("/login");
     });
 
-    newClient.connect();
+    newClient.on("statusUpdate", (status) => {
+      if (status === "UnRecoverable") {
+        setCantConnect(true);
+      }
+    });
+
+    newClient.connect(token);
 
     setClient(newClient);
   }, [token]);

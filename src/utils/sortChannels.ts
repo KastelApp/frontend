@@ -1,6 +1,6 @@
 /*eslint camelcase: "error"*/
 
-import { type BaseChannel } from "@kastelll/wrapper";
+import BaseChannel from "$/Client/Structures/Channels/BaseChannel.ts";
 
 /**
  * Sorts through the channels and returns a sorted array of channels. (Stolen from Backend)

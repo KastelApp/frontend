@@ -7,6 +7,7 @@ export type status =
     | "Offline"
     | "Reconnecting"
     | "Resuming"
+	| "UnRecoverable" // ! When we have hit max attempts or something else has happened
     | "Ready"; // ? Difference between "Connected" and "Ready" is we have authenticated with the gateway
 
 export interface websocketSettings {

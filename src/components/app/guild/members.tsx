@@ -1,5 +1,4 @@
 import { useRecoilState } from "recoil";
-import { currentGuild } from "@/utils/stores.ts";
 import {
   Badge,
   Box,
@@ -12,17 +11,18 @@ import {
   Text,
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
-import { GuildMember } from "@kastelll/wrapper";
+import { clientStore } from "@/utils/stores.ts";
+import Member from "$/Client/Structures/Guild/Member.ts";
 
 const GuildMembers = () => {
-  const [guild] = useRecoilState(currentGuild);
-  const [members, setMembers] = useState<GuildMember[]>([]);
+  const [client] = useRecoilState(clientStore);
+  const [members, setMembers] = useState<Member[]>([]);
 
   useEffect(() => {
-    if (!guild?.members) return;
+    if (!client.currentGuild?.members) return;
 
-    setMembers(guild?.members.toArray());
-  }, [guild?.members]);
+    setMembers(client.currentGuild.members);
+  }, [client.currentGuild?.members]);
 
   const avatars = [
     "/icon.png",
@@ -32,7 +32,7 @@ const GuildMembers = () => {
     "/icon-4.png",
   ];
 
-  return guild ? (
+  return client.currentGuild ? (
     <Box mt={5}>
       <Text ml={3}>
         {members?.length === 1 ? "Member" : "Members"} - {members?.length}
@@ -81,11 +81,11 @@ const GuildMembers = () => {
                       boxSize="3"
                       borderRadius="full"
                       bg={
-                        member?.user?.presence === "online"
+                        member?.user?.currentPresence === "online"
                           ? "green.500"
-                          : member?.user?.presence === "idle"
+                          : member?.user?.currentPresence === "idle"
                             ? "yellow.500"
-                            : member?.user?.presence === "dnd"
+                            : member?.user?.currentPresence === "dnd"
                               ? "red.500"
                               : "gray.500"
                       }
@@ -132,11 +132,11 @@ const GuildMembers = () => {
                       boxSize="5"
                       borderRadius="full"
                       bg={
-                        member?.user?.presence === "online"
+                        member?.user?.currentPresence === "online"
                           ? "green.500"
-                          : member?.user?.presence === "idle"
+                          : member?.user?.currentPresence === "idle"
                             ? "yellow.500"
-                            : member?.user?.presence === "dnd"
+                            : member?.user?.currentPresence === "dnd"
                               ? "red.500"
                               : "gray.500"
                       }
@@ -147,7 +147,7 @@ const GuildMembers = () => {
                   </Box>
 
                   <Text ml={2} mt={3}>
-                    {member?.user?.username}#{member?.user?.discriminator}
+                    {member?.user?.fullUsername}
                   </Text>
                 </Flex>
               </PopoverBody>

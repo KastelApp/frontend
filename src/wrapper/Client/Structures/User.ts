@@ -83,6 +83,16 @@ class User<IsClient extends boolean = false> {
     public get fullUsername() {
         return `${this.username}#${this.tag.padStart(4, "0")}`;
     }
+
+    public getAvatarUrl(options: { size: number }) {
+        console.log(options);
+
+        return "/icon-1.png"
+    }
+
+    public get currentPresence() {
+        return this.presence.some((p) => p.status === "invisible") ? "invisible" : this.presence.find((p) => p.current)?.status ?? "offline";
+    }
 }
 
 export default User;

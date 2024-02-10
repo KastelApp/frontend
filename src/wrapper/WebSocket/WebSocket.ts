@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-declaration-merging */
 import { encoding, status, websocketSettings } from "$/types/ws.ts";
 import { atom } from "recoil";
 import StringFormatter from "$/utils/StringFormatter.ts";
@@ -7,6 +8,7 @@ import { Identify } from "$/types/events.ts";
 import hello from "./Events/Hello.ts";
 import ready from "./Events/Ready.ts";
 import Client from "$/Client/Client.ts";
+import Events from "$/utils/Events.ts";
 
 export const testStatusStore = atom<status>({
     default: "Disconnected",
@@ -23,9 +25,18 @@ export const pingStore = atom<number>({
     key: "ping",
 });
 
-export type Events = "offline" | "online";
+export type events = "offline" | "online" | "statusUpdate"
 
-class Websocket {
+interface Websocket {
+    on(event: "statusUpdate", listener: (status: status) => void): this;
+    on(event: "offline", listener: () => void): this;
+    on(event: "online", listener: () => void): this;
+    emit(event: "statusUpdate", status: status): boolean;
+    emit(event: "offline"): boolean;
+    emit(event: "online"): boolean;
+}
+
+class Websocket extends Events {
     public compression: boolean = true;
 
     public encoding: encoding = "json";
@@ -54,20 +65,26 @@ class Websocket {
 
     private connectedAt: number = 0;
 
-    #ws!: WebSocket;
+    private maxAttempts: number = 5;
 
-    #_events: Map<string, (() => void)[]> = new Map();
+    private timeout: number = 2_000;
+
+    private currentAttempt: number = 0;
+
+    #ws!: WebSocket;
 
     #client?: Client;
 
-    public constructor(opts: websocketSettings, client?: Client) {
-        this.compression = opts.compress;
+    public constructor(opts: Partial<websocketSettings>, client?: Client) {
+        super();
 
-        this.encoding = opts.encoding;
+        this.compression = opts.compress ?? true;
 
-        this.url = opts.url;
+        this.encoding = opts.encoding ?? "json";
 
-        this.version = opts.version;
+        this.url = opts.url ?? "ws://localhost:62240";
+
+        this.version = opts.version?.replace("v", "") ?? "1";
 
         this.#client = client;
 
@@ -95,27 +112,9 @@ class Websocket {
             );
 
             setRecoil(testStatusStore, this.status);
+
+            this.emit("statusUpdate", this.status);
         }, 200);
-    }
-
-    public on(event: Events, callback: () => void) {
-        const current = this.#_events.get(event);
-
-        if (!current) {
-            this.#_events.set(event, [callback]);
-
-            return;
-        }
-
-        current.push(callback);
-    }
-
-    private emit(event: Events) {
-        const current = this.#_events.get(event);
-
-        if (!current) return;
-
-        current.forEach((callback) => callback());
     }
 
     public connect(token: string) {
@@ -138,18 +137,33 @@ class Websocket {
         this.handleOpen();
     }
 
-    public reconnect() {
-        if (this.#ws && this.#ws.readyState === WebSocket.OPEN) {
-            this.#ws.close();
-        }
+    public reconnect(): Promise<void> {
+        return new Promise((resolve) => {
+            if (this.#ws && this.#ws.readyState === WebSocket.OPEN) {
+                this.#ws.close();
+            }
+    
+            if (this.currentAttempt >= this.maxAttempts) {
+                this.status = "UnRecoverable";
+    
+                return resolve();
+            }
+    
+            if (this.status === "Offline") return resolve();
+    
+            this.status = "Reconnecting";
+    
+            this.currentAttempt++;
+    
+            setTimeout(() => {
+                this.#ws = new WebSocket(`${this.url}/?version=${this.version}&encoding=${this.encoding}&compress=${this.compression}`);
+        
+                this.handleOpen();
 
-        if (this.status === "Offline") return;
+                resolve();
+            }, this.timeout);
 
-        this.status = "Reconnecting";
-
-        this.#ws = new WebSocket(`${this.url}/?version=${this.version}&encoding=${this.encoding}&compress=${this.compression}`);
-
-        this.handleOpen();
+        })
     }
 
     private handleOpen() {
@@ -214,7 +228,7 @@ class Websocket {
             }
         };
 
-        this.#ws.onclose = (event) => {
+        this.#ws.onclose = async (event) => {
             this.worker?.terminate();
 
             if (this.status === "Offline") {
@@ -233,7 +247,7 @@ class Websocket {
                 event
             );
 
-            this.reconnect();
+            await this.reconnect();
         };
     }
 

@@ -6,13 +6,13 @@ import {
   useColorModeValue,
 } from "@chakra-ui/react";
 import { useRecoilState } from "recoil";
-import { currentChannel } from "@/utils/stores.ts";
 import { ChatIcon } from "@chakra-ui/icons";
 // import { KeyboardEvent } from "react";
 import { AutoResizeTextarea } from "@/components/AutoResizeTextarea.tsx";
+import { clientStore } from "@/utils/stores.ts";
 
 const GuildMessageContainer = () => {
-  const [currentChannelInfo] = useRecoilState(currentChannel);
+  const [client] = useRecoilState(clientStore);
 
   {
     /*
@@ -52,7 +52,7 @@ const GuildMessageContainer = () => {
             _placeholder={{
               color: useColorModeValue("gray.500", "gray.100"),
             }}
-            placeholder={"Message #" + currentChannelInfo?.name || ""}
+            placeholder={"Message #" + client.currentChannel?.name ?? ""}
           />
           <InputRightElement width="4rem">
             <Button h={"1.75rem"} w={"1.5rem"}>

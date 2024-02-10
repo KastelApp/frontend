@@ -14,9 +14,9 @@ import {
   useColorModeValue,
 } from "@chakra-ui/react";
 import { useRecoilState } from "recoil";
-import { currentGuild } from "@/utils/stores.ts";
 import { useEffect, useState } from "react";
-import { GuildMember } from "@kastelll/wrapper";
+import Member from "$/Client/Structures/Guild/Member.ts";
+import { clientStore } from "@/utils/stores.ts";
 
 const avatars = [
   "/icon.png",
@@ -27,16 +27,15 @@ const avatars = [
 ];
 
 const GuildSettingsMembers = () => {
-  const [guild] = useRecoilState(currentGuild);
+  const [client] = useRecoilState(clientStore);
 
-  const [members, setMembers] = useState<GuildMember[]>([]);
+  const [members, setMembers] = useState<Member[]>([]);
 
   useEffect(() => {
-    if (!guild?.members) return;
-    console.log(guild?.members.toArray());
+    if (!client.currentGuild?.members) return;
 
-    setMembers(guild?.members.toArray());
-  }, [guild?.members]);
+    setMembers(client.currentGuild?.members);
+  }, [client.currentGuild?.members]);
 
   return (
     <>
@@ -81,7 +80,7 @@ const GuildSettingsMembers = () => {
                             draggable={"false"}
                             borderRadius={"full"}
                             src={
-                              member?.user?.getAvatarUrl({ size: 128 }) ?? ""
+                              member.user?.getAvatarUrl({ size: 128 }) ?? ""
                             }
                             fallbackSrc={
                               avatars[
@@ -98,11 +97,11 @@ const GuildSettingsMembers = () => {
                             boxSize="3"
                             borderRadius="full"
                             bg={
-                              member?.user?.presence === "online"
+                              member?.user?.currentPresence === "online"
                                 ? "green.500"
-                                : member?.user?.presence === "idle"
+                                : member?.user?.currentPresence === "idle"
                                   ? "yellow.500"
-                                  : member?.user?.presence === "dnd"
+                                  : member?.user?.currentPresence === "dnd"
                                     ? "red.500"
                                     : "gray.500"
                             }
@@ -117,15 +116,14 @@ const GuildSettingsMembers = () => {
                               member?.user?.username}
                           </Text>
                           <Text fontSize="sm">
-                            {member?.user?.username}#
-                            {member?.user?.discriminator}
+                            {member?.user?.fullUsername}
                           </Text>
                         </Box>
                       </Flex>
                     </Th>
                     <Th>
                       <Text>
-                        {new Date(member?.joinedAt).toLocaleDateString(
+                        {new Date(member.joinedAt).toLocaleDateString(
                           "en-US",
                           {
                             weekday: "long",

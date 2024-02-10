@@ -22,6 +22,10 @@ export const clientStore = atom<Client>({
   dangerouslyAllowMutability: true,
 });
 
+export const cantConnectStore = atom<boolean>({
+  key: "cantConnect",
+  default: false,
+});
 
 export const lastChannelCache = atom<Record<string, string[]>>({
   key: "lastChannelCache",

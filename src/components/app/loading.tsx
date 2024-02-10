@@ -8,6 +8,8 @@ import {
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import NextLink from "next/link";
+import { useRecoilState } from "recoil";
+import { cantConnectStore } from "@/utils/stores.ts";
 
 const confetti = {
   light: {
@@ -28,7 +30,7 @@ const Loading = () => {
   const [quote1, setQuote1] = useState("");
   const [quote2, setQuote2] = useState("");
   const [active, setActive] = useState(1);
-  const [slow, setSlow] = useState(false);
+  const [cantConnect] = useRecoilState(cantConnectStore);
 
   useEffect(() => {
     const quotes = [
@@ -69,11 +71,6 @@ const Loading = () => {
         setQuote2(quotes[Math.floor(Math.random() * quotes.length)]);
       }
     }, 4000);
-
-    // slow loading
-    setTimeout(() => {
-      setSlow(true);
-    }, 7000);
   }, []);
 
   return (
@@ -100,7 +97,7 @@ const Loading = () => {
               {active === 1 ? quote1 : quote2}
             </Text>
           </Stack>
-          {slow && (
+          {cantConnect && (
             <>
               <Text fontSize={"xl"} color={"gray.600"}>
                 It looks like we&apos;re taking a while to connect to our

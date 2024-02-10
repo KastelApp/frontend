@@ -2,21 +2,15 @@ import { Box, Flex, useColorModeValue } from "@chakra-ui/react";
 import getInitials from "../../../utils/getGuildInitals.ts";
 import Image from "next/image";
 import NextLink from "next/link";
-import { BaseGuild } from "@kastelll/wrapper";
+import GuildClass from "$/Client/Structures/Guild/Guild.ts";
 
-const Guild = ({ guild }: { guild: BaseGuild }) => {
-  const firstChannel = guild.channels.find(
-    (channel) =>
-      channel.type === "GuildText" ||
-      channel.type === "GuildNews" ||
-      channel.type === "GuildNewMember" ||
-      channel.type === "GuildRules",
-  );
+const Guild = ({ guild }: { guild: GuildClass }) => {
+  const firstChannel = guild.channels.find((channel) => channel.isTextBased());
 
   const color = useColorModeValue("gray.700", "gray.200");
 
   return (
-    <NextLink href={`/app/guilds/${guild?.id}/channels/${firstChannel?.id}`}>
+    <NextLink href={`/app/guilds/${guild.id}/channels/${firstChannel?.id}`}>
       <Box>
         <Box display="inline-block" marginRight={2}>
           <Flex

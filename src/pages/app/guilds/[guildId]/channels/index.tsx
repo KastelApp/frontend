@@ -6,11 +6,10 @@ import {
   readyStore,
   tokenStore,
 } from "@/utils/stores";
-import { Box } from "@chakra-ui/react";
+import { Box, Center, Heading, Text } from "@chakra-ui/react";
 import Loading from "@/components/app/loading";
 import SEO from "@/components/seo";
 import GuildSideBar from "@/components/app/guild/side-bar";
-import GuildMessages from "@/components/app/guild/messages.tsx";
 
 const GuildChannelPage = () => {
   const router = useRouter();
@@ -43,12 +42,7 @@ const GuildChannelPage = () => {
       foundGuild.channels.find((channel) => channel.id === channelId) ??
       foundGuild.channels.find((channel) => channel.isTextBased());
 
-    if (!channel) {
-      router.push(`/app/guilds/${guildId}/channels`);
-      return;
-    }
-
-    if (channel.id !== channelId) {
+    if (channel) {
       router.push(`/app/guilds/${guildId}/channels/${channel.id}`);
     }
 
@@ -66,9 +60,17 @@ const GuildChannelPage = () => {
       {areWeReady ? (
         <>
           <Box>
-            <GuildSideBar>
-              {/* messages */}
-              <GuildMessages />
+            <GuildSideBar noMemberBar noTextBox noChannelTopic>
+              <Center height="50vh">
+                <Box>
+                  {/* No Text Channels header */}
+                  <Heading textAlign={"center"} as="h1">
+                    No Text Channels
+                  </Heading>
+                  <br />
+                  <Text align={"center"} fontSize="lg" mb={4}>It seems that there are no channels in this guild, or you do not have access to any.</Text>
+                </Box>
+              </Center>
             </GuildSideBar>
           </Box>
         </>

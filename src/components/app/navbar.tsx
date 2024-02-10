@@ -18,7 +18,6 @@ import {
   SimpleGrid,
   Stack,
   useBreakpointValue,
-  useColorMode,
   useColorModeValue,
   useDisclosure,
 } from "@chakra-ui/react";
@@ -46,7 +45,7 @@ const AppNavbar = () => {
   const [, setToken] = useRecoilState(tokenStore);
   const router = useRouter();
   const isSmallScreen = useBreakpointValue({ base: true, sm: false });
-  const [status, setStatus] = useState<string>("green");
+  const [status, setStatus] = useState<"green" | "orange" | "red" | "gray">("green");
 
   const handleLogout = () => {
     if (!client) {
@@ -57,7 +56,6 @@ const AppNavbar = () => {
     }
 
     client.logout();
-    client.setToken(null);
 
     setToken("");
 
@@ -74,16 +72,40 @@ const AppNavbar = () => {
      * offline -  3 - gray
      */
 
-    if (client?.user.presence === "online") {
-      setStatus("green");
-    } else if (client?.user.presence === "idle") {
-      setStatus("orange");
-    } else if (client?.user.presence === "dnd") {
-      setStatus("red");
-    } else {
+    const isInvisable = client.user.presence.some((p) => p.status === "invisible");
+
+    if (isInvisable) {
       setStatus("gray");
+
+      return;
     }
-  }, [client?.user.presence]);
+
+    const current = client.user.presence.find((p) => p.current);
+
+    switch (current?.status) {
+      case "dnd": {
+        setStatus("red");
+
+        break;
+      }
+      case "idle": {
+        setStatus("orange");
+
+        break;
+      }
+      case "online": {
+        setStatus("green");
+
+        break;
+      }
+      default: {
+        setStatus("gray");
+
+        break;
+      }
+    }
+
+  }, [client.user.presence]);
 
   const handleStatusChange = (status: string) => {
     console.log("new status has not been saved. " + status);
@@ -259,7 +281,7 @@ const AppNavbar = () => {
                                 <Badge
                                   onClick={() => handleStatusChange("online")}
                                   variant={
-                                    client?.user.presence === "online"
+                                    client?.user.currentPresence === "online"
                                       ? "solid"
                                       : "subtle"
                                   }
@@ -271,7 +293,7 @@ const AppNavbar = () => {
                                 <Badge
                                   onClick={() => handleStatusChange("idle")}
                                   variant={
-                                    client?.user.presence === "idle"
+                                    client?.user.currentPresence === "idle"
                                       ? "solid"
                                       : "subtle"
                                   }
@@ -283,7 +305,7 @@ const AppNavbar = () => {
                                 <Badge
                                   onClick={() => handleStatusChange("dnd")}
                                   variant={
-                                    client?.user.presence === "dnd"
+                                    client?.user.currentPresence === "dnd"
                                       ? "solid"
                                       : "subtle"
                                   }
@@ -295,7 +317,7 @@ const AppNavbar = () => {
                                 <Badge
                                   onClick={() => handleStatusChange("offline")}
                                   variant={
-                                    client?.user.presence === "offline"
+                                    client?.user.currentPresence === "offline"
                                       ? "solid"
                                       : "subtle"
                                   }

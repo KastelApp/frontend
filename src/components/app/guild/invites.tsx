@@ -14,9 +14,10 @@ import {
   useClipboard,
 } from "@chakra-ui/react";
 import { useRecoilState } from "recoil";
-import { currentChannel, currentGuild } from "@/utils/stores";
 import { useEffect, useState } from "react";
-import { Invite } from "@kastelll/wrapper";
+import { clientStore } from "@/utils/stores.ts";
+import getGuildName from "@/utils/getGuildName.ts";
+import Invite from "$/Client/Structures/Guild/Invite.ts";
 
 const GuildInvites = ({
   isOpen,
@@ -26,19 +27,10 @@ const GuildInvites = ({
   onClose: () => void;
 }) => {
   const { onCopy, value, setValue, hasCopied } = useClipboard("");
-  const [guild] = useRecoilState(currentGuild);
-  const [channel] = useRecoilState(currentChannel);
-  const [, setInvites] = useState<Invite[]>([]);
-  const [invite, setInvite] = useState<string>("");
+  const [client] = useRecoilState(clientStore);
+  const [,] = useState<Invite[]>([]);
+  const [invite] = useState<string>("");
   const [expire] = useState<number>(1000 * 60 * 60 * 24 * 7); // 7 days
-
-  const getGuildName = (name: string) => {
-    if (name.length > 10) {
-      return name.slice(0, 10);
-    } else {
-      return name;
-    }
-  };
 
   const getExpiresAt = (milliseconds: number): string => {
     const seconds = Math.floor(milliseconds / 1000);
@@ -65,8 +57,8 @@ const GuildInvites = ({
     if (!isOpen) return;
 
     const getInvite = async () => {
-      if (!guild) return;
-      if (!channel) return;
+      if (!client.currentGuild) return;
+      if (!client.currentChannel) return;
 
       if (invite) {
         setValue(invite);
@@ -74,33 +66,33 @@ const GuildInvites = ({
         return;
       }
 
-      const fetchedInvites = await guild.fetchMyInvites();
+      // const fetchedInvites = await guild.fetchMyInvites();
 
-      setInvites(fetchedInvites);
+      // setInvites(fetchedInvites);
 
-      const createdInvite = await channel.createInvite({
-        expiresAt: new Date(Date.now() + expire), // 7 days
-        maxUses: 0, // unlimited
-      });
+      // const createdInvite = await channel.createInvite({
+      //   expiresAt: new Date(Date.now() + expire), // 7 days
+      //   maxUses: 0, // unlimited
+      // });
 
-      if (createdInvite.success) {
-        const inv = `${document.location.protocol}//${document.location.hostname}/invite/${createdInvite.code}`;
+      // if (createdInvite.success) {
+      //   const inv = `${document.location.protocol}//${document.location.hostname}/invite/${createdInvite.code}`;
 
-        setValue(inv);
-        setInvite(inv); // darkerink: we set the invite so we don't keep creating em.
-      } else {
-        setValue("Error creating invite");
-      }
+      //   setValue(inv);
+      //   setInvite(inv); // darkerink: we set the invite so we don't keep creating em.
+      // } else {
+      //   setValue("Error creating invite");
+      // }
     };
 
     getInvite();
   }, [isOpen]);
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} size={"sm"}>
+    <Modal isOpen={isOpen} onClose={onClose} size={"lg"}>
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>Invite friends to {getGuildName(guild?.name)}</ModalHeader>
+        <ModalHeader>Invite friends to {getGuildName(client.currentGuild?.name ?? "Loading")}</ModalHeader>
         <ModalCloseButton />
 
         <ModalBody>

@@ -16,6 +16,7 @@ import { useRecoilState } from "recoil";
 import { clientStore, tokenStore } from "@/utils/stores";
 import Navbar from "@/components/navbar";
 import Script from "next/script";
+import t from "$/utils/typeCheck.ts";
 
 const Login = () => {
   const router = useRouter();
@@ -74,21 +75,21 @@ const Login = () => {
       return;
     }
 
-    if (!client.EmailRegex.test(email)) {
+    if (!t(email, "email")) {
       setError([{ code: "INVALID_EMAIL", message: "Invalid email." }]);
       setLoading(false);
 
       return;
     }
 
-    if (!client.PasswordRegex.test(password)) {
+    if (!t(password, "string") || password.length < 4 || password.length > 72) {
       setError([{ code: "INVALID_PASSWORD", message: "Invalid password." }]);
       setLoading(false);
 
       return;
     }
 
-    const loggedInAccount = await client.loginAccount({
+    const loggedInAccount = await client.login({
       email,
       password,
       resetClient: true,
@@ -104,7 +105,7 @@ const Login = () => {
     if (loggedInAccount.success) {
       setToken(loggedInAccount.token);
 
-      client.connect();
+      client.connect(loggedInAccount.token);
       router.push("/app");
 
       return;
@@ -122,7 +123,7 @@ const Login = () => {
         {
           code: "UNKNOWN",
           message: `${Object.entries(loggedInAccount.errors.unknown).map(
-            ([k, obj]) => `${k} - ${obj.Message}`,
+            ([k, obj]) => `${k} - ${obj.message}`,
           )}`,
         },
       ]);

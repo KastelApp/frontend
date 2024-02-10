@@ -85,6 +85,7 @@ export interface ReadyPayload {
     owner: boolean
     nickname: string | null
     roles: string[]
+    joinedAt: string
   }
   
   export interface MemberUser {
@@ -110,5 +111,6 @@ export interface ReadyPayload {
     state: string | null // ?  If type is 0, this is the custom status, if type is 1, this is the game name, etc etc
     status: "online" | "offline" | "idle" | "dnd" | "invisible"
     since: number // ? how long they've been in this status
+    current: boolean
   }
   
