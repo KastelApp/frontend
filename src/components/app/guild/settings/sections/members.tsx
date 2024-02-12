@@ -62,80 +62,83 @@ const GuildSettingsMembers = () => {
                 </Tr>
               </Thead>
               <Tbody>
-                {members?.map((member, index) => (
-                  <Tr key={index}>
-                    <Th>
-                      <Flex py="1.5">
-                        <Box
-                          boxSize="30px"
-                          display="inline-flex"
-                          alignItems="center"
-                          justifyContent="center"
-                          overflow="visible"
-                          lineHeight="none"
-                          borderRadius="full"
-                          position="relative"
-                        >
-                          <Image
-                            draggable={"false"}
-                            borderRadius={"full"}
-                            src={
-                              member.user?.getAvatarUrl({ size: 128 }) ?? ""
-                            }
-                            fallbackSrc={
-                              avatars[
-                                Number(
-                                  BigInt(member?.user?.id || 1) %
-                                    BigInt(avatars.length),
-                                )
-                              ] || "/icon-1.png"
-                            }
-                            alt={member?.user?.username || "loading"}
-                            fit="cover"
-                          />
-                          <Badge
-                            boxSize="3"
+                {members?.map((member, index) => {
+                  console.log("called")
+                  return (
+                    <Tr key={index}>
+                      <Th>
+                        <Flex py="1.5">
+                          <Box
+                            boxSize="30px"
+                            display="inline-flex"
+                            alignItems="center"
+                            justifyContent="center"
+                            overflow="visible"
+                            lineHeight="none"
                             borderRadius="full"
-                            bg={
-                              member?.user?.currentPresence === "online"
-                                ? "green.500"
-                                : member?.user?.currentPresence === "idle"
-                                  ? "yellow.500"
-                                  : member?.user?.currentPresence === "dnd"
-                                    ? "red.500"
-                                    : "gray.500"
-                            }
-                            position="absolute"
-                            bottom="-0.5"
-                            right="-0.5"
-                          />
-                        </Box>
-                        <Box ml="3">
-                          <Text>
-                            {member?.user?.globalNickname ??
-                              member?.user?.username}
-                          </Text>
-                          <Text fontSize="sm">
-                            {member?.user?.fullUsername}
-                          </Text>
-                        </Box>
-                      </Flex>
-                    </Th>
-                    <Th>
-                      <Text>
-                        {new Date(member.joinedAt).toLocaleDateString(
-                          "en-US",
-                          {
-                            weekday: "long",
-                            year: "numeric",
-                            month: "long",
-                            day: "numeric",
-                          },
-                        )}
-                      </Text>
-                    </Th>
-                  </Tr>
-                ))}
+                            position="relative"
+                          >
+                            <Image
+                              draggable={"false"}
+                              borderRadius={"full"}
+                              src={
+                                "/icon-1.png"
+                              }
+                              fallbackSrc={
+                                avatars[
+                                  Number(
+                                    BigInt(member?.user?.id || 1) %
+                                      BigInt(avatars.length),
+                                  )
+                                ] || "/icon-1.png"
+                              }
+                              alt={member?.user?.username || "loading"}
+                              fit="cover"
+                            />
+                            <Badge
+                              boxSize="3"
+                              borderRadius="full"
+                              bg={
+                                member?.user?.currentPresence === "online"
+                                  ? "green.500"
+                                  : member?.user?.currentPresence === "idle"
+                                    ? "yellow.500"
+                                    : member?.user?.currentPresence === "dnd"
+                                      ? "red.500"
+                                      : "gray.500"
+                              }
+                              position="absolute"
+                              bottom="-0.5"
+                              right="-0.5"
+                            />
+                          </Box>
+                          <Box ml="3">
+                            <Text>
+                              {member?.user?.globalNickname ??
+                                member?.user?.username}
+                            </Text>
+                            <Text fontSize="sm">
+                              {member?.user?.fullUsername}
+                            </Text>
+                          </Box>
+                        </Flex>
+                      </Th>
+                      <Th>
+                        <Text>
+                          {new Date(member.joinedAt).toLocaleDateString(
+                            "en-US",
+                            {
+                              weekday: "long",
+                              year: "numeric",
+                              month: "long",
+                              day: "numeric",
+                            },
+                          )}
+                        </Text>
+                      </Th>
+                    </Tr>
+                  )
+                })}
               </Tbody>
             </Table>
           </TableContainer>

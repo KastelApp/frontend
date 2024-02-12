@@ -1,10 +1,11 @@
-import DMBasedChannel from "./DMBasedChannel.ts";
-import TextBasedChannel from "./TextBasedChannel.ts";
-import VoiceBasedChannel from "./VoiceBasedChannel.ts";
+import type DMBasedChannel from "./DMBasedChannel.ts";
+import type TextBasedChannel from "./TextBasedChannel.ts";
+import type VoiceBasedChannel from "./VoiceBasedChannel.ts";
 import { Channel, PermissionOverrides } from "$/types/payloads/ready.ts";
 import Websocket from "$/WebSocket/WebSocket.ts";
 import { getRecoil } from "recoil-nexus";
 import { guildStore } from "$/utils/Stores.ts";
+import constants from "$/utils/constants.ts";
 
 class BaseChannel {
     #ws: Websocket;
@@ -82,15 +83,15 @@ class BaseChannel {
     }
 
     public isDmBased(): this is DMBasedChannel {
-        return this instanceof DMBasedChannel;
+        return this.type === constants.channelTypes.Dm || this.type === constants.channelTypes.GroupChat;
     }
 
     public isTextBased(): this is (DMBasedChannel | TextBasedChannel) {
-        return this instanceof TextBasedChannel;
+        return this.type === constants.channelTypes.Dm || this.type === constants.channelTypes.GroupChat || this.type === constants.channelTypes.GuildNewMember || this.type === constants.channelTypes.GuildText || this.type === constants.channelTypes.GuildNews || this.type === constants.channelTypes.GuildRules;
     }
 
     public isVoiceBased(): this is VoiceBasedChannel {
-        return this instanceof VoiceBasedChannel;
+        return this.type === constants.channelTypes.GuildVoice;
     }
 }
 

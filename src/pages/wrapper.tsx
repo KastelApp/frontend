@@ -39,6 +39,10 @@ const Wrapper = () => {
 
     useEffect(() => {
         console.log(users);
+
+        if (Math.random() < 0.25) {
+            throw new Error("Random error");
+        }
     }, [users]);
 
     return (

@@ -1,12 +1,13 @@
 import Websocket from "../WebSocket.ts";
 import StringFormatter from "$/utils/StringFormatter.ts";
 import { ReadyPayload } from "$/types/payloads/ready.ts";
-import { guildStore, memberStore, roleStore, settingsStore, userStore } from "$/utils/Stores.ts";
+import { channelStore, guildStore, memberStore, roleStore, settingsStore, userStore } from "$/utils/Stores.ts";
 import { setRecoil } from "recoil-nexus";
 import User from "$/Client/Structures/User.ts";
 import Role from "$/Client/Structures/Guild/Role.ts";
 import Member from "$/Client/Structures/Guild/Member.ts";
 import Guild from "$/Client/Structures/Guild/Guild.ts";
+import BaseChannel from "$/Client/Structures/Channels/BaseChannel.ts";
 
 const isReadyPayload = (data: unknown): data is ReadyPayload => {
     if (typeof data !== "object" || data === null || data === undefined) return false;
@@ -61,7 +62,16 @@ const ready = (ws: Websocket, data: unknown) => {
         }
 
         for (const channel of guild.channels) {
-            console.log(channel);
+            switch (channel.type) {
+                default: {
+                    setRecoil(channelStore, (old) => {
+                        return [
+                            ...old.filter((o) => o.id !== channel.id),
+                            new BaseChannel(ws, channel, guild.id)
+                        ]
+                    });
+                }
+            }
         }
 
         for (const member of guild.members) {
@@ -76,10 +86,9 @@ const ready = (ws: Websocket, data: unknown) => {
 
             setRecoil(memberStore, (old) => {
                 return [
-                    ...old.filter((o) => o.userId !== member.user.id),
+                    ...old.filter((o) => o.partial && o.userId === member.user.id && o.guildId === guild.id),
                     new Member(ws, member, guild.id, false)
                 ]
-            
             })
         }
 
@@ -99,7 +108,7 @@ const ready = (ws: Websocket, data: unknown) => {
                 member.coOwner = true;
 
                 return [
-                    ...old.filter((o) => o.userId !== coOwner.id),
+                    ...old.filter((o) => o.partial && o.userId === coOwner.id && o.guildId === guild.id),
                     member
                 ]
             })
@@ -110,7 +119,26 @@ const ready = (ws: Websocket, data: unknown) => {
                 ...old.filter((o) => o.id !== guild.id),
                 new Guild(ws, guild, false)
             ]
-        })
+        });
+
+        setTimeout(() => {
+            // add a fake member and user to the store
+            setRecoil(userStore, (old) => {
+                return [
+                    ...old,
+                    new User(ws, { id: "0", username: "Unknown User", tag: "0000", avatar: null }, [], false, true)
+                ]
+            })
+
+            setRecoil(memberStore, (old) => {
+                return [
+                    ...old,
+                    new Member(ws, { user: { id: "0", avatar: "", flags: "0", publicFlags: "0", username: "Unknown" }, owner: false, roles: [], nickname: null }, guild.id, true)
+                ]
+            })
+
+            console.log("done")
+        }, 5000)
     }
 }
 

@@ -38,7 +38,7 @@ class Guild {
     public constructor(ws: Websocket, data: Partial<RawGuild>, partial = false) { // ? Partial guilds should be rare, they are from invites (or if the guild is unavailable)
         this.#ws = ws;
 
-        this.name = "Funky | best emoji server (real)" ?? "Unknown Guild";
+        this.name = data.name ?? "Unknown Guild";
 
         this.description = data.description ?? null;
 

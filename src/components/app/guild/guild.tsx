@@ -10,7 +10,7 @@ const Guild = ({ guild }: { guild: GuildClass }) => {
   const color = useColorModeValue("gray.700", "gray.200");
 
   return (
-    <NextLink href={`/app/guilds/${guild.id}/channels/${firstChannel?.id}`}>
+    <NextLink href={`/app/guilds/${guild.id}/channels${firstChannel ? `/${firstChannel.id}` : ""}`}>
       <Box>
         <Box display="inline-block" marginRight={2}>
           <Flex

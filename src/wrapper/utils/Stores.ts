@@ -1,10 +1,10 @@
 import { atom } from "recoil";
-import User from "$/Client/Structures/User.ts";
+import type User from "$/Client/Structures/User.ts";
 import { Settings } from "../types/payloads/ready.ts";
-import BaseChannel from "$/Client/Structures/Channels/BaseChannel.ts";
-import Member from "$/Client/Structures/Guild/Member.ts";
-import Role from "$/Client/Structures/Guild/Role.ts";
-import Guild from "$/Client/Structures/Guild/Guild.ts";
+import type BaseChannel from "$/Client/Structures/Channels/BaseChannel.ts";
+import type Member from "$/Client/Structures/Guild/Member.ts";
+import type Role from "$/Client/Structures/Guild/Role.ts";
+import type Guild from "$/Client/Structures/Guild/Guild.ts";
 
 export const channelStore = atom<BaseChannel[]>({
     key: "channels",

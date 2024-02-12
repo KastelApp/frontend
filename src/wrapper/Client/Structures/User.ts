@@ -85,7 +85,7 @@ class User<IsClient extends boolean = false> {
     }
 
     public getAvatarUrl(options: { size: number }) {
-        console.log(options);
+        // console.log("avatar", options, new Error().stack);
 
         return "/icon-1.png"
     }

@@ -11,7 +11,7 @@ import { useRouter } from "next/router";
 import AppNavbar from "./app/navbar.tsx";
 import pack from "../../package.json";
 import { useColorMode } from "@chakra-ui/react";
-import { settingsStore } from "@/wrapper/utils/Stores.ts";
+import { settingsStore, channelStore, guildStore, inviteStore, memberStore, roleStore, userStore } from "@/wrapper/utils/Stores.ts";
 import Client from "$/Client/Client.ts";
 
 const Init = () => {
@@ -23,6 +23,12 @@ const Init = () => {
   const { toggleColorMode } = useColorMode();
   const [settings] = useRecoilState(settingsStore);
   const [, setCantConnect] = useRecoilState(cantConnectStore);
+  const [,] = useRecoilState(channelStore);
+  const [,] = useRecoilState(guildStore);
+  const [,] = useRecoilState(inviteStore);
+  const [,] = useRecoilState(memberStore);
+  const [,] = useRecoilState(roleStore);
+  const [,] = useRecoilState(userStore);
 
   const whitelistedPaths: (string | RegExp)[] = [
     // ! we want to whitelist /app/* as well as /login and /register just so we can use the client in those spaces
