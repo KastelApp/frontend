@@ -84,8 +84,9 @@ class User<IsClient extends boolean = false> {
         return `${this.username}#${this.tag.padStart(4, "0")}`;
     }
 
-    public getAvatarUrl(options: { size: number }) {
-        console.log("avatar", options, new Error().stack);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    public getAvatarUrl(_options: { size: number }) {
+        // console.log("avatar", options, new Error().stack);
 
         return "/icon-1.png"
     }

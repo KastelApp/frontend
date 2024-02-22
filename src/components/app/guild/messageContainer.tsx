@@ -14,16 +14,17 @@ import { clientStore } from "@/utils/stores.ts";
 const GuildMessageContainer = () => {
   const [client] = useRecoilState(clientStore);
 
-  {
-    /*
-  const handleKeyDown = (event: KeyboardEvent) => {
-    if (event.key === "Enter") {
-        event.preventDefault();
-        // send message...
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (event.key === "Enter" && !event.shiftKey) {
+      event.preventDefault();
+
+      const message = event.currentTarget.value ?? "";
+
+      if (message.trim() === "") return;
+
+      console.log(message);
     }
   };
-  */
-  }
 
   return (
     <>
@@ -53,6 +54,7 @@ const GuildMessageContainer = () => {
               color: useColorModeValue("gray.500", "gray.100"),
             }}
             placeholder={"Message #" + client.currentChannel?.name ?? ""}
+            onKeyDown={handleKeyDown}
           />
           <InputRightElement width="4rem">
             <Button h={"1.75rem"} w={"1.5rem"}>

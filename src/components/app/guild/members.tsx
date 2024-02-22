@@ -13,19 +13,16 @@ import {
 import { useEffect, useState } from "react";
 import { clientStore } from "@/utils/stores.ts";
 import Member from "$/Client/Structures/Guild/Member.ts";
-import deepEqual from "fast-deep-equal/react";
+import { memberStore } from "$/utils/Stores.ts";
 
 const GuildMembers = () => {
   const [client] = useRecoilState(clientStore);
+  const [rawMembers] = useRecoilState(memberStore);
   const [members, setMembers] = useState<Member[]>([]);
 
   useEffect(() => {
-    console.log("test")
-    if (!client.currentGuild?.members) return;
-    if (deepEqual(client.currentGuild?.members, members)) return;
-
-    setMembers(client.currentGuild.members);
-  }, [client.currentGuild?.members]);
+    setMembers(client.currentGuild!.members);
+  }, [rawMembers]);
 
   const avatars = [
     "/icon.png",
@@ -35,13 +32,14 @@ const GuildMembers = () => {
     "/icon-4.png",
   ];
 
+  // todo: 
+
   return client.currentGuild ? (
     <Box mt={5}>
       <Text ml={3}>
         {members?.length === 1 ? "Member" : "Members"} - {members?.length}
       </Text>
       {members?.map((member, index) => {
-        console.log("called")
         return (
           <Box key={index}>
             <Popover placement={"left"}>
