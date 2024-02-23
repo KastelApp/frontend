@@ -51,88 +51,22 @@ export const settingsStore = atom<Settings>({
     },
     key: "settings",
     dangerouslyAllowMutability: true
-})
+});
 
-export const messageStore = atom({
-    default: [
-        {
-          user: {
-            name: "Tea Cup",
-            avatar: "/icon-3.png",
-            presence: "online",
-            username: "Tea Cup",
-            discriminator: "0001",
-          },
-          content: "Hello world!",
-          time: "Yesterday at 1:52 AM",
-        },
-        {
-          user: {
-            name: "Darkerink",
-            avatar: "/icon-4.png",
-            presence: "idle",
-            username: "Darkerink",
-            discriminator: "2927",
-          },
-          content: "Hello",
-          time: "12/12/2020 1:52 AM",
-        },
-        {
-          user: {
-            name: "Test",
-            avatar: "/icon-2.png",
-            presence: "dnd",
-            username: "Test",
-            discriminator: "2340",
-          },
-          content: "Whats up?",
-          time: "Today at 1:52 AM",
-        },
-        {
-          user: {
-            name: "Someone",
-            avatar: "/icon-3.png",
-            presence: "offline",
-            username: "Someone",
-            discriminator: "3428",
-          },
-          content: "Howdy",
-          time: "Yesterday at 4:51 PM",
-        },
-        {
-          user: {
-            name: "goop",
-            avatar: "/icon-4.png",
-            presence: "online",
-            username: "goop",
-            discriminator: "8923",
-          },
-          content: "true",
-          time: "12/12/2020 1:52 AM",
-        },
-        {
-          user: {
-            name: "Taco",
-            avatar: "/icon-2.png",
-            presence: "idle",
-            username: "Taco",
-            discriminator: "6940",
-          },
-          content: "false",
-          time: "Today at 1:52 AM",
-        },
-        {
-          user: {
-            name: "Apple",
-            avatar: "/icon-2.png",
-            presence: "dnd",
-            username: "Apple",
-            discriminator: "4200",
-          },
-          content: "Oh my...",
-          time: "Today at 8:15 AM",
-        },
-      ],
+export const messageStore = atom<{
+    user: {
+        globalNickname: string;
+        avatar: string;
+        presence: string;
+        username: string;
+        discriminator: string;
+    };
+    content: string;
+    time: string;
+    id: string;
+    state: "sent" | "sending" | "failed";
+}[]>({
+    default: [],
     key: "messages",
     dangerouslyAllowMutability: true
-})
+});

@@ -51,7 +51,7 @@ class Member {
     }
 
     public get guild() {
-        return getRecoil(guildStore).find((g) => g.id === this.guildId);
+        return getRecoil(guildStore).find((g) => g.id === this.guildId) ?? null;
     }
 
     public get roles() {
@@ -59,7 +59,7 @@ class Member {
     }
 
     public get user() {
-        return getRecoil(userStore).find((m) => m.id === this.userId);
+        return getRecoil(userStore).find((m) => m.id === this.userId)!;
     }
 }
 

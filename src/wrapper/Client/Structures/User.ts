@@ -45,7 +45,7 @@ class User<IsClient extends boolean = false> {
     }
 
     public constructor(ws: Websocket, data: Partial<UserPayload>, presence: Presence[], isClient: IsClient, partial = false) {
-        this.id = data.id ?? "";
+        this.id = ws.snowflake.validate(data.id ?? "") ? data.id!  : ws.snowflake.generate(); // ? just generate a fake id, this shouldn't happen but we don't want to fail to generate a default avatar
         
         this.email = (isClient ? data.email : null) as IsClient extends true ? string : null;
         
@@ -85,10 +85,16 @@ class User<IsClient extends boolean = false> {
     }
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    public getAvatarUrl(_options: { size: number }) {
-        // console.log("avatar", options, new Error().stack);
+    public getAvatarUrl(_options?: { size: number }) {
+        if (!this.avatar) return this.defaultAvatar;
 
-        return "/icon-1.png"
+        return ""
+    }
+
+    public get defaultAvatar() {
+        const number = BigInt(this.id) % 5n;
+
+        return `/icon${number === 0n ? "" : `-${number}`}.png`;
     }
 
     public get currentPresence() {
@@ -112,6 +118,12 @@ class User<IsClient extends boolean = false> {
         avatar?: string | null;
       }) {
         console.log(options);
+    }
+
+    public get displayUsername() {
+        if (this.globalNickname) return this.globalNickname;
+
+        return this.username;
     }
 }
 

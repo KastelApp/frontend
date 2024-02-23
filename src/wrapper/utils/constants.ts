@@ -213,6 +213,14 @@ const relationshipFlags = {
 	MutualFriend: 4,
 };
 
+const snowflake = {
+	Epoch: 1_701_410_400_000n,
+	TimeShift: 22n,
+	WorkerIdBytes: 17n,
+	ProcessIdBytes: 12n,
+	WorkerId: 1n,
+	ProcessId: 1n,
+};
 
 const permissionOverrideTypes = {
 	Role: 1 << 0,
@@ -261,7 +269,9 @@ export default {
 	permissionOverrideTypes,
 	inviteFlags,
 	statusTypes,
-	opCodes, userSendCodes
+	opCodes,
+	userSendCodes,
+	snowflake
 };
 
 
@@ -279,5 +289,7 @@ export {
 	permissionOverrideTypes,
 	inviteFlags,
 	statusTypes,
-	opCodes, userSendCodes
+	opCodes,
+	userSendCodes,
+	snowflake
 };

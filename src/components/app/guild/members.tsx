@@ -5,8 +5,6 @@ import {
   Flex,
   Image,
   Popover,
-  PopoverBody,
-  PopoverContent,
   PopoverTrigger,
   Text,
 } from "@chakra-ui/react";
@@ -14,6 +12,7 @@ import { useEffect, useState } from "react";
 import { clientStore } from "@/utils/stores.ts";
 import Member from "$/Client/Structures/Guild/Member.ts";
 import { memberStore } from "$/utils/Stores.ts";
+import PopOver from "./members/popover.tsx";
 
 const GuildMembers = () => {
   const [client] = useRecoilState(clientStore);
@@ -23,16 +22,6 @@ const GuildMembers = () => {
   useEffect(() => {
     setMembers(client.currentGuild!.members);
   }, [rawMembers]);
-
-  const avatars = [
-    "/icon.png",
-    "/icon-1.png",
-    "/icon-2.png",
-    "/icon-3.png",
-    "/icon-4.png",
-  ];
-
-  // todo: 
 
   return client.currentGuild ? (
     <Box mt={5}>
@@ -68,16 +57,8 @@ const GuildMembers = () => {
                       <Image
                         draggable={"false"}
                         borderRadius={"full"}
-                        src={member?.user?.getAvatarUrl({ size: 128 }) ?? ""}
-                        fallbackSrc={
-                          avatars[
-                            Number(
-                              BigInt(member?.user?.id || 1) %
-                                BigInt(avatars.length),
-                            )
-                          ] || "/icon-1.png"
-                        }
-                        alt={member?.user?.username || "loading"}
+                        src={member.user.getAvatarUrl({ size: 128 }) ?? ""}
+                        alt={`${member.user.displayUsername}'s avatar`}
                         fit="cover"
                       />
                       <Badge
@@ -95,6 +76,10 @@ const GuildMembers = () => {
                         position="absolute"
                         bottom="-0.5"
                         right="-0.5"
+                        _dark={{
+                          border: "1px solid",
+                          borderColor: "gray.700"
+                        }}
                       />
                     </Box>
                   </Box>
@@ -103,61 +88,10 @@ const GuildMembers = () => {
                   </Text>
                 </Flex>
               </PopoverTrigger>
-              <PopoverContent _focus={{ boxShadow: "none" }}>
-                <PopoverBody>
-                  <Flex>
-                    <Box
-                      boxSize="50px"
-                      display="inline-flex"
-                      alignItems="center"
-                      justifyContent="center"
-                      overflow="visible"
-                      lineHeight="none"
-                      borderRadius="full"
-                      position="relative"
-                    >
-                      <Image
-                        draggable={"false"}
-                        borderRadius={"full"}
-                        src={member?.user?.getAvatarUrl({ size: 128 }) ?? ""}
-                        fallbackSrc={
-                          avatars[
-                            Number(
-                              BigInt(member?.user?.id || 1) %
-                                BigInt(avatars.length),
-                            )
-                          ] || "/icon-1.png"
-                        }
-                        alt={member?.user?.username || "loading"}
-                        fit="cover"
-                      />
-                      <Badge
-                        boxSize="5"
-                        borderRadius="full"
-                        bg={
-                          member?.user?.currentPresence === "online"
-                            ? "green.500"
-                            : member?.user?.currentPresence === "idle"
-                              ? "yellow.500"
-                              : member?.user?.currentPresence === "dnd"
-                                ? "red.500"
-                                : "gray.500"
-                        }
-                        position="absolute"
-                        bottom="-0.5"
-                        right="-0.5"
-                      />
-                    </Box>
-  
-                    <Text ml={2} mt={3}>
-                      {member?.user?.fullUsername}
-                    </Text>
-                  </Flex>
-                </PopoverBody>
-              </PopoverContent>
+              <PopOver user={member.user} member={member} />
             </Popover>
           </Box>
-        )
+        );
       })}
     </Box>
   ) : null;

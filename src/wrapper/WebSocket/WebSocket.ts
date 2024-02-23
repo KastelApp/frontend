@@ -3,12 +3,13 @@ import { encoding, status, websocketSettings } from "$/types/ws.ts";
 import { atom } from "recoil";
 import StringFormatter from "$/utils/StringFormatter.ts";
 import { getRecoil, setRecoil } from "recoil-nexus";
-import { opCodes } from "$/utils/constants.ts";
+import constants, { opCodes } from "$/utils/constants.ts";
 import { Identify } from "$/types/events.ts";
 import hello from "./Events/Hello.ts";
 import ready from "./Events/Ready.ts";
 import Client from "$/Client/Client.ts";
 import Events from "$/utils/Events.ts";
+import Snowflake from "$/utils/Snowflake.ts";
 
 export const testStatusStore = atom<status>({
     default: "Disconnected",
@@ -74,6 +75,8 @@ class Websocket extends Events {
     #ws!: WebSocket;
 
     #client?: Client;
+
+    public snowflake = new Snowflake(constants.snowflake.Epoch, constants.snowflake.WorkerId, constants.snowflake.ProcessId, constants.snowflake.TimeShift, constants.snowflake.WorkerIdBytes, constants.snowflake.ProcessIdBytes);
 
     public constructor(opts: Partial<websocketSettings>, client?: Client) {
         super();

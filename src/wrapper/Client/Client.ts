@@ -5,7 +5,9 @@ import { ClientOptions } from "$/types/client.ts";
 import { LoginOptions, RegisterAccountOptions, RegisterLoginResponse } from "$/types/client/RegisterAndLogin.ts";
 import { status } from "$/types/ws.ts";
 import Events from "$/utils/Events.ts";
+import Snowflake from "$/utils/Snowflake.ts";
 import { guildStore, roleStore, channelStore, inviteStore, memberStore, settingsStore, userStore } from "$/utils/Stores.ts";
+import constants from "$/utils/constants.ts";
 import { getRecoil } from "recoil-nexus";
 
 type events = "unAuthed" | "ready" | "unReady" | "statusUpdate";
@@ -32,6 +34,8 @@ class Client extends Events {
     };
 
     public worker?: Worker; // ? Worker is used to stay alive in the background (since when the tab goes to sleep, the timings for intervals and timeouts are fucked up which will cause the ws to miss a heartbeat)
+
+    public snowflake =new Snowflake(constants.snowflake.Epoch, constants.snowflake.WorkerId, constants.snowflake.ProcessId, constants.snowflake.TimeShift, constants.snowflake.WorkerIdBytes, constants.snowflake.ProcessIdBytes);
 
     public constructor(options: ClientOptions) {
         super();

@@ -111,14 +111,6 @@ const AppNavbar = () => {
     console.log("new status has not been saved. " + status);
   };
 
-  const avatars = [
-    "/icon.png",
-    "/icon-1.png",
-    "/icon-2.png",
-    "/icon-3.png",
-    "/icon-4.png",
-  ];
-
   return (
     <>
       <Settings isOpen={isOpen} onClose={onClose} />
@@ -238,15 +230,7 @@ const AppNavbar = () => {
                         draggable={"false"}
                         borderRadius={"full"}
                         src={client?.user.getAvatarUrl({ size: 128 }) ?? ""}
-                        fallbackSrc={
-                          avatars[
-                            Number(
-                              BigInt(client?.user?.id || 1) %
-                                BigInt(avatars.length),
-                            )
-                          ] || "/icon-1.png"
-                        }
-                        alt={client?.user.username || "Loading"}
+                        alt={client?.user.displayUsername ?? "Loading"}
                         fit="cover"
                       />
                       <Badge

@@ -18,14 +18,6 @@ import { useEffect, useState } from "react";
 import Member from "$/Client/Structures/Guild/Member.ts";
 import { clientStore } from "@/utils/stores.ts";
 
-const avatars = [
-  "/icon.png",
-  "/icon-1.png",
-  "/icon-2.png",
-  "/icon-3.png",
-  "/icon-4.png",
-];
-
 const GuildSettingsMembers = () => {
   const [client] = useRecoilState(clientStore);
 
@@ -81,29 +73,19 @@ const GuildSettingsMembers = () => {
                             <Image
                               draggable={"false"}
                               borderRadius={"full"}
-                              src={
-                                "/icon-1.png"
-                              }
-                              fallbackSrc={
-                                avatars[
-                                  Number(
-                                    BigInt(member?.user?.id || 1) %
-                                      BigInt(avatars.length),
-                                  )
-                                ] || "/icon-1.png"
-                              }
-                              alt={member?.user?.username || "loading"}
+                              src={member.user.getAvatarUrl()}
+                              alt={member.user.username || "loading"}
                               fit="cover"
                             />
                             <Badge
                               boxSize="3"
                               borderRadius="full"
                               bg={
-                                member?.user?.currentPresence === "online"
+                                member.user.currentPresence === "online"
                                   ? "green.500"
-                                  : member?.user?.currentPresence === "idle"
+                                  : member.user.currentPresence === "idle"
                                     ? "yellow.500"
-                                    : member?.user?.currentPresence === "dnd"
+                                    : member.user.currentPresence === "dnd"
                                       ? "red.500"
                                       : "gray.500"
                               }
@@ -114,11 +96,10 @@ const GuildSettingsMembers = () => {
                           </Box>
                           <Box ml="3">
                             <Text>
-                              {member?.user?.globalNickname ??
-                                member?.user?.username}
+                              {member.user.displayUsername}
                             </Text>
                             <Text fontSize="sm">
-                              {member?.user?.fullUsername}
+                              {member.user.fullUsername}
                             </Text>
                           </Box>
                         </Flex>
