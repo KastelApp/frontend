@@ -27,7 +27,7 @@ const GuildMessageContainer = () => {
       const id = Math.random().toString(36).substring(7);
 
       setMessage((old) => [
-        ...old,
+        ...old.slice(-49),
         {
           content: message,
           time: `Today at ${new Date().toLocaleTimeString("en-US", {
@@ -42,7 +42,8 @@ const GuildMessageContainer = () => {
             globalNickname: client.user.globalNickname ?? client.user.username
           },
           id,
-          state: "sending"
+          state: "sending",
+          edited: false
         }
       ]);
 
@@ -60,12 +61,12 @@ const GuildMessageContainer = () => {
             if (message.id === id) {
               return {
                 ...message,
-                // 50% chance of failing
-                state: Math.random() > 0.5 ? "sent" : "failed"
+                state: Math.random() > 0.75 ? "failed" : "sent",
+                edited: Math.random() > 0.75
               };
             }
             return message;
-          });
+          })
         });
       }, 1000);
 

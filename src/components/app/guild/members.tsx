@@ -60,6 +60,7 @@ const GuildMembers = () => {
                         src={member.user.getAvatarUrl({ size: 128 }) ?? ""}
                         alt={`${member.user.displayUsername}'s avatar`}
                         fit="cover"
+                        userSelect={"none"}
                       />
                       <Badge
                         boxSize="3"

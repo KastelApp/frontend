@@ -10,7 +10,7 @@ import { Box } from "@chakra-ui/react";
 import Loading from "@/components/app/loading";
 import SEO from "@/components/seo";
 import GuildSideBar from "@/components/app/guild/side-bar";
-import GuildMessages from "@/components/app/guild/messages.tsx";
+import GuildMessages from "@/components/app/guild/messages";
 
 const GuildChannelPage = () => {
   const router = useRouter();

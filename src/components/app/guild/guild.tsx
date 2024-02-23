@@ -1,10 +1,9 @@
-import { Box, Flex, useColorModeValue } from "@chakra-ui/react";
+import { Box, Flex, Image, useColorModeValue } from "@chakra-ui/react";
 import getInitials from "../../../utils/getGuildInitals.ts";
-import Image from "next/image";
 import NextLink from "next/link";
 import GuildClass from "$/Client/Structures/Guild/Guild.ts";
 
-const Guild = ({ guild }: { guild: GuildClass }) => {
+const Guild = ({ guild }: { guild: GuildClass; }) => {
   const firstChannel = guild.channels.find((channel) => channel.isTextBased());
 
   const color = useColorModeValue("gray.700", "gray.200");
@@ -25,7 +24,6 @@ const Guild = ({ guild }: { guild: GuildClass }) => {
             textAlign="center"
             _hover={{
               bg: useColorModeValue("gray.300", "gray.600"),
-              rounded: "10px",
             }}
           >
             {guild.icon ? (
@@ -33,11 +31,13 @@ const Guild = ({ guild }: { guild: GuildClass }) => {
                 color={color}
                 src={"/icon-1.png"}
                 alt={getInitials(guild.name)}
-                width={128}
-                height={128}
+                userSelect={"none"}
+                borderRadius={"full"}
+                fit="cover"
+                draggable={"false"}
               />
             ) : (
-              <Box color={color} fontSize="xl" fontWeight="bold">
+              <Box userSelect={"none"} color={color} fontSize="xl" fontWeight="bold">
                 {getInitials(guild.name)}
               </Box>
             )}

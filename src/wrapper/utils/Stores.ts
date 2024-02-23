@@ -65,6 +65,7 @@ export const messageStore = atom<{
     time: string;
     id: string;
     state: "sent" | "sending" | "failed";
+    edited: boolean;
 }[]>({
     default: [],
     key: "messages",

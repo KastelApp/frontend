@@ -232,6 +232,7 @@ const AppNavbar = () => {
                         src={client?.user.getAvatarUrl({ size: 128 }) ?? ""}
                         alt={client?.user.displayUsername ?? "Loading"}
                         fit="cover"
+                        userSelect={"none"}
                       />
                       <Badge
                         boxSize="3"
