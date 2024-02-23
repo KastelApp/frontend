@@ -11,7 +11,7 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 import { FiMenu } from "react-icons/fi";
-import { ReactNode } from "react";
+import { ElementType, ReactNode } from "react";
 
 const GuildSettingsSidebar = ({
   selectedPage,
@@ -196,8 +196,8 @@ const NavItem = ({
 }: {
   selectedPage: number;
   id?: number;
-  icon?: React.ElementType | null;
-  children?: React.ReactNode;
+  icon?: ElementType | null;
+  children?: ReactNode;
   [x: string]: unknown;
 }) => {
   const background = useColorModeValue("gray.100", "gray.700");

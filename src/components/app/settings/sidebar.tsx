@@ -13,7 +13,7 @@ import {
 import { FiMenu } from "react-icons/fi";
 import pack from "../../../../package.json";
 import data from "../../../data/sidePanel";
-import { ReactNode } from "react";
+import { ElementType, ReactNode } from "react";
 
 const SettingsSidebar = ({
   selectedPage,
@@ -169,8 +169,8 @@ const NavItem = ({
 }: {
   selectedPage: number;
   id: number;
-  icon: React.ElementType | null;
-  children: React.ReactNode;
+  icon: ElementType | null;
+  children: ReactNode;
   mt?: number;
   onClick: () => void;
 }) => {

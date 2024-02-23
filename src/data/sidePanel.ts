@@ -1,3 +1,5 @@
+import { ElementType } from "react";
+
 interface SidebarData {
   name: string;
   options: {
@@ -7,7 +9,7 @@ interface SidebarData {
       color: string;
     }[];
     id: number;
-    icon: React.ElementType | null;
+    icon: ElementType | null;
   }[];
 }
 

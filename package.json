@@ -6,7 +6,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "format": "prettier --write . && eslint src --ext .js,.ts --fix"
+    "format": "prettier --write . && eslint src --ext .js,.ts --fix",
+    "postbuild": "next-sitemap"
   },
   "dependencies": {
     "@chakra-ui/anatomy": "^2.2.2",
@@ -23,6 +24,7 @@
     "framer-motion": "^10.16.16",
     "next": "14.0.4",
     "next-seo": "^6.4.0",
+    "next-sitemap": "^4.2.3",
     "react": "^18",
     "react-dom": "^18",
     "react-icons": "^4.12.0",
