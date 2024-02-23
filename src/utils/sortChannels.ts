@@ -1,13 +1,13 @@
 /*eslint camelcase: "error"*/
 
 import BaseChannel from "$/Client/Structures/Channels/BaseChannel.ts";
+import constants from "$/utils/constants.ts";
 
 /**
  * Sorts through the channels and returns a sorted array of channels. (Stolen from Backend)
  */
 export const sortChannels = (
   existingChannels: BaseChannel[],
-  ignoreParent = false,
 ): BaseChannel[] => {
   /* position 0 = top
         So for example, with four channels:
@@ -41,31 +41,66 @@ export const sortChannels = (
         category has its own position system.
         */
 
-  const sortedExistingChannels = existingChannels.sort(
-    (a, b) => a.position - b.position,
-  );
-
-  if (ignoreParent) {
-    return sortedExistingChannels;
-  }
-
-  const categories: Record<string, BaseChannel[]> = {};
-  const sortedChannels: BaseChannel[] = [];
-
-  for (const channel of sortedExistingChannels) {
-    if (channel.parentId) {
-      if (!categories[channel.parentId]) {
-        categories[channel.parentId] = [];
-      }
-      categories[channel.parentId].push(channel);
-    } else {
-      sortedChannels.push(channel);
+  // we sort the channels by their position and if its a category it should rank higher (for now)
+  const sortedChannels = existingChannels.sort((a, b) => {
+    if (a.type === constants.channelTypes.GuildCategory && b.type !== constants.channelTypes.GuildCategory) {
+      return -1;
     }
-  }
 
-  const sortedCategories = Object.values(categories).map((categoryChannels) => {
-    return sortChannels(categoryChannels, true);
+    if (b.type === constants.channelTypes.GuildCategory && a.type !== constants.channelTypes.GuildCategory) {
+      return 1;
+    }
+
+    return a.position - b.position;
   });
 
-  return [...sortedChannels, ...sortedCategories].flat(8);
+  const categorys: {
+    [key: string]: {
+      pos: number;
+      channel: BaseChannel
+    }[];
+    parentless: {
+      pos: number;
+      channel: BaseChannel
+    }[];
+  } = {
+    parentless: []
+  };
+
+  for (const channel of sortedChannels) {
+    if (channel.type === constants.channelTypes.GuildCategory) {
+      categorys[channel.id] = [
+        {
+          pos: -1, // to make sure it's at the top
+          channel
+        }
+      ];
+
+      continue;
+    }
+
+    if (!channel.parentId) {
+      categorys.parentless.push({
+        pos: channel.position,
+        channel
+      });
+      
+      continue;
+    }
+
+    if (!categorys[channel.parentId]) {
+      categorys[channel.parentId] = [];
+    }
+
+    categorys[channel.parentId].push({
+      pos: channel.position,
+      channel
+    });
+  }
+
+  const sortedCategorys = Object.values(categorys).map((category) => {
+    return category.sort((a, b) => a.pos - b.pos).map((c) => c.channel);
+  });
+
+  return sortedCategorys.flat();
 };

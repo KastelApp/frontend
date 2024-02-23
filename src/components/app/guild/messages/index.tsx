@@ -56,6 +56,7 @@ const GuildMessages = () => {
                                             <Text
                                                 cursor={"pointer"}
                                                 display="inline"
+                                                as={"span"}
                                             >{message.user.username}</Text>
                                         </PopoverTrigger>
                                         <Badge

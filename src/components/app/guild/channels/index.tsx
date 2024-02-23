@@ -49,7 +49,7 @@ const RawChannel = ({ channel }: { channel: BaseChannel; }) => {
                             return [...old, channel.id];
                         });
                     }}>
-                        <Text color={"white"}>
+                        <Text color={"gray.300"}>
                             {getChannelName(channel?.name)}
                         </Text>
                         <svg
@@ -96,7 +96,7 @@ const RawChannel = ({ channel }: { channel: BaseChannel; }) => {
                 )}
 
                 {channel.type !== constants.channelTypes.GuildCategory && (
-                    <Text color={"white"}>
+                    <Text color={"gray.300"} ml={1}>
                         {getChannelName(channel?.name)}
                     </Text>
                 )}

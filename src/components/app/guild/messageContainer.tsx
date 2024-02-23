@@ -72,6 +72,30 @@ const GuildMessageContainer = () => {
 
 
       event.currentTarget.value = "";
+    } else if (event.key === "b" && event.ctrlKey) {
+      event.preventDefault();
+
+      const textarea = event.currentTarget;
+
+      const start = textarea.selectionStart;
+
+      const end = textarea.selectionEnd;
+
+      const selected = textarea.value.substring(start, end);
+
+      if (start !== end) {
+        textarea.value =
+          textarea.value.substring(0, start) +
+          `**${selected}**` +
+          textarea.value.substring(end);
+        textarea.setSelectionRange(start, end + 4);
+      } else {
+        textarea.value =
+          textarea.value.substring(0, start) +
+          "****" +
+          textarea.value.substring(end);
+        textarea.setSelectionRange(start + 3, start + 3);
+      }
     }
   };
 
