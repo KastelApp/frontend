@@ -1,5 +1,6 @@
 import {
   Box,
+  Divider,
   Flex,
   HStack,
   Menu,
@@ -36,11 +37,14 @@ import CreateChannel from "@/components/app/guild/createChannel.tsx";
 import BaseChannel from "$/Client/Structures/Channels/BaseChannel.ts";
 import getGuildName from "@/utils/getGuildName.ts";
 import Channel from "./channels/index.tsx";
+import ChannelIcon from "./channels/channelIcon.tsx";
+import constants from "$/utils/constants.ts";
+import Link from "next/link";
 
 const GuildSideBar = ({ children, noMemberBar, noTextBox, noChannelTopic }: { children?: ReactNode, noMemberBar?: boolean; noTextBox?: boolean; noChannelTopic?: boolean; }) => {
   const [client] = useRecoilState(clientStore);
   const [ready] = useRecoilState(readyStore);
-  const [collapsedChannelsList] = useRecoilState(collapsedChannels);
+  const [collapsedChannelsList, setCollapsedChannelsList] = useRecoilState(collapsedChannels);
   const [sortedChannelGroups, setSortedChannelGroups] = useState<BaseChannel[]>(
     [],
   );
@@ -153,21 +157,47 @@ const GuildSideBar = ({ children, noMemberBar, noTextBox, noChannelTopic }: { ch
             color="gray.600"
             aria-label="Main Navigation"
           >
-            <div>
-              {sortedChannelGroups.map((channel) => {
-                  if (collapsedChannelsList.includes(channel.parentId ?? "")) return null;
-                  return <Channel channel={channel} key={channel.id} />;
-                })}
-            </div>
+            {sortedChannelGroups.map((channel, index) => {
+              if (collapsedChannelsList.includes(channel.parentId ?? "")) return null;
+              return (
+                <Box key={index}>
+                  {channel.type !== constants.channelTypes.GuildCategory ? (
+                    <Link
+                      href={`/app/guilds/${channel.guildId}/channels/${channel.id}`}
+                    >
+                      <Channel channel={channel} key={channel.id} />
+                    </Link>
+                  ) : (
+                    <Channel channel={channel} onClick={() => {
+                      setCollapsedChannelsList((old) => {
+                        if (old.includes(channel.id)) {
+                          return old.filter((id) => id !== channel.id);
+                        }
+
+                        return [...old, channel.id];
+                      });
+                    }} key={channel.id} />
+                  )}
+                </Box>
+              );
+            })}
           </Flex>
         </Box>
 
         {/* Main content */}
 
-        <Box flex="1" justifyContent="center" maxWidth="calc(100% - 400px)">
+        <Box flex="1" justifyContent="center" maxWidth="calc(100% - 400px)" userSelect={"none"}>
           {!noChannelTopic && (
-            <Box pos="sticky" top={0} zIndex={10} bg={background} p={2}>
-              <Text>{`# ${client.currentChannel?.name}`}</Text>
+            <Box pos="sticky" top={0} zIndex={10} bg={background} p={2} display="flex" alignItems="center">
+              <ChannelIcon channel={client.currentChannel!} />
+              <Text>{client.currentChannel?.name}</Text>
+              {client.currentChannel?.description && (
+                <>
+                  <Divider orientation="vertical" h="20px" ml={3} />
+                  <Text ml={3} fontSize={"small"} color={"gray.400"} cursor={"pointer"}>{client.currentChannel?.description}</Text>
+                </>
+              )}
+
             </Box>
           )}
 

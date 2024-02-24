@@ -3,52 +3,19 @@ import constants from "$/utils/constants.ts";
 import getChannelName from "@/utils/getChannelName.ts";
 import { clientStore, collapsedChannels } from "@/utils/stores.ts";
 import { Flex, Text } from "@chakra-ui/react";
-import Link from "next/link";
 import { useRecoilState } from "recoil";
+import ChannelIcon from "./channelIcon.tsx";
 
 const RawChannel = ({ channel }: { channel: BaseChannel; }) => {
-    const [collapsedChannelsList, setCollapsedChannelsList] = useRecoilState(collapsedChannels);
+    const [collapsedChannelsList] = useRecoilState(collapsedChannels);
 
     return (
         <>
-            <Flex>
-                {channel.type === constants.channelTypes.GuildText && (
-                    <svg
-                        width="18px"
-                        height="18px"
-                        viewBox="0 0 0.72 0.72"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                    >
-                        <path
-                            d="m0.21 0.57 0.12 -0.42m0.06 0.42 0.12 -0.42m0.06 0.12H0.195m0.33 0.18H0.15"
-                            stroke="#ffff"
-                            strokeWidth="0.06"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                        />
-                    </svg>
-                )}
+            <Flex ml={channel.parentId ? 1 : 0}>
+                <ChannelIcon channel={channel} />
 
-                {channel.isVoiceBased() && (
-                    <svg className="w-4 h-4 mr-2" viewBox="0 0 24 24">
-                        <path
-                            fill="currentColor"
-                            d="M12 2c-4.4 0-8 3.6-8 8v4c0 4.4 3.6 8 8 8s8-3.6 8-8v-4c0-4.4-3.6-8-8-8zm6 12c0 3.3-2.7 6-6 6s-6-2.7-6-6v-4c0-3.3 2.7-6 6-6s6 2.7 6 6v4zm-4-4h-2v-4h2v4zm-4 0h-2v-4h2v4zm-3 4h-2v-4h2v4zm-1-6h-2v-4h2v4z"
-                        />
-                    </svg>
-                )}
-
-                {channel.type === constants.channelTypes.GuildCategory && (
-                    <Flex cursor={"pointer"} onClick={() => {
-                        setCollapsedChannelsList((old) => {
-                            if (old.includes(channel.id)) {
-                                return old.filter((id) => id !== channel.id);
-                            }
-
-                            return [...old, channel.id];
-                        });
-                    }}>
+                {channel.isCategory() && (
+                    <Flex cursor={"pointer"}>
                         <Text color={"gray.300"}>
                             {getChannelName(channel?.name)}
                         </Text>
@@ -78,23 +45,6 @@ const RawChannel = ({ channel }: { channel: BaseChannel; }) => {
                     </Flex>
                 )}
 
-                {channel.type === constants.channelTypes.GuildNews && (
-                    <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="18px"
-                        height="18px"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="#fff"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                    >
-                        <path d="M3 11l18-5v12L3 14v-3z" />
-                        <path d="M11.6 16.8a3 3 0 11-5.8-1.6" />
-                    </svg>
-                )}
-
                 {channel.type !== constants.channelTypes.GuildCategory && (
                     <Text color={"gray.300"} ml={1}>
                         {getChannelName(channel?.name)}
@@ -105,7 +55,7 @@ const RawChannel = ({ channel }: { channel: BaseChannel; }) => {
     );
 };
 
-const Channel = ({ channel }: { channel: BaseChannel; }) => {
+const Channel = ({ channel, onClick }: { channel: BaseChannel; onClick?: () => void; }) => {
     const [client] = useRecoilState(clientStore);
 
     return (
@@ -115,22 +65,21 @@ const Channel = ({ channel }: { channel: BaseChannel; }) => {
             key={channel?.id}
             bg={
                 channel?.id === client.currentChannel?.id
-                    ? "brand.500"
+                    ? "gray.800"
                     : ""
             }
+            rounded="10px"
             userSelect={"none"}
+            cursor={"pointer"}
+            _hover={channel.isCategory() ? {} : {
+                bg: "gray.700",
+            }}
+            onClick={onClick}
+            maxW={"85%"}
         >
             <div>
                 <Flex>
-                    {channel.type !== constants.channelTypes.GuildCategory ? (
-                        <Link
-                            href={`/app/guilds/${channel?.guildId}/channels/${channel?.id}`}
-                        >
-                            <RawChannel channel={channel} />
-                        </Link>
-                    ) : (
-                        <RawChannel channel={channel} />
-                    )}
+                    <RawChannel channel={channel} />
                 </Flex>
             </div>
         </Flex>

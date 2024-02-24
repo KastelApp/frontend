@@ -62,7 +62,7 @@ export const messageStore = atom<{
         discriminator: string;
     };
     content: string;
-    time: string;
+    time: Date;
     id: string;
     state: "sent" | "sending" | "failed";
     edited: boolean;

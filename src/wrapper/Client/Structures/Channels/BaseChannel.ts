@@ -1,6 +1,7 @@
 import type DMBasedChannel from "./DMBasedChannel.ts";
 import type TextBasedChannel from "./TextBasedChannel.ts";
 import type VoiceBasedChannel from "./VoiceBasedChannel.ts";
+import type CategoryChannel from "./CategoryChannel.ts";
 import { Channel, PermissionOverrides } from "$/types/payloads/ready.ts";
 import Websocket from "$/WebSocket/WebSocket.ts";
 import { getRecoil } from "recoil-nexus";
@@ -92,6 +93,10 @@ class BaseChannel {
 
     public isVoiceBased(): this is VoiceBasedChannel {
         return this.type === constants.channelTypes.GuildVoice;
+    }
+
+    public isCategory(): this is CategoryChannel{
+        return this.type === constants.channelTypes.GuildCategory;
     }
 }
 

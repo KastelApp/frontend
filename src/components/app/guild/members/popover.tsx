@@ -86,31 +86,43 @@ const PopOver = ({ user, member }: { user: User<boolean>, member?: Member; }) =>
                     <Text
                         fontSize="smaller"
                         fontWeight={"450"}
+                        cursor={"auto"}
+                        userSelect={"text"}
                     >{user.fullUsername}</Text>
                     <Text
                         fontSize="sm"
                         mt={2}
                         color={"gray.400"}
                         ml={2}
+                        cursor={"auto"}
+                        userSelect={"text"}
                     >This is my custom status</Text>
-                    <Divider mt={2} />
-                    <Text
-                        mt={2}
-                        fontWeight={"bold"}
-                        fontSize={"medium"}
-                    >About me</Text>
-                    <Text
-                        fontSize={"sm"}
-                        color={"gray.400"}
-                        mt={2}
-                        ml={2}
-                    >{user.bio}</Text>
+                    {user.bio && (
+                        <>
+                            <Divider mt={2} />
+                            <Text
+                                mt={2}
+                                fontWeight={"bold"}
+                                fontSize={"medium"}
+                                userSelect={"none"}
+                            >About me</Text>
+                            <Text
+                                fontSize={"sm"}
+                                color={"gray.400"}
+                                mt={2}
+                                ml={2}
+                                cursor={"auto"}
+                                userSelect={"text"}
+                            >{user.bio}</Text>
+                        </>
+                    )}
                     {member && (<>
                         <Divider mt={2} />
                         <Text
                             mt={2}
                             fontWeight={"bold"}
                             fontSize={"medium"}
+                            userSelect={"none"}
                         >{member.roles.length === 1 ? "No Roles" : member.roles.length === 2 ? "Role" : "Roles"}</Text>
                     </>)}
                 </Flex>

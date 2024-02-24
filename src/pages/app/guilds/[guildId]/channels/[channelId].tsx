@@ -40,8 +40,14 @@ const GuildChannelPage = () => {
     }
 
     const channel =
-      foundGuild.channels.find((channel) => channel.id === channelId) ??
+      foundGuild.channels.find((channel) => channel.id === channelId && !channel.isCategory()) ??
       foundGuild.channels.find((channel) => channel.isTextBased());
+
+    if (client.currentChannel && client.currentChannel.isCategory() && channel) {
+      router.push(`/app/guilds/${guildId}/channels/${channel.id}`);
+
+      return;
+    }
 
     if (!channel) {
       router.push(`/app/guilds/${guildId}/channels`);

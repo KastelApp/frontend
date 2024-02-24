@@ -30,10 +30,7 @@ const GuildMessageContainer = () => {
         ...old.slice(-49),
         {
           content: message,
-          time: `Today at ${new Date().toLocaleTimeString("en-US", {
-            hour: "numeric",
-            minute: "numeric",
-          })}`,
+          time: new Date(),
           user: {
             avatar: client.user.getAvatarUrl({ size: 128 }),
             discriminator: client.user.tag,
@@ -54,7 +51,6 @@ const GuildMessageContainer = () => {
         setTimeout(() => chat.scrollIntoView({ behavior: "instant" }), 50);
       }
 
-
       setTimeout(() => {
         setMessage((old) => {
           return old.map((message) => {
@@ -66,10 +62,9 @@ const GuildMessageContainer = () => {
               };
             }
             return message;
-          })
+          });
         });
-      }, 1000);
-
+      }, 140); // 140ms is what we are aiming for the API, may be different in production but this is just for testing
 
       event.currentTarget.value = "";
     } else if (event.key === "b" && event.ctrlKey) {
