@@ -75,7 +75,7 @@ const Navbar = () => {
                   href={"https://github.com/KastelApp"}
                 >
                   <Button color={buttonColor} variant="ghost">
-                    Github
+                    GitHub
                   </Button>
                 </NextLink>
 
@@ -157,7 +157,7 @@ const Navbar = () => {
                     href={"https://github.com/KastelApp"}
                   >
                     <Button w={"full"} variant="ghost">
-                      Github
+                      GitHub
                     </Button>
                   </NextLink>
 
