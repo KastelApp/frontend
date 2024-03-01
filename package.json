@@ -21,7 +21,7 @@
     "@kastelll/wrapper": "0.1.9-beta.34",
     "@sentry/nextjs": "^7.88.0",
     "@tauri-apps/api": "^1.5.2",
-    "framer-motion": "^10.16.16",
+    "framer-motion": "^11.0.8",
     "next": "14.0.4",
     "next-seo": "^6.4.0",
     "next-sitemap": "^4.2.3",
