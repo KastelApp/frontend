@@ -53,11 +53,7 @@ class PermissionHandler {
 		if (this.owner) return true;
 
 		const roles = this.memberRoles
-			.filter((role) => {
-				console.log(this.memberRoles)
-
-				return role.permissions.has(permission);
-			})
+			.filter((role) => role.permissions.has(permission))
 			.sort((a, b) => b.position - a.position);
 
 		if (dupe) return roles.length > 0;

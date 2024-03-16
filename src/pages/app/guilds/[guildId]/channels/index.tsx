@@ -40,12 +40,9 @@ const GuildChannelPage = () => {
 
     const guildRoles = roles.filter((role) => role.guildId === guildId);
 
-    console.log("nuh uh", roles, currentMember, guildRoles, channels)
     if (!currentMember || guildRoles.length === 0) {
       return;
     }
-
-    console.log("owo", currentMember, guildRoles)
 
     const clientUser = users.find((u) => u.isClient)!;
     const memberRoles = guildRoles.filter((role) => currentMember?.roleIds.includes(role.id));
