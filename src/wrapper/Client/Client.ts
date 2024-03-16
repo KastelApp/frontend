@@ -8,6 +8,7 @@ import { ApiLoginOptions, LoginResponse } from "$/types/http/auth/login.ts";
 import { ApiRegisterOptions, RegisterResponse } from "$/types/http/auth/register.ts";
 import { isErrorResponse } from "$/types/http/error.ts";
 import { CreateGuildOptions } from "$/types/http/guilds/createGuild.ts";
+import { JoinInvitePayload } from "$/types/http/invites/joinInvite.ts";
 import { status } from "$/types/ws.ts";
 import Events from "$/utils/Events.ts";
 import Snowflake from "$/utils/Snowflake.ts";
@@ -197,7 +198,33 @@ class Client extends Events {
 
     public async fetchInvite(code: string) {}
 
-    public async joinInvite(code: string) {}
+    public async joinInvite(code: string): Promise<{
+        success: boolean;
+        errors: {
+            unknown: boolean;
+        };
+        data: JoinInvitePayload | null;
+    }> {
+        const request = await this.api.post<JoinInvitePayload>(`/invites/${code}`);
+
+        if (!request.ok || request.status >= 400) {
+            return {
+                success: false,
+                errors: {
+                    unknown: true
+                },
+                data: null
+            }
+        }
+
+        return {
+            success: true,
+            errors: {
+                unknown: false
+            },
+            data: await request.json()
+        }
+    }
 
     public async logout() {}
 

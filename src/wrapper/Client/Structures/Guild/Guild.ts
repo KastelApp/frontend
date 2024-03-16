@@ -1,4 +1,5 @@
 import Websocket from "$/WebSocket/WebSocket.ts";
+import { CreateInviteOptions, CreateInviteResponse } from "$/types/http/invites/createInvite.ts";
 import { ChannelProperty, Guild as RawGuild } from "$/types/payloads/ready.ts";
 import StringFormatter from "$/utils/StringFormatter.ts";
 import createGsetters from "$/utils/createGsetters.ts";
@@ -117,6 +118,31 @@ class Guild {
         }
 
         return true;
+    }
+
+    public async createInvite(opts: CreateInviteOptions): Promise<{
+        success: boolean; errors: {
+            unknown: boolean;
+        }; data?: CreateInviteResponse | undefined;
+    }> {
+        const request = await this.#ws.client?.api.post<CreateInviteResponse, CreateInviteOptions>(`/guilds/${this.id}/invites`, opts);
+
+        if (!request?.ok  || request.status >= 400) {
+            return {
+                success: false,
+                errors: {
+                    unknown: true
+                }
+            }
+        }
+
+        return {
+            success: true,
+            errors: {
+                unknown: false
+            },
+            data: await request.json()
+        };
     }
 }
 

@@ -32,7 +32,10 @@ const GuildInvites = ({
   const currentChannel = useChannelStore((s) => s.getCurrentChannel());
   const currentGuild = useGuildStore((s) => s.getCurrentGuild());
   const [,] = useState<Invite[]>([]);
-  const [invite] = useState<string>("");
+  const [invite, setInvite] = useState<{
+    guildId: string;
+    code: string;
+  }[]>([]);
   const [expire] = useState<number>(1000 * 60 * 60 * 24 * 7); // 7 days
 
   const getExpiresAt = (milliseconds: number): string => {
@@ -63,29 +66,27 @@ const GuildInvites = ({
       if (!currentGuild) return;
       if (!currentChannel) return;
 
-      if (invite) {
-        setValue(invite);
+      const foundInvite = invite.find((i) => i.guildId === currentGuild.id);
+
+      if (foundInvite) {
+        setValue(foundInvite.code);
 
         return;
       }
 
-      // const fetchedInvites = await guild.fetchMyInvites();
+      const createdInvite = await currentGuild.createInvite({
+        channelId: currentChannel.id,
+        maxUses: 100
+      });
 
-      // setInvites(fetchedInvites);
+      if (createdInvite.success) {
+        const inv = `${document.location.protocol}//${document.location.hostname}/invite/${createdInvite.data?.code}`;
 
-      // const createdInvite = await channel.createInvite({
-      //   expiresAt: new Date(Date.now() + expire), // 7 days
-      //   maxUses: 0, // unlimited
-      // });
-
-      // if (createdInvite.success) {
-      //   const inv = `${document.location.protocol}//${document.location.hostname}/invite/${createdInvite.code}`;
-
-      //   setValue(inv);
-      //   setInvite(inv); // darkerink: we set the invite so we don't keep creating em.
-      // } else {
-      //   setValue("Error creating invite");
-      // }
+        setValue(inv);
+        setInvite((inv) => [...inv, { guildId: currentGuild.id, code: createdInvite.data?.code ?? "" }]);
+      } else {
+        setValue("Error creating invite");
+      }
     };
 
     getInvite();

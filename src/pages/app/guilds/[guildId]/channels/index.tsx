@@ -44,8 +44,6 @@ const GuildChannelPage = () => {
 
     const clientUser = users.find((u) => u.isClient)!;
 
-    console.log(currentMember)
-
     const roles = currentRoles.filter((role) => currentMember?.roleIds.includes(role.id));
     const permissionHandler = new PermissionHandler(clientUser.id, currentMember?.owner ?? false, roles, channels);
     const channelsWeHaveReadAccessTo = channels.filter((channel) => permissionHandler.hasChannelPermission(channel.id, ["ViewMessageHistory"]));
@@ -67,7 +65,7 @@ const GuildChannelPage = () => {
     } else {
       removeChannelFromCache(guildId);
     }
-  }, [ready, guildId, currentMember, currentRoles]);
+  }, [ready, guildId]);
 
   return (
     <>

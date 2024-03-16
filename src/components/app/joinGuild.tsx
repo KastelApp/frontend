@@ -17,9 +17,11 @@ import {
   UnorderedList,
   useColorModeValue,
 } from "@chakra-ui/react";
+import { useRouter } from "next/router";
+import { useClientStore } from "@/utils/stores.ts";
 
 const JoinServer = ({
-  // modal,
+  modal,
   setForm,
 }: {
   modal: {
@@ -37,19 +39,19 @@ const JoinServer = ({
       message: string;
     }[]
   >([]);
-  // const [client] = useRecoilState(clientStore);
-  // const router = useRouter();
+  const client = useClientStore((s) => s.client);
+  const router = useRouter();
 
-  // const getLastParam = (link: string) => {
-  //   const parts = link.split("/");
-  //   const lastPart = parts[parts.length - 1];
+  const getLastParam = (link: string) => {
+    const parts = link.split("/");
+    const lastPart = parts[parts.length - 1];
 
-  //   if (lastPart !== link) {
-  //     return lastPart; // Return the last part if '/' is present
-  //   } else {
-  //     return link; // Return the input as it is (no '/' found)
-  //   }
-  // };
+    if (lastPart !== link) {
+      return lastPart; // Return the last part if '/' is present
+    } else {
+      return link; // Return the input as it is (no '/' found)
+    }
+  };
 
   const submit = async (
     event: FormEvent<HTMLFormElement> & {
@@ -81,8 +83,6 @@ const JoinServer = ({
       return;
     }
 
-    console.log(inviteLink);
-
     // const inviteCode = getLastParam(inviteLink);
     // const inviteFetch = await client.fetchInvite(inviteCode);
 
@@ -99,30 +99,30 @@ const JoinServer = ({
     //   return;
     // }
 
-    // const join = await client.joinInvite(inviteCode);
+    const join = await client.joinInvite(getLastParam(inviteLink) as string);
 
-    // if (!join) {
-    //   setLoading(false);
+    if (!join.success) {
+      setLoading(false);
 
-    //   setError([
-    //     {
-    //       code: "INVITE",
-    //       message:
-    //         "The invite link is expired, invalid or you are banned from the guild.",
-    //     },
-    //   ]);
+      setError([
+        {
+          code: "INVITE",
+          message:
+            "The invite link is expired, invalid or you are banned from the guild.",
+        },
+      ]);
 
-    //   return;
-    // }
+      return;
+    }
 
-    // setLoading(false);
-    // setError([]);
+    setLoading(false);
+    setError([]);
 
-    // modal.onClose();
+    modal.onClose();
 
-    // router.push(
-    //   `/app/guilds/${inviteFetch?.guild?.id}/channels/${inviteFetch?.channel?.id}}`,
-    // );
+    router.push(
+      `/app/guilds/${join.data?.guild?.id}/channels/${join.data?.channel?.id}}`,
+    );
     return;
   };
 
