@@ -13,11 +13,12 @@ import {
   ModalOverlay,
   useClipboard,
 } from "@chakra-ui/react";
-import { useRecoilState } from "recoil";
 import { useEffect, useState } from "react";
-import { clientStore } from "@/utils/stores.ts";
+// import { useClientStore } from "@/utils/stores.ts";
 import getGuildName from "@/utils/getGuildName.ts";
 import Invite from "$/Client/Structures/Guild/Invite.ts";
+import { useChannelStore, useGuildStore } from "$/utils/Stores.ts";
+
 
 const GuildInvites = ({
   isOpen,
@@ -27,7 +28,9 @@ const GuildInvites = ({
   onClose: () => void;
 }) => {
   const { onCopy, value, setValue, hasCopied } = useClipboard("");
-  const [client] = useRecoilState(clientStore);
+  // const client = useClientStore((s) => s.client);
+  const currentChannel = useChannelStore((s) => s.getCurrentChannel());
+  const currentGuild = useGuildStore((s) => s.getCurrentGuild());
   const [,] = useState<Invite[]>([]);
   const [invite] = useState<string>("");
   const [expire] = useState<number>(1000 * 60 * 60 * 24 * 7); // 7 days
@@ -57,8 +60,8 @@ const GuildInvites = ({
     if (!isOpen) return;
 
     const getInvite = async () => {
-      if (!client.currentGuild) return;
-      if (!client.currentChannel) return;
+      if (!currentGuild) return;
+      if (!currentChannel) return;
 
       if (invite) {
         setValue(invite);
@@ -92,7 +95,7 @@ const GuildInvites = ({
     <Modal isOpen={isOpen} onClose={onClose} size={"lg"}>
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>Invite friends to {getGuildName(client.currentGuild?.name ?? "Loading")}</ModalHeader>
+        <ModalHeader>Invite friends to {getGuildName(currentGuild?.name ?? "Loading")}</ModalHeader>
         <ModalCloseButton />
 
         <ModalBody>

@@ -1,4 +1,3 @@
-import { useRecoilState } from "recoil";
 import {
   Badge,
   Box,
@@ -7,41 +6,42 @@ import {
   Popover,
   PopoverTrigger,
   Text,
+  useColorModeValue,
 } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
-import { clientStore } from "@/utils/stores.ts";
-import Member from "$/Client/Structures/Guild/Member.ts";
-import { memberStore } from "$/utils/Stores.ts";
-import PopOver from "./members/popover.tsx";
+import { useGuildStore, useMemberStore, useRoleStore, useUserStore } from "$/utils/Stores.ts";
+import UserPopOver from "./members/popover.tsx";
 
 const GuildMembers = () => {
-  const [client] = useRecoilState(clientStore);
-  const [rawMembers] = useRecoilState(memberStore);
-  const [members, setMembers] = useState<Member[]>([]);
+  const currentGuild = useGuildStore((s) => s.getCurrentGuild());
+  const members = useMemberStore((s) => s.getCurrentMembers());
+  const { users } = useUserStore();
+  const roles = useRoleStore((s) => s.getCurrentRoles());
+  const hoverBg = useColorModeValue("gray.300", "gray.700");
 
-  useEffect(() => {
-    setMembers(client.currentGuild!.members);
-  }, [rawMembers]);
-
-  return client.currentGuild ? (
+  return currentGuild ? (
     <Box mt={5}>
       <Text ml={3}>
         {members?.length === 1 ? "Member" : "Members"} - {members?.length}
       </Text>
       {members?.map((member, index) => {
+        const user = users.find((u) => u.id === member.userId);
+        const memberRoles = roles.filter((r) => member.roleIds.includes(r.id));
+        const topRole = memberRoles.sort((a, b) => b.position - a.position).find((r) => r.color !== 0);
+
         return (
           <Box key={index}>
-            <Popover placement={"left"}>
+            <Popover placement={"left"} isLazy>
               <PopoverTrigger>
                 <Flex
                   _hover={{
-                    bg: "gray.700",
+                    bg: hoverBg,
                     rounded: "10px",
                     cursor: "pointer",
                   }}
                   mt={2}
                   ml={2}
                   mr={2}
+                  alignItems={"flex-start"}
                 >
                   <Box ml={2} display="flex" alignItems="center" py={1}>
                     <Box
@@ -57,8 +57,8 @@ const GuildMembers = () => {
                       <Image
                         draggable={"false"}
                         borderRadius={"full"}
-                        src={member.user.getAvatarUrl({ size: 128 }) ?? ""}
-                        alt={`${member.user.displayUsername}'s avatar`}
+                        src={user?.getAvatarUrl({ size: 128 }) ?? ""}
+                        alt={`${user?.displayUsername}'s avatar`}
                         fit="cover"
                         userSelect={"none"}
                       />
@@ -66,30 +66,37 @@ const GuildMembers = () => {
                         boxSize="3"
                         borderRadius="full"
                         bg={
-                          member?.user?.currentPresence === "online"
+                          user?.currentPresence === "online"
                             ? "green.500"
-                            : member?.user?.currentPresence === "idle"
+                            : user?.currentPresence === "idle"
                               ? "yellow.500"
-                              : member?.user?.currentPresence === "dnd"
+                              : user?.currentPresence === "dnd"
                                 ? "red.500"
                                 : "gray.500"
                         }
                         position="absolute"
                         bottom="-0.5"
                         right="-0.5"
-                        _dark={{
-                          border: "1px solid",
-                          borderColor: "gray.700"
-                        }}
+                        border="1px solid"
+                        borderColor={hoverBg}
                       />
                     </Box>
                   </Box>
-                  <Text ml={2} mt={1}>
-                    {member?.user?.username}
-                  </Text>
+                  <Flex direction="column" align="start">
+                    <Box>
+                      <Text ml={2} userSelect={"none"} color={topRole ? topRole.hexColor : ""} fontWeight={"400"}>
+                        {user?.username}
+                      </Text>
+                    </Box>
+                    {user?.customStatus && (
+                      <Text ml={2} fontSize="xs" color="gray.500" userSelect={"none"}>
+                        {user?.customStatus ?? "No custom status"}
+                      </Text>
+                    )}
+                  </Flex>
                 </Flex>
               </PopoverTrigger>
-              <PopOver user={member.user} member={member} />
+              <UserPopOver user={user!} member={member} />
             </Popover>
           </Box>
         );

@@ -4,12 +4,12 @@ import { Box, Button, Container, Heading, Stack, Text } from "@chakra-ui/react";
 import Navbar from "@/components/navbar";
 import pack from "../../package.json";
 import { useEffect, useState } from "react";
-import { useRecoilState } from "recoil";
-import { isDesktop } from "@/utils/stores.ts";
+import { useIsDesktop } from "@/utils/stores.ts";
+import NextLink from "next/link";
 
 const Home = () => {
   const [hasToken, setHasToken] = useState(false);
-  const [desktop] = useRecoilState(isDesktop);
+  const { isDesktop } = useIsDesktop()
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -46,7 +46,7 @@ const Home = () => {
               You are viewing version {pack?.version || "0.0.0"}
               <br />
               On the {process.env.PUBLIC_GIT_BRANCH || "Development"} branch
-              {desktop && (
+              {isDesktop && (
                 <>
                   <br />
                   <br />
@@ -55,7 +55,7 @@ const Home = () => {
               )}
             </Text>
 
-            <a href={hasToken ? "/app" : "/register"}>
+            <NextLink href={hasToken ? "/app" : "/register"} passHref>
               <Button
                 rounded={"full"}
                 px={6}
@@ -67,7 +67,7 @@ const Home = () => {
               >
                 {hasToken ? "Open App" : "Register"}
               </Button>
-            </a>
+            </NextLink>
           </Stack>
         </Container>
       </Layout>

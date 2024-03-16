@@ -2,13 +2,12 @@ import SEO from "@/components/seo";
 import Layout from "@/components/layout";
 import { Button, Container, Heading, Stack, Text } from "@chakra-ui/react";
 import Navbar from "@/components/navbar";
-import { useRecoilState } from "recoil";
-import { tokenStore } from "@/utils/stores";
+import { useTokenStore } from "@/utils/stores";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import NextLink from "next/link";
 import BaseChannel from "$/Client/Structures/Channels/BaseChannel.ts";
-import User from "$/Client/Structures/User.ts";
+import User from "$/Client/Structures/User/User";
 import Guild from "$/Client/Structures/Guild/Guild.ts";
 
 interface InviteSuccess {
@@ -21,7 +20,7 @@ interface InviteSuccess {
 
 const Invite = () => {
   const router = useRouter();
-  const [token] = useRecoilState(tokenStore);
+  const token = useTokenStore((s) => s.token)
   const [loading, setLoading] = useState(true);
   // const [client] = useRecoilState(clientStore);
   const [error, setError] = useState<number | null>(null);
@@ -30,7 +29,7 @@ const Invite = () => {
   useEffect(() => {
     if (!token) {
       // todo store guild invite code in local storage
-      router.push("/login");
+      router.push(`/login?redirect=${encodeURIComponent(router.asPath)}`);
     }
   }, []);
 

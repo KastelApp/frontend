@@ -1,7 +1,7 @@
 import Websocket from "$/WebSocket/WebSocket.ts";
 import { Member as RawMember } from "$/types/payloads/ready.ts";
-import { guildStore, roleStore, userStore } from "$/utils/Stores.ts";
-import { getRecoil } from "recoil-nexus";
+import { useUserStore } from "$/utils/Stores.ts";
+import createGsetters from "$/utils/createGsetters.ts";
 
 class Member {
     #ws: Websocket;
@@ -14,52 +14,60 @@ class Member {
         this.#ws = ws;
     }
     
-    public guildId: string;
-
-    public owner: boolean;
-
-    public coOwner: boolean;
-
-    public roleIds: string[];
-
-    public nickname: string | null;
-
-    public userId: string;
-
-    public partial: boolean;
-
-    public joinedAt: Date;
+    @createGsetters("member")
+    private _guildId: string;
+    public guildId!: string;
+    
+    @createGsetters("member")
+    private _owner: boolean;
+    public owner!: boolean;
+    
+    @createGsetters("member")
+    private _coOwner: boolean;
+    public coOwner!: boolean;
+    
+    @createGsetters("member")
+    private _roleIds: string[];
+    public roleIds!: string[];
+    
+    @createGsetters("member")
+    private _nickname: string | null;
+    public nickname!: string | null;
+    
+    @createGsetters("member")
+    private _userId: string;
+    public userId!: string;
+    
+    @createGsetters("member")
+    private _partial: boolean;
+    public partial!: boolean;
+    
+    @createGsetters("member")
+    private _joinedAt: Date;
+    public joinedAt!: Date;
 
     public constructor(ws: Websocket, data: Partial<RawMember>, guildId: string, partial = false) {
         this.#ws = ws;
 
-        this.guildId = guildId;
+        this._guildId = guildId;
 
-        this.owner = data.owner ?? false;
+        this._owner = data.owner ?? false;
 
-        this.roleIds = data.roles ?? [];
+        this._roleIds = data.roles ?? [];
 
-        this.nickname = data.nickname ?? null;
+        this._nickname = data.nickname ?? null;
 
-        this.userId = data.user?.id ?? "";
+        this._userId = data.user?.id ?? "";
 
-        this.coOwner = false
+        this._coOwner = false
 
-        this.partial = partial;
+        this._partial = partial;
 
-        this.joinedAt = new Date(data.joinedAt ?? Date.now());
+        this._joinedAt = new Date(data.joinedAt ?? Date.now());
     }
 
-    public get guild() {
-        return getRecoil(guildStore).find((g) => g.id === this.guildId) ?? null;
-    }
-
-    public get roles() {
-        return getRecoil(roleStore).filter((r) => this.roleIds.includes(r.id));
-    }
-
-    public get user() {
-        return getRecoil(userStore).find((m) => m.id === this.userId)!;
+    public get displayUsername() {
+        return this.nickname ?? useUserStore.getState().users.find((user) => user.id === this.userId)?.displayUsername ?? "Unknown User";
     }
 }
 

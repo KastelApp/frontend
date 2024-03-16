@@ -1,53 +1,73 @@
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
-import { useRecoilState } from "recoil";
+import { useEffect } from "react";
 import {
-  clientStore,
-  readyStore,
-  tokenStore,
+  useLastChannelCache,
+  useReadyStore,
+  useTokenStore
 } from "@/utils/stores";
 import { Box, Center, Heading, Text } from "@chakra-ui/react";
 import Loading from "@/components/app/loading";
 import SEO from "@/components/seo";
-import GuildSideBar from "@/components/app/guild/side-bar";
+import GuildContent from "@/components/app/guild/guildContent";
+import { useChannelStore, useGuildStore, useMemberStore, useRoleStore, useUserStore } from "$/utils/Stores.ts";
+import PermissionHandler from "$/Client/Structures/BitFields/PermissionHandler.ts";
 
 const GuildChannelPage = () => {
   const router = useRouter();
-  const { guildId, channelId } = router.query as {
+  const { guildId } = router.query as {
     guildId: string;
-    channelId: string;
   };
-  const [token] = useRecoilState(tokenStore);
-  const [client] = useRecoilState(clientStore);
-  const [ready] = useRecoilState(readyStore);
-  const [areWeReady, setAreWeReady] = useState(false);
-
+  const token = useTokenStore((s) => s.token);
+  const ready = useReadyStore((s) => s.ready);
+  const currentGuild = useGuildStore((s) => s.getCurrentGuild());
+  const channels = useChannelStore((s) => s.getCurrentChannels());
+  const { users } = useUserStore();
+  const currentRoles = useRoleStore((r) => r.getCurrentRoles());
+  const currentMember = useMemberStore((s) => s.getCurrentMember());
+  const { lastChannelCache, setLastChannelCache, removeChannelFromCache } = useLastChannelCache();
+  
   useEffect(() => {
-    if (!token) router.push("/login");
-  }, [ready]);
+    if (!token) router.push(`/login?redirect=${encodeURIComponent(router.asPath)}`);
 
-  useEffect(() => {
-    if (!client) return;
+
     if (!ready) return;
 
-    const foundGuild = client.guilds.find((guild) => guild.id === guildId);
-
-    if (!foundGuild) {
+    if (!currentGuild) {
       router.push("/app");
 
       return;
     }
 
-    const channel =
-      foundGuild.channels.find((channel) => channel.id === channelId) ??
-      foundGuild.channels.find((channel) => channel.isTextBased());
-
-    if (channel) {
-      router.push(`/app/guilds/${guildId}/channels/${channel.id}`);
+    if (!currentMember) {
+      return;
     }
 
-    setAreWeReady(true); // we create our custom "ready" thing, since the "ready" for the client is well for when its ready, not when we are ready
-  }, [ready, guildId, channelId]);
+    const clientUser = users.find((u) => u.isClient)!;
+
+    console.log(currentMember)
+
+    const roles = currentRoles.filter((role) => currentMember?.roleIds.includes(role.id));
+    const permissionHandler = new PermissionHandler(clientUser.id, currentMember?.owner ?? false, roles, channels);
+    const channelsWeHaveReadAccessTo = channels.filter((channel) => permissionHandler.hasChannelPermission(channel.id, ["ViewMessageHistory"]));
+
+    if (lastChannelCache[guildId]) {
+      if (channelsWeHaveReadAccessTo.find((channel) => channel.id === lastChannelCache[guildId])) {
+        router.push(`/app/guilds/${guildId}/channels/${lastChannelCache[guildId]}`);
+        
+        return;
+      }
+    }
+
+    const channel = channelsWeHaveReadAccessTo.find((channel) => channel.isTextBased() && !channel.isCategory())
+
+    if (channel) {
+      setLastChannelCache({ ...lastChannelCache, [guildId]: channel.id });
+
+      router.push(`/app/guilds/${guildId}/channels/${channel.id}`);
+    } else {
+      removeChannelFromCache(guildId);
+    }
+  }, [ready, guildId, currentMember, currentRoles]);
 
   return (
     <>
@@ -57,13 +77,12 @@ const GuildChannelPage = () => {
           "Kastel is a fresh take on chat apps. With a unique look and feel, it's the perfect way to connect with friends, family, and communities."
         }
       />
-      {areWeReady ? (
+      {ready ? (
         <>
           <Box>
-            <GuildSideBar noMemberBar noTextBox noChannelTopic>
+            <GuildContent noMemberBar noChannelTopic>
               <Center height="50vh">
                 <Box>
-                  {/* No Text Channels header */}
                   <Heading textAlign={"center"} as="h1">
                     No Text Channels
                   </Heading>
@@ -71,7 +90,7 @@ const GuildChannelPage = () => {
                   <Text align={"center"} fontSize="lg" mb={4}>It seems that there are no channels in this guild, or you do not have access to any.</Text>
                 </Box>
               </Center>
-            </GuildSideBar>
+            </GuildContent>
           </Box>
         </>
       ) : (

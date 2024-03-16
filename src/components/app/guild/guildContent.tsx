@@ -13,6 +13,7 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 import {
+  AddIcon,
   // AddIcon,
   BellIcon,
   ChevronDownIcon,
@@ -22,16 +23,13 @@ import {
 } from "@chakra-ui/icons";
 import React, { ReactNode, useEffect, useState } from "react";
 import {
-  clientStore,
-  collapsedChannels,
-  readyStore,
+  useCollapsedChannels,
+  useReadyStore,
 } from "@/utils/stores";
-import { useRecoilState } from "recoil";
 import { sortChannels } from "@/utils/sortChannels";
 import GuildSettings from "@/components/app/guild/settings";
 import GuildInvites from "@/components/app/guild/invites";
 import GuildMembers from "@/components/app/guild/members.tsx";
-import GuildMessageContainer from "@/components/app/guild/messageContainer.tsx";
 import { IoPeople } from "react-icons/io5";
 import CreateChannel from "@/components/app/guild/createChannel.tsx";
 import BaseChannel from "$/Client/Structures/Channels/BaseChannel.ts";
@@ -40,15 +38,22 @@ import Channel from "./channels/index.tsx";
 import ChannelIcon from "./channels/channelIcon.tsx";
 import constants from "$/utils/constants.ts";
 import Link from "next/link";
+import { useChannelStore, useGuildStore, useMemberStore, useRoleStore, useSettingsStore, useUserStore } from "$/utils/Stores.ts";
+import PermissionHandler from "$/Client/Structures/BitFields/PermissionHandler.ts";
 
-const GuildSideBar = ({ children, noMemberBar, noTextBox, noChannelTopic }: { children?: ReactNode, noMemberBar?: boolean; noTextBox?: boolean; noChannelTopic?: boolean; }) => {
-  const [client] = useRecoilState(clientStore);
-  const [ready] = useRecoilState(readyStore);
-  const [collapsedChannelsList, setCollapsedChannelsList] = useRecoilState(collapsedChannels);
+const GuildContent = ({ children, noMemberBar, noChannelTopic, ignoreLimits }: { children?: ReactNode, noMemberBar?: boolean; noChannelTopic?: boolean; ignoreLimits?: boolean; }) => {
+  const ready = useReadyStore();
+  const currentChannel = useChannelStore((s) => s.getCurrentChannel());
+  const currentGuild = useGuildStore((s) => s.getCurrentGuild());
+  const channels = useChannelStore((s) => s.getCurrentChannels());
+  const currentMember = useMemberStore((s) => s.getCurrentMember());
+  const currentRoles = useRoleStore((s) => s.getCurrentRoles());
+  const [permissions, setPermissionHandler] = useState<PermissionHandler>();
+  const { settings } = useSettingsStore();
+  const { collapsedChannels, setCollapsedChannels } = useCollapsedChannels();
   const [sortedChannelGroups, setSortedChannelGroups] = useState<BaseChannel[]>(
     [],
   );
-  const [canAccessSettings, setAccessSettings] = useState(false);
   const borderColor = useColorModeValue("gray.200", "gray.700");
   const background = useColorModeValue("#e6e9ef", "#101319");
   const {
@@ -63,19 +68,34 @@ const GuildSideBar = ({ children, noMemberBar, noTextBox, noChannelTopic }: { ch
   } = useDisclosure();
   const {
     isOpen: createChannelIsOpen,
-    // onOpen: createChannelOnOpen,
+    onOpen: createChannelOnOpen,
     onClose: createChannelOnClose,
   } = useDisclosure();
 
+  const { users } = useUserStore();
+
   useEffect(() => {
-    if (client.currentGuild) {
-      setSortedChannelGroups(sortChannels(client.currentGuild.channels));
+    if (!currentMember || !currentGuild) return;
+    const newPermHandler = new PermissionHandler(
+      currentMember.userId,
+      currentMember.owner ?? currentMember.coOwner,
+      currentMember.roleIds.map((id) => currentRoles.find((role) => role.id === id)!),
+      channels
+    );
 
-      // const canAccess = guild.permissions.hasAnyRole("ManageGuild");
+    setPermissionHandler(newPermHandler);
+  }, [currentGuild, currentMember]);
 
-      setAccessSettings(false);
+  useEffect(() => {
+    if (currentGuild) {
+      const clientUser = users.find((u) => u.isClient)!;
+      const roles = currentRoles.filter((role) => currentMember?.roleIds.includes(role.id));
+      const permissionHandler = new PermissionHandler(clientUser.id, currentMember?.owner ?? false, roles, channels);
+      const channelsWeHaveReadAccessTo = channels.filter((channel) => permissionHandler.hasChannelPermission(channel.id, ["ViewMessageHistory"]));
+  
+      setSortedChannelGroups(sortChannels(channelsWeHaveReadAccessTo));
     }
-  }, [client.currentGuild]);
+  }, [currentGuild]);
 
   return ready ? (
     <>
@@ -85,12 +105,11 @@ const GuildSideBar = ({ children, noMemberBar, noTextBox, noChannelTopic }: { ch
         isOpen={createChannelIsOpen}
         onClose={createChannelOnClose}
       />
-      <Flex height="100vh">
+      <Flex height="100vh" ml={settings.navBarLocation === "left" ? "60px" : ""}>
         <Box
           bg={background}
           pb="10"
           overflowX="hidden"
-          overflowY="scroll"
           color="inherit"
           w={"200px"}
         >
@@ -107,36 +126,46 @@ const GuildSideBar = ({ children, noMemberBar, noTextBox, noChannelTopic }: { ch
                   >
                     <HStack>
                       <Text fontSize={"medium"}>
-                        {getGuildName(client.currentGuild?.name ?? "Loading")}
+                        {getGuildName(currentGuild?.name ?? "Loading")}
                       </Text>
                       {/* todo: make this on the left */}
                       {isOpen ? <ChevronUpIcon /> : <ChevronDownIcon />}
                     </HStack>
                   </MenuButton>
                   <MenuList>
-                    {canAccessSettings && (
-                      <MenuItem
-                        onClick={settingsOnOpen}
-                        icon={<SettingsIcon />}
-                      >
-                        Guild Settings
-                      </MenuItem>
-                    )}
+                    {permissions?.hasAnyRole(
+                      [
+                        "ServerName",
+                        "ServerDescription",
+                        "ServerIcon",
+                        "MaintenanceToggle",
+                        "AddBots",
+                        "ViewAuditLog",
+                        "ManageVanity",
+                      ]
+                    ) && (
+                        <MenuItem
+                          onClick={settingsOnOpen}
+                          icon={<SettingsIcon />}
+                        >
+                          Guild Settings
+                        </MenuItem>
+                      )}
 
-                    {/* {guild.permissions.hasAnyRole("ManageChannels") && (
+                    {permissions?.hasAnyRole(["CreateChannel"]) && (
                       <MenuItem
                         onClick={createChannelOnOpen}
                         icon={<AddIcon />}
                       >
                         Create Channel
                       </MenuItem>
-                    )} */}
+                    )}
 
                     <MenuItem onClick={invitesOnOpen} icon={<IoPeople />}>
                       Invite Friends
                     </MenuItem>
                     <MenuItem icon={<BellIcon />}>Notifications</MenuItem>
-                    {!client.currentGuild?.owner && (
+                    {!currentMember?.owner && (
                       <>
                         <MenuDivider />
                         <MenuItem icon={<DeleteIcon color={"red.500"} />}>
@@ -158,7 +187,7 @@ const GuildSideBar = ({ children, noMemberBar, noTextBox, noChannelTopic }: { ch
             aria-label="Main Navigation"
           >
             {sortedChannelGroups.map((channel, index) => {
-              if (collapsedChannelsList.includes(channel.parentId ?? "")) return null;
+              if (collapsedChannels.includes(channel.parentId ?? "")) return null;
               return (
                 <Box key={index}>
                   {channel.type !== constants.channelTypes.GuildCategory ? (
@@ -169,13 +198,15 @@ const GuildSideBar = ({ children, noMemberBar, noTextBox, noChannelTopic }: { ch
                     </Link>
                   ) : (
                     <Channel channel={channel} onClick={() => {
-                      setCollapsedChannelsList((old) => {
-                        if (old.includes(channel.id)) {
-                          return old.filter((id) => id !== channel.id);
-                        }
+                      const shouldAddOrRemove = !collapsedChannels.includes(channel.id);
 
-                        return [...old, channel.id];
-                      });
+                      setCollapsedChannels(
+                        shouldAddOrRemove
+                          ? [...collapsedChannels, channel.id]
+                          : collapsedChannels.filter((id) => id !== channel.id),
+                      );
+
+
                     }} key={channel.id} />
                   )}
                 </Box>
@@ -186,27 +217,30 @@ const GuildSideBar = ({ children, noMemberBar, noTextBox, noChannelTopic }: { ch
 
         {/* Main content */}
 
-        <Box flex="1" justifyContent="center" maxWidth="calc(100% - 400px)" userSelect={"none"}>
+        <Box flex="1" justifyContent="center" userSelect={"none"}>
           {!noChannelTopic && (
             <Box pos="sticky" top={0} zIndex={10} bg={background} p={2} display="flex" alignItems="center">
-              <ChannelIcon channel={client.currentChannel!} />
-              <Text>{client.currentChannel?.name}</Text>
-              {client.currentChannel?.description && (
+              <ChannelIcon channel={currentChannel!} />
+              <Text>{currentChannel?.name}</Text>
+              {currentChannel?.description && (
                 <>
                   <Divider orientation="vertical" h="20px" ml={3} />
-                  <Text ml={3} fontSize={"small"} color={"gray.400"} cursor={"pointer"}>{client.currentChannel?.description}</Text>
+                  <Text ml={3} fontSize={"small"} color={"gray.400"} cursor={"pointer"}>{currentChannel?.description}</Text>
                 </>
               )}
 
             </Box>
           )}
 
-          <Box maxHeight="calc(100vh - 150px)" overflowY="auto" px={2}>
-            {children}
-          </Box>
-
-          {!noTextBox && (
-            <GuildMessageContainer />
+          {/* todo: let users configure this */}
+          {!ignoreLimits ? (
+            <Box maxHeight={settings.navBarLocation === "bottom" ? "calc(100vh - 170px)" : ""} px={2} id="scrollable-div">
+              {children}
+            </Box>
+          ) : (
+            <Box px={2} id="scrollable-div">
+              {children}
+            </Box>
           )}
         </Box>
 
@@ -215,11 +249,8 @@ const GuildSideBar = ({ children, noMemberBar, noTextBox, noChannelTopic }: { ch
           <Box
             bg={background}
             pb="10"
-            overflowX="hidden"
-            overflowY="scroll"
             color="inherit"
             w={"200px"}
-            zIndex={20}
           >
             <GuildMembers />
           </Box>
@@ -229,4 +260,4 @@ const GuildSideBar = ({ children, noMemberBar, noTextBox, noChannelTopic }: { ch
   ) : null;
 };
 
-export default GuildSideBar;
+export default GuildContent;

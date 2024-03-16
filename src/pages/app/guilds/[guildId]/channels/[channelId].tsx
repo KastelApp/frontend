@@ -1,16 +1,17 @@
-import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
-import { useRecoilState } from "recoil";
+import { useChannelStore, useGuildStore, useMemberStore, useRoleStore, useUserStore } from "$/utils/Stores.ts";
 import {
-  clientStore,
-  readyStore,
-  tokenStore,
-} from "@/utils/stores";
-import { Box } from "@chakra-ui/react";
-import Loading from "@/components/app/loading";
-import SEO from "@/components/seo";
-import GuildSideBar from "@/components/app/guild/side-bar";
-import GuildMessages from "@/components/app/guild/messages";
+  Box,
+} from "@chakra-ui/react";
+import { useEffect, useMemo, useState } from "react";
+import { useRouter } from "next/router";
+import { useLastChannelCache, useReadyStore, useTokenStore } from "@/utils/stores.ts";
+import SEO from "@/components/seo.tsx";
+import GuildContent from "@/components/app/guild/guildContent.tsx";
+import Loading from "@/components/app/loading.tsx";
+import constants from "$/utils/constants.ts";
+import TextChannel from "@/components/app/guild/channels/types/TextChannel.tsx";
+import MarkdownChannel from "@/components/app/guild/channels/types/MarkdownbasedChannel.tsx";
+import PermissionHandler from "$/Client/Structures/BitFields/PermissionHandler.ts";
 
 const GuildChannelPage = () => {
   const router = useRouter();
@@ -18,48 +19,99 @@ const GuildChannelPage = () => {
     guildId: string;
     channelId: string;
   };
-  const [token] = useRecoilState(tokenStore);
-  const [client] = useRecoilState(clientStore);
-  const [ready] = useRecoilState(readyStore);
-  const [areWeReady, setAreWeReady] = useState(false);
+
+  const token = useTokenStore((s) => s.token);
+  const channels = useChannelStore((s) => s.getCurrentChannels());
+  const currentGuild = useGuildStore((s) => s.getCurrentGuild());
+  const currentChannel = useChannelStore((s) => s.getCurrentChannel());
+  const ready = useReadyStore((s) => s.ready);
+  const [flags, setFlags] = useState<{
+    ignoreLimits: boolean;
+    noMemberBar: boolean;
+    noChannelTopic: boolean;
+  }>({
+    ignoreLimits: false,
+    noMemberBar: false,
+    noChannelTopic: false,
+  });
+
+  const { users } = useUserStore();
+  const currentRoles = useRoleStore((r) => r.getCurrentRoles());
+  const currentMember = useMemberStore((s) => s.getCurrentMember());
+  const { lastChannelCache, setLastChannelCache } = useLastChannelCache();
 
   useEffect(() => {
-    if (!token) router.push("/login");
-  }, [ready]);
+    if (!token) {
+      router.push(`/login?redirect=${encodeURIComponent(router.asPath)}`);
 
-  useEffect(() => {
-    if (!client) return;
-    if (!ready) return;
+      return;
+    }
 
-    const foundGuild = client.guilds.find((guild) => guild.id === guildId);
+    if (!ready) {
+      return;
+    }
 
-    if (!foundGuild) {
+    if (!currentGuild) {
       router.push("/app");
 
       return;
     }
 
-    const channel =
-      foundGuild.channels.find((channel) => channel.id === channelId && !channel.isCategory()) ??
-      foundGuild.channels.find((channel) => channel.isTextBased());
-
-    if (client.currentChannel && client.currentChannel.isCategory() && channel) {
-      router.push(`/app/guilds/${guildId}/channels/${channel.id}`);
-
+    if (!currentMember) {
       return;
     }
+
+    const clientUser = users.find((u) => u.isClient)!;
+    const roles = currentRoles.filter((role) => currentMember?.roleIds.includes(role.id));
+    const permissionHandler = new PermissionHandler(clientUser.id, currentMember?.owner ?? false, roles, channels);
+    const channelsWeHaveReadAccessTo = channels.filter((channel) => permissionHandler.hasChannelPermission(channel.id, ["ViewMessageHistory"]));
+
+    const channel =
+      channelsWeHaveReadAccessTo.find((channel) => channel.id === channelId && !channel.isCategory());
 
     if (!channel) {
       router.push(`/app/guilds/${guildId}/channels`);
+
       return;
     }
+  }, [ready, guildId, channels, currentMember, currentRoles]);
 
-    if (channel.id !== channelId) {
-      router.push(`/app/guilds/${guildId}/channels/${channel.id}`);
+  useEffect(() => {
+    setLastChannelCache({ ...lastChannelCache, [guildId]: channelId });
+  }, [channelId])
+
+  const getChannelComponent = () => {
+    if (!currentChannel) return null;
+
+    switch (currentChannel.type) {
+      case constants.channelTypes.GuildText: {
+        setFlags({
+          ignoreLimits: false,
+          noMemberBar: false,
+          noChannelTopic: false
+        });
+
+        return <TextChannel />;
+      }
+
+      case constants.channelTypes.GuildMarkdown: {
+
+        setFlags({
+          ignoreLimits: true,
+          noMemberBar: false,
+          noChannelTopic: false
+        });
+
+        return <MarkdownChannel />;
+      }
+
+      default: {
+        return null;
+      }
     }
+  };
 
-    setAreWeReady(true); // we create our custom "ready" thing, since the "ready" for the client is well for when its ready, not when we are ready
-  }, [ready, guildId, channelId]);
+  const channelComponent = useMemo(() => getChannelComponent(), [currentChannel]);
 
   return (
     <>
@@ -69,15 +121,12 @@ const GuildChannelPage = () => {
           "Kastel is a fresh take on chat apps. With a unique look and feel, it's the perfect way to connect with friends, family, and communities."
         }
       />
-      {areWeReady ? (
-        <>
-          <Box>
-            <GuildSideBar>
-              {/* messages */}
-              <GuildMessages />
-            </GuildSideBar>
-          </Box>
-        </>
+      {ready ? (
+        <Box>
+          <GuildContent ignoreLimits={flags.ignoreLimits} noMemberBar={flags.noMemberBar} noChannelTopic={flags.noChannelTopic}>
+            {channelComponent}
+          </GuildContent>
+        </Box>
       ) : (
         <Loading />
       )}

@@ -1,13 +1,17 @@
 import Websocket from "../WebSocket.ts";
 import StringFormatter from "$/utils/StringFormatter.ts";
 import { ReadyPayload } from "$/types/payloads/ready.ts";
-import { channelStore, guildStore, memberStore, roleStore, settingsStore, userStore } from "$/utils/Stores.ts";
-import { setRecoil } from "recoil-nexus";
-import User from "$/Client/Structures/User.ts";
+import { useChannelStore, useGuildStore, useMemberStore, useRoleStore, useSettingsStore, useUserStore } from "$/utils/Stores.ts";
+import User from "$/Client/Structures/User/User.ts";
 import Role from "$/Client/Structures/Guild/Role.ts";
 import Member from "$/Client/Structures/Guild/Member.ts";
 import Guild from "$/Client/Structures/Guild/Guild.ts";
 import BaseChannel from "$/Client/Structures/Channels/BaseChannel.ts";
+import constants from "$/utils/constants.ts";
+import TextBasedChannel from "$/Client/Structures/Channels/TextBasedChannel.ts";
+import CategoryChannel from "$/Client/Structures/Channels/CategoryChannel.ts";
+import MarkdownBasedChannel from "$/Client/Structures/Channels/MarkdownBasedChannel.ts";
+import { SettingsPayload } from "$/types/http/user/settings.ts";
 
 const isReadyPayload = (data: unknown): data is ReadyPayload => {
     if (typeof data !== "object" || data === null || data === undefined) return false;
@@ -39,9 +43,13 @@ const ready = (ws: Websocket, data: unknown) => {
 
     ws.startHeartbeating();
 
-    setRecoil(settingsStore, data.settings);
+    useSettingsStore.setState({ settings: {
+        ...data.settings,
+        navBarLocation: "bottom",
+        emojiPack: "twemoji"
+    } });
 
-    const recoilData: {
+    const readyData: {
         roles: Role[],
         channels: BaseChannel[],
         members: Member[],
@@ -52,50 +60,68 @@ const ready = (ws: Websocket, data: unknown) => {
         channels: [],
         members: [],
         users: [
-            new User(ws, data.user, data.presence, true)
+            new User(ws, data.user, data.presence, true, false, data.settings as unknown as SettingsPayload)
         ],
         guilds: []
     };
 
     for (const guild of data.guilds) {
         for (const role of guild.roles) {
-            recoilData.roles.push(new Role(ws, role, guild.id));
+            readyData.roles.push(new Role(ws, role, guild.id));
         }
 
         for (const channel of guild.channels) {
             switch (channel.type) {
+                case constants.channelTypes.GuildText: {
+                    readyData.channels.push(new TextBasedChannel(ws, channel, guild.id));
+
+                    break;
+                }
+
+                case constants.channelTypes.GuildCategory: {
+                    readyData.channels.push(new CategoryChannel(ws, channel, guild.id));
+
+                    break;
+                }
+
+                case constants.channelTypes.GuildMarkdown: {
+                    readyData.channels.push(new MarkdownBasedChannel(ws, channel, guild.id));
+
+                    break;
+                }
+
                 default: {
-                    recoilData.channels.push(new BaseChannel(ws, channel, guild.id));
+                    readyData.channels.push(new BaseChannel(ws, channel, guild.id));
                 }
             }
         }
 
         for (const member of guild.members) {
-            if (!recoilData.users.find((o) => o.id === member.user.id)) {
-                recoilData.users.push(new User(ws, member.user, [], false, true));
-            } else if (recoilData.users.find((o) => o.id === member.user.id && o.partial)) {
-                recoilData.users = [
-                    ...recoilData.users.filter((o) => o.id !== member.user.id),
-                    new User(ws, member.user, [], false, true)
+            if (!readyData.users.find((o) => o.id === member.user.id)) {
+                readyData.users.push(new User(ws, member.user, member.presence, false, true));
+            } else if (readyData.users.find((o) => o.id === member.user.id && o.partial)) {
+                readyData.users = [
+                    ...readyData.users.filter((o) => o.id !== member.user.id),
+                    new User(ws, member.user, member.presence, false, true)
                 ];
             }
 
-            if (!recoilData.members.find((o) => o.userId === member.user.id && o.guildId === guild.id)) {
-                recoilData.members.push(new Member(ws, member, guild.id, false));
-            } else if (recoilData.members.find((o) => o.userId === member.user.id && o.guildId === guild.id && o.partial)) {
-                recoilData.members = [
-                    ...recoilData.members.filter((o) => o.userId !== member.user.id && o.guildId !== guild.id),
+            if (!readyData.members.find((o) => o.userId === member.user.id && o.guildId === guild.id)) {
+                readyData.members.push(new Member(ws, member, guild.id, false));
+            } else if (readyData.members.find((o) => o.userId === member.user.id && o.guildId === guild.id && o.partial)) {
+                readyData.members = [
+                    ...readyData.members.filter((o) => o.userId !== member.user.id && o.guildId !== guild.id),
                     new Member(ws, member, guild.id, false)
                 ];
             }
         }
 
         for (const coOwner of guild.coOwners) {
-            if (!recoilData.users.find((o) => o.id === coOwner.id)) {
-                recoilData.users.push(new User(ws, coOwner, [], false, true));
-            } else if (recoilData.users.find((o) => o.id === coOwner.id && o.partial)) {
-                recoilData.users = [
-                    ...recoilData.users.filter((o) => o.id !== coOwner.id),
+            if (!readyData.users.find((o) => o.id === coOwner.id)) {
+                readyData.users.push(new User(ws, coOwner, [], false, true));
+            } else if (readyData.users.find((o) => o.id === coOwner.id && o.partial)) {
+                readyData.users = [
+                    ...readyData.users.filter((o) => o.id !== coOwner.id),
                     new User(ws, coOwner, [], false, true)
                 ];
             }
@@ -104,41 +130,24 @@ const ready = (ws: Websocket, data: unknown) => {
 
             member.coOwner = true;
 
-            if (!recoilData.members.find((o) => o.userId === coOwner.id && o.guildId === guild.id)) {
-                recoilData.members.push(member);
-            } else if (recoilData.members.find((o) => o.userId === coOwner.id && o.guildId === guild.id && o.partial)) {
-                recoilData.members = [
-                    ...recoilData.members.filter((o) => o.userId !== coOwner.id && o.guildId !== guild.id),
+            if (!readyData.members.find((o) => o.userId === coOwner.id && o.guildId === guild.id)) {
+                readyData.members.push(member);
+            } else if (readyData.members.find((o) => o.userId === coOwner.id && o.guildId === guild.id && o.partial)) {
+                readyData.members = [
+                    ...readyData.members.filter((o) => o.userId !== coOwner.id && o.guildId !== guild.id),
                     member
                 ];
             }
         }
 
-        recoilData.guilds.push(new Guild(ws, guild, false));
-
-        setTimeout(() => {
-            // add a fake member and user to the store
-            setRecoil(userStore, (old) => {
-                return [
-                    ...old,
-                    new User(ws, { id: "0", username: "Unknown User", tag: "0000", avatar: null }, [], false, true)
-                ];
-            });
-
-            setRecoil(memberStore, (old) => {
-                return [
-                    ...old,
-                    new Member(ws, { user: { id: "0", avatar: "", flags: "0", publicFlags: "0", username: "Unknown" }, owner: false, roles: [], nickname: null }, guild.id, true)
-                ];
-            });
-        }, 5000);
+        readyData.guilds.push(new Guild(ws, guild, false));
     }
 
-    setRecoil(roleStore, recoilData.roles);
-    setRecoil(channelStore, recoilData.channels);
-    setRecoil(memberStore, recoilData.members);
-    setRecoil(userStore, recoilData.users);
-    setRecoil(guildStore, recoilData.guilds);
+    useRoleStore.getState().setRoles(readyData.roles);
+    useChannelStore.getState().setChannels(readyData.channels);
+    useMemberStore.getState().setMembers(readyData.members);
+    useUserStore.getState().setUsers(readyData.users);
+    useGuildStore.getState().setGuilds(readyData.guilds);
 
     ws.status = "Ready";
 };

@@ -1,4 +1,14 @@
 /* eslint-disable import/no-anonymous-default-export */
+
+const settings = {
+	maxMessageSize: 2000,
+	maxUsernameLength: 32,
+	maxNicknameLength: 32,
+	maxGuildNameLength: 100,
+	maxChannelNameLength: 100,
+	maxRoleNameLength: 100,
+}
+
 const guildFeatures = [
 	"Partnered",
 	"Verified",
@@ -37,6 +47,7 @@ const channelTypes = {
 	GuildRules: 1 << 3,
 	GuildVoice: 1 << 4,
 	GuildNewMember: 1 << 5,
+	GuildMarkdown: 1 << 6,
 	Dm: 1 << 10,
 	GroupChat: 1 << 11,
 };
@@ -84,6 +95,7 @@ const publicFlags = {
 };
 
 const privateFlags = {
+	Ghost: 1n << 0n,
 	System: 1n << 1n,
 	Bot: 1n << 4n,
 	VerifiedBot: 1n << 5n,
@@ -94,7 +106,9 @@ const permissions = {
 	Administrator: {
 		int: 1n << 0n,
 		group: "role", // ? Groups = role, channel, both. role = Permissions only supported for a role (and not a channel permission override) channel = Permissions only supported for a channel (and not a role) both = Permissions supported for both
-		subPermissions: {} // ? It has them all already
+		subPermissions: {
+			A: 0n
+		} // ? It has them all already
 	},
 	Guild: {
 		int: 1n << 1n,
@@ -131,7 +145,7 @@ const permissions = {
 			ChannelAgeRestriction: 1n << 4n,
 			ChannelInvites: 1n << 5n, // ? If you can view / delete invites
 			ChannelWebhooks: 1n << 6n, // ? If you can view / delete webhooks
-			ChannelParent: 1n << 7n, // ? lets you manage the parent of the channel
+			CreateChannel: 1n << 7n,
 			ChannelPermissionOverrides: 1n << 8n, // ? lets you manage permission overrides
 			DeleteChannel: 1n << 9n, // ? If you can delete channels (or the channel (permission override))
 			ViewChannels: 1n << 10n,
@@ -150,7 +164,6 @@ const permissions = {
 		int: 1n << 4n,
 		group: "role",
 		subPermissions: {
-			MemberNickname: 1n << 0n,
 			MemberRoles: 1n << 1n,
 			MemberDeafen: 1n << 5n,
 			MemberMove: 1n << 6n,
@@ -271,7 +284,8 @@ export default {
 	statusTypes,
 	opCodes,
 	userSendCodes,
-	snowflake
+	snowflake,
+	settings
 };
 
 
@@ -291,5 +305,6 @@ export {
 	statusTypes,
 	opCodes,
 	userSendCodes,
-	snowflake
+	snowflake,
+	settings
 };

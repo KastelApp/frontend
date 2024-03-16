@@ -1,5 +1,4 @@
 import { Dispatch, FormEvent, SetStateAction, useState } from "react";
-// import { useRecoilState } from "recoil";
 // import { clientStore } from "@/utils/stores.ts";
 // import { useRouter } from "next/router";
 import {
@@ -81,6 +80,8 @@ const JoinServer = ({
 
       return;
     }
+
+    console.log(inviteLink);
 
     // const inviteCode = getLastParam(inviteLink);
     // const inviteFetch = await client.fetchInvite(inviteCode);

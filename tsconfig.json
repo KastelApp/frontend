@@ -1,7 +1,11 @@
 {
   "compilerOptions": {
     "target": "ES2021",
-    "lib": ["dom", "dom.iterable", "esnext"],
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
@@ -14,10 +18,15 @@
     "jsx": "preserve",
     "incremental": true,
     "paths": {
-      "$/*": ["./src/wrapper/*"],
-      "@/*": ["./src/*"],
+      "$/*": [
+        "./src/wrapper/*"
+      ],
+      "@/*": [
+        "./src/*"
+      ],
     },
-    "allowImportingTsExtensions": true
+    "allowImportingTsExtensions": true,
+    "experimentalDecorators": true,
   },
   "include": [
     "next-env.d.ts",
@@ -28,7 +37,11 @@
     "sentry.server.config.ts",
     "sentry.edge.config.ts",
     "next-seo.config.mjs",
-    "gitinfo.mjs"
-, "src/wrapper/WebSocket/heartbeat.worker.mjs"  ],
-  "exclude": ["node_modules"]
+    "gitinfo.mjs",
+    "webpack.config.mjs",
+    "src/wrapper/WebSocket/heartbeat.worker.mjs"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
 }

@@ -13,22 +13,19 @@ import {
 import { AiOutlineMenu } from "react-icons/ai";
 import NextLink from "next/link";
 import { useEffect, useState } from "react";
-import { useRecoilState } from "recoil";
-import { isDesktop } from "@/utils/stores.ts";
+import { useIsDesktop, useTokenStore } from "@/utils/stores.ts";
 
 const Navbar = () => {
   const bg = useColorModeValue("white", "gray.900");
   const buttonColor = useColorModeValue("#000b2e", "#d1dcff");
   const mobileNav = useDisclosure();
-  const [token, setToken] = useState(false);
-  const [desktop] = useRecoilState(isDesktop);
+  const [hasToken, setHasToken] = useState(false);
+  const { token } = useTokenStore()
+  const desktop = useIsDesktop((state) => state.isDesktop);
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-
-    if (token) setToken(true);
-    if (token === '""') setToken(false);
-  }, []);
+    if (token) setHasToken(true);
+  }, [token]);
 
   return (
     <>
@@ -88,7 +85,7 @@ const Navbar = () => {
                   </Button>
                 </NextLink>
               </HStack>
-              <a href={token ? "/app" : "/login"}>
+              <NextLink href={hasToken ? "/app" : "/login"} passHref>
                 <Button
                   _hover={{
                     bgGradient: "linear(to-r, red.400,pink.400)",
@@ -98,9 +95,9 @@ const Navbar = () => {
                   color={"white"}
                   size="sm"
                 >
-                  {token ? "Open App" : "Login"}
+                  {hasToken ? "Open App" : "Login"}
                 </Button>
-              </a>
+              </NextLink>
               <Box
                 display={{
                   base: "inline-flex",

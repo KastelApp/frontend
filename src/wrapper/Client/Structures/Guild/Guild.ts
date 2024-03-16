@@ -1,9 +1,7 @@
 import Websocket from "$/WebSocket/WebSocket.ts";
-import { Guild as RawGuild } from "$/types/payloads/ready.ts";
-import { channelStore, memberStore, roleStore } from "$/utils/Stores.ts";
+import { ChannelProperty, Guild as RawGuild } from "$/types/payloads/ready.ts";
 import StringFormatter from "$/utils/StringFormatter.ts";
-import { getRecoil } from "recoil-nexus";
-
+import createGsetters from "$/utils/createGsetters.ts";
 class Guild {
     #ws: Websocket;
 
@@ -15,76 +13,74 @@ class Guild {
         this.#ws = ws;
     }
 
-    public name: string;
+    @createGsetters("guild")
+    private _name: string;
+    public name!: string;
 
-    public description: string | null;
+    @createGsetters("guild")
+    private _description: string | null;
+    public description!: string | null;
 
-    public features: string[];
+    @createGsetters("guild")
+    private _features: string[];
+    public features!: string[];
 
-    public id: string;
+    @createGsetters("guild")
+    private _id: string;
+    public id!: string;
 
-    public icon: string | null;
+    @createGsetters("guild")
+    private _icon: string | null;
+    public icon!: string | null;
 
-    public ownerId: string;
+    @createGsetters("guild")
+    private _ownerId: string;
+    public ownerId!: string;
 
-    public coOwnerIds: string[];
+    @createGsetters("guild")
+    private _coOwnerIds: string[];
+    public coOwnerIds!: string[];
 
-    public maxMembers: number;
+    @createGsetters("guild")
+    private _maxMembers: number;
+    public maxMembers!: number;
 
-    public flags: number;
+    @createGsetters("guild")
+    private _flags: number;
+    public flags!: number;
 
-    public partial: boolean;
+    @createGsetters("guild")
+    private _partial: boolean;
+    public partial!: boolean;
+    
+    @createGsetters("guild")
+    private _properties: ChannelProperty[];
+    public properties!: ChannelProperty[];
 
     public constructor(ws: Websocket, data: Partial<RawGuild>, partial = false) { // ? Partial guilds should be rare, they are from invites (or if the guild is unavailable)
         this.#ws = ws;
 
-        this.name = data.name ?? "Unknown Guild";
+        this._name = data.name ?? "Unknown Guild";
 
-        this.description = data.description ?? null;
+        this._description = data.description ?? null;
 
-        this.features = data.features ?? [];
+        this._features = data.features ?? [];
 
-        this.id = data.id ?? "";
+        this._id = data.id ?? "";
 
-        this.icon = data.icon ?? null;
+        this._icon = data.icon ?? null;
 
-        this.ownerId = data.owner?.id ?? "";
+        this._ownerId = data.owner?.id ?? "";
 
-        this.coOwnerIds = data.coOwners?.map((o) => o.id) ?? [];
+        this._coOwnerIds = data.coOwners?.map((o) => o.id) ?? [];
 
-        this.maxMembers = data.maxMembers ?? 0;
+        this._maxMembers = data.maxMembers ?? 0;
 
-        this.flags = data.flags ?? 0;
+        this._flags = data.flags ?? 0;
 
-        this.partial = partial;
-    }
+        this._partial = partial;
 
-    public get members() {
-        return getRecoil(memberStore).filter((m) => m.guildId === this.id);
-    }
-
-    public get channels() {
-        return getRecoil(channelStore).filter((c) => c.guildId === this.id);
-    }
-
-    public get owner() {
-        return this.members.find((m) => m.guildId === this.id && m.userId === this.ownerId);
-    }
-
-    public get coOwners() {
-        return this.members.filter((m) => m.guildId === this.id && this.coOwnerIds.includes(m.userId));
-    }
-
-    public get roles() {
-        return getRecoil(roleStore).filter((r) => r.guildId === this.id);
-    }
-
-    public get memberCount() {
-        return this.members.length;
-    }
-
-    public get channelCount() {
-        return this.channels.length;
+        this._properties = data.channelProperties ?? [];
     }
 
     // todo: add options
@@ -99,6 +95,28 @@ class Guild {
 
             return;
         }
+    }
+
+    public async delete() {
+        if (this.partial) {
+            StringFormatter.log(
+                `${StringFormatter.purple("[Wrapper]")} ${StringFormatter.green("[Guild]")} ${StringFormatter.white(`[${this.id} (${this.name})] Cannot delete a partial guild.`)}`
+            )
+
+            return;
+        }
+
+        const request = await this.#ws.client?.api.delete(`/guilds/${this.id}`);
+
+        if (!request?.ok || request.status !== 204) {
+            StringFormatter.log(
+                `${StringFormatter.purple("[Wrapper]")} ${StringFormatter.green("[Guild]")} ${StringFormatter.white(`[${this.id} (${this.name})] Failed to delete guild.`)}`
+            )
+
+            return false;
+        }
+
+        return true;
     }
 }
 

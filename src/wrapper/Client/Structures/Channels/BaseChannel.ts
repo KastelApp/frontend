@@ -2,11 +2,12 @@ import type DMBasedChannel from "./DMBasedChannel.ts";
 import type TextBasedChannel from "./TextBasedChannel.ts";
 import type VoiceBasedChannel from "./VoiceBasedChannel.ts";
 import type CategoryChannel from "./CategoryChannel.ts";
+import type MarkdownBasedChannel from "./MarkdownBasedChannel.ts";
 import { Channel, PermissionOverrides } from "$/types/payloads/ready.ts";
 import Websocket from "$/WebSocket/WebSocket.ts";
-import { getRecoil } from "recoil-nexus";
-import { guildStore } from "$/utils/Stores.ts";
 import constants from "$/utils/constants.ts";
+import createGsetters from "$/utils/createGsetters.ts";
+
 
 class BaseChannel {
     #ws: Websocket;
@@ -18,69 +19,87 @@ class BaseChannel {
     public set ws(ws: Websocket) {
         this.#ws = ws;
     }
+    
+    @createGsetters("channel")
+    private _name: string;
+    public name!: string;
+ 
+    @createGsetters("channel")
+    private _description: string | null;
+    public description!: string | null;
+ 
+    @createGsetters("channel")
+    private _id: string;
+    public id!: string;
+ 
+    @createGsetters("channel")
+    private _parentId: string | null;
+    public parentId!: string | null;
+ 
+    @createGsetters("channel")
+    private _ageRestricted: boolean;
+    public ageRestricted!: boolean;
+ 
+    @createGsetters("channel")
+    private _slowmode: number;
+    public slowmode!: number;
+ 
+    @createGsetters("channel")
+    private _type: number;
+    public type!: number;
+ 
+    @createGsetters("channel")
+    private _childrenIds: string[];
+    public childrenIds!: string[];
 
-    public name: string;
-
-    public description: string | null;
-
-    public id: string;
-
-    public parentId?: string;
-
-    public ageRestricted: boolean;
-
-    public slowmode: number;
-
-    public type: number;
-
-    public childrenIds: string[];
-
-    public permissionOverrides: PermissionOverrides;
-
-    public position: number;
-
-    public partial: boolean;
-
-    public guildId: string;
+    @createGsetters("channel")
+    private _permissionOverrides: PermissionOverrides;
+    public permissionOverrides!: PermissionOverrides;
+ 
+    @createGsetters("channel")
+    private _position: number;
+    public position!: number;
+ 
+    @createGsetters("channel")
+    private _partial: boolean;
+    public partial!: boolean;
+ 
+    @createGsetters("channel")
+    private _guildId: string;
+    public guildId!: string;
+    
+    @createGsetters("channel")
+    private _lastMessageId: string | null;
+    public lastMessageId!: string | null;
 
     public constructor(ws: Websocket, data: Partial<Channel>, guildId?: string, partial = false) {
         this.#ws = ws;
 
-        this.name = data.name ?? "Unknown Channel";
+        this._name = data.name ?? "Unknown Channel";
 
-        this.description = data.description ?? null;
+        this._description = data.description ?? null;
 
-        this.id = data.id ?? "";
+        this._id = data.id ?? "";
 
-        this.parentId = data.parentId;
+        this._parentId = data.parentId ?? null;
 
-        this.ageRestricted = data.ageRestricted ?? false;
+        this._ageRestricted = data.ageRestricted ?? false;
 
-        this.slowmode = data.slowmode ?? 0;
+        this._slowmode = data.slowmode ?? 0;
 
-        this.type = data.type ?? 0;
+        this._type = data.type ?? 0;
 
-        this.childrenIds = data.children ?? [];
+        this._childrenIds = data.children ?? [];
 
-        this.permissionOverrides = data.permissionOverrides ?? {};
+        this._permissionOverrides = data.permissionOverrides ?? {};
 
-        this.position = data.position ?? 0;
+        this._position = data.position ?? 0;
 
-        this.guildId = guildId ?? "";
+        this._guildId = guildId ?? "";
 
-        this.partial = partial;
-    }
+        this._partial = partial;
 
-    public get parent() {
-        return this.guild!.channels.find((c) => c.id === this.parentId);
-    }
-
-    public get children() {
-        return this.guild!.channels.filter((c) => this.childrenIds.includes(c.id));
-    }
-
-    public get guild() {
-        return getRecoil(guildStore).find((g) => g.id === this.guildId);
+        this._lastMessageId = data.lastMessageId ?? null;
     }
 
     public isDmBased(): this is DMBasedChannel {
@@ -98,6 +117,11 @@ class BaseChannel {
     public isCategory(): this is CategoryChannel{
         return this.type === constants.channelTypes.GuildCategory;
     }
+
+    public isMarkdownBased(): this is MarkdownBasedChannel {
+        return this.type === constants.channelTypes.GuildMarkdown;
+    }
 }
+
 
 export default BaseChannel;

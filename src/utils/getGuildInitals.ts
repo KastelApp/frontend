@@ -1,5 +1,5 @@
 const getInitials = (name: string) => {
-  const words = name.split(" ");
+  const words = name?.split(" ") ?? "UNKNOWN";
 
   if (words.length === 1) {
     return words[0].charAt(0).toUpperCase();

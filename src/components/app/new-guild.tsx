@@ -31,9 +31,10 @@ import {
   useRef,
   useState,
 } from "react";
-import { useRecoilState } from "recoil";
-import { clientStore } from "@/utils/stores";
+import { useClientStore } from "@/utils/stores";
 import JoinServer from "./joinGuild.tsx";
+import constants from "$/utils/constants.ts";
+import Permissions from "$/Client/Structures/BitFields/Permissions.ts";
 // import { useRouter } from "next/router";
 
 const NewGuild = () => {
@@ -108,6 +109,7 @@ const NewServerForm = ({
   };
   setForm: Dispatch<SetStateAction<number>>;
 }) => {
+  const client = useClientStore((s) => s.client);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<
     {
@@ -115,7 +117,6 @@ const NewServerForm = ({
       message: string;
     }[]
   >([]);
-  const [client] = useRecoilState(clientStore);
   // const router = useRouter();
 
   const submit = async (
@@ -147,9 +148,41 @@ const NewServerForm = ({
       return;
     }
 
+    const categoryId = client.snowflake.generate();
+
     const guild = await client.createGuild({
       name,
-      description: "",
+      features: [],
+      channels: [
+        {
+          name: "General",
+          type: constants.channelTypes.GuildCategory,
+          id: categoryId,
+        },
+        {
+          name: "lounge",
+          type: constants.channelTypes.GuildText,
+          parentId: categoryId,
+        }
+      ],
+      roles: [
+        {
+          name: "everyone",
+          position: 0,
+          everyone: true,
+          permissions: new Permissions([]).add([
+            "ChangeNickname",
+            "CreateInvite",
+            "ViewMessageHistory",
+            "ViewChannels",
+            "UseExternalEmojis",
+            "UseChatFormatting",
+            "SendMessages",
+            "Nickname",
+            "EmbedLinks"
+          ]).normizedBits
+        }
+      ]
     });
 
     console.log(guild);
@@ -176,6 +209,7 @@ const NewServerForm = ({
     // }
 
     setLoading(false);
+
     modal.onClose();
   };
 

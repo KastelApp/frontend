@@ -1,32 +1,16 @@
 /* eslint-disable @typescript-eslint/no-unsafe-declaration-merging */
-import { encoding, status, websocketSettings } from "$/types/ws.ts";
-import { atom } from "recoil";
+import { encoding, status, WebsocketSettings } from "$/types/ws.ts";
 import StringFormatter from "$/utils/StringFormatter.ts";
-import { getRecoil, setRecoil } from "recoil-nexus";
 import constants, { opCodes } from "$/utils/constants.ts";
 import { Identify } from "$/types/events.ts";
 import hello from "./Events/Hello.ts";
+import eventEvent from "./Events/Event.ts";
 import ready from "./Events/Ready.ts";
 import Client from "$/Client/Client.ts";
 import Events from "$/utils/Events.ts";
 import Snowflake from "$/utils/Snowflake.ts";
 
-export const testStatusStore = atom<status>({
-    default: "Disconnected",
-    key: "testStatus",
-});
-
-export const beenConnectedSince = atom<number>({
-    default: 0,
-    key: "beenConnectedSince",
-});
-
-export const pingStore = atom<number>({
-    default: 0,
-    key: "ping",
-});
-
-export type events = "offline" | "online" | "statusUpdate"
+export type events = "offline" | "online" | "statusUpdate";
 
 interface Websocket {
     on(event: "statusUpdate", listener: (status: status) => void): this;
@@ -48,7 +32,22 @@ class Websocket extends Events {
 
     #token: string = "";
 
-    public status: status = "Disconnected";
+    public _status: status = "Disconnected";
+
+    public set status(status: status) {
+
+        StringFormatter.log(
+            `${StringFormatter.purple("[Wrapper]")} ${StringFormatter.green("[WebSocket]")} ${StringFormatter.white("Changing status to")} ${StringFormatter.orange(status)} ${StringFormatter.white("from")} ${StringFormatter.orange(this._status)}`
+        );
+
+        this._status = status;
+
+        this.emit("statusUpdate", status);
+    }
+
+    public get status() {
+        return this._status;
+    }
 
     public sessionId: string = "";
 
@@ -66,9 +65,9 @@ class Websocket extends Events {
 
     private connectedAt: number = 0;
 
-    private maxAttempts: number = 5;
+    private maxAttempts: number = 15;
 
-    private timeout: number = 2_000;
+    private timeout: number = 1_000;
 
     private currentAttempt: number = 0;
 
@@ -78,7 +77,7 @@ class Websocket extends Events {
 
     public snowflake = new Snowflake(constants.snowflake.Epoch, constants.snowflake.WorkerId, constants.snowflake.ProcessId, constants.snowflake.TimeShift, constants.snowflake.WorkerIdBytes, constants.snowflake.ProcessIdBytes);
 
-    public constructor(opts: Partial<websocketSettings>, client?: Client) {
+    public constructor(opts: Partial<WebsocketSettings>, client?: Client) {
         super();
 
         this.compression = opts.compress ?? true;
@@ -104,20 +103,6 @@ class Websocket extends Events {
                 this.emit("online");
             });
         }
-
-        setInterval(() => {
-            const lastStatusType = getRecoil(testStatusStore);
-
-            if (this.status === lastStatusType) return;
-
-            StringFormatter.log(
-                `${StringFormatter.purple("[Wrapper]")} ${StringFormatter.green("[WebSocket]")} ${StringFormatter.white("Changing status to")} ${StringFormatter.orange(this.status)}`
-            );
-
-            setRecoil(testStatusStore, this.status);
-
-            this.emit("statusUpdate", this.status);
-        }, 200);
     }
 
     public connect(token: string) {
@@ -131,13 +116,34 @@ class Websocket extends Events {
 
         if (this.status === "Offline" || this.status === "Reconnecting" || this.status === "Resuming") return;
 
-        this.status = "Connecting";
+
+        if (!token) {
+            StringFormatter.log(
+                `${StringFormatter.purple("[Wrapper]")} ${StringFormatter.green("[WebSocket]")} ${StringFormatter.white("No token provided")}`
+            );
+
+            return;
+        }
 
         this.#token = token;
+
+        this.status = "Connecting";
 
         this.#ws = new WebSocket(`${this.url}/?version=${this.version}&encoding=${this.encoding}&compress=${this.compression}`);
 
         this.handleOpen();
+    }
+
+    public get token() {
+        return this.#token;
+    }
+
+    public set token(token: string) {
+        this.#token = token;
+
+        if (this.#ws && this.#ws.readyState === WebSocket.OPEN) {
+            this.#ws.close();
+        }
     }
 
     public reconnect(): Promise<void> {
@@ -145,28 +151,28 @@ class Websocket extends Events {
             if (this.#ws && this.#ws.readyState === WebSocket.OPEN) {
                 this.#ws.close();
             }
-    
+
             if (this.currentAttempt >= this.maxAttempts) {
                 this.status = "UnRecoverable";
-    
+
                 return resolve();
             }
-    
+
             if (this.status === "Offline") return resolve();
-    
+
             this.status = "Reconnecting";
-    
+
             this.currentAttempt++;
-    
+
             setTimeout(() => {
                 this.#ws = new WebSocket(`${this.url}/?version=${this.version}&encoding=${this.encoding}&compress=${this.compression}`);
-        
+
                 this.handleOpen();
 
                 resolve();
             }, this.timeout);
 
-        })
+        });
     }
 
     private handleOpen() {
@@ -180,8 +186,6 @@ class Websocket extends Events {
 
         this.#ws.onopen = () => {
             this.connectedAt = Date.now();
-
-            setRecoil(beenConnectedSince, Date.now());
 
             this.status = "Connected";
         };
@@ -200,9 +204,8 @@ class Websocket extends Events {
 
             const parsed = this.parseMessageData(event.data);
 
-            if (parsed.seq) this.sequence = parsed.seq;
-
-            console.log(parsed);
+            // never trust the server :3 (for now until I fix any issues relating to sequence numbers)
+            if (parsed.seq) this.sequence++;
 
             switch (parsed.op) {
                 case opCodes.hello: {
@@ -210,18 +213,27 @@ class Websocket extends Events {
 
                     break;
                 }
+
                 case opCodes.ready: {
                     ready(this, parsed.data);
 
+                    this.sequence = parsed.seq ?? 1;
+
                     break;
                 }
+
                 case opCodes.heartbeatAck: {
                     this.lastHeartbeatAck = Date.now();
 
-                    setRecoil(pingStore, this.lastHeartbeatAck - this.lastHeartbeatSent);
+                    break;
+                }
+
+                case opCodes.event: {
+                    eventEvent(this, parsed);
 
                     break;
                 }
+
                 default: {
                     StringFormatter.log(
                         `${StringFormatter.purple("[Wrapper]")} ${StringFormatter.green("[WebSocket]")} ${StringFormatter.white("Received unknown opcode")}`,
@@ -249,6 +261,16 @@ class Websocket extends Events {
                 `${StringFormatter.purple("[Wrapper]")} ${StringFormatter.green("[WebSocket]")} ${StringFormatter.white("Disconnected")}`,
                 event
             );
+
+            if (event.code === 4001) {
+                this.status = "UnAuthed";
+
+                StringFormatter.log(
+                    `${StringFormatter.purple("[Wrapper]")} ${StringFormatter.green("[WebSocket]")} ${StringFormatter.white("Invalid token, or no token was provided")}`
+                );
+
+                return;
+            }
 
             await this.reconnect();
         };

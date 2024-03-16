@@ -1,14 +1,17 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-unsafe-declaration-merging */
+import API from "$/API/API.ts";
 import Websocket from "$/WebSocket/WebSocket.ts";
 import { ClientOptions } from "$/types/client.ts";
 import { LoginOptions, RegisterAccountOptions, RegisterLoginResponse } from "$/types/client/RegisterAndLogin.ts";
+import { ApiLoginOptions, LoginResponse } from "$/types/http/auth/login.ts";
+import { ApiRegisterOptions, RegisterResponse } from "$/types/http/auth/register.ts";
+import { isErrorResponse } from "$/types/http/error.ts";
+import { CreateGuildOptions } from "$/types/http/guilds/createGuild.ts";
 import { status } from "$/types/ws.ts";
 import Events from "$/utils/Events.ts";
 import Snowflake from "$/utils/Snowflake.ts";
-import { guildStore, roleStore, channelStore, inviteStore, memberStore, settingsStore, userStore } from "$/utils/Stores.ts";
 import constants from "$/utils/constants.ts";
-import { getRecoil } from "recoil-nexus";
 
 type events = "unAuthed" | "ready" | "unReady" | "statusUpdate";
 
@@ -20,6 +23,7 @@ interface Client {
     emit(event: "statusUpdate", status: status): boolean;
     emit(event: "unAuthed"): boolean;
     emit(event: "ready"): boolean;
+    emit(event: "unReady"): boolean;
 }
 
 class Client extends Events {
@@ -37,6 +41,8 @@ class Client extends Events {
 
     public snowflake =new Snowflake(constants.snowflake.Epoch, constants.snowflake.WorkerId, constants.snowflake.ProcessId, constants.snowflake.TimeShift, constants.snowflake.WorkerIdBytes, constants.snowflake.ProcessIdBytes);
 
+    public api: API;
+
     public constructor(options: ClientOptions) {
         super();
 
@@ -45,40 +51,147 @@ class Client extends Events {
             encoding: "json",
             url: options.wsUrl ?? "ws://localhost:62240",
             version: options.version ?? "1"
-        });
+        }, this);
 
         this.#ws.on("statusUpdate", (status) => {
             this.emit("statusUpdate", status);
 
             if (status === "Ready") {
                 this.emit("ready")
+            } else if (status === "UnAuthed") {
+                this.emit("unAuthed")
+            } else if (status === "Reconnecting") {
+                this.emit("unReady")
             }
         })
+
+        this.api = new API(options.restOptions ?? {}, this)
+    }
+
+    public get token() {
+        return this.ws.token;
     }
 
     public async register(options: RegisterAccountOptions): Promise<RegisterLoginResponse> {
-        return {
-            errors: {
-                email: true,
-                maxUsernames: false,
-                password: false,
-                unknown: {},
-                username: false
+        const request = await this.api.post<RegisterResponse, ApiRegisterOptions>("/auth/register", {
+            email: options.email,
+            username: options.username,
+            password: options.password,
+            inviteCode: options.inviteCode,
+            platformInviteCode: options.platformInviteCode,
+        }, {
+            noVersion: true
+        });
+
+        if (!request.ok || request.status >= 500) {
+            return {
+                errors: {
+                    email: false,
+                    maxUsernames: false,
+                    password: false,
+                    unknown: {},
+                    username: false,
+                    captchaRequired: false,
+                    internalError: true
+                },
+                success: false
+            }
+        }
+
+        const json = await request.json();
+
+        if (isErrorResponse<{
+            email: {
+                code: "InvalidEmail",
+                message: string
             },
-            success: false
+            username: {
+                code: "MaxUsernames",
+                message: string
+            },
+            platformInvite: {
+                code: "MissingInvite" | "InvalidInvite",
+                message: string
+            }
+        }>(json)) {
+            return {
+                errors: {
+                    email: json.errors.email?.code === "InvalidEmail",
+                    password: false,
+                    internalError: false,
+                    captchaRequired: false,
+                    username: json.errors.username?.code === "MaxUsernames",
+                    maxUsernames: false,
+                    unknown: json.errors
+                },
+                success: false
+            }
+        }
+
+        if (options.resetClient) {
+            this.ws.token = json.token;
+        }
+
+        return {
+            success: true,
+            token: json.token,
+            userData: json.user
         }
     }
 
     public async login(options: LoginOptions): Promise<RegisterLoginResponse> {
+        const request = await this.api.post<LoginResponse, ApiLoginOptions>("/auth/login", {
+            email: options.email,
+            password: options.password,
+        }, {
+            noVersion: true
+        });
+
+        if (!request.ok || request.status >= 500) {
+            return {
+                errors: {
+                    email: false,
+                    maxUsernames: false,
+                    password: false,
+                    unknown: {},
+                    username: false,
+                    captchaRequired: false,
+                    internalError: true
+                },
+                success: false
+            }
+        }
+
+        const json = await request.json();
+
+        if (isErrorResponse<{
+            login: {
+                code: "BadLogin" | "MissingPassword" | "AccountDeleted" | "AccountDataUpdate" | "AccountDisabled",
+                message: string
+            }
+        }>(json)) {
+            return {
+                errors: {
+                    email: json.errors.login?.code === "BadLogin",
+                    password: json.errors.login?.code === "BadLogin",
+                    internalError: false,
+                    captchaRequired: false,
+                    username: false,
+                    maxUsernames: false,
+                    unknown: json.errors
+                },
+                success: false
+            }
+        }
+
+        if (options.resetClient) {
+            this.ws.token = json.token;
+        }
+
         return {
-            errors: {
-                email: true,
-                maxUsernames: false,
-                password: false,
-                unknown: {},
-                username: false
-            },
-            success: false
+            success: true,
+            token: json.token,
+            userData: null
         }
     }
 
@@ -96,59 +209,21 @@ class Client extends Events {
         return this.#ws;
     }
 
-    public get guilds() {
-        return getRecoil(guildStore);
+    public async createGuild(options: CreateGuildOptions): Promise<CreateGuildOptions | null> {
+        const request = await this.api.post<CreateGuildOptions, CreateGuildOptions>("/guilds", options);
+
+        if (!request.ok) {
+            return null;
+        }
+
+        return request.json();
     }
 
-    public get roles() {
-        return getRecoil(roleStore);
+    public async deleteGuild(guildId: string): Promise<boolean> {
+        const request = await this.api.delete(`/guilds/${guildId}`);
+
+        return request.ok;        
     }
-
-    public get channels() {
-        return getRecoil(channelStore);
-    }
-
-    public get invites() {
-        return getRecoil(inviteStore);
-    }
-
-    public get members() {
-        return getRecoil(memberStore);
-    }
-
-    public get settings() {
-        return getRecoil(settingsStore);
-    }
-
-    public get users() {
-        return getRecoil(userStore);
-    }
-
-    public get user() {
-        return this.users.find((user) => user.isClient)!;
-    }
-
-    public get currentGuild() {
-        if (!("window" in globalThis)) return null;
-
-        const match = globalThis.window.location.pathname.match(this.regexes.guild);
-
-        if (!match) return null;
-
-        return this.guilds.find((g) => g.id === match[1]);
-    }
-
-    public get currentChannel() {
-        if (!("window" in globalThis)) return null;
-
-        const match = globalThis.window.location.pathname.match(this.regexes.channel);
-
-        if (!match) return null;
-
-        return this.channels.find((c) => c.id === match[1]);
-    }
-
-    public createGuild(options: { name: string; description: string }) {}
 }
 
 export default Client;

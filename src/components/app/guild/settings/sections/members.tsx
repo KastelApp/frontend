@@ -13,21 +13,16 @@ import {
   Tr,
   useColorModeValue,
 } from "@chakra-ui/react";
-import { useRecoilState } from "recoil";
-import { useEffect, useState } from "react";
-import Member from "$/Client/Structures/Guild/Member.ts";
-import { clientStore } from "@/utils/stores.ts";
+import { useMemberStore, useUserStore } from "$/utils/Stores.ts";
 
 const GuildSettingsMembers = () => {
-  const [client] = useRecoilState(clientStore);
-
-  const [members, setMembers] = useState<Member[]>([]);
-
-  useEffect(() => {
-    if (!client.currentGuild?.members) return;
-
-    setMembers(client.currentGuild?.members);
-  }, [client.currentGuild?.members]);
+  const { users } = useUserStore();
+  const members = useMemberStore((s) => s.getCurrentMembers().map((member) => {
+    return {
+      ...member,
+      user: users.find((u) => u.id === member.userId)!,
+    };
+  }));
 
   return (
     <>
@@ -55,7 +50,6 @@ const GuildSettingsMembers = () => {
               </Thead>
               <Tbody>
                 {members?.map((member, index) => {
-                  console.log("called")
                   return (
                     <Tr key={index}>
                       <Th>
@@ -74,7 +68,7 @@ const GuildSettingsMembers = () => {
                               draggable={"false"}
                               borderRadius={"full"}
                               src={member.user.getAvatarUrl()}
-                              alt={member.user.username || "loading"}
+                              alt={member.user.username ?? "loading"}
                               fit="cover"
                             />
                             <Badge

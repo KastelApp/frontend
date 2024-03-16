@@ -8,5 +8,6 @@
         "id": "1234567890"
       }
     ]
-  }
+  },
+  "example": "Hello {{user.username}}!"
 }

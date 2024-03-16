@@ -10,15 +10,18 @@ import {
   Stack,
   Text,
   useColorModeValue,
+  useDisclosure,
 } from "@chakra-ui/react";
 import Layout from "@/components/layout";
-import { useRecoilState } from "recoil";
-import { clientStore, tokenStore } from "@/utils/stores";
+import { useClientStore, useTokenStore } from "@/utils/stores";
 import Navbar from "@/components/navbar";
-import Script from "next/script";
 import t from "$/utils/typeCheck.ts";
+import Robot from "@/components/Robot.tsx";
+import redirectCleaner from "../utils/redirectCleaner.ts";
+import Link from "next/link";
 
 const Login = () => {
+  const { isOpen, onOpen, onClose } = useDisclosure();
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<
@@ -27,8 +30,13 @@ const Login = () => {
       message: string;
     }[]
   >([]);
-  const [client] = useRecoilState(clientStore);
-  const [token, setToken] = useRecoilState(tokenStore);
+  const { client } = useClientStore();
+  const { token, setToken } = useTokenStore();
+  const [resolve, setResolve] = useState<(k: string) => void>(() => () => { });
+
+  const bg = useColorModeValue("gray.200", "#1A202C");
+  const color = useColorModeValue("gray.900", "gray.100");
+  const hoverColor = useColorModeValue("#000b2e", "#d1dcff");
 
   useEffect(() => {
     router.prefetch("/app");
@@ -49,9 +57,6 @@ const Login = () => {
         password: {
           value: string;
         };
-        "cf-turnstile-response": {
-          value: string;
-        };
       };
     },
   ) => {
@@ -61,19 +66,6 @@ const Login = () => {
 
     const email = event.target.email.value;
     const password = event.target.password.value;
-    const turnstile = event.target["cf-turnstile-response"].value;
-
-    if (!turnstile) {
-      setError([
-        {
-          code: "INVALID_TURNSTILE",
-          message: "Cloudflare turnstile not initiated.",
-        },
-      ]);
-      setLoading(false);
-
-      return;
-    }
 
     if (!t(email, "email")) {
       setError([{ code: "INVALID_EMAIL", message: "Invalid email." }]);
@@ -89,63 +81,74 @@ const Login = () => {
       return;
     }
 
-    const loggedInAccount = await client.login({
-      email,
-      password,
-      resetClient: true,
-    });
+    const attempt = async (turnstile?: string) => {
+      const loggedInAccount = await client!.login({
+        email,
+        password,
+        resetClient: true,
+        turnstile,
+      });
 
-    if (!loggedInAccount) {
-      setError([{ code: "UNKNOWN", message: "Unknown error occurred." }]);
+      if (loggedInAccount.success) {
+        setToken(loggedInAccount.token);
+
+        client.connect(loggedInAccount.token);
+
+        const redirect = router.query.redirect;
+
+        if (typeof redirect === "string") {
+          router.push(redirectCleaner(redirect));
+
+          return;
+        } else {
+          router.push("/app");
+        }
+
+        return;
+      }
+
+      if (loggedInAccount.errors.email || loggedInAccount.errors.password) {
+        setError([
+          {
+            code: "INVALID_EMAIL_PASSWORD",
+            message: "Invalid Email and or Password",
+          },
+        ]);
+      } else if (Object.keys(loggedInAccount.errors.unknown).length > 0) {
+        const firstError = Object.entries(loggedInAccount.errors.unknown).map(
+          ([, obj]) => obj.message,
+        )[0];
+
+        setError([
+          {
+            code: "UNKNOWN",
+            message: firstError,
+          },
+        ]);
+      } else if (loggedInAccount.errors.captchaRequired) {
+        onOpen();
+
+        attempt(await new Promise((res) => {
+          setResolve(() => res);
+        }));
+
+        return;
+      } else {
+        setError([{ code: "UNKNOWN", message: "Unknown error occurred." }]);
+      }
+
       setLoading(false);
+    };
 
-      return;
-    }
-
-    if (loggedInAccount.success) {
-      setToken(loggedInAccount.token);
-
-      client.connect(loggedInAccount.token);
-      router.push("/app");
-
-      return;
-    }
-
-    if (loggedInAccount.errors.email || loggedInAccount.errors.password) {
-      setError([
-        {
-          code: "INVALID_EMAIL_PASSWORD",
-          message: "Invalid Email and or Password",
-        },
-      ]);
-    } else if (loggedInAccount.errors.unknown) {
-      setError([
-        {
-          code: "UNKNOWN",
-          message: `${Object.entries(loggedInAccount.errors.unknown).map(
-            ([k, obj]) => `${k} - ${obj.message}`,
-          )}`,
-        },
-      ]);
-    } else {
-      setError([{ code: "UNKNOWN", message: "Unknown error occurred." }]);
-    }
-
-    setLoading(false);
+    await attempt();
   };
 
   return (
     <>
-      <Script
-        src={"https://challenges.cloudflare.com/turnstile/v0/api.js"}
-        async={true}
-        defer={true}
-      />
-
       <SEO title={"Login"} />
       <Navbar />
       <Layout>
-        <form onSubmit={login}>
+        <form onSubmit={login} id={"login"}>
           {/* @ts-expect-error -- (no clue what the issue is here) */}
           <Box align={"center"} justify={"center"} position={"relative"}>
             {/* @ts-expect-error -- (no clue what the issue is here) */}
@@ -196,31 +199,26 @@ const Login = () => {
                         required={true}
                         type={"email"}
                         placeholder="hello@example.com"
-                        bg={useColorModeValue("gray.200", "#1A202C")}
+                        bg={bg}
                         border={0}
-                        color={useColorModeValue("gray.900", "gray.100")}
+                        color={color}
                         _placeholder={{
-                          color: useColorModeValue("#000b2e", "#d1dcff"),
+                          color: hoverColor,
                         }}
+                        autoComplete="email"
                       />
                       <Input
                         id={"password"}
                         required={true}
                         type={"password"}
                         placeholder="CoolPassword123!"
-                        bg={useColorModeValue("gray.200", "#1A202C")}
+                        bg={bg}
                         border={0}
-                        color={useColorModeValue("gray.900", "gray.100")}
+                        color={color}
                         _placeholder={{
-                          color: useColorModeValue("#000b2e", "#d1dcff"),
+                          color: hoverColor,
                         }}
-                      />
-
-                      <div
-                        className="cf-turnstile checkbox"
-                        data-sitekey={
-                          process.env.NEXT_PUBLIC_CLOUDFLARE_TURNSTILE_SITE_KEY
-                        }
+                        autoComplete="current-password"
                       />
                     </Stack>
 
@@ -261,7 +259,7 @@ const Login = () => {
                       mt={2}
                       direction={["column", "row"]}
                     >
-                      <a href={"/register"}>
+                      <Link href={"/register"}>
                         <Button
                           fontFamily={"heading"}
                           w={"full"}
@@ -274,9 +272,9 @@ const Login = () => {
                         >
                           Create an Account
                         </Button>
-                      </a>
+                      </Link>
 
-                      <a href={"/reset-password"}>
+                      <Link href={"/reset-password"}>
                         <Button
                           fontFamily={"heading"}
                           w={"full"}
@@ -289,15 +287,21 @@ const Login = () => {
                         >
                           Forgot Password?
                         </Button>
-                      </a>
+                      </Link>
                     </Stack>
+
                   </Box>
                 </Box>
+
               </>
             </Container>
           </Box>
         </form>
       </Layout>
+      <Robot isOpen={isOpen} onClose={onClose} onVerify={(key) => {
+        onClose();
+        resolve(key);
+      }} />
     </>
   );
 };

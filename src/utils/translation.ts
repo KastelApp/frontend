@@ -4,6 +4,28 @@ type TranslationType = {
   [key: string]: string | TranslationType;
 };
 
+const defaultFunctions = {
+  date: {
+    now: (type: "uk" | "us" = "us") => {
+      const date = new Date();
+
+      return type === "us"
+        ? `${
+            date.getMonth() + 1
+          }/${date.getDate()}/${date.getFullYear()} ${date.toLocaleTimeString()}`
+        : `${date.getDate()}/${
+            date.getMonth() + 1
+          }/${date.getFullYear()} ${date.toLocaleTimeString()}`;
+    },
+    time: (format: "12" | "24" = "12") => {
+      const date = new Date();
+      return format === "12"
+        ? date.toLocaleTimeString()
+        : `${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;
+    },
+  },
+};
+
 class Translation {
   private currentLanguage: string = "en";
   private translations: Map<string, TranslationType> = new Map();
@@ -112,28 +134,6 @@ class Translation {
   }
 
   private parse(str: string, ...anything: any[]) {
-    const defaultFunctions = {
-      date: {
-        now: (type: "uk" | "us" = "us") => {
-          const date = new Date();
-
-          return type === "us"
-            ? `${
-                date.getMonth() + 1
-              }/${date.getDate()}/${date.getFullYear()} ${date.toLocaleTimeString()}`
-            : `${date.getDate()}/${
-                date.getMonth() + 1
-              }/${date.getFullYear()} ${date.toLocaleTimeString()}`;
-        },
-        time: (format: "12" | "24" = "12") => {
-          const date = new Date();
-          return format === "12"
-            ? date.toLocaleTimeString()
-            : `${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;
-        },
-      },
-    };
-
     const functions = {
       ...defaultFunctions,
       ...anything.reduce((acc, cur) => ({ ...acc, ...cur }), {}),

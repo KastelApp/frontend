@@ -1,274 +1,179 @@
-import { messageStore } from "$/utils/Stores.ts";
+import { useChannelStore, useMemberStore, useRoleStore, useSettingsStore, useUserStore } from "$/utils/Stores.ts";
 import {
-    Badge,
-    Box,
-    Flex,
-    Image,
-    Popover,
-    PopoverTrigger,
-    Text,
-    List,
-    ListItem
+    Box, Flex, Text,
 } from "@chakra-ui/react";
-import { useRecoilState } from "recoil";
-import PopOver from "../members/popover.tsx";
-import { clientStore } from "@/utils/stores.ts";
-import { useEffect, useState } from "react";
+import { memo, useCallback, useMemo } from "react";
+import { ModelData } from "../../markdown/components/mentions/mentionData.tsx";
+import Member from "$/Client/Structures/Guild/Member.ts";
+import UserStruct from "$/Client/Structures/User/User.ts";
+import { Chunk } from "@/utils/chunker.ts";
+import Message from "./message.tsx";
+import InfiniteScroll from "react-infinite-scroll-component";
+import MessageType from "$/Client/Structures/Message.ts";
+import ChannelIcon from "../channels/channelIcon.tsx";
+import SkeletonMessage from "./fakeMessages.tsx";
 
-const getMessageColor = (state: "sending" | "sent" | "failed") => {
-    if (state === "sending") return "gray";
-    if (state === "sent") return "white";
-    if (state === "failed") return "red";
-};
+const generateSkeleton = (length = 50) => {
+    const messages: {
+        chunked: boolean;
+        usernameWidth: number;
+        messageWidth: number;
+        noOfLines: number;
+    }[] = [];
 
-interface User {
-    globalNickname: string;
-    avatar: string;
-    presence: string;
-    username: string;
-    discriminator: string;
-}
+    for (let i = 0; i < length; i++) {
+        let chunked = false;
 
-interface Message {
-    user: User;
-    content: string;
-    time: Date;
-    id: string;
-    state: "sent" | "sending" | "failed";
-    edited: boolean;
-}
+        const lastFourChunked = messages.slice(Math.max(0, i - 4), i).filter(msg => msg.chunked).length;
 
-interface Chunk {
-    user: User;
-    time: Date;
-    messages: Message[];
-}
-
-const messageChunker = (msgs: {
-    user: {
-        globalNickname: string;
-        avatar: string;
-        presence: string;
-        username: string;
-        discriminator: string;
-    };
-    content: string;
-    time: Date;
-    id: string;
-    state: "sent" | "sending" | "failed";
-    edited: boolean;
-}[]): Chunk[] => {
-    /*
-     Messages go from a top to bottom, i.e top being oldest message and bottom being the newest
-     we need to chunk messages. How this works is for example:
-    
-    * 8:00 AM User1: Hello
-    * 8:02 AM User1: Hello 2
-    * 8:04 AM User1: Hello 3
-    
-    These messages should be chunked into one message, the reason for this is simple, its the same user in a row, and the previous message was sent within 15 minutes of the next message
-
-    heres an example of messages that should not be chunked:
-
-    * 8:00 AM User1: Hello
-    * 8:02 AM User2: Hello 2
-    * 8:04 AM User1: Hello 3
-
-    This is because the user changed, so we should not chunk these messages together
-
-    this is another example of messages that should not be chunked:
-
-    * 8:00 AM User1: Hello
-    * 9:00 AM User1: Hello 2
-     
-    This is because the previous message was sent over 15 minutes ago, so we should not chunk these messages together
-
-    */
-
-    const chunkedMessages: Chunk[] = [];
-    let currentChunk: Chunk | null = null;
-
-    for (const msg of msgs) {
-        if (!currentChunk ||
-            currentChunk.user.username !== msg.user.username ||
-            Math.abs(msg.time.getTime()! - currentChunk.time.getTime()) > 15 * 60 * 1000
-        ) {
-            currentChunk = {
-                user: msg.user,
-                time: msg.time,
-                messages: [{
-                    ...msg
-                }]
-            };
-            chunkedMessages.push(currentChunk);
-        } else {
-            currentChunk.messages.push({
-                ...msg
-            });
+        if (lastFourChunked < 3) {
+            if (i !== 0) {
+                const lastMessage = messages[i - 1];
+                chunked = lastMessage.chunked ? Math.random() > 0.15 : Math.random() > 0.35;
+            }
         }
+
+
+        const usernameWidth = Math.floor(Math.random() * 200) - 250;
+        const messageWidth = chunked
+            ? Math.floor(Math.random() * 800) + 600
+            : Math.floor(Math.random() * 700) + 600;
+
+        messages.push({
+            chunked,
+            usernameWidth,
+            messageWidth,
+            noOfLines: 1,
+        });
     }
 
-    return chunkedMessages;
+    return messages;
 };
 
-const Message = ({
-    message
+const GuildMessages = ({
+    chunks,
+    modelData,
+    ready,
+    setData,
+    next,
+    hasMore,
+    fullMessages
 }: {
-    message: {
-        user: {
-            globalNickname: string;
-            avatar: string;
-            presence: string;
-            username: string;
-            discriminator: string;
-        };
-        time: string;
-        content: string;
-        id: string;
-        state: "sent" | "sending" | "failed";
-        edited: boolean;
-        chunked: boolean;
-        hasMore: boolean;
-    };
+    chunks: Chunk[];
+    ready: boolean;
+    modelData: ModelData;
+    setData: (data: { type: "user"; user: UserStruct<boolean>; member?: Member; }) => void;
+    next: () => void;
+    hasMore: boolean;
+    fullMessages: MessageType[]
 }) => {
-    const [client] = useRecoilState(clientStore);
-    const [hovered, setHovered] = useState(false);
+    const members = useMemberStore((s) => s.getCurrentMembers());
+    const { users } = useUserStore();
+    const roles = useRoleStore((s) => s.getCurrentRoles());
+    const { getCurrentChannel } = useChannelStore();
+    const { settings } = useSettingsStore();
+    const fakeMessages = useMemo(() => generateSkeleton(50), []);
+    const currentUser = useUserStore((s) => s.getCurrentUser());
+
+    const msg = useCallback(
+        (
+            message: MessageType,
+            index: number,
+            idx: number,
+        ) => {
+            const member = members.find((m) => m.userId === message.authorId);
+            const memberRoles = roles.filter((r) => member?.roleIds.includes(r.id));
+            const topRole = memberRoles.sort((a, b) => b.position - a.position).find((r) => r.color !== 0);
+            const replyMessage = message.replyingTo ? fullMessages.find((msg) => msg.id === message.replyingTo) ?? null : null;
+            const clientMember = members.find((m) => m.userId === currentUser?.id)!;
+
+            return (
+                <Message
+                    message={message}
+                    chunked={idx !== 0}
+                    hasMore={chunks.length !== index + 1}
+                    key={message.id}
+                    modelData={modelData}
+                    setData={setData}
+                    member={member}
+                    user={users.find((u) => u.id === message.authorId)!}
+                    topRole={topRole}
+                    replyMessage={replyMessage ? {
+                        message: replyMessage,
+                        user: users.find((u) => u.id === replyMessage?.authorId) ?? null,
+                        member: members.find((m) => m.userId === replyMessage?.authorId) ?? null,
+                        topRole: roles.find((r) => r.id === replyMessage?.authorId) ?? null,
+                    } : null}
+                    clientUser={currentUser!}
+                    clientMember={clientMember}
+                />
+            );
+        },
+        [members, users, roles, fullMessages]
+    );
+
+    const msgChunks = useCallback(
+        (message: Chunk, index: number) => (
+            <Box key={index}>
+                {message.messages.map((m, idx) => msg(m, index, idx))}
+            </Box>
+        ),
+        [fullMessages]
+    );
+
+    const Skeleton = memo(() => {
+        return (
+            <Box>
+                {fakeMessages.map((message, index) => (
+                    <SkeletonMessage
+                        chunked={message.chunked}
+                        usernameWidth={message.usernameWidth}
+                        messageWidth={message.messageWidth}
+                        noOfLines={message.noOfLines}
+                        key={index}
+                    />
+                ))}
+            </Box>
+        );
+    });
 
     return (
         <Box
-            key={message.id}
-            _hover={{
-                bg: "rgba(0, 0, 0, 0.1)",
-            }}
-            mt={message.chunked ? 0 : 2}
-            onMouseEnter={() => setHovered(true)}
-            onMouseLeave={() => setHovered(false)}
+            id="scrollableDiv"
+            overflow={"auto"}
+            display={"flex"}
+            flexDir={"column-reverse"}
+            h={settings.navBarLocation === "left" ? "calc(100vh - 125px)" : "calc(100vh - 185px)"}
         >
-            <Popover placement={"right"} >
-                <Flex ml={5}
-                    mt={message.chunked ? 0 : 1.5}
-                >
-                    {!message.chunked && (
-                        <PopoverTrigger>
-                            <Image
-                                draggable={"false"}
-                                borderRadius={"full"}
-                                src={"/icon-1.png"}
-                                alt={message?.user?.username || "loading"}
-                                fit="cover"
-                                boxSize={"32px"}
-                                cursor={"pointer"}
-                                mt={1.5}
-                                userSelect={"none"}
-                            />
-                        </PopoverTrigger>
-                    )}
-                    <Box ml="3" position={"relative"}>
-                        {!message.chunked && (
-                            <Text
-                                cursor={"default"}
-                            >
-                                <PopoverTrigger>
-                                    <Text
-                                        cursor={"pointer"}
-                                        display="inline"
-                                        as={"span"}
-                                    >{message.user.username}</Text>
-                                </PopoverTrigger>
-                                <Badge
-                                    bg={"unset"}
-                                    color={"inherit"}
-                                    textTransform={"unset"}
-                                    fontWeight={"unset"}
-                                    ml="1"
-                                    fontSize={"xx-small"}
-                                >
-                                    {message.time}
-                                </Badge>
-                            </Text>
-                        )}
-                        {message.chunked && hovered && (
-                            <Box position="absolute" left="-5" top="0">
-                                <Badge
-                                    bg={"unset"}
-                                    color={"inherit"}
-                                    textTransform={"unset"}
-                                    fontWeight={"unset"}
-                                    ml="1"
-                                    fontSize={"xx-small"}
-                                    display={"inline"}
-                                    userSelect={"none"}
-                                >
-                                    4:43 AM
-                                </Badge>
+            <InfiniteScroll
+                dataLength={chunks.reduce((acc, curr) => acc + curr.messages.length, 0)}
+                next={next}
+                style={{ display: "flex", flexDirection: "column-reverse" }}
+                inverse={true}
+                hasMore={hasMore}
+                endMessage={
+                    <Box mb={4} mr={16} ml={4}>
+                        <Flex>
+                            <Box display={"flex"} alignItems={"center"} bg={"gray.600"} p={2} borderRadius={9999}>
+                                <ChannelIcon channel={getCurrentChannel()!} svg={{
+                                    width: 32,
+                                    height: 32
+                                }} />
                             </Box>
-                        )}
-                        <Text
-                            fontSize="sm"
-                            color={getMessageColor(message.state)}
-                            transition={"color 0.2s"}
-                            ml={message.chunked ? 8 : 0}
-                            display={"inline"}
-                            cursor={"text"}
-                        >{message.content} <Text
-                            fontSize="x-small"
-                            color={"gray.500"}
-                            transition={"color 0.2s"}
-                            display={"inline"}
-                            as={"span"}
-                            cursor={"default"}
-                            userSelect={"none"}
-                        >{message.edited ? "(edited)" : ""}</Text></Text>
+                        </Flex>
+                        <Text fontSize="xl" fontWeight="bold">Welcome to the #{getCurrentChannel()?.name} channel</Text>
+                        <Text fontSize="md">This is the beginning of the channel.</Text>
                     </Box>
-                </Flex>
-                {!message.chunked && (
-                    <PopOver user={client.members[0].user} member={client.members[0]} />
-                )}
-            </Popover>
+                }
+                loader={
+                    <>
+                    </>
+                }
+                scrollableTarget="scrollableDiv"
+            >
+                {ready ? chunks.map((message, index) => msgChunks(message, index)) : <Skeleton />}
+            </InfiniteScroll>
         </Box>
-    );
-};
-
-const GuildMessages = () => {
-    const [rawMessages] = useRecoilState(messageStore);
-
-    const [messages, setMessages] = useState<Chunk[]>([]);
-
-    useEffect(() => {
-        setMessages(messageChunker(rawMessages));
-    }, [rawMessages]);
-
-    return (
-        <>
-            <Box mb={2} maxHeight="calc(100vh - 100px)" overflowY="auto" ml={-2} mr={-2}>
-                <List spacing={3}>
-                    {messages.map((message, index) => {
-                        return (
-                            <ListItem key={index}>
-                                {message.messages.map((msg, index) => {
-                                    return (
-                                        <Message
-                                            message={{
-                                                ...msg,
-                                                user: message.user,
-                                                time: `Today at ${msg.time.toLocaleTimeString("en-US", {
-                                                    hour: "numeric",
-                                                    minute: "numeric",
-                                                })}`,
-                                                chunked: index !== 0,
-                                                hasMore: index === 0 && message.messages.length > 1
-                                            }}
-                                            key={msg.id}
-                                        />
-                                    );
-                                })}
-                            </ListItem>
-                        );
-                    })}
-                </List>
-                <div id="bottom-chat" />
-            </Box>
-        </>
     );
 };
 
