@@ -11,16 +11,8 @@ import {
   Tr,
   useColorModeValue,
 } from "@chakra-ui/react";
-import { useRecoilState } from "recoil";
-import { clientStore } from "@/utils/stores.ts";
-import { useEffect } from "react";
 
 const SettingsSessions = () => {
-  const [client] = useRecoilState(clientStore);
-
-  useEffect(() => {
-    if (!client) return;
-  }, [client]);
 
   return (
     <>

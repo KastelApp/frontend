@@ -20,7 +20,7 @@ const data: SidebarData[] = [
       { name: "My Profile", badges: [], id: 0, icon: null },
       {
         name: "Invites",
-        badges: [{ name: "New!", color: "#7c2d71" }],
+        badges: [{ name: "Beta", color: "#4F2D7C" }],
         id: 9,
         icon: null,
       },

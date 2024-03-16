@@ -7,15 +7,14 @@ import {
 } from "@chakra-ui/react";
 import SEO from "@/components/seo";
 import Navbar from "@/components/navbar";
-import { useRecoilState } from "recoil";
-import { isDesktop } from "@/utils/stores.ts";
+import { useIsDesktop } from "@/utils/stores.ts";
 import { useEffect } from "react";
 import { useRouter } from "next/router";
 import { useSearchParams } from "next/navigation";
 import Layout from "@/components/layout.tsx";
 
 const OAuthAuthorize = () => {
-  const [desktop] = useRecoilState(isDesktop);
+  const desktop = useIsDesktop((s) => s.isDesktop)
   const router = useRouter();
   const searchParams = useSearchParams();
 

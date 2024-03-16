@@ -1,52 +1,53 @@
-import { BaseChannel, BaseGuild, BaseUser } from "@kastelll/wrapper";
 import SEO from "@/components/seo";
 import Layout from "@/components/layout";
 import { Button, Container, Heading, Stack, Text } from "@chakra-ui/react";
 import Navbar from "@/components/navbar";
-import { useRecoilState } from "recoil";
-import { clientStore, tokenStore } from "@/utils/stores";
+import { useTokenStore } from "@/utils/stores";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import NextLink from "next/link";
+import BaseChannel from "$/Client/Structures/Channels/BaseChannel.ts";
+import User from "$/Client/Structures/User/User";
+import Guild from "$/Client/Structures/Guild/Guild.ts";
 
 interface InviteSuccess {
   channel: BaseChannel;
   code: string;
-  creator: BaseUser;
-  guild: BaseGuild;
+  creator: User;
+  guild: Guild;
   success: true;
 }
 
 const Invite = () => {
   const router = useRouter();
-  const [token] = useRecoilState(tokenStore);
+  const token = useTokenStore((s) => s.token)
   const [loading, setLoading] = useState(true);
-  const [client] = useRecoilState(clientStore);
+  // const [client] = useRecoilState(clientStore);
   const [error, setError] = useState<number | null>(null);
-  const [inviteInfo, setInviteInfo] = useState<InviteSuccess | null>(null);
+  const [inviteInfo,] = useState<InviteSuccess | null>(null);
 
   useEffect(() => {
     if (!token) {
       // todo store guild invite code in local storage
-      router.push("/login");
+      router.push(`/login?redirect=${encodeURIComponent(router.asPath)}`);
     }
   }, []);
 
   useEffect(() => {
     const processInvite = async () => {
       if (router.query.code) {
-        const inviteCode = router.query.code;
-        const inviteFetch = await client.fetchInvite(inviteCode as string);
+        // const inviteCode = router.query.code;
+        // const inviteFetch = await client.fetchInvite(inviteCode as string);
 
         setLoading(false);
 
-        if (!inviteFetch.success) {
-          setError(1);
+        // if (!inviteFetch.success) {
+        //   setError(1);
 
-          return;
-        }
+        //   return;
+        // }
 
-        setInviteInfo(inviteFetch as unknown as InviteSuccess);
+        // setInviteInfo(inviteFetch as unknown as InviteSuccess);
       }
     };
 
@@ -60,17 +61,17 @@ const Invite = () => {
       return;
     }
 
-    const join = await client.joinInvite(inviteInfo.code);
+    // const join = await client.joinInvite(inviteInfo.code);
 
-    if (!join) {
-      setError(1);
+    // if (!join) {
+    //   setError(1);
 
-      return;
-    }
+    //   return;
+    // }
 
-    router.push(
-      `/app/guilds/${inviteInfo?.guild?.id}/channels/${inviteInfo?.channel?.id}}`,
-    );
+    // router.push(
+    //   `/app/guilds/${inviteInfo?.guild?.id}/channels/${inviteInfo?.channel?.id}}`,
+    // );
   };
 
   return (

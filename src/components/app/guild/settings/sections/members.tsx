@@ -13,30 +13,16 @@ import {
   Tr,
   useColorModeValue,
 } from "@chakra-ui/react";
-import { useRecoilState } from "recoil";
-import { currentGuild } from "@/utils/stores.ts";
-import { useEffect, useState } from "react";
-import { GuildMember } from "@kastelll/wrapper";
-
-const avatars = [
-  "/icon.png",
-  "/icon-1.png",
-  "/icon-2.png",
-  "/icon-3.png",
-  "/icon-4.png",
-];
+import { useMemberStore, useUserStore } from "$/utils/Stores.ts";
 
 const GuildSettingsMembers = () => {
-  const [guild] = useRecoilState(currentGuild);
-
-  const [members, setMembers] = useState<GuildMember[]>([]);
-
-  useEffect(() => {
-    if (!guild?.members) return;
-    console.log(guild?.members.toArray());
-
-    setMembers(guild?.members.toArray());
-  }, [guild?.members]);
+  const { users } = useUserStore();
+  const members = useMemberStore((s) => s.getCurrentMembers().map((member) => {
+    return {
+      ...member,
+      user: users.find((u) => u.id === member.userId)!,
+    };
+  }));
 
   return (
     <>
@@ -63,81 +49,71 @@ const GuildSettingsMembers = () => {
                 </Tr>
               </Thead>
               <Tbody>
-                {members?.map((member, index) => (
-                  <Tr key={index}>
-                    <Th>
-                      <Flex py="1.5">
-                        <Box
-                          boxSize="30px"
-                          display="inline-flex"
-                          alignItems="center"
-                          justifyContent="center"
-                          overflow="visible"
-                          lineHeight="none"
-                          borderRadius="full"
-                          position="relative"
-                        >
-                          <Image
-                            draggable={"false"}
-                            borderRadius={"full"}
-                            src={
-                              member?.user?.getAvatarUrl({ size: 128 }) ?? ""
-                            }
-                            fallbackSrc={
-                              avatars[
-                                Number(
-                                  BigInt(member?.user?.id || 1) %
-                                    BigInt(avatars.length),
-                                )
-                              ] || "/icon-1.png"
-                            }
-                            alt={member?.user?.username || "loading"}
-                            fit="cover"
-                          />
-                          <Badge
-                            boxSize="3"
+                {members?.map((member, index) => {
+                  return (
+                    <Tr key={index}>
+                      <Th>
+                        <Flex py="1.5">
+                          <Box
+                            boxSize="30px"
+                            display="inline-flex"
+                            alignItems="center"
+                            justifyContent="center"
+                            overflow="visible"
+                            lineHeight="none"
                             borderRadius="full"
-                            bg={
-                              member?.user?.presence === "online"
-                                ? "green.500"
-                                : member?.user?.presence === "idle"
-                                  ? "yellow.500"
-                                  : member?.user?.presence === "dnd"
-                                    ? "red.500"
-                                    : "gray.500"
-                            }
-                            position="absolute"
-                            bottom="-0.5"
-                            right="-0.5"
-                          />
-                        </Box>
-                        <Box ml="3">
-                          <Text>
-                            {member?.user?.globalNickname ??
-                              member?.user?.username}
-                          </Text>
-                          <Text fontSize="sm">
-                            {member?.user?.username}#
-                            {member?.user?.discriminator}
-                          </Text>
-                        </Box>
-                      </Flex>
-                    </Th>
-                    <Th>
-                      <Text>
-                        {new Date(member?.joinedAt).toLocaleDateString(
-                          "en-US",
-                          {
-                            weekday: "long",
-                            year: "numeric",
-                            month: "long",
-                            day: "numeric",
-                          },
-                        )}
-                      </Text>
-                    </Th>
-                  </Tr>
-                ))}
+                            position="relative"
+                          >
+                            <Image
+                              draggable={"false"}
+                              borderRadius={"full"}
+                              src={member.user.getAvatarUrl()}
+                              alt={member.user.username ?? "loading"}
+                              fit="cover"
+                            />
+                            <Badge
+                              boxSize="3"
+                              borderRadius="full"
+                              bg={
+                                member.user.currentPresence === "online"
+                                  ? "green.500"
+                                  : member.user.currentPresence === "idle"
+                                    ? "yellow.500"
+                                    : member.user.currentPresence === "dnd"
+                                      ? "red.500"
+                                      : "gray.500"
+                              }
+                              position="absolute"
+                              bottom="-0.5"
+                              right="-0.5"
+                            />
+                          </Box>
+                          <Box ml="3">
+                            <Text>
+                              {member.user.displayUsername}
+                            </Text>
+                            <Text fontSize="sm">
+                              {member.user.fullUsername}
+                            </Text>
+                          </Box>
+                        </Flex>
+                      </Th>
+                      <Th>
+                        <Text>
+                          {new Date(member.joinedAt).toLocaleDateString(
+                            "en-US",
+                            {
+                              weekday: "long",
+                              year: "numeric",
+                              month: "long",
+                              day: "numeric",
+                            },
+                          )}
+                        </Text>
+                      </Th>
+                    </Tr>
+                  )
+                })}
               </Tbody>
             </Table>
           </TableContainer>

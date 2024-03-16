@@ -1,71 +1,149 @@
-import { BaseChannel, BaseGuild, Client } from "@kastelll/wrapper";
-import { atom } from "recoil";
-import localStorageEffect from "./effects/localStorage.ts";
 import Translation from "./translation.ts";
+import Client from "$/Client/Client.ts";
+import { create } from "zustand";
+import { persist } from "zustand/middleware"
 
-export const readyStore = atom<boolean>({
-  key: "ready",
-  default: false,
-});
+interface ReadyStore {
+  ready: boolean;
+  setReady: (ready: boolean) => void;
+}
 
-export const tokenStore = atom<string>({
-  key: "token",
-  // @ts-expect-error -- this is fine
-  default: null,
-  effects: [localStorageEffect("token")],
-});
+export const useReadyStore = create<ReadyStore>((set) => ({
+  ready: false,
+  setReady: (ready) => set({ ready }),
+}));
 
-export const clientStore = atom<Client>({
-  key: "client",
-  // @ts-expect-error -- this is fine
-  default: null,
-  dangerouslyAllowMutability: true,
-});
+interface TokenStore {
+  token: string | null;
+  setToken: (token: string) => void;
+  _hasHydrated: boolean;
+  setHasHydrated: (hasHydrated: boolean) => void;
+}
 
-export const currentGuild = atom<BaseGuild>({
-  key: "currentGuild",
-  // @ts-expect-error -- this is fine
-  default: null,
-  dangerouslyAllowMutability: true,
-});
+export const useTokenStore = create<TokenStore>()(
+  persist(
+    (set) => ({
+      token: null,
+      setToken: (token) => set(() => ({ token: token })),
+      _hasHydrated: false,
+      setHasHydrated: (hasHydrated) => set(() => ({ _hasHydrated: hasHydrated })),
+    }),
+    {
+      name: "token",
+      onRehydrateStorage: () => (state) => {
+        state!.setHasHydrated(true);
+      },
+    },
+  ),
+);
 
-export const currentChannel = atom<BaseChannel>({
-  key: "currentChannel",
-  // @ts-expect-error -- this is fine
-  default: null,
-  dangerouslyAllowMutability: true,
-});
+interface ClientStore {
+  client: Client;
+  setClient: (client: Client) => void;
+}
 
-export const guildStore = atom<BaseGuild[]>({
-  key: "guilds",
-  default: [],
-  dangerouslyAllowMutability: true,
-});
+export const useClientStore = create<ClientStore>((set) => ({
+  client: null as unknown as Client,
+  setClient: (client) => set(() => ({ client })),
+}));
 
-export const channelStore = atom<BaseChannel[]>({
-  key: "channels",
-  default: [],
-  dangerouslyAllowMutability: true,
-});
+interface CantConnectStore {
+  cantConnect: boolean;
+  setCantConnect: (cantConnect: boolean) => void;
+}
 
-export const lastChannelCache = atom<Record<string, string[]>>({
-  key: "lastChannelCache",
-  default: {},
-  effects: [localStorageEffect("lastChannelCache")],
-});
+export const useCantConnectStore = create<CantConnectStore>((set) => ({
+  cantConnect: false,
+  setCantConnect: (cantConnect) => set(() => ({ cantConnect })),
+}));
 
-export const collapsedChannels = atom<string[]>({
-  key: "collapsedChannels",
-  default: [],
-  effects: [localStorageEffect("collapsedChannels")],
-});
+interface LastChannelCache {
+  lastChannelCache: Record<string, string>;
+  setLastChannelCache: (lastChannelCache: Record<string, string>) => void;
+  removeChannelFromCache: (guildId: string) => void;
+}
 
-export const isDesktop = atom({
-  key: "isDesktop",
-  default: false,
-});
+export const useLastChannelCache = create<LastChannelCache>()(
+  persist(
+    (set, get) => ({
+      lastChannelCache: {},
+      setLastChannelCache: (lastChannelCache) => set(() => ({ lastChannelCache })),
+      removeChannelFromCache: (guildId) => {
+        const lastChannelCache = get().lastChannelCache;
+        delete lastChannelCache[guildId];
+        set(() => ({ lastChannelCache }));
+      },
+    }),
+    {
+      name: "lastChannelCache",
+    },
+  ),
+);
 
-export const translationStore = atom({
-  key: "translation",
-  default: new Translation(),
-});
+interface CollapsedChannels {
+  collapsedChannels: string[];
+  setCollapsedChannels: (collapsedChannels: string[]) => void;
+}
+
+export const useCollapsedChannels = create<CollapsedChannels>()(
+  persist(
+    (set) => ({
+      collapsedChannels: [],
+      setCollapsedChannels: (collapsedChannels) => set(() => ({ collapsedChannels })),
+    }),
+    {
+      name: "collapsedChannels",
+    },
+  ),
+);
+
+interface IsDesktop {
+  isDesktop: boolean;
+  setIsDesktop: (isDesktop: boolean) => void;
+}
+
+export const useIsDesktop = create<IsDesktop>((set) => ({
+  isDesktop: false,
+  setIsDesktop: (isDesktop) => set(() => ({ isDesktop })),
+}));
+
+interface TranslationStore {
+  translation: Translation;
+  setTranslation: (translation: Translation) => void;
+}
+
+export const useTranslationStore = create<TranslationStore>((set) => ({
+  translation: new Translation(),
+  setTranslation: (translation) => set(() => ({ translation })),
+}));
+
+interface LastStatusStore {
+  lastStatus: string;
+  setLastStatus: (lastStatus: string) => void;
+}
+
+export const useLastStatusStore = create<LastStatusStore>((set) => ({
+  lastStatus: "",
+  setLastStatus: (lastStatus) => set(() => ({ lastStatus })),
+}));
+
+interface ExperimentsStore {
+  experiments: {
+    newChatBox: boolean;
+  }
+  setExperiments: (settings: { newChatBox: boolean; }) => void;
+}
+
+export const usePresistantSettings = create<ExperimentsStore>()(
+  persist(
+    (set) => ({
+      experiments: {
+        newChatBox: false,
+      },
+      setExperiments: (experiments) => set(() => ({ experiments })),
+    }),
+    {
+      name: "experiments",
+    },
+  ),
+);

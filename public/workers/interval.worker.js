@@ -1,88 +1,73 @@
-const OpCodes = {
-  Hello: 0, // Worker > Client
-  Hey: 1, // Client > Worker
-  Heartbeat: 2, // Worker > Client
-  Heartbeated: 3, // Client > Worker
-  StopAll: 4, // Client > Worker
-};
+const codes = {
+  interval: 1, // Client -> Worker
+  stop: 2, // Client -> Worker
+  heartbeat: 3, // Worker -> Client
+  heartbeated: 4, // Client -> Worker
+}
 
 /**
- * @type {{ miniSession: string, interval: NodeJS.Timeout, lastHeartbeat: number, lastHeartbeated: number }[]}
- */
-let intervals = [];
+* @type {Map<string, { interval: NodeJS.Timeout, lastHeartbeat: number, lastHeartbeated: number }> }
+*/
+let intervals = new Map();
 
 onmessage = (event) => {
   if (!event?.data?.op) return console.warn("No op code provided");
 
-  /**
-   * @type {[keyof typeof OpCodes, number]}
-   */
-  const eventName = Object.entries(OpCodes).find(
-    (data) => data[1] === event.data.op,
-  );
+  const { op, data } = event.data;
 
-  const { interval, session } = event.data.data;
+  switch (op) {
+      case codes.interval: {
+          const { interval, session } = data;
 
-  switch (eventName[0]) {
-    case "Hey": {
-      postMessage({ op: OpCodes.Hello });
+          intervals.set(session, {
+              interval: setInterval(() => {
+                  const intervalOfSession = intervals.get(session);
 
-      intervals.push({
-        miniSession: session,
-        interval: setInterval(() => {
-          const intervalOfSession = intervals.find(
-            (x) => x.miniSession === session,
-          );
+                  if (!intervalOfSession) {
+                      clearInterval(intervalOfSession.interval);
+                      return;
+                  }
 
-          if (!intervalOfSession) {
-            clearInterval(intervalOfSession.interval);
-            return;
-          }
+                  if (
+                      intervalOfSession.lastHeartbeated -
+                      intervalOfSession.lastHeartbeat >
+                      10000
+                  ) {
+                      clearInterval(intervalOfSession.interval);
+                      return;
+                  }
 
-          if (
-            intervalOfSession.lastHeartbeated -
-              intervalOfSession.lastHeartbeat >
-            10000
-          ) {
-            clearInterval(intervalOfSession.interval);
-            return;
-          }
+                  postMessage({ op: codes.heartbeat, session });
 
-          postMessage({ op: OpCodes.Heartbeat });
+                  intervalOfSession.lastHeartbeat = Date.now();
+              }, interval),
+              lastHeartbeat: Date.now(),
+              lastHeartbeated: Date.now(),
+          });
 
-          intervalOfSession.lastHeartbeat = Date.now();
-        }, interval),
-      });
-
-      break;
-    }
-    case "Heartbeated": {
-      const intervalOfSession = intervals.find(
-        (x) => x.miniSession === session,
-      );
-
-      if (!intervalOfSession) {
-        clearInterval(intervalOfSession.interval);
-        return;
+          break;
       }
+      case codes.heartbeated: {
+          const { session } = data;
 
-      intervalOfSession.lastHeartbeated = Date.now();
+          const intervalOfSession = intervals.get(session);
 
-      break;
-    }
+          if (!intervalOfSession) return;
 
-    case "StopAll": {
-      for (const interval of intervals) {
-        clearInterval(interval.interval);
+          intervalOfSession.lastHeartbeated = Date.now();
+
+          break;
       }
+      case codes.stop: {
+          const { session } = data;
 
-      break;
-    }
+          const intervalOfSession = intervals.get(session);
 
-    default: {
-      console.warn(`Unknown event name: ${eventName}`);
+          if (!intervalOfSession) return;
 
-      break;
-    }
+          clearInterval(intervalOfSession.interval);
+
+          break;
+      }
   }
-};
+}

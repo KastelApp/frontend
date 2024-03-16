@@ -21,9 +21,8 @@ import {
 } from "@chakra-ui/react";
 import { SmallCloseIcon, ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
 import { ChangeEvent, FormEvent, useRef, useState } from "react";
-import { clientStore } from "@/utils/stores.ts";
-import { useRecoilState } from "recoil";
 import { hideEmail } from "@/utils/hideEmail.ts";
+import { useUserStore } from "$/utils/Stores.ts";
 
 const SettingsProfile = () => {
   const toast = useToast();
@@ -32,7 +31,6 @@ const SettingsProfile = () => {
   const [showEmail, setShowEmail] = useState<boolean>(false);
   const [changeEmail, setChangeEmail] = useState<boolean>(false);
   const [detectedChanges, setDetectedChanges] = useState<boolean>(false);
-  const [client] = useRecoilState(clientStore);
   const [selectedImage, setSelectedImage] = useState<string | undefined>(
     undefined,
   );
@@ -44,6 +42,7 @@ const SettingsProfile = () => {
       message: string;
     }[]
   >([]);
+  const user = useUserStore((s) => s.getCurrentUser()!);
 
   const handleImageChange = async (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -57,11 +56,13 @@ const SettingsProfile = () => {
     };
     reader.readAsDataURL(file);
 
-    const hash = await client.user.uploadAvatar(file); // todo: fix cors error
+    const hash = await user.uploadAvatar(file); // todo: fix cors error
+
     if (hash.success) {
-      await client.user.updateUser({
+      await user.updateUser({
         avatar: hash.hash,
       });
+
       toast({
         title: "Avatar updated.",
         description: "Your avatar has been updated.",
@@ -70,6 +71,7 @@ const SettingsProfile = () => {
         isClosable: true,
       });
     }
+
     console.log(hash);
   };
 
@@ -177,7 +179,7 @@ const SettingsProfile = () => {
 
     console.log(data);
 
-    const res = await client.user.updateUser(data);
+    const res = await user.updateUser(data);
 
     console.log(res);
 
@@ -193,9 +195,11 @@ const SettingsProfile = () => {
 
   const handleDelete = async () => {
     setSelectedImage("/icon-1.png");
-    await client.user.updateUser({
+    
+    await user.updateUser({
       avatar: null,
     });
+    
     toast({
       title: "Avatar removed.",
       description: "Your avatar has been removed.",
@@ -230,10 +234,9 @@ const SettingsProfile = () => {
                   size="xl"
                   src={
                     selectedImage ??
-                    client.user.getAvatarUrl({
+                    user.getAvatarUrl({
                       size: 256,
-                    }) ??
-                    "/icon-1.png"
+                    })
                   }
                   name="avatar-preview"
                   mb={4}
@@ -303,7 +306,7 @@ const SettingsProfile = () => {
                 <Input
                   onChange={() => setDetectedChanges(true)}
                   id={"username"}
-                  defaultValue={client?.user?.username}
+                  defaultValue={user?.username}
                   type="text"
                 />
               </FormControl>
@@ -315,7 +318,7 @@ const SettingsProfile = () => {
                   <Input
                     onChange={() => setDetectedChanges(true)}
                     id={"discriminator"}
-                    defaultValue={client?.user?.discriminator}
+                    defaultValue={user?.tag}
                     type="text"
                     maxLength={4}
                   />
@@ -331,8 +334,8 @@ const SettingsProfile = () => {
                 <Flex>
                   <Text>
                     {showEmail
-                      ? client?.user?.email || ""
-                      : hideEmail(client?.user?.email || "")}
+                      ? user?.email || ""
+                      : hideEmail(user?.email || "")}
                   </Text>
 
                   <Button

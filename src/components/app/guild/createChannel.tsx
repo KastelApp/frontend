@@ -16,9 +16,9 @@ import {
   ModalOverlay,
   Text,
 } from "@chakra-ui/react";
-import { FaHashtag } from "react-icons/fa";
-import { HiSpeakerWave } from "react-icons/hi2";
 import { FormEvent, ReactNode, useState } from "react";
+import ChannelIcon from "./channels/channelIcon.tsx";
+import { channelTypes } from "$/utils/constants.ts";
 
 interface ChannelType {
   name: string;
@@ -32,14 +32,38 @@ const initialChannelTypes: ChannelType[] = [
     name: "Text",
     description: "Send messages in text channels",
     selected: true,
-    icon: <FaHashtag />,
+    icon: <ChannelIcon type={channelTypes.GuildText} />
+  },
+  {
+    name: "Announcement",
+    description: "Important messages from the server",
+    selected: false,
+    icon: <ChannelIcon type={channelTypes.GuildNews} />
+  },
+  {
+    name: "New Members",
+    description: "A channel for new members to visit",
+    selected: false,
+    icon: <ChannelIcon type={channelTypes.GuildText} />
+  },
+  {
+    name: "Rules",
+    description: "Let users know the rules of your server",
+    selected: false,
+    icon: <ChannelIcon type={channelTypes.GuildText} />
   },
   {
     name: "Voice",
     description: "Talk with your friends",
     selected: false,
-    icon: <HiSpeakerWave />,
+    icon: <ChannelIcon type={channelTypes.GuildVoice} />,
   },
+  {
+    name: "Markdown",
+    description: "Have a Markdown based channel",
+    selected: false,
+    icon: <ChannelIcon type={channelTypes.GuildMarkdown} />,
+  }
 ];
 
 const CreateChannel = ({
@@ -81,7 +105,6 @@ const CreateChannel = ({
         <ModalCloseButton mt={2} />
 
         <ModalBody>
-          <form id="create-channel">
             <Text>Channel Type</Text>
             {channelTypes.map((channelType) => (
               <Flex
@@ -101,7 +124,6 @@ const CreateChannel = ({
                   isActive={channelType?.selected}
                 >
                   <Box mt={1} mb={1.5} textAlign="left">
-                    {/* Explicitly set text alignment to the left */}
                     <Text>{channelType?.name}</Text>
                     <Text fontSize="xs">{channelType?.description}</Text>
                   </Box>
@@ -118,11 +140,10 @@ const CreateChannel = ({
                 <Input
                   onChange={handleChange}
                   required={true}
-                  placeholder="new-channel"
+                  placeholder="New-Channel"
                 />
               </InputGroup>
             </FormControl>
-          </form>
         </ModalBody>
 
         <ModalFooter display="flex">
@@ -135,9 +156,7 @@ const CreateChannel = ({
           ) : (
             <Button
               isDisabled={disabled}
-              onClick={() => setLoading(true)}
-              form={"create-channel"}
-              type={"submit"}
+              onClick={() => setLoading(false)}
             >
               Create Channel
             </Button>

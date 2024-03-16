@@ -4,6 +4,7 @@ import {
   Drawer,
   DrawerContent,
   Flex,
+  FlexProps,
   Icon,
   IconButton,
   Text,
@@ -12,6 +13,7 @@ import {
 } from "@chakra-ui/react";
 import { FiMenu } from "react-icons/fi";
 import { ElementType, ReactNode } from "react";
+import DeleteGuildPopup from "./deleteGuildPopup.tsx";
 
 const GuildSettingsSidebar = ({
   selectedPage,
@@ -70,6 +72,8 @@ const SidebarContent = ({
   onClose: () => void;
   [x: string]: unknown;
 }) => {
+  const { isOpen, onOpen, onClose: closeModal } = useDisclosure();
+
   return (
     <Box
       bg={useColorModeValue("#e6e9ef", "#101319")}
@@ -82,6 +86,7 @@ const SidebarContent = ({
       overflow={"scroll"}
       {...rest}
     >
+      <DeleteGuildPopup isOpen={isOpen} onClose={closeModal} closeSettings={onClose} />
       <Box flex="1">
         <Flex alignItems="center" mx="8" justifyContent="space-between">
           <CloseButton
@@ -182,6 +187,19 @@ const SidebarContent = ({
         >
           Members
         </NavItem>
+        <NavItem
+          mt={1}
+          border="2px solid hsl(339, 90%, 51%, 1)"
+          color="hsl(339, 90%, 51%, 1)"
+          _hover={{
+            color: "hsl(339, 90%, 41%, 1)",
+            borderColor: "hsl(339, 90%, 41%, 1)",
+          }}
+          selectedPage={0}
+          onClick={() => {
+            onOpen();
+          }}
+          >Delete Guild</NavItem>
       </Box>
     </Box>
   );
@@ -198,8 +216,7 @@ const NavItem = ({
   id?: number;
   icon?: ElementType | null;
   children?: ReactNode;
-  [x: string]: unknown;
-}) => {
+} & FlexProps) => {
   const background = useColorModeValue("gray.100", "gray.700");
   const backgroundHover = useColorModeValue("gray.200", "gray.600");
 

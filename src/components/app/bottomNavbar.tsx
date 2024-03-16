@@ -17,36 +17,32 @@ import {
   PopoverTrigger,
   SimpleGrid,
   Stack,
+  Text,
   useBreakpointValue,
-  useColorMode,
   useColorModeValue,
-  useDisclosure,
 } from "@chakra-ui/react";
 import Link from "next/link";
 import {
   FaCog,
   FaHome,
   FaRegCompass,
-  FaRegPaperPlane,
   FaSignOutAlt,
 } from "react-icons/fa";
-import Settings from "@/components/app/settings";
-import { useRecoilState } from "recoil";
-import { clientStore, guildStore, tokenStore } from "@/utils/stores";
+import { useClientStore, useTokenStore } from "@/utils/stores";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import Guild from "./guild/guild.tsx";
 import NewGuild from "./new-guild.tsx";
+import { useGuildStore, useUserStore } from "@/wrapper/utils/Stores.ts";
 
-const AppNavbar = () => {
-  const { isOpen, onOpen, onClose } = useDisclosure();
-  const [client] = useRecoilState(clientStore);
-  const [guilds] = useRecoilState(guildStore);
-  const [, setToken] = useRecoilState(tokenStore);
+const AppNavbar = ({ onCustomStatusOpen, onOpen }: { onOpen: () => void, onCustomStatusOpen: () => void; }) => {
+  const currentUser = useUserStore((state) => state.getCurrentUser());
+  const client = useClientStore((state) => state.client);
+  const guilds = useGuildStore((state) => state.guilds);
+  const setToken = useTokenStore((state) => state.setToken);
   const router = useRouter();
   const isSmallScreen = useBreakpointValue({ base: true, sm: false });
-  const { toggleColorMode } = useColorMode();
-  const [status, setStatus] = useState<string>("green");
+  const [status, setStatus] = useState<"green.500" | "orange.400" | "red.600" | "gray.500">("green.500");
 
   const handleLogout = () => {
     if (!client) {
@@ -57,24 +53,11 @@ const AppNavbar = () => {
     }
 
     client.logout();
-    client.setToken(null);
 
     setToken("");
 
     router.push("/");
   };
-
-  useEffect(() => {
-    const mode = localStorage.getItem("chakra-ui-color-mode");
-
-    const theme = client?.user.theme;
-
-    if (!theme) return;
-
-    if (mode !== theme) {
-      toggleColorMode();
-    }
-  }, [client?.user.theme]);
 
   useEffect(() => {
     /*
@@ -84,35 +67,52 @@ const AppNavbar = () => {
      * offline -  3 - gray
      */
 
-    if (client?.user.presence === "online") {
-      setStatus("green");
-    } else if (client?.user.presence === "idle") {
-      setStatus("orange");
-    } else if (client?.user.presence === "dnd") {
-      setStatus("red");
-    } else {
-      setStatus("gray");
+    const isInvisable = currentUser?.presence.some((p) => p.status === "invisible");
+
+    if (isInvisable) {
+      setStatus("gray.500");
+
+      return;
     }
-  }, [client?.user.presence]);
+
+    const current = currentUser?.presence.find((p) => p.current);
+
+    switch (current?.status) {
+      case "dnd": {
+        setStatus("red.600");
+
+        break;
+      }
+
+      case "idle": {
+        setStatus("orange.400");
+
+        break;
+      }
+
+      case "online": {
+        setStatus("green.500");
+
+        break;
+      }
+
+      default: {
+        setStatus("gray.500");
+
+        break;
+      }
+    }
+
+  }, [currentUser?.presence]);
 
   const handleStatusChange = (status: string) => {
     console.log("new status has not been saved. " + status);
   };
 
-  const avatars = [
-    "/icon.png",
-    "/icon-1.png",
-    "/icon-2.png",
-    "/icon-3.png",
-    "/icon-4.png",
-  ];
-
   return (
     <>
-      <Settings isOpen={isOpen} onClose={onClose} />
-
       <Flex
-        zIndex={100}
+        zIndex={2}
         w="full"
         h="14"
         alignItems="center"
@@ -131,7 +131,7 @@ const AppNavbar = () => {
           alignItems="center"
         >
           <Flex id="leftSideBar" alignItems="center" h="full">
-            <HStack id="toolbar" spacing="7">
+            <HStack id="toolbar" spacing="5">
               <Link href="/app">
                 <Box
                   id="home_toolbar"
@@ -141,18 +141,6 @@ const AppNavbar = () => {
                 >
                   {/* home button */}
                   <FaHome size="1.25em" />
-                </Box>
-              </Link>
-
-              <Link href="/app/@me/messages">
-                <Box
-                  id="directMessage_toolbar"
-                  className="group hidden sm:flex justify-center"
-                  cursor="pointer"
-                  display={isSmallScreen ? "none" : "flex"}
-                >
-                  {/* direct message button */}
-                  <FaRegPaperPlane size="1.25em" />
                 </Box>
               </Link>
 
@@ -177,28 +165,14 @@ const AppNavbar = () => {
             </Box>
 
             <Flex id="guilds" height="full" py={2} marginLeft={5}>
-              <>
-                <Flex
-                  overflowX="auto" // Enable horizontal scrolling
-                  maxWidth="calc(100vw - 260px)" // Set a maximum width to prevent overflowing the screen
-                >
-                  {guilds &&
-                    guilds.map((guild) => {
-                      if (!guild?.id) return;
-                      return (
-                        <div
-                          key={guild.id}
-                          // index={index}
-                        >
-                          <>
-                            <Guild key={guild.id} guild={guild} />
-                          </>
-                        </div>
-                      );
-                    })}
-                  <NewGuild />
-                </Flex>
-              </>
+              <Flex
+                overflowX="auto" // Enable horizontal scrolling
+                overflowY="hidden"
+                maxWidth="calc(100vw - 260px)" // Set a maximum width to prevent overflowing the screen
+              >
+                {guilds.map((guild) => <Guild type="bottom" key={guild.id} guild={guild} />)}
+                <NewGuild />
+              </Flex>
             </Flex>
           </Flex>
 
@@ -209,7 +183,7 @@ const AppNavbar = () => {
             marginLeft={"auto"}
           >
             <Flex id="profileData" alignItems="center" py="1.5">
-              <Popover placement="top">
+              <Popover placement="top" isLazy>
                 <PopoverTrigger>
                   <Box py={1} className=" flex ">
                     <Box
@@ -225,17 +199,10 @@ const AppNavbar = () => {
                       <Image
                         draggable={"false"}
                         borderRadius={"full"}
-                        src={client?.user.getAvatarUrl({ size: 128 }) ?? ""}
-                        fallbackSrc={
-                          avatars[
-                            Number(
-                              BigInt(client?.user?.id || 1) %
-                                BigInt(avatars.length),
-                            )
-                          ] || "/icon-1.png"
-                        }
-                        alt={client?.user.username || "Loading"}
+                        src={currentUser?.getAvatarUrl({ size: 128 }) ?? ""}
+                        alt={currentUser?.displayUsername ?? "Loading"}
                         fit="cover"
+                        userSelect={"none"}
                       />
                       <Badge
                         boxSize="3"
@@ -269,7 +236,7 @@ const AppNavbar = () => {
                                 <Badge
                                   onClick={() => handleStatusChange("online")}
                                   variant={
-                                    client?.user.presence === "online"
+                                    currentUser?.currentPresence === "online"
                                       ? "solid"
                                       : "subtle"
                                   }
@@ -281,7 +248,7 @@ const AppNavbar = () => {
                                 <Badge
                                   onClick={() => handleStatusChange("idle")}
                                   variant={
-                                    client?.user.presence === "idle"
+                                    currentUser?.currentPresence === "idle"
                                       ? "solid"
                                       : "subtle"
                                   }
@@ -293,7 +260,7 @@ const AppNavbar = () => {
                                 <Badge
                                   onClick={() => handleStatusChange("dnd")}
                                   variant={
-                                    client?.user.presence === "dnd"
+                                    currentUser?.currentPresence === "dnd"
                                       ? "solid"
                                       : "subtle"
                                   }
@@ -305,7 +272,7 @@ const AppNavbar = () => {
                                 <Badge
                                   onClick={() => handleStatusChange("offline")}
                                   variant={
-                                    client?.user.presence === "offline"
+                                    currentUser?.currentPresence === "offline"
                                       ? "solid"
                                       : "subtle"
                                   }
@@ -318,6 +285,25 @@ const AppNavbar = () => {
                           </AccordionPanel>
                         </AccordionItem>
                       </Accordion>
+                      <Box cursor={"pointer"}>
+                        <Button
+                          w="194px"
+                          variant="ghost"
+                          justifyContent="flex-start"
+                          fontWeight="normal"
+                          fontSize="sm"
+                          onClick={onCustomStatusOpen}
+                        >
+                          <Flex direction="column" align="start">
+                            <Box mb={1} mt={1}>Custom Status</Box>
+                            {currentUser?.customStatus && (
+                              <Text fontSize="xs" color="gray.500">
+                                {currentUser?.customStatus ?? "No custom status"}
+                              </Text>
+                            )}
+                          </Flex>
+                        </Button>
+                      </Box>
 
                       <Button
                         w="194px"

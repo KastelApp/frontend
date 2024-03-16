@@ -13,15 +13,18 @@ import {
   Stack,
   Text,
   useColorModeValue,
+  useDisclosure,
 } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import { FormEvent, useEffect, useState } from "react";
-import { useRecoilState } from "recoil";
-import { clientStore, tokenStore } from "@/utils/stores";
 import Navbar from "@/components/navbar";
-import Script from "next/script";
+import t from "$/utils/typeCheck.ts";
+import Robot from "@/components/Robot.tsx";
+import { useClientStore, useTokenStore } from "@/utils/stores.ts";
+import Link from "next/link";
 
 const Register = () => {
+  const { isOpen, onOpen, onClose } = useDisclosure();
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [terms, setTerms] = useState(false);
@@ -31,8 +34,9 @@ const Register = () => {
       message: string;
     }[]
   >([]);
-  const [client] = useRecoilState(clientStore);
-  const [token, setToken] = useRecoilState(tokenStore);
+  const client = useClientStore((s) => s.client);
+  const { token, setToken } = useTokenStore()
+  const [resolve, setResolve] = useState<(k: string) => void>(() => () => { });
 
   useEffect(() => {
     router.prefetch("/app");
@@ -59,9 +63,6 @@ const Register = () => {
         confirmpassword: {
           value: string;
         };
-        "cf-turnstile-response": {
-          value: string;
-        };
       };
     },
   ) => {
@@ -73,19 +74,6 @@ const Register = () => {
     const email = event.target.email.value;
     const password = event.target.password.value;
     const confirmPassword = event.target.confirmpassword.value;
-    const turnstile = event.target["cf-turnstile-response"].value;
-
-    if (!turnstile) {
-      setError([
-        {
-          code: "INVALID_TURNSTILE",
-          message: "Cloudflare turnstile not initiated.",
-        },
-      ]);
-      setLoading(false);
-
-      return;
-    }
 
     if (password !== confirmPassword) {
       setError([
@@ -96,15 +84,15 @@ const Register = () => {
     }
 
     // Testing against the regexes (which should be the same that the backend uses) helps prevent unnecessary requests.
-    if (!client.EmailRegex.test(email)) {
+    if (!t(email, "email")) {
       setError([{ code: "INVALID_EMAIL", message: "Invalid email." }]);
       setLoading(false);
 
       return;
     }
 
-    if (!client.PasswordRegex.test(password)) {
-      setError([{ code: "INVALID_PASSWORD", message: "Invalid password." }]);
+    if (!t(password, "string") || password.length < 4 || password.length > 72) {
+      setError([{ code: "INVALID_PASSWORD", message: "Invalid password. Must be between 4 and 72" }]);
       setLoading(false);
 
       return;
@@ -122,67 +110,71 @@ const Register = () => {
       return;
     }
 
-    const registeredAccount = await client.registerAccount({
-      email,
-      password,
-      username,
-      resetClient: true,
-    });
+    const attempt = async (turnstile?: string) => {
 
-    if (!registeredAccount) {
-      setError([{ code: "UNKNOWN", message: "Unknown error occurred." }]);
+      const registeredAccount = await client.register({
+        email,
+        password,
+        username,
+        resetClient: true,
+        turnstile
+      });
+
+      if (registeredAccount.success) {
+        setToken(registeredAccount.token);
+
+        client.connect(registeredAccount.token);
+
+        router.push("/app");
+
+        return;
+      }
+
+      if (registeredAccount.errors.email || registeredAccount.errors.password) {
+        setError([
+          {
+            code: "INVALID_EMAIL_PASSWORD",
+            message: "Invalid Email and or Password",
+          },
+        ]);
+      } else if (registeredAccount.errors.username) {
+        setError([
+          {
+            code: "INVALID_USERNAME",
+            message: "Invalid Username (This username may be maxed out)",
+          },
+        ]);
+      } else if (registeredAccount.errors.unknown) {
+        const firstError = Object.entries(registeredAccount.errors.unknown).map(
+          ([, obj]) => obj.message,
+        )[0];
+
+        setError([
+          {
+            code: "UNKNOWN",
+            message: firstError,
+          },
+        ]);
+      } else if (registeredAccount.errors.captchaRequired) {
+        onOpen();
+
+        attempt(await new Promise((res) => {
+          setResolve(() => res);
+        }));
+
+        return;
+      } else {
+        setError([{ code: "UNKNOWN", message: "Unknown error occurred." }]);
+      }
+
       setLoading(false);
+    };
 
-      return;
-    }
-
-    if (registeredAccount.success) {
-      setToken(registeredAccount.token);
-
-      client.connect();
-
-      router.push("/app");
-
-      return;
-    }
-
-    if (registeredAccount.errors.email || registeredAccount.errors.password) {
-      setError([
-        {
-          code: "INVALID_EMAIL_PASSWORD",
-          message: "Invalid Email and or Password",
-        },
-      ]);
-    } else if (registeredAccount.errors.username) {
-      setError([
-        {
-          code: "INVALID_USERNAME",
-          message: "Invalid Username (This username may be maxed out)",
-        },
-      ]);
-    } else if (registeredAccount.errors.unknown) {
-      setError([
-        {
-          code: "UNKNOWN",
-          message: `${Object.entries(registeredAccount.errors.unknown).map(
-            ([k, obj]) => `${k} - ${obj.Message}`,
-          )}`,
-        },
-      ]);
-    } else {
-      setError([{ code: "UNKNOWN", message: "Unknown error occurred." }]);
-    }
-
-    setLoading(false);
+    attempt();
   };
 
   return (
     <>
-      <Script
-        src={"https://challenges.cloudflare.com/turnstile/v0/api.js"}
-        async={true}
-        defer={true}
-      />
       <SEO title={"Register"} />
       <Navbar />
       <Layout>
@@ -245,6 +237,7 @@ const Register = () => {
                           _placeholder={{
                             color: useColorModeValue("#000b2e", "#d1dcff"),
                           }}
+                          autoComplete="username"
                         />
                       </FormControl>
 
@@ -261,6 +254,7 @@ const Register = () => {
                           _placeholder={{
                             color: useColorModeValue("#000b2e", "#d1dcff"),
                           }}
+                          autoComplete="email"
                         />
                       </FormControl>
 
@@ -277,6 +271,7 @@ const Register = () => {
                           _placeholder={{
                             color: useColorModeValue("#000b2e", "#d1dcff"),
                           }}
+                          autoComplete="new-password"
                         />
                       </FormControl>
 
@@ -293,6 +288,7 @@ const Register = () => {
                           _placeholder={{
                             color: useColorModeValue("#000b2e", "#d1dcff"),
                           }}
+                          autoComplete="new-password"
                         />
                       </FormControl>
 
@@ -301,13 +297,6 @@ const Register = () => {
                           I agree to the Terms and Conditions
                         </Checkbox>
                       </Flex>
-
-                      <div
-                        className="cf-turnstile checkbox"
-                        data-sitekey={
-                          process.env.NEXT_PUBLIC_CLOUDFLARE_TURNSTILE_SITE_KEY
-                        }
-                      />
                     </Stack>
 
                     {loading ? (
@@ -347,7 +336,7 @@ const Register = () => {
                       mt={2}
                       direction={["column", "row"]}
                     >
-                      <a href={"/login"}>
+                      <Link href={"/login"}>
                         <Button
                           fontFamily={"heading"}
                           w={"full"}
@@ -360,9 +349,9 @@ const Register = () => {
                         >
                           Have an Account?
                         </Button>
-                      </a>
+                      </Link>
 
-                      <a href={"/reset-password"}>
+                      <Link href={"/reset-password"}>
                         <Button
                           fontFamily={"heading"}
                           w={"full"}
@@ -375,7 +364,7 @@ const Register = () => {
                         >
                           Forgot Password?
                         </Button>
-                      </a>
+                      </Link>
                     </Stack>
                   </Box>
                 </Box>
@@ -384,6 +373,10 @@ const Register = () => {
           </Box>
         </form>
       </Layout>
+      <Robot isOpen={isOpen} onClose={onClose} onVerify={(key) => {
+        onClose();
+        resolve(key);
+      }} />
     </>
   );
 };

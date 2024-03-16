@@ -31,10 +31,11 @@ import {
   useRef,
   useState,
 } from "react";
-import { useRecoilState } from "recoil";
-import { clientStore } from "@/utils/stores";
+import { useClientStore } from "@/utils/stores";
 import JoinServer from "./joinGuild.tsx";
-import { useRouter } from "next/router";
+import constants from "$/utils/constants.ts";
+import Permissions from "$/Client/Structures/BitFields/Permissions.ts";
+// import { useRouter } from "next/router";
 
 const NewGuild = () => {
   const modal = useDisclosure();
@@ -108,6 +109,7 @@ const NewServerForm = ({
   };
   setForm: Dispatch<SetStateAction<number>>;
 }) => {
+  const client = useClientStore((s) => s.client);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<
     {
@@ -115,8 +117,7 @@ const NewServerForm = ({
       message: string;
     }[]
   >([]);
-  const [client] = useRecoilState(clientStore);
-  const router = useRouter();
+  // const router = useRouter();
 
   const submit = async (
     event: FormEvent<HTMLFormElement> & {
@@ -147,35 +148,68 @@ const NewServerForm = ({
       return;
     }
 
-    const guild = await client.guilds.createGuild({
+    const categoryId = client.snowflake.generate();
+
+    const guild = await client.createGuild({
       name,
-      description: "",
+      features: [],
+      channels: [
+        {
+          name: "General",
+          type: constants.channelTypes.GuildCategory,
+          id: categoryId,
+        },
+        {
+          name: "lounge",
+          type: constants.channelTypes.GuildText,
+          parentId: categoryId,
+        }
+      ],
+      roles: [
+        {
+          name: "everyone",
+          position: 0,
+          everyone: true,
+          permissions: new Permissions([]).add([
+            "ChangeNickname",
+            "CreateInvite",
+            "ViewMessageHistory",
+            "ViewChannels",
+            "UseExternalEmojis",
+            "UseChatFormatting",
+            "SendMessages",
+            "Nickname",
+            "EmbedLinks"
+          ]).normizedBits
+        }
+      ]
     });
 
     console.log(guild);
 
-    if (!guild.success) {
-      setLoading(false);
+    // if (!guild.success) {
+    //   setLoading(false);
 
-      setError([
-        {
-          code: "TBA",
-          message: "An error occurred, check logs.",
-        },
-      ]);
+    //   setError([
+    //     {
+    //       code: "TBA",
+    //       message: "An error occurred, check logs.",
+    //     },
+    //   ]);
 
-      return;
-    }
+    //   return;
+    // }
 
-    const firstChannel = guild.guild.channels.find(
-      (channel) => channel.type === "GuildText",
-    );
+    // const firstChannel = guild.guild.channels.find(
+    //   (channel) => channel.type === "GuildText",
+    // );
 
-    if (firstChannel) {
-      router.push(`/app/guilds/${guild.guild.id}/channels/${firstChannel.id}`);
-    }
+    // if (firstChannel) {
+    //   router.push(`/app/guilds/${guild.guild.id}/channels/${firstChannel.id}`);
+    // }
 
     setLoading(false);
+
     modal.onClose();
   };
 

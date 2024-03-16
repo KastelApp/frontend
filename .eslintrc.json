@@ -28,7 +28,9 @@
         "selector": "variable",
         "format": ["camelCase"]
       }
-    ]
+    ],
+    "react/no-unescaped-entities": "off",
+    "react/display-name": "off"
   },
   "parserOptions": {
     "project": "./tsconfig.json"

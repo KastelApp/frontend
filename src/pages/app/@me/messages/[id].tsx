@@ -1,17 +1,16 @@
 import { useEffect } from "react";
 import { useRouter } from "next/router";
-import { useRecoilState } from "recoil";
-import { readyStore, tokenStore } from "@/utils/stores";
+import { useReadyStore, useTokenStore } from "@/utils/stores";
 import Loading from "@/components/app/loading";
 import { Box } from "@chakra-ui/react";
 
 const AtMeMessagesId = () => {
   const router = useRouter();
-  const [token] = useRecoilState(tokenStore);
-  const [ready] = useRecoilState(readyStore);
+  const { token } = useTokenStore();
+  const { ready } = useReadyStore();
 
   useEffect(() => {
-    if (!token) router.push("/login");
+    if (!token) router.push(`/login?redirect=${encodeURIComponent(router.asPath)}`);
   }, [ready]);
 
   return (

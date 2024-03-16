@@ -23,6 +23,7 @@ const nextConfig = {
     NEXT_PUBLIC_CLOUDFLARE_TURNSTILE_SITE_KEY:
       process.env.NEXT_PUBLIC_CLOUDFLARE_TURNSTILE_SITE_KEY,
     PUBLIC_DESKTOP_APP: process.env.KASTEL_DESKTOP_APP,
+    SENTRY_DSN: process.env.SENTRY_DSN,
   },
   sentry: {
     disableServerWebpackPlugin: true,
@@ -30,6 +31,9 @@ const nextConfig = {
   },
   ...(process.env.KASTEL_DESKTOP_APP === "true" && {
     output: "export",
+    images: {
+      unoptimized: true, // ? can't have this in the desktop app (which sucks :()
+    }
   }),
 };
 

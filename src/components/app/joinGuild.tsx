@@ -1,7 +1,6 @@
 import { Dispatch, FormEvent, SetStateAction, useState } from "react";
-import { useRecoilState } from "recoil";
-import { clientStore } from "@/utils/stores.ts";
-import { useRouter } from "next/router";
+// import { clientStore } from "@/utils/stores.ts";
+// import { useRouter } from "next/router";
 import {
   Button,
   FormControl,
@@ -18,6 +17,8 @@ import {
   UnorderedList,
   useColorModeValue,
 } from "@chakra-ui/react";
+import { useRouter } from "next/router";
+import { useClientStore } from "@/utils/stores.ts";
 
 const JoinServer = ({
   modal,
@@ -38,7 +39,7 @@ const JoinServer = ({
       message: string;
     }[]
   >([]);
-  const [client] = useRecoilState(clientStore);
+  const client = useClientStore((s) => s.client);
   const router = useRouter();
 
   const getLastParam = (link: string) => {
@@ -82,25 +83,25 @@ const JoinServer = ({
       return;
     }
 
-    const inviteCode = getLastParam(inviteLink);
-    const inviteFetch = await client.fetchInvite(inviteCode);
+    // const inviteCode = getLastParam(inviteLink);
+    // const inviteFetch = await client.fetchInvite(inviteCode);
 
-    if (!inviteFetch.success) {
-      setLoading(false);
+    // if (!inviteFetch.success) {
+    //   setLoading(false);
 
-      setError([
-        {
-          code: "INVITE",
-          message: "The invite link is invalid or expired.",
-        },
-      ]);
+    //   setError([
+    //     {
+    //       code: "INVITE",
+    //       message: "The invite link is invalid or expired.",
+    //     },
+    //   ]);
 
-      return;
-    }
+    //   return;
+    // }
 
-    const join = await client.joinInvite(inviteCode);
+    const join = await client.joinInvite(getLastParam(inviteLink) as string);
 
-    if (!join) {
+    if (!join.success) {
       setLoading(false);
 
       setError([
@@ -120,7 +121,7 @@ const JoinServer = ({
     modal.onClose();
 
     router.push(
-      `/app/guilds/${inviteFetch?.guild?.id}/channels/${inviteFetch?.channel?.id}}`,
+      `/app/guilds/${join.data?.guild?.id}/channels/${join.data?.channel?.id}}`,
     );
     return;
   };
