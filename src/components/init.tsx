@@ -111,8 +111,10 @@ const Init = () => {
   const whitelistedPaths: (string | RegExp)[] = [
     // ! we want to whitelist /app/* as well as /login and /register just so we can use the client in those spaces
     /^\/app?\/.*/,
+    /^\/reset?\/.*/,
     "/login",
     "/register",
+    "/reset-password",
     "/app"
   ];
 

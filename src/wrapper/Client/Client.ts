@@ -40,7 +40,7 @@ class Client extends Events {
 
     public worker?: Worker; // ? Worker is used to stay alive in the background (since when the tab goes to sleep, the timings for intervals and timeouts are fucked up which will cause the ws to miss a heartbeat)
 
-    public snowflake =new Snowflake(constants.snowflake.Epoch, constants.snowflake.WorkerId, constants.snowflake.ProcessId, constants.snowflake.TimeShift, constants.snowflake.WorkerIdBytes, constants.snowflake.ProcessIdBytes);
+    public snowflake = new Snowflake(constants.snowflake.Epoch, constants.snowflake.WorkerId, constants.snowflake.ProcessId, constants.snowflake.TimeShift, constants.snowflake.WorkerIdBytes, constants.snowflake.ProcessIdBytes);
 
     public api: API;
 
@@ -58,15 +58,15 @@ class Client extends Events {
             this.emit("statusUpdate", status);
 
             if (status === "Ready") {
-                this.emit("ready")
+                this.emit("ready");
             } else if (status === "UnAuthed") {
-                this.emit("unAuthed")
+                this.emit("unAuthed");
             } else if (status === "Reconnecting") {
-                this.emit("unReady")
+                this.emit("unReady");
             }
-        })
+        });
 
-        this.api = new API(options.restOptions ?? {}, this)
+        this.api = new API(options.restOptions ?? {}, this);
     }
 
     public get token() {
@@ -96,7 +96,7 @@ class Client extends Events {
                     internalError: true
                 },
                 success: false
-            }
+            };
         }
 
         const json = await request.json();
@@ -104,16 +104,16 @@ class Client extends Events {
         if (isErrorResponse<{
             email: {
                 code: "InvalidEmail",
-                message: string
+                message: string;
             },
             username: {
                 code: "MaxUsernames",
-                message: string
+                message: string;
             },
             platformInvite: {
                 code: "MissingInvite" | "InvalidInvite",
-                message: string
-            }
+                message: string;
+            };
         }>(json)) {
             return {
                 errors: {
@@ -126,7 +126,7 @@ class Client extends Events {
                     unknown: json.errors
                 },
                 success: false
-            }
+            };
         }
 
         if (options.resetClient) {
@@ -137,7 +137,7 @@ class Client extends Events {
             success: true,
             token: json.token,
             userData: json.user
-        }
+        };
     }
 
     public async login(options: LoginOptions): Promise<RegisterLoginResponse> {
@@ -160,7 +160,7 @@ class Client extends Events {
                     internalError: true
                 },
                 success: false
-            }
+            };
         }
 
         const json = await request.json();
@@ -168,8 +168,8 @@ class Client extends Events {
         if (isErrorResponse<{
             login: {
                 code: "BadLogin" | "MissingPassword" | "AccountDeleted" | "AccountDataUpdate" | "AccountDisabled",
-                message: string
-            }
+                message: string;
+            };
         }>(json)) {
             return {
                 errors: {
@@ -182,7 +182,7 @@ class Client extends Events {
                     unknown: json.errors
                 },
                 success: false
-            }
+            };
         }
 
         if (options.resetClient) {
@@ -193,10 +193,10 @@ class Client extends Events {
             success: true,
             token: json.token,
             userData: null
-        }
+        };
     }
 
-    public async fetchInvite(code: string) {}
+    public async fetchInvite(code: string) { }
 
     public async joinInvite(code: string): Promise<{
         success: boolean;
@@ -214,7 +214,7 @@ class Client extends Events {
                     unknown: true
                 },
                 data: null
-            }
+            };
         }
 
         return {
@@ -223,10 +223,78 @@ class Client extends Events {
                 unknown: false
             },
             data: await request.json()
-        }
+        };
     }
 
-    public async logout() {}
+    public async logout() { }
+
+    public async resetPassword(email: string) {
+        const request = await this.api.post("/auth/forgot", {
+            email
+        }, {
+            noVersion: true
+        });
+
+        return request.ok && request.status < 400;
+    }
+
+    public async changePassword({
+        newPassword,
+        resetClient,
+        token,
+        id
+    }: {
+        newPassword: string;
+        resetClient: boolean;
+        token: string;
+        id: string;
+    }) {
+        const request = await this.api.patch<{
+            token: string;
+            userId: string;
+        }>("/auth/reset", {
+            id,
+            token,
+            password: newPassword
+        }, {
+            noVersion: true
+        });
+
+        if (!request.ok || request.status >= 400) {
+            return {
+                success: request.ok && request.status < 400,
+                token: undefined
+            };
+        }
+
+        const tok = (await request.json()).token as string;
+
+        if (resetClient) {
+            this.ws.token = tok
+        }
+
+        return {
+            success: request.ok && request.status < 400,
+            token: tok
+        };
+    }
+
+    public async valdateAuth({
+        id,
+        token
+    }: {
+        id: string;
+        token: string;
+    }) {
+        const request = await this.api.post("/auth/reset", {
+            id,
+            token
+        }, {
+            noVersion: true
+        });
+
+        return request.ok && request.status < 400;
+    }
 
     public connect(token: string) {
         this.#ws.connect(token);
@@ -249,7 +317,7 @@ class Client extends Events {
     public async deleteGuild(guildId: string): Promise<boolean> {
         const request = await this.api.delete(`/guilds/${guildId}`);
 
-        return request.ok;        
+        return request.ok;
     }
 }
 
