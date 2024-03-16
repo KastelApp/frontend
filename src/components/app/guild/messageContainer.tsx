@@ -77,7 +77,7 @@ const GuildMessageContainer = ({ children }: { children?: React.ReactNode; }) =>
   const [canSendMessages, setCanSendMessages] = useState(true);
 
   useEffect(() => {
-    const ourChannel = typing[currentChannel!.id];
+    const ourChannel = typing[currentChannel?.id ?? ""];
 
     if (!ourChannel) {
       setUsersTyping([]);

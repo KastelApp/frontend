@@ -25,7 +25,7 @@ export const useRoleStore = create<RoleStore>((set, get) => ({
     roles: [] as Role[],
     setRoles: (roles: Role[]) => set({ roles }),
     addRole: (role: Role) => set((state) => ({ roles: [...state.roles, role] })),
-    addRoles: (roles: Role[]) => set((state) => ({ roles: [...state.roles, ...roles] })),
+    addRoles: (roles: Role[]) => set(() => ({ roles: [...get().roles, ...roles] })),
     removeRole: (role: Role) => set((state) => ({ roles: state.roles.filter((r) => r.id !== role.id) })),
     getCurrentRoles: () => {
         if (!("window" in globalThis)) return [];

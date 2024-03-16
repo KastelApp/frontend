@@ -75,7 +75,7 @@ const GuildContent = ({ children, noMemberBar, noChannelTopic, ignoreLimits }: {
   const { users } = useUserStore();
 
   useEffect(() => {
-    if (!currentMember || !currentGuild) return;
+    if (!currentMember || !currentGuild || currentRoles.length === 0) return;
     const newPermHandler = new PermissionHandler(
       currentMember.userId,
       currentMember.owner ?? currentMember.coOwner,

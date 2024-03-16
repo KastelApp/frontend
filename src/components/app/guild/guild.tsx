@@ -30,9 +30,6 @@ const Guild = ({ guild, type }: { guild: GuildClass; type: "left" | "bottom"; })
     }
 
     const memberRoles = roles.filter((role) => currentMember?.roleIds.includes(role.id));
-
-    console.log(memberRoles)
-
     const permissionHandler = new PermissionHandler(clientUser.id, currentMember.owner || currentMember.coOwner, memberRoles, channels.filter((channel) => channel.guildId === guild.id));
     const channelsWeHaveReadAccessTo = channels.filter((channel) => channel.guildId === guild.id && permissionHandler.hasChannelPermission(channel.id, ["ViewMessageHistory"]));
 

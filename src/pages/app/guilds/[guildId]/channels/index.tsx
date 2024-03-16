@@ -22,7 +22,7 @@ const GuildChannelPage = () => {
   const currentGuild = useGuildStore((s) => s.getCurrentGuild());
   const channels = useChannelStore((s) => s.getCurrentChannels());
   const { users } = useUserStore();
-  const currentRoles = useRoleStore((r) => r.getCurrentRoles());
+  const { roles } = useRoleStore();
   const currentMember = useMemberStore((s) => s.getCurrentMember());
   const { lastChannelCache, setLastChannelCache, removeChannelFromCache } = useLastChannelCache();
   
@@ -38,14 +38,18 @@ const GuildChannelPage = () => {
       return;
     }
 
-    if (!currentMember) {
+    const guildRoles = roles.filter((role) => role.guildId === guildId);
+
+    console.log("nuh uh", roles, currentMember, guildRoles, channels)
+    if (!currentMember || guildRoles.length === 0) {
       return;
     }
 
-    const clientUser = users.find((u) => u.isClient)!;
+    console.log("owo", currentMember, guildRoles)
 
-    const roles = currentRoles.filter((role) => currentMember?.roleIds.includes(role.id));
-    const permissionHandler = new PermissionHandler(clientUser.id, currentMember?.owner ?? false, roles, channels);
+    const clientUser = users.find((u) => u.isClient)!;
+    const memberRoles = guildRoles.filter((role) => currentMember?.roleIds.includes(role.id));
+    const permissionHandler = new PermissionHandler(clientUser.id, currentMember?.owner ?? false, memberRoles, channels);
     const channelsWeHaveReadAccessTo = channels.filter((channel) => permissionHandler.hasChannelPermission(channel.id, ["ViewMessageHistory"]));
 
     if (lastChannelCache[guildId]) {
@@ -65,7 +69,7 @@ const GuildChannelPage = () => {
     } else {
       removeChannelFromCache(guildId);
     }
-  }, [ready, guildId]);
+  }, [ready, guildId, roles]);
 
   return (
     <>

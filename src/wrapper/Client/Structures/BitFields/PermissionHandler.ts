@@ -53,10 +53,10 @@ class PermissionHandler {
 		if (this.owner) return true;
 
 		const roles = this.memberRoles
-			.filter((Role) => {
-				console.log(Role.permissions.has(permission), Role.permissions.toJSON(), Role.permissions.bits)
+			.filter((role) => {
+				console.log(this.memberRoles)
 
-				return Role.permissions.has(permission);
+				return role.permissions.has(permission);
 			})
 			.sort((a, b) => b.position - a.position);
 
@@ -98,15 +98,11 @@ class PermissionHandler {
 
 		if (overrides.length === 0) {
 
-			StringFormatter.log(
-				`${StringFormatter.purple("[Wrapper]")} ${StringFormatter.yellow("[PermissionHandler]")} ${StringFormatter.white("No overrides found for channel, defaulting to role permissions")}`,
-			);
+			// StringFormatter.log(
+			// 	`${StringFormatter.purple("[Wrapper]")} ${StringFormatter.yellow("[PermissionHandler]")} ${StringFormatter.white("No overrides found for channel, defaulting to role permissions")}`,
+			// );
 
-			const has = this.hasAnyRole(permission);
-
-			console.log(has, this)
-
-			return has;
+			return this.hasAnyRole(permission);
 		}
 
 		const allow = overrides.some((Override) => Override.allow.has(permission));

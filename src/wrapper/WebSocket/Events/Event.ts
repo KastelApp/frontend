@@ -6,6 +6,7 @@ import messageCreate from "./MessageCreate.ts";
 import guildCreate from "./GuildCreate.ts";
 import guildDelete from "./GuildDelete.ts";
 import guildMemberAdd from "./GuildMemberAdd.ts";
+import guildMemberChunk from "./GuildMemberChunk.ts";
 
 const isEventPayload = (data: unknown): data is EventPayload => {
     if (typeof data !== "object" || data === null || data === undefined) return false;
@@ -54,6 +55,12 @@ const event = (ws: Websocket, data: unknown) => {
 
         case "GuildMemberAdd": {
             guildMemberAdd(ws, data.data)
+
+            break;
+        }
+
+        case "GuildMemberChunk": {
+            guildMemberChunk(ws, data.data)
 
             break;
         }
