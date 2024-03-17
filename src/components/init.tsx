@@ -142,7 +142,7 @@ const Init = () => {
         mediaUrl: process.env.PUBLIC_MEDIA_URL as string,
         url: process.env.PUBLIC_API_URL as string,
         defaultHeaders: {
-          "X-Specal-Properties": Buffer.from(JSON.stringify({
+          "X-Special-Properties": Buffer.from(JSON.stringify({
             version: pack.version,
             commit: process.env.PUBLIC_GIT_COMMIT as string,
             branch: process.env.PUBLIC_GIT_BRANCH as string,

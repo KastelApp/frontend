@@ -29,7 +29,7 @@ class API {
 
         this.version = this.parseVersion(options.version ?? "v1") ?? 1
 
-        this.defaultHeaders = options.defaultHeaders ?? { "X-Specal-Properties": "" }
+        this.defaultHeaders = options.defaultHeaders ?? { "X-Special-Properties": "" }
 
         this.cdnUrl = options.cdnUrl ?? "http://localhost:62240"
 
