@@ -48,7 +48,7 @@ const LeftAppNavbar =  ({ onCustomStatusOpen, onOpen }: { onOpen: () => void, on
 
     const handleLogout = () => {
         if (!client) {
-            setToken("");
+            setToken(null);
             router.push("/");
 
             return;
@@ -56,7 +56,7 @@ const LeftAppNavbar =  ({ onCustomStatusOpen, onOpen }: { onOpen: () => void, on
 
         client.logout();
 
-        setToken("");
+        setToken(null);
 
         router.push("/");
     };

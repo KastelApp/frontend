@@ -46,7 +46,7 @@ const AppNavbar = ({ onCustomStatusOpen, onOpen }: { onOpen: () => void, onCusto
 
   const handleLogout = () => {
     if (!client) {
-      setToken("");
+      setToken(null);
       router.push("/");
 
       return;
@@ -54,7 +54,7 @@ const AppNavbar = ({ onCustomStatusOpen, onOpen }: { onOpen: () => void, onCusto
 
     client.logout();
 
-    setToken("");
+    setToken(null);
 
     router.push("/");
   };

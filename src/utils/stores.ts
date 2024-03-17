@@ -15,7 +15,7 @@ export const useReadyStore = create<ReadyStore>((set) => ({
 
 interface TokenStore {
   token: string | null;
-  setToken: (token: string) => void;
+  setToken: (token: string | null) => void;
   _hasHydrated: boolean;
   setHasHydrated: (hasHydrated: boolean) => void;
 }

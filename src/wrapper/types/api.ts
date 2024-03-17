@@ -1,5 +1,5 @@
 export interface DefaultHeaders {
-    specialProperties: string; // i.e eyJ2ZXJzaW9uIjoiMC4wLjY4IiwiY29tbWl0IjoiOWI2OWZmZiIsImJyYW5jaCI6Imluay93cmFwcGVyIiwicGFsdGZvcm0iOiJicm93c2VyIn0=
+    "X-Specal-Properties": string; // i.e eyJ2ZXJzaW9uIjoiMC4wLjY4IiwiY29tbWl0IjoiOWI2OWZmZiIsImJyYW5jaCI6Imluay93cmFwcGVyIiwicGFsdGZvcm0iOiJicm93c2VyIn0=
 }
 
 export interface ApiSettings {

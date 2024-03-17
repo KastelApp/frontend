@@ -29,7 +29,7 @@ class API {
 
         this.version = this.parseVersion(options.version ?? "v1") ?? 1
 
-        this.defaultHeaders = options.defaultHeaders ?? { specialProperties: "" }
+        this.defaultHeaders = options.defaultHeaders ?? { "X-Specal-Properties": "" }
 
         this.cdnUrl = options.cdnUrl ?? "http://localhost:62240"
 
@@ -72,7 +72,7 @@ class API {
             const finalHeaders = completeUrl ? {} : {
                 ...this.defaultHeaders,
                 ...(this.client?.token && !noAuth ? { Authorization: this.client.token } : {}),
-                ...(typeof body === "object" ? { "Content-Type": "application/json" } : {})
+                ...(typeof body === "object" ? { "Content-Type": "application/json" } : {}),
             };
             const finalBody = body ? typeof body === "string" ? body : JSON.stringify(body) : undefined;
     

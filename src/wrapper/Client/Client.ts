@@ -226,7 +226,13 @@ class Client extends Events {
         };
     }
 
-    public async logout() { }
+    public async logout() {
+        const request = await this.api.post("/auth/logout");
+
+        this.ws.token = null;
+
+        return request.ok && request.status < 400;
+    }
 
     public async resetPassword(email: string) {
         const request = await this.api.post("/auth/forgot", {

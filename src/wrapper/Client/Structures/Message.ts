@@ -203,6 +203,10 @@ class Message {
 
         return this;
     }
+
+    public async delete() {
+        
+    }
 }
 
 export default Message;
