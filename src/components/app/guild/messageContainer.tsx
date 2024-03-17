@@ -128,7 +128,9 @@ const GuildMessageContainer = ({ children }: { children?: React.ReactNode; }) =>
       setTimeout(() => chat.scrollIntoView({ behavior: "instant" }), 50);
     }
 
-    await currentChannel.sendMessage({ content: message, replyingTo: messageId ?? undefined });
+    const replyingTo = state === "replying" ? messageId ?? undefined : undefined;
+
+    await currentChannel.sendMessage({ content: message, replyingTo });
 
     setVersion(version + 1);
 
