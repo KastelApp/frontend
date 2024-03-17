@@ -95,14 +95,12 @@ const Guild = ({ guild, type }: { guild: GuildClass; type: "left" | "bottom"; })
           />) : <Box
             position="absolute"
             bottom="18px"
-            // left={guildId === guild.id ? "11px" : "15px"}
             left={guildId === guild.id ? "-5" : hovered ? "-4" : "-3"}
             right="0"
             w={guildId === guild.id ? "24px" : hovered ? "16px" : "8px"}
             bg="white"
             h="4px"
             rounded="4px"
-            // rotate it 90 degrees
             transform={"rotate(90deg)"}
           />}
         </Box>
