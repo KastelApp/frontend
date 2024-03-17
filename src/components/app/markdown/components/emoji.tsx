@@ -4,18 +4,19 @@ import { Box, Flex, Image, Text, Tooltip, useDisclosure } from "@chakra-ui/react
 import { useSettingsStore } from "$/utils/Stores.ts";
 import parse from "@/utils/emojiParser.ts";
 
-const Emoji = (props: { emoji: string; }) => {
+const Emoji = (props: { emoji: string; pack?: "twemoji" | "noto-emoji" | "fluentui-emoji" | "native" }) => {
     const { isOpen, onClose, onToggle } = useDisclosure();
     const emojiFromProp = useMemo(() => getEmojiBySlug(props.emoji), [[props.emoji]]);
     const { settings } = useSettingsStore();
 
     if (!emojiFromProp) return <>:{props.emoji}:</>;
 
+    const pack = props.pack ?? settings.emojiPack
 
     // @ts-expect-error --- this is fine
-    const parsed = parse(emojiFromProp.unicode, { style: settings.emojiPack });
+    const parsed = parse(emojiFromProp.unicode, { style: pack });
 
-    if (settings.emojiPack === "native" || !parsed) return <Text as="span" fontSize="24px">
+    if (pack === "native" || !parsed) return <Text as="span" fontSize="24px">
         {emojiFromProp?.unicode}
     </Text>
 

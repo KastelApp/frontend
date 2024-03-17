@@ -1,5 +1,4 @@
 import {
-  Badge,
   Box,
   Flex,
   Image,
@@ -18,12 +17,7 @@ import { useMemberStore, useUserStore } from "$/utils/Stores.ts";
 const GuildSettingsMembers = () => {
   const { users } = useUserStore();
   const { getCurrentMembers } = useMemberStore();
-  const members = getCurrentMembers().map((member) => {
-    return {
-      ...member,
-      user: users.find((u) => u.id === member.userId)!,
-    };
-  })
+  const members = getCurrentMembers();
 
   return (
     <>
@@ -51,6 +45,8 @@ const GuildSettingsMembers = () => {
               </Thead>
               <Tbody>
                 {members?.map((member, index) => {
+                  const user = users.find((user) => user.id === member.userId)!;
+
                   return (
                     <Tr key={index}>
                       <Th>
@@ -68,40 +64,24 @@ const GuildSettingsMembers = () => {
                             <Image
                               draggable={"false"}
                               borderRadius={"full"}
-                              src={member.user.getAvatarUrl()}
-                              alt={member.user.username ?? "loading"}
+                              src={user.getAvatarUrl()}
+                              alt={user.username ?? "loading"}
                               fit="cover"
-                            />
-                            <Badge
-                              boxSize="3"
-                              borderRadius="full"
-                              bg={
-                                member.user.currentPresence === "online"
-                                  ? "green.500"
-                                  : member.user.currentPresence === "idle"
-                                    ? "yellow.500"
-                                    : member.user.currentPresence === "dnd"
-                                      ? "red.500"
-                                      : "gray.500"
-                              }
-                              position="absolute"
-                              bottom="-0.5"
-                              right="-0.5"
                             />
                           </Box>
                           <Box ml="3">
                             <Text>
-                              {member.user.displayUsername}
+                              {member.displayUsername}
                             </Text>
                             <Text fontSize="sm">
-                              {member.user.fullUsername}
+                              {user.fullUsername}
                             </Text>
                           </Box>
                         </Flex>
                       </Th>
                       <Th>
                         <Text>
-                          {new Date(member.joinedAt).toLocaleDateString(
+                          {member.joinedAt.toLocaleDateString(
                             "en-US",
                             {
                               weekday: "long",
