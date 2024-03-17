@@ -13,10 +13,12 @@ const CustomStatus = ({
     onClose: () => void;
 }) => {
     const { getCurrentUser } = useUserStore();
-    const [value, setValue] = useState(getCurrentUser()?.customStatus ?? "");
+    const currentUser = getCurrentUser();
+    const [value, setValue] = useState(currentUser?.customStatus ?? null);
 
     const maxLength = 128;
-    const remainingChars = maxLength - value.length;
+    const remainingChars = maxLength - (value ? value.length : 0);
+    const [msg, setMsg] = useState<string | null>(null);
 
     return (
         <Modal isOpen={isOpen} onClose={onClose}>
@@ -25,12 +27,15 @@ const CustomStatus = ({
                 <ModalHeader>Set a custom status</ModalHeader>
                 <ModalCloseButton />
                 <ModalBody>
+                    <Flex direction="column" align="center">
+                        {msg && <Text color="red.500">{msg}</Text>}
+                    </Flex>
                     <Text mb={2}>Custom Status</Text>
                     <Flex direction="column" alignItems="flex-end">
                         <InputGroup>
                             <Input
-                                placeholder={`Whats happening today ${getCurrentUser()?.username}?`}
-                                value={value}
+                                placeholder={`Whats happening today ${currentUser?.username}?`}
+                                value={value ?? ""}
                                 onChange={(e) => setValue(e.target.value)}
                                 maxLength={maxLength}
                                 border={0}
@@ -42,7 +47,7 @@ const CustomStatus = ({
                                 }}
                             />
                             <InputRightElement>
-                                <Button onClick={() => setValue("")} bg={"transparent"} p={0} >
+                                <Button onClick={() => setValue(null)} bg={"transparent"} p={0} >
                                     <CloseIcon w={3} h={3} />
                                 </Button>
                             </InputRightElement>
@@ -56,11 +61,30 @@ const CustomStatus = ({
                 </ModalBody>
 
                 <ModalFooter>
-                    <Button mr={3}>
-                        Save
-                    </Button>
                     <Button mr={3} onClick={onClose}>
                         Close
+                    </Button>
+                    <Button mr={3} onClick={async () => {
+                        const updatedSettings = await currentUser?.updateSettings({
+                            customStatus: value === "" ? null : value,
+                        });
+
+                        if (updatedSettings?.success) {
+                            setMsg(null);
+                            onClose();
+                        } else {
+                            if (updatedSettings?.errors?.unknown) {
+                                const firstError = Object.entries(updatedSettings.errors.unknown).map(
+                                    ([, obj]) => obj.message,
+                                )[0];
+
+                                setMsg(firstError ?? "Failed to update settings");
+                            } else {
+                                setMsg("Failed to update settings");
+                            }
+                        }
+                    }}>
+                        Save
                     </Button>
                 </ModalFooter>
             </ModalContent>

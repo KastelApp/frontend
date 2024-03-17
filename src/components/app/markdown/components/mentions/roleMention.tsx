@@ -46,7 +46,8 @@ const RoleMention = ({
     roleId: string;
     onClick?: (e: React.MouseEvent<HTMLSpanElement>) => void;
 }) => {
-    const roles  = useRoleStore((s) => s.getCurrentRoles());
+    const { getCurrentRoles } = useRoleStore();
+    const roles = getCurrentRoles();
 
     const role = roles.find((role) => roleId === "@everyone" ? role.id === role.guildId : role.id === roleId);
 

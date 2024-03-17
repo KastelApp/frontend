@@ -12,10 +12,13 @@ import { useGuildStore, useMemberStore, useRoleStore, useUserStore } from "$/uti
 import UserPopOver from "./members/popover.tsx";
 
 const GuildMembers = () => {
-  const currentGuild = useGuildStore((s) => s.getCurrentGuild());
-  const members = useMemberStore((s) => s.getCurrentMembers());
+  const { getCurrentGuild } = useGuildStore();
+  const currentGuild = getCurrentGuild();
+  const { getCurrentMembers } = useMemberStore();
+  const members = getCurrentMembers();
   const { users } = useUserStore();
-  const roles = useRoleStore((s) => s.getCurrentRoles());
+  const { getCurrentRoles } = useRoleStore();
+  const roles = getCurrentRoles();
   const hoverBg = useColorModeValue("gray.300", "gray.700");
 
   return currentGuild ? (

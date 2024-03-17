@@ -30,7 +30,7 @@ class Websocket extends Events {
 
     public version: string = "1";
 
-    #token: string = "";
+    #token: string | null = null;
 
     public _status: status = "Disconnected";
 
@@ -138,7 +138,7 @@ class Websocket extends Events {
         return this.#token;
     }
 
-    public set token(token: string) {
+    public set token(token: string | null) {
         this.#token = token;
 
         if (this.#ws && this.#ws.readyState === WebSocket.OPEN) {
@@ -370,7 +370,7 @@ class Websocket extends Events {
     }
 
     public identify() {
-        if (!this.#ws || this.status !== "Connected") return;
+        if (!this.#ws || this.status !== "Connected" || !this.#token) return;
 
         this.send<Identify>({
             op: opCodes.identify,

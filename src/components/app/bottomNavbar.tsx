@@ -36,7 +36,8 @@ import NewGuild from "./new-guild.tsx";
 import { useGuildStore, useUserStore } from "@/wrapper/utils/Stores.ts";
 
 const AppNavbar = ({ onCustomStatusOpen, onOpen }: { onOpen: () => void, onCustomStatusOpen: () => void; }) => {
-  const currentUser = useUserStore((state) => state.getCurrentUser());
+  const { getCurrentUser } = useUserStore();
+  const currentUser = getCurrentUser();
   const client = useClientStore((state) => state.client);
   const guilds = useGuildStore((state) => state.guilds);
   const setToken = useTokenStore((state) => state.setToken);
@@ -46,7 +47,7 @@ const AppNavbar = ({ onCustomStatusOpen, onOpen }: { onOpen: () => void, onCusto
 
   const handleLogout = () => {
     if (!client) {
-      setToken("");
+      setToken(null);
       router.push("/");
 
       return;
@@ -54,7 +55,7 @@ const AppNavbar = ({ onCustomStatusOpen, onOpen }: { onOpen: () => void, onCusto
 
     client.logout();
 
-    setToken("");
+    setToken(null);
 
     router.push("/");
   };
@@ -67,17 +68,9 @@ const AppNavbar = ({ onCustomStatusOpen, onOpen }: { onOpen: () => void, onCusto
      * offline -  3 - gray
      */
 
-    const isInvisable = currentUser?.presence.some((p) => p.status === "invisible");
+    const current = currentUser?.currentPresence;
 
-    if (isInvisable) {
-      setStatus("gray.500");
-
-      return;
-    }
-
-    const current = currentUser?.presence.find((p) => p.current);
-
-    switch (current?.status) {
+    switch (current) {
       case "dnd": {
         setStatus("red.600");
 
@@ -96,13 +89,19 @@ const AppNavbar = ({ onCustomStatusOpen, onOpen }: { onOpen: () => void, onCusto
         break;
       }
 
+      case "invisible":
+      case "offline": {
+        setStatus("gray.500");
+
+        break;
+      }
+
       default: {
         setStatus("gray.500");
 
         break;
       }
     }
-
   }, [currentUser?.presence]);
 
   const handleStatusChange = (status: string) => {

@@ -28,9 +28,10 @@ const GuildInvites = ({
   onClose: () => void;
 }) => {
   const { onCopy, value, setValue, hasCopied } = useClipboard("");
-  // const client = useClientStore((s) => s.client);
-  const currentChannel = useChannelStore((s) => s.getCurrentChannel());
-  const currentGuild = useGuildStore((s) => s.getCurrentGuild());
+  const { getCurrentChannel } = useChannelStore();
+  const currentChannel = getCurrentChannel();
+  const { getCurrentGuild } = useGuildStore();
+  const currentGuild = getCurrentGuild();
   const [,] = useState<Invite[]>([]);
   const [invite, setInvite] = useState<{
     guildId: string;

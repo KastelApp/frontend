@@ -23,10 +23,14 @@ const NewChatBox = ({ setLength, setMentioning, handleKeyDown, setValue, value }
     unicode: string;
   }[];
 }) => void, handleKeyDown: (event?: React.KeyboardEvent<HTMLTextAreaElement>) => void, value: string, setValue: (value: string) => void }) => {
-  const currentChannel = useChannelStore((s) => s.getCurrentChannel());
-  const members = useMemberStore((s) => s.getCurrentMembers());
-  const roles = useRoleStore((s) => s.getCurrentRoles());
-  const channels = useChannelStore((s) => s.getCurrentChannels());
+  const { getCurrentChannel } = useChannelStore();
+  const currentChannel = getCurrentChannel();
+  const { getCurrentMembers } = useMemberStore();
+  const members = getCurrentMembers();
+  const { getCurrentRoles } = useRoleStore();
+  const roles = getCurrentRoles();
+  const { getCurrentChannels } = useChannelStore();
+  const channels = getCurrentChannels();
   const { users } = useUserStore();
   const textRef = useRef<HTMLTextAreaElement>(null);
   const [typing, setTyping] = useState<{

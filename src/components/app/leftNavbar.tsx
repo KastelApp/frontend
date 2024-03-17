@@ -38,7 +38,8 @@ import NewGuild from "./new-guild.tsx";
 import { useGuildStore, useUserStore } from "@/wrapper/utils/Stores.ts";
 
 const LeftAppNavbar =  ({ onCustomStatusOpen, onOpen }: { onOpen: () => void, onCustomStatusOpen: () => void }) => {
-    const currentUser = useUserStore((state) => state.getCurrentUser());
+    const { getCurrentUser } = useUserStore();
+    const currentUser = getCurrentUser();
     const client = useClientStore((state) => state.client);
     const guilds = useGuildStore((state) => state.guilds);
     const setToken = useTokenStore((state) => state.setToken);
@@ -48,7 +49,7 @@ const LeftAppNavbar =  ({ onCustomStatusOpen, onOpen }: { onOpen: () => void, on
 
     const handleLogout = () => {
         if (!client) {
-            setToken("");
+            setToken(null);
             router.push("/");
 
             return;
@@ -56,7 +57,7 @@ const LeftAppNavbar =  ({ onCustomStatusOpen, onOpen }: { onOpen: () => void, on
 
         client.logout();
 
-        setToken("");
+        setToken(null);
 
         router.push("/");
     };
@@ -69,37 +70,39 @@ const LeftAppNavbar =  ({ onCustomStatusOpen, onOpen }: { onOpen: () => void, on
          * offline -  3 - gray
          */
 
-        const isInvisable = currentUser?.presence.some((p) => p.status === "invisible");
+        const current = currentUser?.currentPresence;
 
-        if (isInvisable) {
+        switch (current) {
+          case "dnd": {
+            setStatus("red.600");
+    
+            break;
+          }
+    
+          case "idle": {
+            setStatus("orange.400");
+    
+            break;
+          }
+    
+          case "online": {
+            setStatus("green.500");
+    
+            break;
+          }
+    
+          case "invisible":
+          case "offline": {
             setStatus("gray.500");
-
-            return;
-        }
-
-        const current = currentUser?.presence.find((p) => p.current);
-
-        switch (current?.status) {
-            case "dnd": {
-                setStatus("red.600");
-
-                break;
-            }
-            case "idle": {
-                setStatus("orange.400");
-
-                break;
-            }
-            case "online": {
-                setStatus("green.500");
-
-                break;
-            }
-            default: {
-                setStatus("gray.500");
-
-                break;
-            }
+    
+            break;
+          }
+    
+          default: {
+            setStatus("gray.500");
+    
+            break;
+          }
         }
 
     }, [currentUser?.presence]);

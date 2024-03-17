@@ -28,6 +28,7 @@ import {
   Dispatch,
   FormEvent,
   SetStateAction,
+  useEffect,
   useRef,
   useState,
 } from "react";
@@ -35,6 +36,8 @@ import { useClientStore } from "@/utils/stores";
 import JoinServer from "./joinGuild.tsx";
 import constants from "$/utils/constants.ts";
 import Permissions from "$/Client/Structures/BitFields/Permissions.ts";
+import { useGuildStore } from "$/utils/Stores.ts";
+import { useRouter } from "next/router";
 // import { useRouter } from "next/router";
 
 const NewGuild = () => {
@@ -110,6 +113,7 @@ const NewServerForm = ({
   setForm: Dispatch<SetStateAction<number>>;
 }) => {
   const client = useClientStore((s) => s.client);
+  const { guilds } = useGuildStore();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<
     {
@@ -117,7 +121,9 @@ const NewServerForm = ({
       message: string;
     }[]
   >([]);
-  // const router = useRouter();
+  const router = useRouter();
+  const [resolve, setResolve] = useState<(k: string) => void>(() => () => { });
+  const [id, setId] = useState<string | null>(null);
 
   const submit = async (
     event: FormEvent<HTMLFormElement> & {
@@ -185,32 +191,67 @@ const NewServerForm = ({
       ]
     });
 
-    console.log(guild);
+    if (!guild.success) {
+      if (guild.errors.invalidName) {
+        setLoading(false);
+        setError([
+          {
+            code: "INVALID_NAME",
+            message: "Invalid name, it should be 2-100 characters long.",
+          },
+        ]);
 
-    // if (!guild.success) {
-    //   setLoading(false);
+        return;
+      }
 
-    //   setError([
-    //     {
-    //       code: "TBA",
-    //       message: "An error occurred, check logs.",
-    //     },
-    //   ]);
+      if (guild.errors.maxGuildsReached) {
+        setLoading(false);
+        setError([
+          {
+            code: "MAX_GUILDS",
+            message: "You have reached the maximum amount of guilds.",
+          },
+        ]);
 
-    //   return;
-    // }
+        return;
+      }
 
-    // const firstChannel = guild.guild.channels.find(
-    //   (channel) => channel.type === "GuildText",
-    // );
+      setLoading(false);
 
-    // if (firstChannel) {
-    //   router.push(`/app/guilds/${guild.guild.id}/channels/${firstChannel.id}`);
-    // }
+      const firstError = Object.entries(guild.errors.unknown).map(
+        ([, obj]) => obj.message,
+      )[0];
 
-    setLoading(false);
+      setError([
+        {
+          code: "TBA",
+          message: firstError ?? "An error occurred, check logs.",
+        },
+      ]);
 
-    modal.onClose();
+      return;
+    }
+
+    setId(guild.guild?.id ?? null);
+
+    setResolve(await new Promise((res) => {
+      setResolve(() => res);
+
+      const firstChannelChattableIn = guild.guild.channels?.find((chan) => chan.type === constants.channelTypes.GuildText);
+
+      setTimeout(() => {
+        if (firstChannelChattableIn) {
+          router.push(`/app/guilds/${guild.guild.id}/channels/${firstChannelChattableIn.id}`);
+        } else {
+          router.push(`/app/guilds/${guild.guild.id}/channels`);
+        }
+
+        setLoading(false);
+
+        modal.onClose();
+      }, 500);
+
+    }));
   };
 
   const [selectedImage, setSelectedImage] = useState<string | undefined>(
@@ -231,6 +272,12 @@ const NewServerForm = ({
 
     reader.readAsDataURL(file);
   };
+
+  useEffect(() => {
+    if (id && guilds.find((g) => g.id === id)) {
+      resolve(id);
+    }
+  }, [guilds]);
 
   return (
     <>

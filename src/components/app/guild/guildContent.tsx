@@ -8,6 +8,7 @@ import {
   MenuDivider,
   MenuItem,
   MenuList,
+  Spacer,
   Text,
   useColorModeValue,
   useDisclosure,
@@ -33,7 +34,6 @@ import GuildMembers from "@/components/app/guild/members.tsx";
 import { IoPeople } from "react-icons/io5";
 import CreateChannel from "@/components/app/guild/createChannel.tsx";
 import BaseChannel from "$/Client/Structures/Channels/BaseChannel.ts";
-import getGuildName from "@/utils/getGuildName.ts";
 import Channel from "./channels/index.tsx";
 import ChannelIcon from "./channels/channelIcon.tsx";
 import constants from "$/utils/constants.ts";
@@ -43,11 +43,15 @@ import PermissionHandler from "$/Client/Structures/BitFields/PermissionHandler.t
 
 const GuildContent = ({ children, noMemberBar, noChannelTopic, ignoreLimits }: { children?: ReactNode, noMemberBar?: boolean; noChannelTopic?: boolean; ignoreLimits?: boolean; }) => {
   const ready = useReadyStore();
-  const currentChannel = useChannelStore((s) => s.getCurrentChannel());
-  const currentGuild = useGuildStore((s) => s.getCurrentGuild());
-  const channels = useChannelStore((s) => s.getCurrentChannels());
-  const currentMember = useMemberStore((s) => s.getCurrentMember());
-  const currentRoles = useRoleStore((s) => s.getCurrentRoles());
+  const { getCurrentChannel, getCurrentChannels } = useChannelStore();
+  const { getCurrentGuild } = useGuildStore();
+  const { getCurrentMember } = useMemberStore();
+  const { getCurrentRoles } = useRoleStore();
+  const currentChannel = getCurrentChannel();
+  const currentGuild = getCurrentGuild();
+  const channels = getCurrentChannels();
+  const currentMember = getCurrentMember();
+  const currentRoles = getCurrentRoles();
   const [permissions, setPermissionHandler] = useState<PermissionHandler>();
   const { settings } = useSettingsStore();
   const { collapsedChannels, setCollapsedChannels } = useCollapsedChannels();
@@ -92,7 +96,7 @@ const GuildContent = ({ children, noMemberBar, noChannelTopic, ignoreLimits }: {
       const roles = currentRoles.filter((role) => currentMember?.roleIds.includes(role.id));
       const permissionHandler = new PermissionHandler(clientUser.id, currentMember?.owner ?? false, roles, channels);
       const channelsWeHaveReadAccessTo = channels.filter((channel) => permissionHandler.hasChannelPermission(channel.id, ["ViewMessageHistory"]));
-  
+
       setSortedChannelGroups(sortChannels(channelsWeHaveReadAccessTo));
     }
   }, [currentGuild]);
@@ -123,15 +127,17 @@ const GuildContent = ({ children, noMemberBar, noChannelTopic, ignoreLimits }: {
                     overflow="hidden"
                     borderBottomColor={borderColor}
                     borderBottomWidth="1px"
+                    w="full"
                   >
                     <HStack>
-                      <Text fontSize={"medium"}>
-                        {getGuildName(currentGuild?.name ?? "Loading")}
+                      <Text fontSize="small" isTruncated>
+                        {currentGuild?.name ?? "Loading"}
                       </Text>
-                      {/* todo: make this on the left */}
+                      <Spacer />
                       {isOpen ? <ChevronUpIcon /> : <ChevronDownIcon />}
                     </HStack>
                   </MenuButton>
+
                   <MenuList>
                     {permissions?.hasAnyRole(
                       [

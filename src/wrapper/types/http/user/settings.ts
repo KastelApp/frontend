@@ -1,12 +1,14 @@
 export interface UpdateSettingsOptions  {
     customStatus?: string | null;
-    theme?: string;
+    theme?: "dark" | "light" | "system";
     language?: string;
     guildOrder?: {
         guildId: string;
         position: number;
     }[];
     bio?: string;
+    navBarLocation?: "bottom" | "left";
+    emojiPack?: "twemoji" | "noto-emoji" | "fluentui-emoji" | "native";  
 }
 
 export interface SettingsPayload {
@@ -21,4 +23,6 @@ export interface SettingsPayload {
 	theme: "dark" | "light" | "system",
 	allowedInvites: number,
 	customStatus: string | null
+    navBarLocation: "bottom" | "left";
+    emojiPack: "twemoji" | "noto-emoji" | "fluentui-emoji" | "native";  
 }

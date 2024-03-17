@@ -10,8 +10,8 @@ const UserMention = ({
     onClick?: (e: React.MouseEvent<HTMLSpanElement>) => void;
 }) => {
     const { users } = useUserStore();
-    const members  = useMemberStore((s) => s.getCurrentMembers());
-
+    const { getCurrentMembers } = useMemberStore();
+    const members = getCurrentMembers();
     const user = users.find((user) => user.id === userId);
     const member = members.find((member) => member.userId === userId);
 

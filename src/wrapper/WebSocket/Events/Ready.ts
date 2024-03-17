@@ -43,11 +43,7 @@ const ready = (ws: Websocket, data: unknown) => {
 
     ws.startHeartbeating();
 
-    useSettingsStore.setState({ settings: {
-        ...data.settings,
-        navBarLocation: "bottom",
-        emojiPack: "twemoji"
-    } });
+    useSettingsStore.setState({ settings: data.settings });
 
     const readyData: {
         roles: Role[],

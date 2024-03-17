@@ -64,7 +64,8 @@ const RawChannel = ({ channel }: { channel: BaseChannel; }) => {
 };
 
 const Channel = ({ channel, onClick }: { channel: BaseChannel; onClick?: () => void; }) => {
-    const currentChannel = useChannelStore((s) => s.getCurrentChannel());
+    const { getCurrentChannel } = useChannelStore();
+    const currentChannel = getCurrentChannel();
 
     const bg = useColorModeValue("gray.100", "gray.800");
     const hoverBg = useColorModeValue("gray.300", "gray.700");

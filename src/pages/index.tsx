@@ -3,20 +3,12 @@ import Layout from "@/components/layout";
 import { Box, Button, Container, Heading, Stack, Text } from "@chakra-ui/react";
 import Navbar from "@/components/navbar";
 import pack from "../../package.json";
-import { useEffect, useState } from "react";
-import { useIsDesktop } from "@/utils/stores.ts";
+import { useIsDesktop, useTokenStore } from "@/utils/stores.ts";
 import NextLink from "next/link";
 
 const Home = () => {
-  const [hasToken, setHasToken] = useState(false);
   const { isDesktop } = useIsDesktop()
-
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-
-    if (token) setHasToken(true);
-    if (token === '""') setHasToken(false);
-  }, []);
+  const { token } = useTokenStore();
 
   return (
     <>
@@ -55,7 +47,7 @@ const Home = () => {
               )}
             </Text>
 
-            <NextLink href={hasToken ? "/app" : "/register"} passHref>
+            <NextLink href={token ? "/app" : "/register"} passHref>
               <Button
                 rounded={"full"}
                 px={6}
@@ -65,7 +57,7 @@ const Home = () => {
                 }}
                 bgGradient="linear(to-r, red.400,pink.400)"
               >
-                {hasToken ? "Open App" : "Register"}
+                {token ? "Open App" : "Register"}
               </Button>
             </NextLink>
           </Stack>

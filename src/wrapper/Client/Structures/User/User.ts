@@ -1,3 +1,5 @@
+import { SettingsResponse } from "$/types/client/Settings.ts";
+import { isErrorResponse } from "$/types/http/error.ts";
 import { SettingsPayload, UpdateSettingsOptions } from "$/types/http/user/settings.ts";
 import { Presence, UserPayload } from "$/types/payloads/ready.ts";
 import createGsetters from "$/utils/createGsetters.ts";
@@ -177,20 +179,26 @@ class User<IsClient extends boolean = false> {
         return [];
     }
 
-    public setCustomStatus(state: string | null) {
-        return this.updateSettings({
-            customStatus: state
-        })
-    }
-
-    public async updateSettings(options: UpdateSettingsOptions) {
+    public async updateSettings(options: UpdateSettingsOptions): Promise<SettingsResponse> {
         const request = await this.#ws.client?.api.patch<SettingsPayload, UpdateSettingsOptions>("/users/@me/settings", options);
 
-        if (!request?.ok) return false;
+        const json = await request?.json();
 
-        this._settings = await request.json()
+        if (isErrorResponse(json)) {
+            return {
+                success: false,
+                errors: {
+                    unknown: json.errors
+                }
+            }
+        }
 
-        return true;
+        this.settings = json!;
+
+        return {
+            success: true,
+            settings: json!
+        }
     }
 }
 

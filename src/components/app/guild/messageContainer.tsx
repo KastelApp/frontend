@@ -30,7 +30,8 @@ import { useRouter } from "next/router";
 import PermissionHandler from "../../../wrapper/Client/Structures/BitFields/PermissionHandler.ts";
 
 const GuildMessageContainer = ({ children }: { children?: React.ReactNode; }) => {
-  const currentChannel = useChannelStore((s) => s.getCurrentChannel());
+  const { getCurrentChannel } = useChannelStore();
+  const currentChannel = getCurrentChannel();
   const router = useRouter();
   const { guildId, channelId } = router.query as {
     guildId: string;
@@ -39,7 +40,9 @@ const GuildMessageContainer = ({ children }: { children?: React.ReactNode; }) =>
   const { version, setVersion } = useMessageStore();
   const [length, setLength] = useState(0);
   const [shake, setShake] = useState(false);
-  const channels = useChannelStore((s) => s.getCurrentChannels());
+  const { getCurrentChannels } = useChannelStore();
+  const channels = getCurrentChannels();
+  
   const [mentioning, setMentioning] = useState<{
     isMenioning: boolean;
     searchingFor: string;
@@ -125,7 +128,9 @@ const GuildMessageContainer = ({ children }: { children?: React.ReactNode; }) =>
       setTimeout(() => chat.scrollIntoView({ behavior: "instant" }), 50);
     }
 
-    await currentChannel.sendMessage({ content: message, replyingTo: messageId ?? undefined });
+    const replyingTo = state === "replying" ? messageId ?? undefined : undefined;
+
+    await currentChannel.sendMessage({ content: message, replyingTo });
 
     setVersion(version + 1);
 
