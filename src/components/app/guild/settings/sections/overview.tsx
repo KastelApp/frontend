@@ -36,7 +36,8 @@ const GuildSettingsOverview = () => {
     reader.readAsDataURL(file);
   };
 
-  const currentGuild = useGuildStore((s) => s.getCurrentGuild());
+  const { getCurrentGuild } = useGuildStore();
+  const currentGuild = getCurrentGuild();
 
   return (
     <>

@@ -30,9 +30,11 @@ const TextChannel = () => {
     const client = useClientStore((s) => s.client);
     const ready = useReadyStore((s) => s.ready);
     const [areWeReady, setAreWeReady] = useState(false);
-    const currentGuild = useGuildStore((s) => s.getCurrentGuild());
-    const channels = useChannelStore((s) => s.getCurrentChannels());
-    const currentChannel = useChannelStore((s) => s.getCurrentChannel());
+    const { getCurrentGuild } = useGuildStore();
+    const currentGuild = getCurrentGuild();
+    const { getCurrentChannels, getCurrentChannel } = useChannelStore();
+    const channels = getCurrentChannels();
+    const currentChannel = getCurrentChannel();
     const messageStore = useMessageStore();
     const model = useModelData();
     const { isOpen, height, onClose, width, x, y, placement } = model;
@@ -48,8 +50,10 @@ const TextChannel = () => {
     const [messages, setMessages] = useState<Chunk[]>([]);
 
     const { users } = useUserStore();
-    const currentRoles = useRoleStore((r) => r.getCurrentRoles());
-    const currentMember = useMemberStore((s) => s.getCurrentMember());
+    const { getCurrentMember } = useMemberStore();
+    const { getCurrentRoles } = useRoleStore();
+    const currentMember = getCurrentMember();
+    const currentRoles = getCurrentRoles();
 
     const fetchMessages = async (
         limit: number,

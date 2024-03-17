@@ -16,7 +16,7 @@ export interface User {
 export interface Presence {
     type: number;
     state: string | null;
-    status: string;
+    status: "online" | "offline" | "idle" | "dnd" | "invisible";
     since: number;
     current: boolean;
 }

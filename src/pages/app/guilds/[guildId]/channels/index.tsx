@@ -19,11 +19,14 @@ const GuildChannelPage = () => {
   };
   const token = useTokenStore((s) => s.token);
   const ready = useReadyStore((s) => s.ready);
-  const currentGuild = useGuildStore((s) => s.getCurrentGuild());
-  const channels = useChannelStore((s) => s.getCurrentChannels());
+  const { getCurrentChannels } = useChannelStore();
+  const { getCurrentGuild } = useGuildStore();
+  const channels = getCurrentChannels();
+  const currentGuild = getCurrentGuild();
   const { users } = useUserStore();
   const { roles } = useRoleStore();
-  const currentMember = useMemberStore((s) => s.getCurrentMember());
+  const { getCurrentMember } = useMemberStore();
+  const currentMember = getCurrentMember();
   const { lastChannelCache, setLastChannelCache, removeChannelFromCache } = useLastChannelCache();
   
   useEffect(() => {

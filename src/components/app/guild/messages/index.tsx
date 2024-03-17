@@ -67,14 +67,16 @@ const GuildMessages = ({
     hasMore: boolean;
     fullMessages: MessageType[]
 }) => {
-    const members = useMemberStore((s) => s.getCurrentMembers());
-    const { users } = useUserStore();
-    const roles = useRoleStore((s) => s.getCurrentRoles());
+    const { getCurrentMembers } = useMemberStore();
+    const members = getCurrentMembers();
+    const { users, getCurrentUser } = useUserStore();
+    const { getCurrentRoles } = useRoleStore();
+    const roles = getCurrentRoles();
     const { getCurrentChannel } = useChannelStore();
     const { settings } = useSettingsStore();
     const fakeMessages = useMemo(() => generateSkeleton(50), []);
-    const currentUser = useUserStore((s) => s.getCurrentUser());
-
+    const currentUser = getCurrentUser();
+  
     const msg = useCallback(
         (
             message: MessageType,

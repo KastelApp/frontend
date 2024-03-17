@@ -12,7 +12,8 @@ const DeleteGuildPopup = ({
     onClose: () => void;
     closeSettings: () => void;
 }) => {
-    const currentGuild = useGuildStore((s) => s.getCurrentGuild());
+    const { getCurrentGuild } = useGuildStore();
+    const currentGuild = getCurrentGuild();
     const [msg, setMsg] = useState<string | null>(null);
     const router = useRouter();
 

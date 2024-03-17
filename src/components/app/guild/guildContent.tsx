@@ -43,11 +43,15 @@ import PermissionHandler from "$/Client/Structures/BitFields/PermissionHandler.t
 
 const GuildContent = ({ children, noMemberBar, noChannelTopic, ignoreLimits }: { children?: ReactNode, noMemberBar?: boolean; noChannelTopic?: boolean; ignoreLimits?: boolean; }) => {
   const ready = useReadyStore();
-  const currentChannel = useChannelStore((s) => s.getCurrentChannel());
-  const currentGuild = useGuildStore((s) => s.getCurrentGuild());
-  const channels = useChannelStore((s) => s.getCurrentChannels());
-  const currentMember = useMemberStore((s) => s.getCurrentMember());
-  const currentRoles = useRoleStore((s) => s.getCurrentRoles());
+  const { getCurrentChannel, getCurrentChannels } = useChannelStore();
+  const { getCurrentGuild } = useGuildStore();
+  const { getCurrentMember } = useMemberStore();
+  const { getCurrentRoles } = useRoleStore();
+  const currentChannel = getCurrentChannel();
+  const currentGuild = getCurrentGuild();
+  const channels = getCurrentChannels();
+  const currentMember = getCurrentMember();
+  const currentRoles = getCurrentRoles();
   const [permissions, setPermissionHandler] = useState<PermissionHandler>();
   const { settings } = useSettingsStore();
   const { collapsedChannels, setCollapsedChannels } = useCollapsedChannels();

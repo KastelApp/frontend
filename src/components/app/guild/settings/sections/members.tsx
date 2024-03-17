@@ -17,12 +17,13 @@ import { useMemberStore, useUserStore } from "$/utils/Stores.ts";
 
 const GuildSettingsMembers = () => {
   const { users } = useUserStore();
-  const members = useMemberStore((s) => s.getCurrentMembers().map((member) => {
+  const { getCurrentMembers } = useMemberStore();
+  const members = getCurrentMembers().map((member) => {
     return {
       ...member,
       user: users.find((u) => u.id === member.userId)!,
     };
-  }));
+  })
 
   return (
     <>

@@ -21,9 +21,12 @@ const GuildChannelPage = () => {
   };
 
   const token = useTokenStore((s) => s.token);
-  const channels = useChannelStore((s) => s.getCurrentChannels());
-  const currentGuild = useGuildStore((s) => s.getCurrentGuild());
-  const currentChannel = useChannelStore((s) => s.getCurrentChannel());
+  const { getCurrentChannels, getCurrentChannel } = useChannelStore();
+  const { getCurrentGuild } = useGuildStore();
+  const channels = getCurrentChannels();
+  const currentGuild = getCurrentGuild();
+  const currentChannel = getCurrentChannel();
+  
   const ready = useReadyStore((s) => s.ready);
   const [flags, setFlags] = useState<{
     ignoreLimits: boolean;
@@ -36,8 +39,10 @@ const GuildChannelPage = () => {
   });
 
   const { users } = useUserStore();
-  const currentRoles = useRoleStore((r) => r.getCurrentRoles());
-  const currentMember = useMemberStore((s) => s.getCurrentMember());
+  const { getCurrentMember } = useMemberStore();
+  const currentMember = getCurrentMember();
+  const { getCurrentRoles } = useRoleStore();
+  const currentRoles = getCurrentRoles();
   const { lastChannelCache, setLastChannelCache } = useLastChannelCache();
 
   useEffect(() => {
