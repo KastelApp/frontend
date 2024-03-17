@@ -1,4 +1,4 @@
-import { Dispatch, FormEvent, SetStateAction, useState } from "react";
+import { Dispatch, FormEvent, SetStateAction, useEffect, useState } from "react";
 // import { clientStore } from "@/utils/stores.ts";
 // import { useRouter } from "next/router";
 import {
@@ -19,6 +19,7 @@ import {
 } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import { useClientStore } from "@/utils/stores.ts";
+import { useGuildStore } from "$/utils/Stores.ts";
 
 const JoinServer = ({
   modal,
@@ -40,7 +41,10 @@ const JoinServer = ({
     }[]
   >([]);
   const client = useClientStore((s) => s.client);
+  const { guilds } = useGuildStore();
   const router = useRouter();
+  const [resolve, setResolve] = useState<(k: string) => void>(() => () => { });
+  const [id, setId] = useState<string | null>(null);
 
   const getLastParam = (link: string) => {
     const parts = link.split("/");
@@ -83,22 +87,6 @@ const JoinServer = ({
       return;
     }
 
-    // const inviteCode = getLastParam(inviteLink);
-    // const inviteFetch = await client.fetchInvite(inviteCode);
-
-    // if (!inviteFetch.success) {
-    //   setLoading(false);
-
-    //   setError([
-    //     {
-    //       code: "INVITE",
-    //       message: "The invite link is invalid or expired.",
-    //     },
-    //   ]);
-
-    //   return;
-    // }
-
     const join = await client.joinInvite(getLastParam(inviteLink) as string);
 
     if (!join.success) {
@@ -115,16 +103,27 @@ const JoinServer = ({
       return;
     }
 
-    setLoading(false);
-    setError([]);
+    setId(join?.data?.guild?.id ?? null);
 
-    modal.onClose();
+    setResolve(await new Promise((res) => {
+      setResolve(() => res);
 
-    router.push(
-      `/app/guilds/${join.data?.guild?.id}/channels/${join.data?.channel?.id}}`,
-    );
+      setTimeout(() => {
+        router.push(`/app/guilds/${id}/channels`);
+        setLoading(false);
+        modal.onClose();
+      }, 500)
+
+    }));
+
     return;
   };
+
+  useEffect(() => {
+    if (id && guilds.find((g) => g.id === id)) {
+      resolve(id);
+    }
+  }, [guilds]);
 
   return (
     <>

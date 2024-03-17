@@ -3,6 +3,7 @@
 import API from "$/API/API.ts";
 import Websocket from "$/WebSocket/WebSocket.ts";
 import { ClientOptions } from "$/types/client.ts";
+import { GuildCreateResponse } from "$/types/client/CreateGuild.ts";
 import { LoginOptions, RegisterAccountOptions, RegisterLoginResponse } from "$/types/client/RegisterAndLogin.ts";
 import { ApiLoginOptions, LoginResponse } from "$/types/http/auth/login.ts";
 import { ApiRegisterOptions, RegisterResponse } from "$/types/http/auth/register.ts";
@@ -310,14 +311,35 @@ class Client extends Events {
         return this.#ws;
     }
 
-    public async createGuild(options: CreateGuildOptions): Promise<CreateGuildOptions | null> {
+    public async createGuild(options: CreateGuildOptions): Promise<GuildCreateResponse> {
         const request = await this.api.post<CreateGuildOptions, CreateGuildOptions>("/guilds", options);
 
-        if (!request.ok) {
-            return null;
+        const json = await request.json();
+
+        if (isErrorResponse<{
+            guild: {
+                code: "MaxGuildsReached"
+                message: string;
+            }
+            name: {
+                code: "InvalidType"
+                message: string;
+            }
+        }>(json)) {
+            return {
+                success: false,
+                errors: {
+                    invalidName: json.errors.name?.code === "InvalidType",
+                    maxGuildsReached: json.errors.guild?.code === "MaxGuildsReached",
+                    unknown: json.errors
+                }
+            }
         }
 
-        return request.json();
+        return {
+            success: true,
+            guild: json
+        }
     }
 
     public async deleteGuild(guildId: string): Promise<boolean> {
