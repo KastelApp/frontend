@@ -7,7 +7,7 @@ import { useIsDesktop, useTokenStore } from "@/utils/stores.ts";
 import NextLink from "next/link";
 
 const Home = () => {
-  const { isDesktop } = useIsDesktop()
+  const { isDesktop } = useIsDesktop();
   const { token } = useTokenStore();
 
   return (

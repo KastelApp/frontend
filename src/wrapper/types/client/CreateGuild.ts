@@ -3,17 +3,17 @@ import { CreateGuildOptions } from "../http/guilds/createGuild.ts";
 import { RequestFail, RequestSuccess } from "./FailSuccess.ts";
 
 interface GuildCreateSuccess extends RequestSuccess {
-    guild: CreateGuildOptions
+  guild: CreateGuildOptions;
 }
 
 interface GuildCreateFail extends RequestFail {
-    errors: {
-        unknown: {
-            [key: string]: BaseError;
-        }
-        maxGuildsReached: boolean;
-        invalidName: boolean;
-    }
+  errors: {
+    unknown: {
+      [key: string]: BaseError;
+    };
+    maxGuildsReached: boolean;
+    invalidName: boolean;
+  };
 }
 
 export type GuildCreateResponse = GuildCreateSuccess | GuildCreateFail;

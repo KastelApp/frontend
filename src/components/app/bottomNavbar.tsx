@@ -22,12 +22,7 @@ import {
   useColorModeValue,
 } from "@chakra-ui/react";
 import Link from "next/link";
-import {
-  FaCog,
-  FaHome,
-  FaRegCompass,
-  FaSignOutAlt,
-} from "react-icons/fa";
+import { FaCog, FaHome, FaRegCompass, FaSignOutAlt } from "react-icons/fa";
 import { useClientStore, useTokenStore } from "@/utils/stores";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
@@ -35,7 +30,13 @@ import Guild from "./guild/guild.tsx";
 import NewGuild from "./new-guild.tsx";
 import { useGuildStore, useUserStore } from "@/wrapper/utils/Stores.ts";
 
-const AppNavbar = ({ onCustomStatusOpen, onOpen }: { onOpen: () => void, onCustomStatusOpen: () => void; }) => {
+const AppNavbar = ({
+  onCustomStatusOpen,
+  onOpen,
+}: {
+  onOpen: () => void;
+  onCustomStatusOpen: () => void;
+}) => {
   const { getCurrentUser } = useUserStore();
   const currentUser = getCurrentUser();
   const client = useClientStore((state) => state.client);
@@ -43,7 +44,9 @@ const AppNavbar = ({ onCustomStatusOpen, onOpen }: { onOpen: () => void, onCusto
   const setToken = useTokenStore((state) => state.setToken);
   const router = useRouter();
   const isSmallScreen = useBreakpointValue({ base: true, sm: false });
-  const [status, setStatus] = useState<"green.500" | "orange.400" | "red.600" | "gray.500">("green.500");
+  const [status, setStatus] = useState<
+    "green.500" | "orange.400" | "red.600" | "gray.500"
+  >("green.500");
 
   const handleLogout = () => {
     if (!client) {
@@ -169,7 +172,9 @@ const AppNavbar = ({ onCustomStatusOpen, onOpen }: { onOpen: () => void, onCusto
                 overflowY="hidden"
                 maxWidth="calc(100vw - 260px)" // Set a maximum width to prevent overflowing the screen
               >
-                {guilds.map((guild) => <Guild type="bottom" key={guild.id} guild={guild} />)}
+                {guilds.map((guild) => (
+                  <Guild type="bottom" key={guild.id} guild={guild} />
+                ))}
                 <NewGuild />
               </Flex>
             </Flex>
@@ -294,10 +299,13 @@ const AppNavbar = ({ onCustomStatusOpen, onOpen }: { onOpen: () => void, onCusto
                           onClick={onCustomStatusOpen}
                         >
                           <Flex direction="column" align="start">
-                            <Box mb={1} mt={1}>Custom Status</Box>
+                            <Box mb={1} mt={1}>
+                              Custom Status
+                            </Box>
                             {currentUser?.customStatus && (
                               <Text fontSize="xs" color="gray.500">
-                                {currentUser?.customStatus ?? "No custom status"}
+                                {currentUser?.customStatus ??
+                                  "No custom status"}
                               </Text>
                             )}
                           </Flex>

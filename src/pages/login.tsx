@@ -32,7 +32,7 @@ const Login = () => {
   >([]);
   const { client } = useClientStore();
   const { token, setToken } = useTokenStore();
-  const [resolve, setResolve] = useState<(k: string) => void>(() => () => { });
+  const [resolve, setResolve] = useState<(k: string) => void>(() => () => {});
 
   const bg = useColorModeValue("gray.200", "#1A202C");
   const color = useColorModeValue("gray.900", "gray.100");
@@ -128,9 +128,11 @@ const Login = () => {
       } else if (loggedInAccount.errors.captchaRequired) {
         onOpen();
 
-        attempt(await new Promise((res) => {
-          setResolve(() => res);
-        }));
+        attempt(
+          await new Promise((res) => {
+            setResolve(() => res);
+          }),
+        );
 
         return;
       } else {
@@ -289,19 +291,21 @@ const Login = () => {
                         </Button>
                       </Link>
                     </Stack>
-
                   </Box>
                 </Box>
-
               </>
             </Container>
           </Box>
         </form>
       </Layout>
-      <Robot isOpen={isOpen} onClose={onClose} onVerify={(key) => {
-        onClose();
-        resolve(key);
-      }} />
+      <Robot
+        isOpen={isOpen}
+        onClose={onClose}
+        onVerify={(key) => {
+          onClose();
+          resolve(key);
+        }}
+      />
     </>
   );
 };

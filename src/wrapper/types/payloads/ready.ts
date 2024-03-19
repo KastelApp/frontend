@@ -34,9 +34,8 @@ export interface Guild {
   channels: Channel[];
   roles: Role[];
   members: Member[];
-  channelProperties: ChannelProperty[]
-  unavailable: boolean
-
+  channelProperties: ChannelProperty[];
+  unavailable: boolean;
 }
 
 export interface Owner {
@@ -60,7 +59,7 @@ export interface Channel {
   children: string[];
   permissionOverrides: PermissionOverrides;
   position: number;
-  lastMessageId: string | null
+  lastMessageId: string | null;
 }
 
 export interface PermissionOverrides {
@@ -90,7 +89,7 @@ export interface Member {
   nickname: string | null;
   roles: string[];
   joinedAt: string;
-  presence: Presence[]
+  presence: Presence[];
 }
 
 export interface MemberUser {
@@ -121,9 +120,8 @@ export interface Presence {
   current?: boolean;
 }
 
-
 export interface ChannelProperty {
-  channelId: string
-  lastMessageAckId: string | null
-  timedoutUntil: string | null
+  channelId: string;
+  lastMessageAckId: string | null;
+  timedoutUntil: string | null;
 }

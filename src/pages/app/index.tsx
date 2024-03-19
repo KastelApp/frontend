@@ -3,7 +3,23 @@ import { useRouter } from "next/router";
 import { useReadyStore, useTokenStore } from "@/utils/stores";
 import Loading from "@/components/app/loading";
 import SEO from "@/components/seo";
-import { Avatar, Badge, Box, Button, Divider, Flex, Icon, List, ListItem, Tab, TabList, TabPanel, TabPanels, Tabs, useColorModeValue } from "@chakra-ui/react";
+import {
+  Avatar,
+  Badge,
+  Box,
+  Button,
+  Divider,
+  Flex,
+  Icon,
+  List,
+  ListItem,
+  Tab,
+  TabList,
+  TabPanel,
+  TabPanels,
+  Tabs,
+  useColorModeValue,
+} from "@chakra-ui/react";
 import { CloseIcon } from "@chakra-ui/icons";
 import { useSettingsStore } from "$/utils/Stores.ts";
 
@@ -12,11 +28,14 @@ const App = () => {
   const { token } = useTokenStore();
   const { ready } = useReadyStore();
   const background = useColorModeValue("#e6e9ef", "#101319");
-  const [selected, setSelected] = useState<"home" | "friends" | "gameLibrary">("home");
+  const [selected, setSelected] = useState<"home" | "friends" | "gameLibrary">(
+    "home",
+  );
   const { settings } = useSettingsStore();
 
   useEffect(() => {
-    if (!token) router.push(`/login?redirect=${encodeURIComponent(router.asPath)}`);
+    if (!token)
+      router.push(`/login?redirect=${encodeURIComponent(router.asPath)}`);
   }, [ready]);
 
   return (
@@ -69,7 +88,11 @@ const App = () => {
                     p={2}
                     position="relative"
                     _hover={{ bg: "gray.600" }}
-                    _disabled={{ cursor: "not-allowed", _hover: { bg: "inherit" }, color: "gray.400" }}
+                    _disabled={{
+                      cursor: "not-allowed",
+                      _hover: { bg: "inherit" },
+                      color: "gray.400",
+                    }}
                     aria-disabled
                     userSelect={"none"}
                   >
@@ -127,7 +150,12 @@ const App = () => {
                   </Box>
                   <Box ml="2" position={"relative"}>
                     <Flex align="center">
-                      <Box as="span" color="white" fontSize="md" userSelect={"none"}>
+                      <Box
+                        as="span"
+                        color="white"
+                        fontSize="md"
+                        userSelect={"none"}
+                      >
                         Username
                       </Box>
                     </Flex>
@@ -146,50 +174,47 @@ const App = () => {
             </Box>
 
             <Flex flex="1" p={4} direction="column">
-              {
-                selected === "friends" ? (
-                  <Tabs variant="enclosed" isLazy>
-                    <TabList>
-                      <Tab>Online (15)</Tab>
-                      <Tab>All (30)</Tab>
-                      <Tab>Blocked</Tab>
-                      <Tab>Pending (3)</Tab>
-                      <Button
-                        bg="green.600"
-                        _hover={{
-                          bg: "green.700",
-                        }}
-                        size={"sm"}
-                        mt={1}
-                        as={Tab}
-                      >Add Friend</Button>
-                    </TabList>
-                    <TabPanels>
-                      <TabPanel>
-                        <Box>Online Friends</Box>
-                      </TabPanel>
-                      <TabPanel>
-                        <Box>All Friends</Box>
-                      </TabPanel>
-                      <TabPanel>
-                        <Box>Blocked Users</Box>
-                      </TabPanel>
-                      <TabPanel>
-                        <Box>Pending Requests</Box>
-                      </TabPanel>
-                      <TabPanel>
-                        <Box>Add Friend</Box>
-                      </TabPanel>
-                    </TabPanels>
-                  </Tabs>
-                ) : (
-                  <>
-                    Idk what to put
-                  </>
-                )
-              }
+              {selected === "friends" ? (
+                <Tabs variant="enclosed" isLazy>
+                  <TabList>
+                    <Tab>Online (15)</Tab>
+                    <Tab>All (30)</Tab>
+                    <Tab>Blocked</Tab>
+                    <Tab>Pending (3)</Tab>
+                    <Button
+                      bg="green.600"
+                      _hover={{
+                        bg: "green.700",
+                      }}
+                      size={"sm"}
+                      mt={1}
+                      as={Tab}
+                    >
+                      Add Friend
+                    </Button>
+                  </TabList>
+                  <TabPanels>
+                    <TabPanel>
+                      <Box>Online Friends</Box>
+                    </TabPanel>
+                    <TabPanel>
+                      <Box>All Friends</Box>
+                    </TabPanel>
+                    <TabPanel>
+                      <Box>Blocked Users</Box>
+                    </TabPanel>
+                    <TabPanel>
+                      <Box>Pending Requests</Box>
+                    </TabPanel>
+                    <TabPanel>
+                      <Box>Add Friend</Box>
+                    </TabPanel>
+                  </TabPanels>
+                </Tabs>
+              ) : (
+                <>Idk what to put</>
+              )}
             </Flex>
-
           </Flex>
         </>
       ) : (

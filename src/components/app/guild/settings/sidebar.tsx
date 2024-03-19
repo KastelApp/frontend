@@ -86,7 +86,11 @@ const SidebarContent = ({
       overflow={"scroll"}
       {...rest}
     >
-      <DeleteGuildPopup isOpen={isOpen} onClose={closeModal} closeSettings={onClose} />
+      <DeleteGuildPopup
+        isOpen={isOpen}
+        onClose={closeModal}
+        closeSettings={onClose}
+      />
       <Box flex="1">
         <Flex alignItems="center" mx="8" justifyContent="space-between">
           <CloseButton
@@ -199,7 +203,9 @@ const SidebarContent = ({
           onClick={() => {
             onOpen();
           }}
-          >Delete Guild</NavItem>
+        >
+          Delete Guild
+        </NavItem>
       </Box>
     </Box>
   );

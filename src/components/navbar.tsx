@@ -20,7 +20,7 @@ const Navbar = () => {
   const buttonColor = useColorModeValue("#000b2e", "#d1dcff");
   const mobileNav = useDisclosure();
   const [hasToken, setHasToken] = useState(false);
-  const { token } = useTokenStore()
+  const { token } = useTokenStore();
   const desktop = useIsDesktop((state) => state.isDesktop);
 
   useEffect(() => {

@@ -14,7 +14,7 @@ import { useSearchParams } from "next/navigation";
 import Layout from "@/components/layout.tsx";
 
 const OAuthAuthorize = () => {
-  const desktop = useIsDesktop((s) => s.isDesktop)
+  const desktop = useIsDesktop((s) => s.isDesktop);
   const router = useRouter();
   const searchParams = useSearchParams();
 

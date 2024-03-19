@@ -33,7 +33,7 @@ const quotes = [
   "The name of our platform actually came from Supernatural and a tiny bit of mispelling",
   "Kastel.initialize()... wow, didn't work :(",
   "I can't code without a fresh glass of Tea", // :3
-  ":3 - some Ink guy"
+  ":3 - some Ink guy",
 ];
 
 const Loading = () => {
@@ -65,7 +65,7 @@ const Loading = () => {
         align={"center"}
         justify={"center"}
       >
-        <Stack spacing={8} mx={"auto"} maxW={"lg"} py={12} >
+        <Stack spacing={8} mx={"auto"} maxW={"lg"} py={12}>
           <Stack align={"center"}>
             <Heading
               bgGradient="linear(to-r, red.400,pink.400)"

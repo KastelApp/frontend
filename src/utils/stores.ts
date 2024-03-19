@@ -1,7 +1,7 @@
 import Translation from "./translation.ts";
 import Client from "$/Client/Client.ts";
 import { create } from "zustand";
-import { persist } from "zustand/middleware"
+import { persist } from "zustand/middleware";
 
 interface ReadyStore {
   ready: boolean;
@@ -26,7 +26,8 @@ export const useTokenStore = create<TokenStore>()(
       token: null,
       setToken: (token) => set(() => ({ token: token })),
       _hasHydrated: false,
-      setHasHydrated: (hasHydrated) => set(() => ({ _hasHydrated: hasHydrated })),
+      setHasHydrated: (hasHydrated) =>
+        set(() => ({ _hasHydrated: hasHydrated })),
     }),
     {
       name: "token",
@@ -67,7 +68,8 @@ export const useLastChannelCache = create<LastChannelCache>()(
   persist(
     (set, get) => ({
       lastChannelCache: {},
-      setLastChannelCache: (lastChannelCache) => set(() => ({ lastChannelCache })),
+      setLastChannelCache: (lastChannelCache) =>
+        set(() => ({ lastChannelCache })),
       removeChannelFromCache: (guildId) => {
         const lastChannelCache = get().lastChannelCache;
         delete lastChannelCache[guildId];
@@ -89,7 +91,8 @@ export const useCollapsedChannels = create<CollapsedChannels>()(
   persist(
     (set) => ({
       collapsedChannels: [],
-      setCollapsedChannels: (collapsedChannels) => set(() => ({ collapsedChannels })),
+      setCollapsedChannels: (collapsedChannels) =>
+        set(() => ({ collapsedChannels })),
     }),
     {
       name: "collapsedChannels",
@@ -130,8 +133,8 @@ export const useLastStatusStore = create<LastStatusStore>((set) => ({
 interface ExperimentsStore {
   experiments: {
     newChatBox: boolean;
-  }
-  setExperiments: (settings: { newChatBox: boolean; }) => void;
+  };
+  setExperiments: (settings: { newChatBox: boolean }) => void;
 }
 
 export const usePresistantSettings = create<ExperimentsStore>()(

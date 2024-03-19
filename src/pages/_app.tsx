@@ -25,7 +25,7 @@ const App = ({ Component, pageProps }: AppProps) => {
       setColorTheme(
         window.matchMedia("(prefers-color-scheme: dark)").matches
           ? "dark"
-          : "light"
+          : "light",
       );
     } else {
       setColorTheme(settings.theme);
@@ -67,16 +67,16 @@ const App = ({ Component, pageProps }: AppProps) => {
         for (let i = 0; i < 5; i++) {
           console.log(
             "%cStop! Before you continue!",
-            "color: red; font-size: 50px; -webkit-text-stroke: 1px black; font-weight: bold"
+            "color: red; font-size: 50px; -webkit-text-stroke: 1px black; font-weight: bold",
           );
           console.log(
-            "%cThis is a feature of the browser intended for Developers. If someone told you to paste something in here to enable a \"feature\" or to \"verify\" something, it's a scam! It'll give them access to your account.",
-            "color: white; font-size: 20px;"
+            '%cThis is a feature of the browser intended for Developers. If someone told you to paste something in here to enable a "feature" or to "verify" something, it\'s a scam! It\'ll give them access to your account.',
+            "color: white; font-size: 20px;",
           );
           console.log(
             "%cIf you know what you are doing, come contribute to the project! %chttps://github.com/KastelApp",
             "color: white; font-size: 16px;",
-            "color: blue; font-size: 16px;"
+            "color: blue; font-size: 16px;",
           );
 
           await new Promise((resolve) => setTimeout(resolve, 1250));
@@ -91,12 +91,15 @@ const App = ({ Component, pageProps }: AppProps) => {
     return null;
   }
 
-
   return (
     <>
       <DefaultSeo {...SEO} />
       <ChakraProvider theme={theme}>
-        <div className={colorTheme === "dark" ? "dark-scrollbar" : "light-scrollbar"}>
+        <div
+          className={
+            colorTheme === "dark" ? "dark-scrollbar" : "light-scrollbar"
+          }
+        >
           <ErrorBoundary>
             {/* Fast forward the loading of the component, we only need to check anything else besides these (which shouldn't be much) */}
             {/* As long as the PUBLIC_DESKTOP_APP is set correctly, there should no longer be a flicker */}
@@ -106,15 +109,15 @@ const App = ({ Component, pageProps }: AppProps) => {
               ["/login", "/register"].includes(router.pathname) ||
               router.pathname.startsWith("/app") ||
               ready) && (
-                <>
-                  {hydrated && (
-                    <>
-                      <Init />
-                      <Component {...pageProps} />
-                    </>
-                  )}
-                </>
-              )}
+              <>
+                {hydrated && (
+                  <>
+                    <Init />
+                    <Component {...pageProps} />
+                  </>
+                )}
+              </>
+            )}
           </ErrorBoundary>
         </div>
       </ChakraProvider>

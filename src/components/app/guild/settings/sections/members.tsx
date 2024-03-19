@@ -70,30 +70,23 @@ const GuildSettingsMembers = () => {
                             />
                           </Box>
                           <Box ml="3">
-                            <Text>
-                              {member.displayUsername}
-                            </Text>
-                            <Text fontSize="sm">
-                              {user.fullUsername}
-                            </Text>
+                            <Text>{member.displayUsername}</Text>
+                            <Text fontSize="sm">{user.fullUsername}</Text>
                           </Box>
                         </Flex>
                       </Th>
                       <Th>
                         <Text>
-                          {member.joinedAt.toLocaleDateString(
-                            "en-US",
-                            {
-                              weekday: "long",
-                              year: "numeric",
-                              month: "long",
-                              day: "numeric",
-                            },
-                          )}
+                          {member.joinedAt.toLocaleDateString("en-US", {
+                            weekday: "long",
+                            year: "numeric",
+                            month: "long",
+                            day: "numeric",
+                          })}
                         </Text>
                       </Th>
                     </Tr>
-                  )
+                  );
                 })}
               </Tbody>
             </Table>

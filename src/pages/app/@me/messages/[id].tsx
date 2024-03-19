@@ -10,7 +10,8 @@ const AtMeMessagesId = () => {
   const { ready } = useReadyStore();
 
   useEffect(() => {
-    if (!token) router.push(`/login?redirect=${encodeURIComponent(router.asPath)}`);
+    if (!token)
+      router.push(`/login?redirect=${encodeURIComponent(router.asPath)}`);
   }, [ready]);
 
   return (

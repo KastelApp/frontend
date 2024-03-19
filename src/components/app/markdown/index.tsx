@@ -1,10 +1,17 @@
 import SimpleMarkdown, { defaultRules } from "simple-markdown";
 import memoize from "memoizee";
 import * as ramda from "ramda";
-import { flattenAst, astToString, recurse, recurseStrings } from "@/components/app/markdown/util.ts";
+import {
+  flattenAst,
+  astToString,
+  recurse,
+  recurseStrings,
+} from "@/components/app/markdown/util.ts";
 import { Box, Code, Heading, Link, Text } from "@chakra-ui/react";
 import { getEmojiByUnicode } from "@/components/app/markdown/defaultEmojis.ts";
-import Codeblock, { PreviewCodeblock } from "./components/codeblock/Codeblock.tsx";
+import Codeblock, {
+  PreviewCodeblock,
+} from "./components/codeblock/Codeblock.tsx";
 import { customRules } from "./ast.tsx";
 
 const parserFor = (rules: SimpleMarkdown.ReactRules, returnAst?: unknown) => {
@@ -19,34 +26,31 @@ const parserFor = (rules: SimpleMarkdown.ReactRules, returnAst?: unknown) => {
       const parse = ramda.pipe.apply(
         this,
         // @ts-expect-error -- TODO: fix this
-        [parser, flattenAst, transform, !returnAst && renderer].filter(Boolean)
+        [parser, flattenAst, transform, !returnAst && renderer].filter(Boolean),
       );
 
       return parse(input, { inline, ...state });
     },
     {
       normalizer: (...args) => JSON.stringify(args),
-    }
+    },
   );
 };
 
 const createRules = (rule: SimpleMarkdown.ReactRules, keepSpecial = false) => {
-  const {
-    paragraph,
-    url,
-    link,
-    codeBlock,
-    inlineCode,
-    blockQuote,
-    heading,
-  } = rule;
+  const { paragraph, url, link, codeBlock, inlineCode, blockQuote, heading } =
+    rule;
 
   return {
     ...defaultRules,
     ...rule,
     heading: {
       ...heading,
-      react: (node: SimpleMarkdown.RefNode & { level: number; }, recurseOutput: (content: unknown, state: unknown) => React.ReactElement, state: { key: string; }) => {
+      react: (
+        node: SimpleMarkdown.RefNode & { level: number },
+        recurseOutput: (content: unknown, state: unknown) => React.ReactElement,
+        state: { key: string },
+      ) => {
         const sizes = {
           "1": "lg",
           "2": "md",
@@ -66,37 +70,49 @@ const createRules = (rule: SimpleMarkdown.ReactRules, keepSpecial = false) => {
       order: rule.u!.order,
       match: SimpleMarkdown.inlineRegex(/^~~([\s\S]+?)~~(?!_)/),
       parse: rule.u!.parse,
-      react: (node: SimpleMarkdown.RefNode, recurseOutput: (content: unknown, state: unknown) => React.ReactElement, state: { key: string; }) => {
+      react: (
+        node: SimpleMarkdown.RefNode,
+        recurseOutput: (content: unknown, state: unknown) => React.ReactElement,
+        state: { key: string },
+      ) => {
         if (!keepSpecial) {
-          return (
-            <s key={state.key}>{recurseOutput(node.content, state)}</s>
-          );
+          return <s key={state.key}>{recurseOutput(node.content, state)}</s>;
         }
 
         return (
           <>
-            <Text as="span" color="gray.500">~~</Text>
+            <Text as="span" color="gray.500">
+              ~~
+            </Text>
             <s key={state.key}>{recurseOutput(node.content, state)}</s>
-            <Text as="span" color="gray.500">~~</Text>
+            <Text as="span" color="gray.500">
+              ~~
+            </Text>
           </>
         );
       },
     },
     paragraph: {
       ...paragraph,
-      react: (node: SimpleMarkdown.RefNode, recurseOutput: (content: unknown, state: unknown) => React.ReactElement, state: { key: string; }) => (
-        <p key={state.key}>{recurseOutput(node.content, state)}</p>
-      ),
+      react: (
+        node: SimpleMarkdown.RefNode,
+        recurseOutput: (content: unknown, state: unknown) => React.ReactElement,
+        state: { key: string },
+      ) => <p key={state.key}>{recurseOutput(node.content, state)}</p>,
     },
     url: {
       ...url,
       match: SimpleMarkdown.inlineRegex(
-        /^((https?|steam):\/\/[^\s<]+[^<.,:;"')\]\s])/
+        /^((https?|steam):\/\/[^\s<]+[^<.,:;"')\]\s])/,
       ),
     },
     link: {
       ...link,
-      react: (node: SimpleMarkdown.RefNode & { target: string; }, recurseOutput: (content: unknown, state: unknown) => React.ReactElement, state: { key: string; }) => (
+      react: (
+        node: SimpleMarkdown.RefNode & { target: string },
+        recurseOutput: (content: unknown, state: unknown) => React.ReactElement,
+        state: { key: string },
+      ) => (
         <Link
           title={node.title || astToString(node.content!)}
           href={SimpleMarkdown.sanitizeUrl(node.target)!}
@@ -107,61 +123,90 @@ const createRules = (rule: SimpleMarkdown.ReactRules, keepSpecial = false) => {
         >
           {recurseOutput(node.content, state)}
         </Link>
-      )
+      ),
     },
     inlineCode: {
       ...inlineCode,
-      react: (node: SimpleMarkdown.RefNode, recurseOutput: (content: unknown, state: unknown) => React.ReactElement, state: { key: string; }) => {
+      react: (
+        node: SimpleMarkdown.RefNode,
+        recurseOutput: (content: unknown, state: unknown) => React.ReactElement,
+        state: { key: string },
+      ) => {
         if (!keepSpecial) {
           return (
-            <Code key={state.key}>
-              {recurse(node, recurseOutput, state)}
-            </Code>
+            <Code key={state.key}>{recurse(node, recurseOutput, state)}</Code>
           );
         }
 
         return (
           <>
-            <Text as="span" color="gray.500">`</Text>
-            <Code key={state.key}>
-              {recurse(node, recurseOutput, state)}
-            </Code>
-            <Text as="span" color="gray.500">`</Text>
+            <Text as="span" color="gray.500">
+              `
+            </Text>
+            <Code key={state.key}>{recurse(node, recurseOutput, state)}</Code>
+            <Text as="span" color="gray.500">
+              `
+            </Text>
           </>
         );
       },
     },
     codeBlock: {
       ...codeBlock,
-      react: (node: SimpleMarkdown.RefNode & { lang: string; }, recurseOutput: (content: unknown, state: unknown) => React.ReactElement, state: { key: string; }) => {
+      react: (
+        node: SimpleMarkdown.RefNode & { lang: string },
+        recurseOutput: (content: unknown, state: unknown) => React.ReactElement,
+        state: { key: string },
+      ) => {
         if (!keepSpecial) {
           return (
-            <Codeblock node={node} recurseOutput={recurseOutput} state={state} key={state.key} />
+            <Codeblock
+              node={node}
+              recurseOutput={recurseOutput}
+              state={state}
+              key={state.key}
+            />
           );
         }
 
         return (
           <Box display={"inline"} key={state.key}>
-            <Text as="span" color="gray.500">```<Text as="span" color="blue.400">{node.lang}</Text></Text>
+            <Text as="span" color="gray.500">
+              ```
+              <Text as="span" color="blue.400">
+                {node.lang}
+              </Text>
+            </Text>
             <Box>
-              <PreviewCodeblock node={node} recurseOutput={recurseOutput} state={state} />
+              <PreviewCodeblock
+                node={node}
+                recurseOutput={recurseOutput}
+                state={state}
+              />
             </Box>
-            <Text as="span" color="gray.500">```</Text>
+            <Text as="span" color="gray.500">
+              ```
+            </Text>
           </Box>
         );
       },
     },
     blockQuote: {
       ...blockQuote,
-      match: (source: string, { prevCapture }: { prevCapture: string; }) => {
+      match: (source: string, { prevCapture }: { prevCapture: string }) => {
         return /^$|\n *$/.test(prevCapture ?? "")
           ? /^( *>{1,9} [^\n]*\n?)/.exec(source)
           : null;
       },
-      react: (node: SimpleMarkdown.RefNode, recurseOutput: (content: unknown, state: unknown) => React.ReactElement, state: { key: string; }) => {
+      react: (
+        node: SimpleMarkdown.RefNode,
+        recurseOutput: (content: unknown, state: unknown) => React.ReactElement,
+        state: { key: string },
+      ) => {
         if (!keepSpecial) {
           return (
-            <Box key={state.key}
+            <Box
+              key={state.key}
               borderColor={"gray.500"}
               pl={2}
               ml={0}
@@ -175,62 +220,83 @@ const createRules = (rule: SimpleMarkdown.ReactRules, keepSpecial = false) => {
 
         return (
           <Box key={state.key} display={"inline"}>
-            <Text as="span" color="gray.500">&gt;</Text>
-            <Text as="span">
-              {recurseStrings(node, recurseOutput, state)}
+            <Text as="span" color="gray.500">
+              &gt;
             </Text>
+            <Text as="span">{recurseStrings(node, recurseOutput, state)}</Text>
           </Box>
         );
       },
     },
     strong: {
       ...rule.strong,
-      react: (node: SimpleMarkdown.RefNode, recurseOutput: (content: unknown, state: unknown) => React.ReactElement, state: { key: string; }) => {
+      react: (
+        node: SimpleMarkdown.RefNode,
+        recurseOutput: (content: unknown, state: unknown) => React.ReactElement,
+        state: { key: string },
+      ) => {
         if (!keepSpecial) {
           return (
-            <strong key={state.key}>{recurseOutput(node.content, state)}</strong>
+            <strong key={state.key}>
+              {recurseOutput(node.content, state)}
+            </strong>
           );
         }
 
         return (
           <>
-            <Text as="span" color="gray.500">**</Text>
-            <Text as="span" color="blue.400">{recurseOutput(node.content, state)}</Text>
-            <Text as="span" color="gray.500">**</Text>
+            <Text as="span" color="gray.500">
+              **
+            </Text>
+            <Text as="span" color="blue.400">
+              {recurseOutput(node.content, state)}
+            </Text>
+            <Text as="span" color="gray.500">
+              **
+            </Text>
           </>
         );
       },
-    }
+    },
   };
 };
 
 // @ts-expect-error -- TODO: fix this
-const textRules = parserFor(createRules({
-  ...customRules,
-  link: { // masked link
-    ...customRules.link,
-    match: () => null,
-  },
-  // disable heading
-  heading: {
-    ...customRules.heading,
-    match: () => null,
-  },
-}));
+const textRules = parserFor(
+  createRules({
+    ...customRules,
+    link: {
+      // masked link
+      ...customRules.link,
+      match: () => null,
+    },
+    // disable heading
+    heading: {
+      ...customRules.heading,
+      match: () => null,
+    },
+  }),
+);
 
 // @ts-expect-error -- TODO: fix this
-const previewRules = parserFor(createRules({
-  ...customRules,
-  link: { // masked link
-    ...customRules.link,
-    match: () => null,
-  },
-  // disable heading
-  heading: {
-    ...customRules.heading,
-    match: () => null,
-  },
-}, true));
+const previewRules = parserFor(
+  createRules(
+    {
+      ...customRules,
+      link: {
+        // masked link
+        ...customRules.link,
+        match: () => null,
+      },
+      // disable heading
+      heading: {
+        ...customRules.heading,
+        match: () => null,
+      },
+    },
+    true,
+  ),
+);
 
 // @ts-expect-error -- TODO: fix this
 const markdownChannelRules = parserFor(createRules(customRules));
@@ -251,10 +317,9 @@ const handleUnicodeEmojis = (content: string): string => {
       emojiCount++; // Increment the counter for each processed emoji
 
       return `:${emojiResult.emoji.slug}:`;
-    }
+    },
   );
 };
-
 
 export const Markdown = ({
   children: content,
@@ -264,7 +329,7 @@ export const Markdown = ({
   const uniEmojis = handleUnicodeEmojis(content as unknown as string);
 
   return content
-    ? textRules(uniEmojis, undefined) as React.ReactElement
+    ? (textRules(uniEmojis, undefined) as React.ReactElement)
     : null;
 };
 
@@ -274,13 +339,16 @@ export const ChannelMarkdown = ({
   children: React.ReactNode;
 }): React.ReactElement | null => {
   return children
-    ? markdownChannelRules(children as unknown as string, undefined) as React.ReactElement
+    ? (markdownChannelRules(
+        children as unknown as string,
+        undefined,
+      ) as React.ReactElement)
     : null;
 };
 
 export const PreviewMarkdown = ({
   children,
-  keepSpecial = true
+  keepSpecial = true,
 }: {
   children: React.ReactNode;
   keepSpecial?: boolean;
@@ -288,6 +356,14 @@ export const PreviewMarkdown = ({
   const uniEmojis = handleUnicodeEmojis(children as unknown as string);
 
   return children
-    ? keepSpecial ? previewRules(uniEmojis as unknown as string, undefined) as React.ReactElement : textRules(uniEmojis as unknown as string, undefined) as React.ReactElement
+    ? keepSpecial
+      ? (previewRules(
+          uniEmojis as unknown as string,
+          undefined,
+        ) as React.ReactElement)
+      : (textRules(
+          uniEmojis as unknown as string,
+          undefined,
+        ) as React.ReactElement)
     : null;
 };

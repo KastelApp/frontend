@@ -3,11 +3,11 @@ const codes = {
   stop: 2, // Client -> Worker
   heartbeat: 3, // Worker -> Client
   heartbeated: 4, // Client -> Worker
-}
+};
 
 /**
-* @type {Map<string, { interval: NodeJS.Timeout, lastHeartbeat: number, lastHeartbeated: number }> }
-*/
+ * @type {Map<string, { interval: NodeJS.Timeout, lastHeartbeat: number, lastHeartbeated: number }> }
+ */
 let intervals = new Map();
 
 onmessage = (event) => {
@@ -16,58 +16,58 @@ onmessage = (event) => {
   const { op, data } = event.data;
 
   switch (op) {
-      case codes.interval: {
-          const { interval, session } = data;
+    case codes.interval: {
+      const { interval, session } = data;
 
-          intervals.set(session, {
-              interval: setInterval(() => {
-                  const intervalOfSession = intervals.get(session);
-
-                  if (!intervalOfSession) {
-                      clearInterval(intervalOfSession.interval);
-                      return;
-                  }
-
-                  if (
-                      intervalOfSession.lastHeartbeated -
-                      intervalOfSession.lastHeartbeat >
-                      10000
-                  ) {
-                      clearInterval(intervalOfSession.interval);
-                      return;
-                  }
-
-                  postMessage({ op: codes.heartbeat, session });
-
-                  intervalOfSession.lastHeartbeat = Date.now();
-              }, interval),
-              lastHeartbeat: Date.now(),
-              lastHeartbeated: Date.now(),
-          });
-
-          break;
-      }
-      case codes.heartbeated: {
-          const { session } = data;
-
+      intervals.set(session, {
+        interval: setInterval(() => {
           const intervalOfSession = intervals.get(session);
 
-          if (!intervalOfSession) return;
+          if (!intervalOfSession) {
+            clearInterval(intervalOfSession.interval);
+            return;
+          }
 
-          intervalOfSession.lastHeartbeated = Date.now();
+          if (
+            intervalOfSession.lastHeartbeated -
+              intervalOfSession.lastHeartbeat >
+            10000
+          ) {
+            clearInterval(intervalOfSession.interval);
+            return;
+          }
 
-          break;
-      }
-      case codes.stop: {
-          const { session } = data;
+          postMessage({ op: codes.heartbeat, session });
 
-          const intervalOfSession = intervals.get(session);
+          intervalOfSession.lastHeartbeat = Date.now();
+        }, interval),
+        lastHeartbeat: Date.now(),
+        lastHeartbeated: Date.now(),
+      });
 
-          if (!intervalOfSession) return;
+      break;
+    }
+    case codes.heartbeated: {
+      const { session } = data;
 
-          clearInterval(intervalOfSession.interval);
+      const intervalOfSession = intervals.get(session);
 
-          break;
-      }
+      if (!intervalOfSession) return;
+
+      intervalOfSession.lastHeartbeated = Date.now();
+
+      break;
+    }
+    case codes.stop: {
+      const { session } = data;
+
+      const intervalOfSession = intervals.get(session);
+
+      if (!intervalOfSession) return;
+
+      clearInterval(intervalOfSession.interval);
+
+      break;
+    }
   }
-}
+};

@@ -35,8 +35,8 @@ const Register = () => {
     }[]
   >([]);
   const client = useClientStore((s) => s.client);
-  const { token, setToken } = useTokenStore()
-  const [resolve, setResolve] = useState<(k: string) => void>(() => () => { });
+  const { token, setToken } = useTokenStore();
+  const [resolve, setResolve] = useState<(k: string) => void>(() => () => {});
 
   useEffect(() => {
     router.prefetch("/app");
@@ -92,7 +92,12 @@ const Register = () => {
     }
 
     if (!t(password, "string") || password.length < 4 || password.length > 72) {
-      setError([{ code: "INVALID_PASSWORD", message: "Invalid password. Must be between 4 and 72" }]);
+      setError([
+        {
+          code: "INVALID_PASSWORD",
+          message: "Invalid password. Must be between 4 and 72",
+        },
+      ]);
       setLoading(false);
 
       return;
@@ -111,13 +116,12 @@ const Register = () => {
     }
 
     const attempt = async (turnstile?: string) => {
-
       const registeredAccount = await client.register({
         email,
         password,
         username,
         resetClient: true,
-        turnstile
+        turnstile,
       });
 
       if (registeredAccount.success) {
@@ -158,9 +162,11 @@ const Register = () => {
       } else if (registeredAccount.errors.captchaRequired) {
         onOpen();
 
-        attempt(await new Promise((res) => {
-          setResolve(() => res);
-        }));
+        attempt(
+          await new Promise((res) => {
+            setResolve(() => res);
+          }),
+        );
 
         return;
       } else {
@@ -373,10 +379,14 @@ const Register = () => {
           </Box>
         </form>
       </Layout>
-      <Robot isOpen={isOpen} onClose={onClose} onVerify={(key) => {
-        onClose();
-        resolve(key);
-      }} />
+      <Robot
+        isOpen={isOpen}
+        onClose={onClose}
+        onVerify={(key) => {
+          onClose();
+          resolve(key);
+        }}
+      />
     </>
   );
 };

@@ -32,25 +32,25 @@ const initialChannelTypes: ChannelType[] = [
     name: "Text",
     description: "Send messages in text channels",
     selected: true,
-    icon: <ChannelIcon type={channelTypes.GuildText} />
+    icon: <ChannelIcon type={channelTypes.GuildText} />,
   },
   {
     name: "Announcement",
     description: "Important messages from the server",
     selected: false,
-    icon: <ChannelIcon type={channelTypes.GuildNews} />
+    icon: <ChannelIcon type={channelTypes.GuildNews} />,
   },
   {
     name: "New Members",
     description: "A channel for new members to visit",
     selected: false,
-    icon: <ChannelIcon type={channelTypes.GuildText} />
+    icon: <ChannelIcon type={channelTypes.GuildText} />,
   },
   {
     name: "Rules",
     description: "Let users know the rules of your server",
     selected: false,
-    icon: <ChannelIcon type={channelTypes.GuildText} />
+    icon: <ChannelIcon type={channelTypes.GuildText} />,
   },
   {
     name: "Voice",
@@ -63,7 +63,7 @@ const initialChannelTypes: ChannelType[] = [
     description: "Have a Markdown based channel",
     selected: false,
     icon: <ChannelIcon type={channelTypes.GuildMarkdown} />,
-  }
+  },
 ];
 
 const CreateChannel = ({
@@ -105,45 +105,45 @@ const CreateChannel = ({
         <ModalCloseButton mt={2} />
 
         <ModalBody>
-            <Text>Channel Type</Text>
-            {channelTypes.map((channelType) => (
-              <Flex
-                key={channelType.name}
-                justify="flex-start"
-                align="flex-start"
-                w="full"
+          <Text>Channel Type</Text>
+          {channelTypes.map((channelType) => (
+            <Flex
+              key={channelType.name}
+              justify="flex-start"
+              align="flex-start"
+              w="full"
+            >
+              <Button
+                borderRadius={"5px"}
+                onClick={() => handleButtonClick(channelType)}
+                mt={2}
+                w={"full"}
+                h={"full"}
+                leftIcon={<>{channelType?.icon}</>}
+                justifyContent={"unset"}
+                isActive={channelType?.selected}
               >
-                <Button
-                  borderRadius={"5px"}
-                  onClick={() => handleButtonClick(channelType)}
-                  mt={2}
-                  w={"full"}
-                  h={"full"}
-                  leftIcon={<>{channelType?.icon}</>}
-                  justifyContent={"unset"}
-                  isActive={channelType?.selected}
-                >
-                  <Box mt={1} mb={1.5} textAlign="left">
-                    <Text>{channelType?.name}</Text>
-                    <Text fontSize="xs">{channelType?.description}</Text>
-                  </Box>
-                </Button>
-              </Flex>
-            ))}
+                <Box mt={1} mb={1.5} textAlign="left">
+                  <Text>{channelType?.name}</Text>
+                  <Text fontSize="xs">{channelType?.description}</Text>
+                </Box>
+              </Button>
+            </Flex>
+          ))}
 
-            <FormControl mt={2}>
-              <FormLabel>Channel Name</FormLabel>
-              <InputGroup>
-                <InputLeftElement pointerEvents="none">
-                  {channelTypes.find((type) => type.selected)?.icon}
-                </InputLeftElement>
-                <Input
-                  onChange={handleChange}
-                  required={true}
-                  placeholder="New-Channel"
-                />
-              </InputGroup>
-            </FormControl>
+          <FormControl mt={2}>
+            <FormLabel>Channel Name</FormLabel>
+            <InputGroup>
+              <InputLeftElement pointerEvents="none">
+                {channelTypes.find((type) => type.selected)?.icon}
+              </InputLeftElement>
+              <Input
+                onChange={handleChange}
+                required={true}
+                placeholder="New-Channel"
+              />
+            </InputGroup>
+          </FormControl>
         </ModalBody>
 
         <ModalFooter display="flex">
@@ -154,10 +154,7 @@ const CreateChannel = ({
           {loading ? (
             <Button isLoading={true}>Create Channel</Button>
           ) : (
-            <Button
-              isDisabled={disabled}
-              onClick={() => setLoading(false)}
-            >
+            <Button isDisabled={disabled} onClick={() => setLoading(false)}>
               Create Channel
             </Button>
           )}

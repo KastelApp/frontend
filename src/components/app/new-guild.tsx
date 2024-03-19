@@ -122,7 +122,7 @@ const NewServerForm = ({
     }[]
   >([]);
   const router = useRouter();
-  const [resolve, setResolve] = useState<(k: string) => void>(() => () => { });
+  const [resolve, setResolve] = useState<(k: string) => void>(() => () => {});
   const [id, setId] = useState<string | null>(null);
 
   const submit = async (
@@ -169,7 +169,7 @@ const NewServerForm = ({
           name: "lounge",
           type: constants.channelTypes.GuildText,
           parentId: categoryId,
-        }
+        },
       ],
       roles: [
         {
@@ -185,10 +185,10 @@ const NewServerForm = ({
             "UseChatFormatting",
             "SendMessages",
             "Nickname",
-            "EmbedLinks"
-          ]).normizedBits
-        }
-      ]
+            "EmbedLinks",
+          ]).normizedBits,
+        },
+      ],
     });
 
     if (!guild.success) {
@@ -234,24 +234,29 @@ const NewServerForm = ({
 
     setId(guild.guild?.id ?? null);
 
-    setResolve(await new Promise((res) => {
-      setResolve(() => res);
+    setResolve(
+      await new Promise((res) => {
+        setResolve(() => res);
 
-      const firstChannelChattableIn = guild.guild.channels?.find((chan) => chan.type === constants.channelTypes.GuildText);
+        const firstChannelChattableIn = guild.guild.channels?.find(
+          (chan) => chan.type === constants.channelTypes.GuildText,
+        );
 
-      setTimeout(() => {
-        if (firstChannelChattableIn) {
-          router.push(`/app/guilds/${guild.guild.id}/channels/${firstChannelChattableIn.id}`);
-        } else {
-          router.push(`/app/guilds/${guild.guild.id}/channels`);
-        }
+        setTimeout(() => {
+          if (firstChannelChattableIn) {
+            router.push(
+              `/app/guilds/${guild.guild.id}/channels/${firstChannelChattableIn.id}`,
+            );
+          } else {
+            router.push(`/app/guilds/${guild.guild.id}/channels`);
+          }
 
-        setLoading(false);
+          setLoading(false);
 
-        modal.onClose();
-      }, 500);
-
-    }));
+          modal.onClose();
+        }, 500);
+      }),
+    );
   };
 
   const [selectedImage, setSelectedImage] = useState<string | undefined>(

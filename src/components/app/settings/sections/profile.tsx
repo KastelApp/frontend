@@ -196,11 +196,11 @@ const SettingsProfile = () => {
 
   const handleDelete = async () => {
     setSelectedImage("/icon-1.png");
-    
+
     await user.updateUser({
       avatar: null,
     });
-    
+
     toast({
       title: "Avatar removed.",
       description: "Your avatar has been removed.",

@@ -4,7 +4,7 @@
  * @returns The cleaned redirect path
  */
 const redirectCleaner = (redirect: string) => {
-    return redirect.replace(/(http(s)?:\/\/)|(\.\.\/)/g, "");
+  return redirect.replace(/(http(s)?:\/\/)|(\.\.\/)/g, "");
 };
 
 export default redirectCleaner;

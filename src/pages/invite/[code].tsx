@@ -20,11 +20,11 @@ interface InviteSuccess {
 
 const Invite = () => {
   const router = useRouter();
-  const token = useTokenStore((s) => s.token)
+  const token = useTokenStore((s) => s.token);
   const [loading, setLoading] = useState(true);
   // const [client] = useRecoilState(clientStore);
   const [error, setError] = useState<number | null>(null);
-  const [inviteInfo,] = useState<InviteSuccess | null>(null);
+  const [inviteInfo] = useState<InviteSuccess | null>(null);
 
   useEffect(() => {
     if (!token) {

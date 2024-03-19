@@ -11,11 +11,20 @@ import {
   VStack,
   useColorModeValue,
 } from "@chakra-ui/react";
-import { AddIcon, ChatIcon, CloseIcon, } from "@chakra-ui/icons";
+import { AddIcon, ChatIcon, CloseIcon } from "@chakra-ui/icons";
 import { useCallback, useEffect, useRef, useState } from "react";
 import constants from "$/utils/constants.ts";
 import Typing from "./messages/typing.tsx";
-import { useChannelStore, useMemberStore, useMessageStateStore, useMessageStore, useRoleStore, useSettingsStore, useTypingStore, useUserStore } from "$/utils/Stores.ts";
+import {
+  useChannelStore,
+  useMemberStore,
+  useMessageStateStore,
+  useMessageStore,
+  useRoleStore,
+  useSettingsStore,
+  useTypingStore,
+  useUserStore,
+} from "$/utils/Stores.ts";
 import Member from "$/Client/Structures/Guild/Member.ts";
 import TextBoxBanner from "./messageBanner.tsx";
 import User from "$/Client/Structures/User/User.ts";
@@ -29,7 +38,11 @@ import ChatBox from "../chatbox/chatbox.tsx";
 import { useRouter } from "next/router";
 import PermissionHandler from "../../../wrapper/Client/Structures/BitFields/PermissionHandler.ts";
 
-const GuildMessageContainer = ({ children }: { children?: React.ReactNode; }) => {
+const GuildMessageContainer = ({
+  children,
+}: {
+  children?: React.ReactNode;
+}) => {
   const { getCurrentChannel } = useChannelStore();
   const currentChannel = getCurrentChannel();
   const router = useRouter();
@@ -42,7 +55,7 @@ const GuildMessageContainer = ({ children }: { children?: React.ReactNode; }) =>
   const [shake, setShake] = useState(false);
   const { getCurrentChannels } = useChannelStore();
   const channels = getCurrentChannels();
-  
+
   const [mentioning, setMentioning] = useState<{
     isMenioning: boolean;
     searchingFor: string;
@@ -62,7 +75,7 @@ const GuildMessageContainer = ({ children }: { children?: React.ReactNode; }) =>
     members: [],
     roles: [],
     channels: [],
-    emojis: []
+    emojis: [],
   });
   const textRef = useRef<HTMLTextAreaElement>(null);
   const [focused, setFocused] = useState(false);
@@ -70,7 +83,9 @@ const GuildMessageContainer = ({ children }: { children?: React.ReactNode; }) =>
   const [value, setValue] = useState("");
   const { typing } = useTypingStore();
   const { users } = useUserStore();
-  const [usersTyping, setUsersTyping] = useState<{ user: User<boolean>, since: number; }[]>([]);
+  const [usersTyping, setUsersTyping] = useState<
+    { user: User<boolean>; since: number }[]
+  >([]);
   const { state, messageId, setState, setMessageId } = useMessageStateStore();
   const { experiments: presSettings } = usePresistantSettings();
   const { messages } = useMessageStore();
@@ -102,20 +117,36 @@ const GuildMessageContainer = ({ children }: { children?: React.ReactNode; }) =>
       if (users.find((u) => u.id === user.userId && u.isClient)) continue; // ? don't show that *we* are typing
 
       setUsersTyping((tpUsers) => {
-        return [...tpUsers, { user: users.find((u) => u.id === user.userId)!, since: user.since }];
+        return [
+          ...tpUsers,
+          { user: users.find((u) => u.id === user.userId)!, since: user.since },
+        ];
       });
     }
-
   }, [typing, router]);
 
   useEffect(() => {
     const clientUser = users.find((u) => u.isClient)!;
-    const member = clientUser ? members.find((member) => member.userId === clientUser.id && member.guildId === guildId) : null;
-    const memberRoles = member ? roles.filter((r) => member.roleIds.includes(r.id)) : [];
-    const permissionHandler = new PermissionHandler(clientUser.id, member?.owner ?? false, memberRoles, channels);
+    const member = clientUser
+      ? members.find(
+          (member) =>
+            member.userId === clientUser.id && member.guildId === guildId,
+        )
+      : null;
+    const memberRoles = member
+      ? roles.filter((r) => member.roleIds.includes(r.id))
+      : [];
+    const permissionHandler = new PermissionHandler(
+      clientUser.id,
+      member?.owner ?? false,
+      memberRoles,
+      channels,
+    );
 
-    setCanSendMessages(permissionHandler.hasChannelPermission(channelId, ["SendMessages"]))
-  }, [channelId])
+    setCanSendMessages(
+      permissionHandler.hasChannelPermission(channelId, ["SendMessages"]),
+    );
+  }, [channelId]);
 
   const sendMessage = async (message: string) => {
     setLength(0);
@@ -128,7 +159,8 @@ const GuildMessageContainer = ({ children }: { children?: React.ReactNode; }) =>
       setTimeout(() => chat.scrollIntoView({ behavior: "instant" }), 50);
     }
 
-    const replyingTo = state === "replying" ? messageId ?? undefined : undefined;
+    const replyingTo =
+      state === "replying" ? messageId ?? undefined : undefined;
 
     await currentChannel.sendMessage({ content: message, replyingTo });
 
@@ -149,7 +181,6 @@ const GuildMessageContainer = ({ children }: { children?: React.ReactNode; }) =>
 
         setTimeout(() => setShake(false), 500);
         return;
-
       }
 
       sendMessage(message);
@@ -185,16 +216,31 @@ const GuildMessageContainer = ({ children }: { children?: React.ReactNode; }) =>
       const selected = textarea.value.substring(start, end);
 
       if (selected.startsWith("**") && selected.endsWith("**")) {
-        setValue(textarea.value.substring(0, start) + selected.substring(2, selected.length - 2) + textarea.value.substring(end));
+        setValue(
+          textarea.value.substring(0, start) +
+            selected.substring(2, selected.length - 2) +
+            textarea.value.substring(end),
+        );
         textarea.setSelectionRange(start, end - 4);
       } else {
-        setValue(textarea.value.substring(0, start) + `**${selected}**` + textarea.value.substring(end));
+        setValue(
+          textarea.value.substring(0, start) +
+            `**${selected}**` +
+            textarea.value.substring(end),
+        );
         textarea.setSelectionRange(start, end + 4);
       }
     }
   };
 
-  const onUserRoleClick = (type: "user" | "role" | "channel" | "emoji", item: Role | User<boolean> | BaseChannel | { emoji: string; unicode: string; }) => {
+  const onUserRoleClick = (
+    type: "user" | "role" | "channel" | "emoji",
+    item:
+      | Role
+      | User<boolean>
+      | BaseChannel
+      | { emoji: string; unicode: string },
+  ) => {
     if (!textRef.current) return;
 
     const words = value;
@@ -205,40 +251,86 @@ const GuildMessageContainer = ({ children }: { children?: React.ReactNode; }) =>
       const wordStart = words.indexOf(word);
       const wordend = wordStart + word.length;
 
-      if (word.includes("@") && caretPosition > wordStart && caretPosition <= wordend) {
+      if (
+        word.includes("@") &&
+        caretPosition > wordStart &&
+        caretPosition <= wordend
+      ) {
         const beforeCaret = words.substring(0, caretPosition);
 
         if (type === "role" && item instanceof Role) {
           if (item.id === item.guildId) {
-            setValue(beforeCaret.substring(0, beforeCaret.lastIndexOf("@")) + "@everyone" + words.substring(caretPosition));
+            setValue(
+              beforeCaret.substring(0, beforeCaret.lastIndexOf("@")) +
+                "@everyone" +
+                words.substring(caretPosition),
+            );
 
-            textRef.current.setSelectionRange(caretPosition + 9, caretPosition + 9);
+            textRef.current.setSelectionRange(
+              caretPosition + 9,
+              caretPosition + 9,
+            );
           } else {
-            setValue(beforeCaret.substring(0, beforeCaret.lastIndexOf("@")) + `<&${item.id}>` + words.substring(caretPosition));
+            setValue(
+              beforeCaret.substring(0, beforeCaret.lastIndexOf("@")) +
+                `<&${item.id}>` +
+                words.substring(caretPosition),
+            );
 
-            textRef.current.setSelectionRange(caretPosition + 3 + item.id.length, caretPosition + 3 + item.id.length);
+            textRef.current.setSelectionRange(
+              caretPosition + 3 + item.id.length,
+              caretPosition + 3 + item.id.length,
+            );
           }
         } else if (type === "user" && item instanceof User) {
-          setValue(beforeCaret.substring(0, beforeCaret.lastIndexOf("@")) + `<@${item.id}>` + words.substring(caretPosition));
+          setValue(
+            beforeCaret.substring(0, beforeCaret.lastIndexOf("@")) +
+              `<@${item.id}>` +
+              words.substring(caretPosition),
+          );
 
-          textRef.current.setSelectionRange(caretPosition + 3 + item.id.length, caretPosition + 3 + item.id.length);
+          textRef.current.setSelectionRange(
+            caretPosition + 3 + item.id.length,
+            caretPosition + 3 + item.id.length,
+          );
         }
-
-      } else if (word.includes("#") && caretPosition > wordStart && caretPosition <= wordend) {
+      } else if (
+        word.includes("#") &&
+        caretPosition > wordStart &&
+        caretPosition <= wordend
+      ) {
         const beforeCaret = words.substring(0, caretPosition);
 
         if (type === "channel" && item instanceof BaseChannel) {
-          setValue(beforeCaret.substring(0, beforeCaret.lastIndexOf("#")) + `<#${item.id}>` + words.substring(caretPosition));
+          setValue(
+            beforeCaret.substring(0, beforeCaret.lastIndexOf("#")) +
+              `<#${item.id}>` +
+              words.substring(caretPosition),
+          );
 
-          textRef.current.setSelectionRange(caretPosition + 3 + item.id.length, caretPosition + 3 + item.id.length);
+          textRef.current.setSelectionRange(
+            caretPosition + 3 + item.id.length,
+            caretPosition + 3 + item.id.length,
+          );
         }
-      } else if (word.includes(":") && caretPosition > wordStart && caretPosition <= wordend) {
+      } else if (
+        word.includes(":") &&
+        caretPosition > wordStart &&
+        caretPosition <= wordend
+      ) {
         const beforeCaret = words.substring(0, caretPosition);
 
-        if (type === "emoji" && ("emoji" in item) && ("unicode" in item)) {
-          setValue(beforeCaret.substring(0, beforeCaret.lastIndexOf(":")) + `:${item.emoji}:` + words.substring(caretPosition));
+        if (type === "emoji" && "emoji" in item && "unicode" in item) {
+          setValue(
+            beforeCaret.substring(0, beforeCaret.lastIndexOf(":")) +
+              `:${item.emoji}:` +
+              words.substring(caretPosition),
+          );
 
-          textRef.current.setSelectionRange(caretPosition + 2 + item.emoji.length, caretPosition + 2 + item.emoji.length);
+          textRef.current.setSelectionRange(
+            caretPosition + 2 + item.emoji.length,
+            caretPosition + 2 + item.emoji.length,
+          );
         }
       }
 
@@ -251,15 +343,25 @@ const GuildMessageContainer = ({ children }: { children?: React.ReactNode; }) =>
       members: [],
       roles: [],
       channels: [],
-      emojis: []
+      emojis: [],
     });
   };
 
-  const replyTextBanner = useCallback((() => {
-    const user = users.find((u) => u.id === messages.find((m) => m.id === messageId)?.authorId);
-    const member = user ? members.find((member) => member.userId === user.id && member.guildId === guildId) : null;
-    const memberRoles = member ? roles.filter((r) => member.roleIds.includes(r.id)) : [];
-    const topRole = memberRoles.sort((a, b) => b.position - a.position).find((r) => r.color !== 0);
+  const replyTextBanner = useCallback(() => {
+    const user = users.find(
+      (u) => u.id === messages.find((m) => m.id === messageId)?.authorId,
+    );
+    const member = user
+      ? members.find(
+          (member) => member.userId === user.id && member.guildId === guildId,
+        )
+      : null;
+    const memberRoles = member
+      ? roles.filter((r) => member.roleIds.includes(r.id))
+      : [];
+    const topRole = memberRoles
+      .sort((a, b) => b.position - a.position)
+      .find((r) => r.color !== 0);
 
     return (
       <TextBoxBanner
@@ -275,17 +377,19 @@ const GuildMessageContainer = ({ children }: { children?: React.ReactNode; }) =>
             <Text ml={1} color={topRole?.hexColor ?? ""}>
               {member?.displayUsername ?? user?.displayUsername}
             </Text>
-            <CloseIcon ml="auto" cursor={"pointer"} onClick={() => {
-              setState("idle");
-              setMessageId(null);
-            }} />
+            <CloseIcon
+              ml="auto"
+              cursor={"pointer"}
+              onClick={() => {
+                setState("idle");
+                setMessageId(null);
+              }}
+            />
           </Flex>
         </Box>
-
       </TextBoxBanner>
     );
-
-  }), [state, messageId]);
+  }, [state, messageId]);
 
   return (
     <Flex
@@ -294,7 +398,11 @@ const GuildMessageContainer = ({ children }: { children?: React.ReactNode; }) =>
       pos="fixed"
       bottom={settings.navBarLocation === "left" ? "25" : "85"}
       px="3"
-      maxW={settings.navBarLocation === "left" ? "calc(100% - 450px)" : "calc(100% - 400px)"}
+      maxW={
+        settings.navBarLocation === "left"
+          ? "calc(100% - 450px)"
+          : "calc(100% - 400px)"
+      }
       left={settings.navBarLocation === "left" ? "51.5%" : "50%"}
       transform="translateX(-50%)"
       onFocus={() => setFocused(true)}
@@ -326,7 +434,7 @@ const GuildMessageContainer = ({ children }: { children?: React.ReactNode; }) =>
                 _focus={{
                   bg: "gray.700",
                   boxShadow: "none",
-                  outline: "none"
+                  outline: "none",
                 }}
                 tabIndex={i}
                 onClick={() => {
@@ -334,7 +442,10 @@ const GuildMessageContainer = ({ children }: { children?: React.ReactNode; }) =>
                 }}
               >
                 <Flex alignItems="center">
-                  <Avatar size="sm" src={member.user.getAvatarUrl({ size: 128 })} />
+                  <Avatar
+                    size="sm"
+                    src={member.user.getAvatarUrl({ size: 128 })}
+                  />
                   <Text ml={2}>{member.member.displayUsername}</Text>
                 </Flex>
               </Flex>
@@ -354,14 +465,20 @@ const GuildMessageContainer = ({ children }: { children?: React.ReactNode; }) =>
                     _focus={{
                       bg: "gray.700",
                       boxShadow: "none",
-                      outline: "none"
+                      outline: "none",
                     }}
                     onClick={() => {
                       onUserRoleClick("role", role);
                     }}
                   >
                     <Flex alignItems="center">
-                      <Text fontWeight={"600"} color={role.hexColor} fontSize={"md"}>@{role.name}</Text>
+                      <Text
+                        fontWeight={"600"}
+                        color={role.hexColor}
+                        fontSize={"md"}
+                      >
+                        @{role.name}
+                      </Text>
                     </Flex>
                   </Flex>
                 ))}
@@ -378,11 +495,13 @@ const GuildMessageContainer = ({ children }: { children?: React.ReactNode; }) =>
                     px={2}
                     py={1}
                     _hover={{ bg: "gray.700" }}
-                    tabIndex={mentioning.members.length + mentioning.roles.length + i}
+                    tabIndex={
+                      mentioning.members.length + mentioning.roles.length + i
+                    }
                     _focus={{
                       bg: "gray.700",
                       boxShadow: "none",
-                      outline: "none"
+                      outline: "none",
                     }}
                     onClick={() => {
                       onUserRoleClick("channel", channel);
@@ -394,7 +513,12 @@ const GuildMessageContainer = ({ children }: { children?: React.ReactNode; }) =>
                     </Flex>
                     {channel.parentId && (
                       <Flex alignItems="center" justifyContent="flex-end">
-                        <Text fontSize={"sm"}>{channels.find((c) => c.id === channel.parentId)?.name}</Text>
+                        <Text fontSize={"sm"}>
+                          {
+                            channels.find((c) => c.id === channel.parentId)
+                              ?.name
+                          }
+                        </Text>
                       </Flex>
                     )}
                   </Flex>
@@ -411,11 +535,16 @@ const GuildMessageContainer = ({ children }: { children?: React.ReactNode; }) =>
                     px={2}
                     py={1}
                     _hover={{ bg: "gray.700" }}
-                    tabIndex={mentioning.members.length + mentioning.roles.length + mentioning.channels.length + i}
+                    tabIndex={
+                      mentioning.members.length +
+                      mentioning.roles.length +
+                      mentioning.channels.length +
+                      i
+                    }
                     _focus={{
                       bg: "gray.700",
                       boxShadow: "none",
-                      outline: "none"
+                      outline: "none",
                     }}
                     onClick={() => {
                       onUserRoleClick("emoji", emoji);
@@ -432,16 +561,24 @@ const GuildMessageContainer = ({ children }: { children?: React.ReactNode; }) =>
           </TextBoxBanner>
         )}
 
-        {state === "replying" && (
-          <>{replyTextBanner()}</>
-        )}
+        {state === "replying" && <>{replyTextBanner()}</>}
 
         {children}
 
-        <InputGroup id="message-box" bg={useColorModeValue("gray.200", "gray.800")} rounded={10} style={shake ? {
-          animation: "shake 0.5s",
-          animationIterationCount: 0.5
-        } : {}} mb={2}>
+        <InputGroup
+          id="message-box"
+          bg={useColorModeValue("gray.200", "gray.800")}
+          rounded={10}
+          style={
+            shake
+              ? {
+                  animation: "shake 0.5s",
+                  animationIterationCount: 0.5,
+                }
+              : {}
+          }
+          mb={2}
+        >
           {/* Add File Button*/}
           {canSendMessages && (
             <InputLeftAddon bg="transparent" border={0}>
@@ -451,13 +588,32 @@ const GuildMessageContainer = ({ children }: { children?: React.ReactNode; }) =>
             </InputLeftAddon>
           )}
 
-          {presSettings.newChatBox
-            ? <NewChatBox setLength={setLength} setMentioning={setMentioning} handleKeyDown={handleKeyDown} setValue={setValue} value={value} />
-            : <ChatBox setLength={setLength} setMentioning={setMentioning} handleKeyDown={handleKeyDown} setValue={setValue} value={value} disabled={!canSendMessages} />}
+          {presSettings.newChatBox ? (
+            <NewChatBox
+              setLength={setLength}
+              setMentioning={setMentioning}
+              handleKeyDown={handleKeyDown}
+              setValue={setValue}
+              value={value}
+            />
+          ) : (
+            <ChatBox
+              setLength={setLength}
+              setMentioning={setMentioning}
+              handleKeyDown={handleKeyDown}
+              setValue={setValue}
+              value={value}
+              disabled={!canSendMessages}
+            />
+          )}
 
           {canSendMessages && (
             <InputRightAddon width="4rem" bg={"transparent"} border={0}>
-              <Button h={"1.75rem"} w={"1.5rem"} onClick={() => handleKeyDown()}>
+              <Button
+                h={"1.75rem"}
+                w={"1.5rem"}
+                onClick={() => handleKeyDown()}
+              >
                 <ChatIcon />
               </Button>
             </InputRightAddon>
@@ -469,7 +625,13 @@ const GuildMessageContainer = ({ children }: { children?: React.ReactNode; }) =>
               bottom="0"
               right="0"
               fontSize="xs"
-              color={length >= constants.settings.maxMessageSize * 0.9 ? "red.500" : length >= constants.settings.maxMessageSize * 0.85 ? "yellow.500" : "green.500"}
+              color={
+                length >= constants.settings.maxMessageSize * 0.9
+                  ? "red.500"
+                  : length >= constants.settings.maxMessageSize * 0.85
+                    ? "yellow.500"
+                    : "green.500"
+              }
               pr="1"
             >
               {constants.settings.maxMessageSize - length}

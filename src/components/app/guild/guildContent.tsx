@@ -23,10 +23,7 @@ import {
   SettingsIcon,
 } from "@chakra-ui/icons";
 import React, { ReactNode, useEffect, useState } from "react";
-import {
-  useCollapsedChannels,
-  useReadyStore,
-} from "@/utils/stores";
+import { useCollapsedChannels, useReadyStore } from "@/utils/stores";
 import { sortChannels } from "@/utils/sortChannels";
 import GuildSettings from "@/components/app/guild/settings";
 import GuildInvites from "@/components/app/guild/invites";
@@ -38,10 +35,27 @@ import Channel from "./channels/index.tsx";
 import ChannelIcon from "./channels/channelIcon.tsx";
 import constants from "$/utils/constants.ts";
 import Link from "next/link";
-import { useChannelStore, useGuildStore, useMemberStore, useRoleStore, useSettingsStore, useUserStore } from "$/utils/Stores.ts";
+import {
+  useChannelStore,
+  useGuildStore,
+  useMemberStore,
+  useRoleStore,
+  useSettingsStore,
+  useUserStore,
+} from "$/utils/Stores.ts";
 import PermissionHandler from "$/Client/Structures/BitFields/PermissionHandler.ts";
 
-const GuildContent = ({ children, noMemberBar, noChannelTopic, ignoreLimits }: { children?: ReactNode, noMemberBar?: boolean; noChannelTopic?: boolean; ignoreLimits?: boolean; }) => {
+const GuildContent = ({
+  children,
+  noMemberBar,
+  noChannelTopic,
+  ignoreLimits,
+}: {
+  children?: ReactNode;
+  noMemberBar?: boolean;
+  noChannelTopic?: boolean;
+  ignoreLimits?: boolean;
+}) => {
   const ready = useReadyStore();
   const { getCurrentChannel, getCurrentChannels } = useChannelStore();
   const { getCurrentGuild } = useGuildStore();
@@ -83,8 +97,10 @@ const GuildContent = ({ children, noMemberBar, noChannelTopic, ignoreLimits }: {
     const newPermHandler = new PermissionHandler(
       currentMember.userId,
       currentMember.owner ?? currentMember.coOwner,
-      currentMember.roleIds.map((id) => currentRoles.find((role) => role.id === id)!),
-      channels
+      currentMember.roleIds.map(
+        (id) => currentRoles.find((role) => role.id === id)!,
+      ),
+      channels,
     );
 
     setPermissionHandler(newPermHandler);
@@ -93,9 +109,20 @@ const GuildContent = ({ children, noMemberBar, noChannelTopic, ignoreLimits }: {
   useEffect(() => {
     if (currentGuild) {
       const clientUser = users.find((u) => u.isClient)!;
-      const roles = currentRoles.filter((role) => currentMember?.roleIds.includes(role.id));
-      const permissionHandler = new PermissionHandler(clientUser.id, currentMember?.owner ?? false, roles, channels);
-      const channelsWeHaveReadAccessTo = channels.filter((channel) => permissionHandler.hasChannelPermission(channel.id, ["ViewMessageHistory"]));
+      const roles = currentRoles.filter((role) =>
+        currentMember?.roleIds.includes(role.id),
+      );
+      const permissionHandler = new PermissionHandler(
+        clientUser.id,
+        currentMember?.owner ?? false,
+        roles,
+        channels,
+      );
+      const channelsWeHaveReadAccessTo = channels.filter((channel) =>
+        permissionHandler.hasChannelPermission(channel.id, [
+          "ViewMessageHistory",
+        ]),
+      );
 
       setSortedChannelGroups(sortChannels(channelsWeHaveReadAccessTo));
     }
@@ -109,7 +136,10 @@ const GuildContent = ({ children, noMemberBar, noChannelTopic, ignoreLimits }: {
         isOpen={createChannelIsOpen}
         onClose={createChannelOnClose}
       />
-      <Flex height="100vh" ml={settings.navBarLocation === "left" ? "60px" : ""}>
+      <Flex
+        height="100vh"
+        ml={settings.navBarLocation === "left" ? "60px" : ""}
+      >
         <Box
           bg={background}
           pb="10"
@@ -139,24 +169,22 @@ const GuildContent = ({ children, noMemberBar, noChannelTopic, ignoreLimits }: {
                   </MenuButton>
 
                   <MenuList>
-                    {permissions?.hasAnyRole(
-                      [
-                        "ServerName",
-                        "ServerDescription",
-                        "ServerIcon",
-                        "MaintenanceToggle",
-                        "AddBots",
-                        "ViewAuditLog",
-                        "ManageVanity",
-                      ]
-                    ) && (
-                        <MenuItem
-                          onClick={settingsOnOpen}
-                          icon={<SettingsIcon />}
-                        >
-                          Guild Settings
-                        </MenuItem>
-                      )}
+                    {permissions?.hasAnyRole([
+                      "ServerName",
+                      "ServerDescription",
+                      "ServerIcon",
+                      "MaintenanceToggle",
+                      "AddBots",
+                      "ViewAuditLog",
+                      "ManageVanity",
+                    ]) && (
+                      <MenuItem
+                        onClick={settingsOnOpen}
+                        icon={<SettingsIcon />}
+                      >
+                        Guild Settings
+                      </MenuItem>
+                    )}
 
                     {permissions?.hasAnyRole(["CreateChannel"]) && (
                       <MenuItem
@@ -193,7 +221,8 @@ const GuildContent = ({ children, noMemberBar, noChannelTopic, ignoreLimits }: {
             aria-label="Main Navigation"
           >
             {sortedChannelGroups.map((channel, index) => {
-              if (collapsedChannels.includes(channel.parentId ?? "")) return null;
+              if (collapsedChannels.includes(channel.parentId ?? ""))
+                return null;
               return (
                 <Box key={index}>
                   {channel.type !== constants.channelTypes.GuildCategory ? (
@@ -203,17 +232,23 @@ const GuildContent = ({ children, noMemberBar, noChannelTopic, ignoreLimits }: {
                       <Channel channel={channel} key={channel.id} />
                     </Link>
                   ) : (
-                    <Channel channel={channel} onClick={() => {
-                      const shouldAddOrRemove = !collapsedChannels.includes(channel.id);
+                    <Channel
+                      channel={channel}
+                      onClick={() => {
+                        const shouldAddOrRemove = !collapsedChannels.includes(
+                          channel.id,
+                        );
 
-                      setCollapsedChannels(
-                        shouldAddOrRemove
-                          ? [...collapsedChannels, channel.id]
-                          : collapsedChannels.filter((id) => id !== channel.id),
-                      );
-
-
-                    }} key={channel.id} />
+                        setCollapsedChannels(
+                          shouldAddOrRemove
+                            ? [...collapsedChannels, channel.id]
+                            : collapsedChannels.filter(
+                                (id) => id !== channel.id,
+                              ),
+                        );
+                      }}
+                      key={channel.id}
+                    />
                   )}
                 </Box>
               );
@@ -225,22 +260,44 @@ const GuildContent = ({ children, noMemberBar, noChannelTopic, ignoreLimits }: {
 
         <Box flex="1" justifyContent="center" userSelect={"none"}>
           {!noChannelTopic && (
-            <Box pos="sticky" top={0} zIndex={10} bg={background} p={2} display="flex" alignItems="center">
+            <Box
+              pos="sticky"
+              top={0}
+              zIndex={10}
+              bg={background}
+              p={2}
+              display="flex"
+              alignItems="center"
+            >
               <ChannelIcon channel={currentChannel!} />
               <Text>{currentChannel?.name}</Text>
               {currentChannel?.description && (
                 <>
                   <Divider orientation="vertical" h="20px" ml={3} />
-                  <Text ml={3} fontSize={"small"} color={"gray.400"} cursor={"pointer"}>{currentChannel?.description}</Text>
+                  <Text
+                    ml={3}
+                    fontSize={"small"}
+                    color={"gray.400"}
+                    cursor={"pointer"}
+                  >
+                    {currentChannel?.description}
+                  </Text>
                 </>
               )}
-
             </Box>
           )}
 
           {/* todo: let users configure this */}
           {!ignoreLimits ? (
-            <Box maxHeight={settings.navBarLocation === "bottom" ? "calc(100vh - 170px)" : ""} px={2} id="scrollable-div">
+            <Box
+              maxHeight={
+                settings.navBarLocation === "bottom"
+                  ? "calc(100vh - 170px)"
+                  : ""
+              }
+              px={2}
+              id="scrollable-div"
+            >
               {children}
             </Box>
           ) : (
@@ -252,12 +309,7 @@ const GuildContent = ({ children, noMemberBar, noChannelTopic, ignoreLimits }: {
 
         {/* Right side */}
         {!noMemberBar && (
-          <Box
-            bg={background}
-            pb="10"
-            color="inherit"
-            w={"200px"}
-          >
+          <Box bg={background} pb="10" color="inherit" w={"200px"}>
             <GuildMembers />
           </Box>
         )}

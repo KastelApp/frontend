@@ -13,7 +13,6 @@ import {
 } from "@chakra-ui/react";
 
 const SettingsSessions = () => {
-
   return (
     <>
       <Text fontSize="xl" fontWeight="bold">
