@@ -86,7 +86,7 @@ const ResetPassword = () => {
         const password = event.target.password.value;
 
         if (!t(password, "string") || password.length < 4 || password.length > 72) {
-            setError([{ code: "INVALID_PASSWORD", message: "Invalid password. Must be between 4 and 72" }]);
+            setError([{ code: "INVALID_PASSWORD", message: "Invalid password. Must be between 4 and 72 characters" }]);
             setLoading(false);
 
             return;
