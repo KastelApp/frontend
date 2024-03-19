@@ -67,7 +67,7 @@ const ResetPassword = () => {
             setError([
                 {
                     code: "Success",
-                    message: "An email has been sent to your email address.",
+                    message: "Instructions to reset your password have been sent to your email.",
                 }
             ])
 
