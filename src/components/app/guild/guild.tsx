@@ -48,7 +48,7 @@ const Guild = ({ guild, type }: { guild: GuildClass; type: "left" | "bottom"; })
   const [hovered, setHovered] = useState(false);
 
   return (
-    <Tooltip label={guild.name} aria-label={guild.name} placement="auto">
+    <Tooltip label={guild.name} aria-label={guild.name} placement="top">
       <NextLink href={`/app/guilds/${guild.id}/channels${channelId ? `/${channelId}` : ""}`} onMouseEnter={() => setHovered(true)} onMouseLeave={() => setHovered(false)}>
         <Box position="relative">
           <Box display="inline-block" marginRight={2}>
