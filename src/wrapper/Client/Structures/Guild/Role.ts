@@ -67,10 +67,10 @@ class Role {
     this._guildId = guildId;
   }
 
-  public get hexColor() {
-    // if the color is 0, then we want to return the default color (which is c4c9ce)
-    return this.color === 0 ? "#c4c9ce" : `#${this.color.toString(16)}`;
-  }
+    public get hexColor() {
+        // if the color is 0, then we want to return the default color (which is c4c9ce)
+        return this.color === 0 ? "#c4c9ce" : `#${this.color.toString(16).padStart(6, "0")}`;
+    }
 }
 
 export default Role;

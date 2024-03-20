@@ -202,7 +202,9 @@ const GuildContent = ({
                     {!currentMember?.owner && (
                       <>
                         <MenuDivider />
-                        <MenuItem icon={<DeleteIcon color={"red.500"} />}>
+                        <MenuItem icon={<DeleteIcon color={"red.500"} />} onClick={() => {
+                          currentGuild?.leave();
+                        }}>
                           <Text color={"red.500"}>Leave Server</Text>
                         </MenuItem>
                       </>

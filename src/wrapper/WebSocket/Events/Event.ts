@@ -8,6 +8,7 @@ import guildDelete from "./GuildDelete.ts";
 import guildMemberAdd from "./GuildMemberAdd.ts";
 import guildMemberChunk from "./GuildMemberChunk.ts";
 import presenceUpdate from "./PresencesUpdate.ts";
+import guildMemberRemove from "./GuildMemberRemove.ts";
 
 const isEventPayload = (data: unknown): data is EventPayload => {
   if (typeof data !== "object" || data === null || data === undefined)
@@ -70,8 +71,14 @@ const event = (ws: Websocket, data: unknown) => {
     case "PresencesUpdate": {
       presenceUpdate(ws, data.data);
 
-      break;
-    }
+            break;
+        }
+
+        case "GuildMemberRemove": {
+            guildMemberRemove(ws, data.data)
+
+            break;
+        }
 
     default: {
       StringFormatter.log(
