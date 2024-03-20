@@ -29,10 +29,7 @@ const messageCreate = (ws: Websocket, data: unknown) => {
 
   const state = useMessageStore.getState();
 
-  if (
-    state.messages.find((msg) => msg.id === data.id || msg.nonce === data.nonce)
-  )
-    return;
+  if (state.messages.find((msg) => msg.id === data.id || msg.nonce === data.nonce && msg.nonce !== null)) return;
 
   state.addMessage(new Message(ws, data, "sent", data.channelId));
 
