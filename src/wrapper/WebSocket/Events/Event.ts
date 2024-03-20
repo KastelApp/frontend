@@ -11,84 +11,84 @@ import presenceUpdate from "./PresencesUpdate.ts";
 import guildMemberRemove from "./GuildMemberRemove.ts";
 
 const isEventPayload = (data: unknown): data is EventPayload => {
-  if (typeof data !== "object" || data === null || data === undefined)
-    return false;
+    if (typeof data !== "object" || data === null || data === undefined)
+        return false;
 
-  if (!("event" in data)) return false;
-  if (!("op" in data)) return false;
-  if (!("data" in data)) return false;
+    if (!("event" in data)) return false;
+    if (!("op" in data)) return false;
+    if (!("data" in data)) return false;
 
-  return true;
+    return true;
 };
 
 const event = (ws: Websocket, data: unknown) => {
-  if (!isEventPayload(data)) {
-    StringFormatter.log(
-      `${StringFormatter.purple("[Wrapper]")} ${StringFormatter.green("[WebSocket]")} ${StringFormatter.white("Invalid Event Payload")}`,
-      data,
-    );
+    if (!isEventPayload(data)) {
+        StringFormatter.log(
+            `${StringFormatter.purple("[Wrapper]")} ${StringFormatter.green("[WebSocket]")} ${StringFormatter.white("Invalid Event Payload")}`,
+            data,
+        );
 
-    return;
-  }
-
-  switch (data.event) {
-    case "Typing": {
-      typing(ws, data.data);
-
-      break;
+        return;
     }
 
-    case "MessageCreate": {
-      messageCreate(ws, data.data);
+    switch (data.event) {
+        case "Typing": {
+            typing(ws, data.data);
 
-      break;
-    }
+            break;
+        }
 
-    case "GuildCreate": {
-      guildCreate(ws, data.data);
+        case "MessageCreate": {
+            messageCreate(ws, data.data);
 
-      break;
-    }
+            break;
+        }
 
-    case "GuildDelete": {
-      guildDelete(ws, data.data);
+        case "GuildCreate": {
+            guildCreate(ws, data.data);
 
-      break;
-    }
+            break;
+        }
 
-    case "GuildMemberAdd": {
-      guildMemberAdd(ws, data.data);
+        case "GuildDelete": {
+            guildDelete(ws, data.data);
 
-      break;
-    }
+            break;
+        }
 
-    case "GuildMemberChunk": {
-      guildMemberChunk(ws, data.data);
+        case "GuildMemberAdd": {
+            guildMemberAdd(ws, data.data);
 
-      break;
-    }
+            break;
+        }
 
-    case "PresencesUpdate": {
-      presenceUpdate(ws, data.data);
+        case "GuildMemberChunk": {
+            guildMemberChunk(ws, data.data);
+
+            break;
+        }
+
+        case "PresencesUpdate": {
+            presenceUpdate(ws, data.data);
 
             break;
         }
 
         case "GuildMemberRemove": {
-            guildMemberRemove(ws, data.data)
+            guildMemberRemove(ws, data.data);
 
             break;
         }
 
-    default: {
-      StringFormatter.log(
-        `${StringFormatter.purple("[Wrapper]")} ${StringFormatter.green("[WebSocket]")} ${StringFormatter.white("Invalid Event")} ${StringFormatter.red(data.event)}`,
-        data,
-      );
+        default: {
+            StringFormatter.log(
+                `${StringFormatter.purple("[Wrapper]")} ${StringFormatter.green("[WebSocket]")} ${StringFormatter.white("Invalid Event")} ${StringFormatter.red(data.event)}`,
+                data,
+            );
 
-      break;
+            break;
+        }
     }
-  }
 };
 
 export default event;
