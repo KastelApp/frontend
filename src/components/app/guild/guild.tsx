@@ -5,7 +5,7 @@ import GuildClass from "$/Client/Structures/Guild/Guild.ts";
 import {
   useChannelStore,
   useMemberStore,
-  useRoleStore,
+  useRoleStore, useSettingsStore,
   useUserStore,
 } from "$/utils/Stores.ts";
 import { useLastChannelCache } from "@/utils/stores.ts";
@@ -31,6 +31,7 @@ const Guild = ({
   const { roles } = useRoleStore();
   const { members } = useMemberStore();
   const { channels } = useChannelStore();
+  const { settings } = useSettingsStore();
 
   useEffect(() => {
     const clientUser = users.find((u) => u.isClient)!;
@@ -81,7 +82,7 @@ const Guild = ({
   const [hovered, setHovered] = useState(false);
 
   return (
-    <Tooltip label={guild.name} aria-label={guild.name} placement="top">
+    <Tooltip label={guild.name} aria-label={guild.name} placement={settings.navBarLocation === "left" ? "auto" : "top"}>
       <NextLink
         href={`/app/guilds/${guild.id}/channels${channelId ? `/${channelId}` : ""}`}
         onMouseEnter={() => setHovered(true)}
