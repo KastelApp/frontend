@@ -1,36 +1,39 @@
 class Events {
-    #_events: Map<string, ((...data: unknown[]) => void)[]> = new Map();
+  #_events: Map<string, ((...data: unknown[]) => void)[]> = new Map();
 
-    public on(event: string, listener: (...data: unknown[]) => void) {
-        const listeners = this.#_events.get(event) ?? [];
+  public on(event: string, listener: (...data: unknown[]) => void) {
+    const listeners = this.#_events.get(event) ?? [];
 
-        listeners.push(listener);
+    listeners.push(listener);
 
-        this.#_events.set(event, listeners);
+    this.#_events.set(event, listeners);
+  }
+
+  public emit(event: string, ...data: unknown[]) {
+    const listeners = this.#_events.get(event) ?? [];
+
+    for (const listener of listeners) {
+      listener(...data);
     }
+  }
 
-    public emit(event: string, ...data: unknown[]) {
-        const listeners = this.#_events.get(event) ?? [];
+  public off(event: string, listener: (...data: never) => void) {
+    const listeners = this.#_events.get(event) ?? [];
 
-        for (const listener of listeners) {
-            listener(...data);
-        }
-    }
+    this.#_events.set(
+      event,
+      listeners.filter((l) => l !== listener),
+    );
+  }
 
-    public off(event: string, listener: (...data: never) => void) {
-        const listeners = this.#_events.get(event) ?? [];
+  public once(event: string, listener: (...data: unknown[]) => void) {
+    const onceListener = (...data: unknown[]) => {
+      listener(...data);
+      this.off(event, onceListener);
+    };
 
-        this.#_events.set(event, listeners.filter((l) => l !== listener));
-    }
-
-    public once(event: string, listener: (...data: unknown[]) => void) {
-        const onceListener = (...data: unknown[]) => {
-            listener(...data);
-            this.off(event, onceListener);
-        };
-
-        this.on(event, onceListener);
-    }
+    this.on(event, onceListener);
+  }
 }
 
 export default Events;

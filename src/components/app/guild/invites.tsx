@@ -19,7 +19,6 @@ import getGuildName from "@/utils/getGuildName.ts";
 import Invite from "$/Client/Structures/Guild/Invite.ts";
 import { useChannelStore, useGuildStore } from "$/utils/Stores.ts";
 
-
 const GuildInvites = ({
   isOpen,
   onClose,
@@ -33,10 +32,12 @@ const GuildInvites = ({
   const { getCurrentGuild } = useGuildStore();
   const currentGuild = getCurrentGuild();
   const [,] = useState<Invite[]>([]);
-  const [invite, setInvite] = useState<{
-    guildId: string;
-    code: string;
-  }[]>([]);
+  const [invite, setInvite] = useState<
+    {
+      guildId: string;
+      code: string;
+    }[]
+  >([]);
   const [expire] = useState<number>(1000 * 60 * 60 * 24 * 7); // 7 days
 
   const getExpiresAt = (milliseconds: number): string => {
@@ -77,14 +78,17 @@ const GuildInvites = ({
 
       const createdInvite = await currentGuild.createInvite({
         channelId: currentChannel.id,
-        maxUses: 100
+        maxUses: 100,
       });
 
       if (createdInvite.success) {
         const inv = `${document.location.protocol}//${document.location.hostname}/invite/${createdInvite.data?.code}`;
 
         setValue(inv);
-        setInvite((inv) => [...inv, { guildId: currentGuild.id, code: createdInvite.data?.code ?? "" }]);
+        setInvite((inv) => [
+          ...inv,
+          { guildId: currentGuild.id, code: createdInvite.data?.code ?? "" },
+        ]);
       } else {
         setValue("Error creating invite");
       }
@@ -97,7 +101,9 @@ const GuildInvites = ({
     <Modal isOpen={isOpen} onClose={onClose} size={"lg"}>
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>Invite friends to {getGuildName(currentGuild?.name ?? "Loading")}</ModalHeader>
+        <ModalHeader>
+          Invite friends to {getGuildName(currentGuild?.name ?? "Loading")}
+        </ModalHeader>
         <ModalCloseButton />
 
         <ModalBody>

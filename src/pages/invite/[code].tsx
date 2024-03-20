@@ -20,16 +20,16 @@ interface InviteSuccess {
 
 const Invite = () => {
   const router = useRouter();
-  const token = useTokenStore((s) => s.token)
+  const token = useTokenStore((s) => s.token);
   const [loading, setLoading] = useState(true);
   // const [client] = useRecoilState(clientStore);
   const [error, setError] = useState<number | null>(null);
-  const [inviteInfo,] = useState<InviteSuccess | null>(null);
+  const [inviteInfo] = useState<InviteSuccess | null>(null);
 
   useEffect(() => {
     if (!token) {
       // todo store guild invite code in local storage
-      router.push(`/login?redirect=${encodeURIComponent(router.asPath)}`);
+      router.push(`/login?redirect=${router.asPath}`);
     }
   }, []);
 
@@ -39,7 +39,7 @@ const Invite = () => {
         // const inviteCode = router.query.code;
         // const inviteFetch = await client.fetchInvite(inviteCode as string);
 
-        setLoading(false);
+        setLoading(true); // temp
 
         // if (!inviteFetch.success) {
         //   setError(1);

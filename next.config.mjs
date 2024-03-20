@@ -33,7 +33,7 @@ const nextConfig = {
     output: "export",
     images: {
       unoptimized: true, // ? can't have this in the desktop app (which sucks :()
-    }
+    },
   }),
 };
 

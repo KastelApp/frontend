@@ -32,7 +32,9 @@ const Init = () => {
   const typingRef = useRef(typing);
   const [clientStatus, setClientStatus] = useState<status>("Disconnected");
   const clientStatusRef = useRef(clientStatus);
-  const [timoutInterval, setTimeoutInterval] = useState<NodeJS.Timeout | null>(null);
+  const [timoutInterval, setTimeoutInterval] = useState<NodeJS.Timeout | null>(
+    null,
+  );
   const tokenRef = useRef(token);
 
   useEffect(() => {
@@ -61,51 +63,59 @@ const Init = () => {
 
       toast({
         title: "Connection lost and could not recover",
-        description: "We have lost connection to the server and could not recover, please try refreshing the page.",
+        description:
+          "We have lost connection to the server and could not recover, please try refreshing the page.",
         variant: "subtle",
         status: "error",
         position: "top-right",
         isClosable: false,
-        duration: null
+        duration: null,
       });
     }
 
-    if (clientStatus === "Disconnected" || clientStatus === "Reconnecting" && !timoutInterval) {
-      setTimeoutInterval(setTimeout(() => {
-        if (clientStatusRef.current === "Ready") return;
-        if (!tokenRef.current) return;
+    if (
+      clientStatus === "Disconnected" ||
+      (clientStatus === "Reconnecting" && !timoutInterval)
+    ) {
+      setTimeoutInterval(
+        setTimeout(() => {
+          if (clientStatusRef.current === "Ready") return;
+          if (!tokenRef.current) return;
 
-        setReady(false);
+          setReady(false);
 
-        toast.close("unReady");
+          toast.close("unReady");
 
-        toast({
-          title: "Connection lost",
-          description: "We have lost connection to the server, trying to reconnect...",
-          variant: "subtle",
-          status: "warning",
-          position: "top-right",
-          isClosable: false,
-          duration: null,
-          id: "unReady"
-        });
-      }, 5000));
+          toast({
+            title: "Connection lost",
+            description:
+              "We have lost connection to the server, trying to reconnect...",
+            variant: "subtle",
+            status: "warning",
+            position: "top-right",
+            isClosable: false,
+            duration: null,
+            id: "unReady",
+          });
+        }, 5000),
+      );
     }
   }, [clientStatus]);
 
   useEffect(() => {
     if (interval) clearInterval(interval);
 
-    setTypingInterval(setInterval(() => {
-      for (const [channelId, users] of Object.entries(typingRef.current)) {
-        for (const user of users) {
-          if (Date.now() - user.since > 8000) {
-            removeTyping(channelId, user.userId);
+    setTypingInterval(
+      setInterval(() => {
+        for (const [channelId, users] of Object.entries(typingRef.current)) {
+          for (const user of users) {
+            if (Date.now() - user.since > 8000) {
+              removeTyping(channelId, user.userId);
+            }
           }
         }
-      }
-    }, 1000));
-
+      }, 1000),
+    );
   }, []);
 
   const whitelistedPaths: (string | RegExp)[] = [
@@ -115,7 +125,7 @@ const Init = () => {
     "/login",
     "/register",
     "/reset-password",
-    "/app"
+    "/app",
   ];
 
   useEffect(() => {
@@ -127,7 +137,13 @@ const Init = () => {
     }
 
     // ? We make sure the path we are at is whitelisted, so we don't create a client when the user is viewing lets say /tos
-    if (!whitelistedPaths.some((path) => path === router.pathname || path instanceof RegExp && path.test(router.pathname))) {
+    if (
+      !whitelistedPaths.some(
+        (path) =>
+          path === router.pathname ||
+          (path instanceof RegExp && path.test(router.pathname)),
+      )
+    ) {
       return;
     }
 
@@ -142,14 +158,19 @@ const Init = () => {
         mediaUrl: process.env.PUBLIC_MEDIA_URL as string,
         url: process.env.PUBLIC_API_URL as string,
         defaultHeaders: {
-          "X-Special-Properties": Buffer.from(JSON.stringify({
-            version: pack.version,
-            commit: process.env.PUBLIC_GIT_COMMIT as string,
-            branch: process.env.PUBLIC_GIT_BRANCH as string,
-            paltform: process.env.PUBLIC_DESKTOP_APP === "true" ? "desktop" : "browser"
-          })).toString("base64")
-        }
-      }
+          "X-Special-Properties": Buffer.from(
+            JSON.stringify({
+              version: pack.version,
+              commit: process.env.PUBLIC_GIT_COMMIT as string,
+              branch: process.env.PUBLIC_GIT_BRANCH as string,
+              paltform:
+                process.env.PUBLIC_DESKTOP_APP === "true"
+                  ? "desktop"
+                  : "browser",
+            }),
+          ).toString("base64"),
+        },
+      },
     });
 
     newClient.on("ready", () => {
@@ -189,15 +210,32 @@ const Init = () => {
   }, [settings.theme]);
 
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const { isOpen: isCustomStatusOpen, onOpen: onCustomStatusOpen, onClose: onCustomStatusClose } = useDisclosure();
+  const {
+    isOpen: isCustomStatusOpen,
+    onOpen: onCustomStatusOpen,
+    onClose: onCustomStatusClose,
+  } = useDisclosure();
 
   return (
     <>
       {router.pathname.startsWith("/app") && ready && (
         <>
           <Settings isOpen={isOpen} onClose={onClose} />
-          <CustomStatus isOpen={isCustomStatusOpen} onClose={onCustomStatusClose} />
-          {settings.navBarLocation === "bottom" ? <AppNavbar onOpen={onOpen} onCustomStatusOpen={onCustomStatusOpen} /> : <LeftAppNavbar onOpen={onOpen} onCustomStatusOpen={onCustomStatusOpen} />}
+          <CustomStatus
+            isOpen={isCustomStatusOpen}
+            onClose={onCustomStatusClose}
+          />
+          {settings.navBarLocation === "bottom" ? (
+            <AppNavbar
+              onOpen={onOpen}
+              onCustomStatusOpen={onCustomStatusOpen}
+            />
+          ) : (
+            <LeftAppNavbar
+              onOpen={onOpen}
+              onCustomStatusOpen={onCustomStatusOpen}
+            />
+          )}
         </>
       )}
     </>

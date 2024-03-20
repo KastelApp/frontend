@@ -1,7 +1,7 @@
 export interface RequestFail {
-    success: false;
+  success: false;
 }
 
 export interface RequestSuccess {
-    success: true;
+  success: true;
 }

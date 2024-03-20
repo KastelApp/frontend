@@ -1,4 +1,10 @@
-import { Dispatch, FormEvent, SetStateAction, useEffect, useState } from "react";
+import {
+  Dispatch,
+  FormEvent,
+  SetStateAction,
+  useEffect,
+  useState,
+} from "react";
 // import { clientStore } from "@/utils/stores.ts";
 // import { useRouter } from "next/router";
 import {
@@ -43,7 +49,7 @@ const JoinServer = ({
   const client = useClientStore((s) => s.client);
   const { guilds } = useGuildStore();
   const router = useRouter();
-  const [resolve, setResolve] = useState<(k: string) => void>(() => () => { });
+  const [resolve, setResolve] = useState<(k: string) => void>(() => () => {});
   const [id, setId] = useState<string | null>(null);
 
   const getLastParam = (link: string) => {
@@ -105,16 +111,17 @@ const JoinServer = ({
 
     setId(join?.data?.guild?.id ?? null);
 
-    setResolve(await new Promise((res) => {
-      setResolve(() => res);
+    setResolve(
+      await new Promise((res) => {
+        setResolve(() => res);
 
-      setTimeout(() => {
-        router.push(`/app/guilds/${id}/channels`);
-        setLoading(false);
-        modal.onClose();
-      }, 500)
-
-    }));
+        setTimeout(() => {
+          router.push(`/app/guilds/${id}/channels`);
+          setLoading(false);
+          modal.onClose();
+        }, 500);
+      }),
+    );
 
     return;
   };

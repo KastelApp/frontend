@@ -1,12 +1,13 @@
-const getMessageColor = (state: "sent" | "deleted" | "sending" | "failed" = "sent") => {
+const getMessageColor = (
+  state: "sent" | "deleted" | "sending" | "failed" = "sent",
+) => {
+  const theme = localStorage.getItem("chakra-ui-color-mode");
 
-    const theme = localStorage.getItem("chakra-ui-color-mode");
+  if (state === "sending") return "gray";
+  if (state === "sent") return theme === "light" ? "black" : "white";
+  if (state === "failed") return "red";
 
-    if (state === "sending") return "gray";
-    if (state === "sent") return theme === "light" ? "black" : "white";
-    if (state === "failed") return "red";
-
-    return "gray"
+  return "gray";
 };
 
 export default getMessageColor;

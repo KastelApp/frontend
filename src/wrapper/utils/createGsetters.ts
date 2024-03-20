@@ -1,99 +1,107 @@
 import {
-    useChannelStore,
-    useGuildStore,
-    useUserStore,
-    useMessageStore,
-    useInviteStore,
-    useMemberStore,
-    useRoleStore,
-    useSettingsStore    
+  useChannelStore,
+  useGuildStore,
+  useUserStore,
+  useMessageStore,
+  useInviteStore,
+  useMemberStore,
+  useRoleStore,
+  useSettingsStore,
 } from "$/utils/Stores.ts";
 
-const createGsetters = (store: "channel" | "guild" | "user" | "message" | "invite" | "member" | "role" | "settings") => {
-    return (target: unknown, key: string) => {
+const createGsetters = (
+  store:
+    | "channel"
+    | "guild"
+    | "user"
+    | "message"
+    | "invite"
+    | "member"
+    | "role"
+    | "settings",
+) => {
+  return (target: unknown, key: string) => {
+    Object.defineProperty(target, key.slice(1), {
+      get() {
+        return this[key];
+      },
+      set(value) {
+        switch (store) {
+          case "channel": {
+            const state = useChannelStore.getState();
 
-        Object.defineProperty(target, key.slice(1), {
-            get() {
-                return this[key];
-            },
-            set(value) {
+            state.setVersion(state.version + 1);
 
-                switch (store) {
-                    case "channel": {
-                        const state = useChannelStore.getState();
+            break;
+          }
 
-                        state.setVersion(state.version + 1);
+          case "guild": {
+            const state = useGuildStore.getState();
 
-                        break;
-                    }
+            state.setVersion(state.version + 1);
 
-                    case "guild": {
-                        const state = useGuildStore.getState();
+            break;
+          }
 
-                        state.setVersion(state.version + 1);
+          case "user": {
+            const state = useUserStore.getState();
 
-                        break;
-                    }
+            state.setVersion(state.version + 1);
 
-                    case "user": {
-                        const state = useUserStore.getState();
+            break;
+          }
 
-                        state.setVersion(state.version + 1);
+          case "message": {
+            const state = useMessageStore.getState();
 
-                        break;
-                    }
+            state.setVersion(state.version + 1);
 
-                    case "message": {
-                        const state = useMessageStore.getState();
+            break;
+          }
 
-                        state.setVersion(state.version + 1);
+          case "invite": {
+            const state = useInviteStore.getState();
 
-                        break;
-                    }
+            state.setVersion(state.version + 1);
 
-                    case "invite": {
-                        const state = useInviteStore.getState();
+            break;
+          }
 
-                        state.setVersion(state.version + 1);
+          case "member": {
+            const state = useMemberStore.getState();
 
-                        break;
-                    }
+            state.setVersion(state.version + 1);
 
-                    case "member": {
-                        const state = useMemberStore.getState();
+            break;
+          }
 
-                        state.setVersion(state.version + 1);
+          case "role": {
+            const state = useRoleStore.getState();
 
-                        break;
-                    }
+            state.setVersion(state.version + 1);
 
-                    case "role": {
-                        const state = useRoleStore.getState();
+            break;
+          }
 
-                        state.setVersion(state.version + 1);
+          case "settings": {
+            const state = useSettingsStore.getState();
 
-                        break;
-                    }
+            state.setVersion(state.version + 1);
 
-                    case "settings": {
-                        const state = useSettingsStore.getState();
+            break;
+          }
 
-                        state.setVersion(state.version + 1);
+          default: {
+            throw new Error("Invalid store");
+          }
+        }
 
-                        break;
-                    }
-
-                    default: {
-                        throw new Error("Invalid store");
-                    }
-                }
-
-                this[key] = value;
-            },
-            enumerable: true,
-            configurable: true,
-        });
-    }
-}
+        this[key] = value;
+      },
+      enumerable: true,
+      configurable: true,
+    });
+  };
+};
 
 export default createGsetters;

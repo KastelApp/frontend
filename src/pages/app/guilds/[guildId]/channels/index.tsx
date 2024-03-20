@@ -3,13 +3,19 @@ import { useEffect } from "react";
 import {
   useLastChannelCache,
   useReadyStore,
-  useTokenStore
+  useTokenStore,
 } from "@/utils/stores";
 import { Box, Center, Heading, Text } from "@chakra-ui/react";
 import Loading from "@/components/app/loading";
 import SEO from "@/components/seo";
 import GuildContent from "@/components/app/guild/guildContent";
-import { useChannelStore, useGuildStore, useMemberStore, useRoleStore, useUserStore } from "$/utils/Stores.ts";
+import {
+  useChannelStore,
+  useGuildStore,
+  useMemberStore,
+  useRoleStore,
+  useUserStore,
+} from "$/utils/Stores.ts";
 import PermissionHandler from "$/Client/Structures/BitFields/PermissionHandler.ts";
 
 const GuildChannelPage = () => {
@@ -27,11 +33,12 @@ const GuildChannelPage = () => {
   const { roles } = useRoleStore();
   const { getCurrentMember } = useMemberStore();
   const currentMember = getCurrentMember();
-  const { lastChannelCache, setLastChannelCache, removeChannelFromCache } = useLastChannelCache();
-  
-  useEffect(() => {
-    if (!token) router.push(`/login?redirect=${encodeURIComponent(router.asPath)}`);
+  const { lastChannelCache, setLastChannelCache, removeChannelFromCache } =
+    useLastChannelCache();
 
+  useEffect(() => {
+    if (!token)
+      router.push(`/login?redirect=${encodeURIComponent(router.asPath)}`);
 
     if (!ready) return;
 
@@ -48,19 +55,38 @@ const GuildChannelPage = () => {
     }
 
     const clientUser = users.find((u) => u.isClient)!;
-    const memberRoles = guildRoles.filter((role) => currentMember?.roleIds.includes(role.id));
-    const permissionHandler = new PermissionHandler(clientUser.id, currentMember?.owner ?? false, memberRoles, channels);
-    const channelsWeHaveReadAccessTo = channels.filter((channel) => permissionHandler.hasChannelPermission(channel.id, ["ViewMessageHistory"]));
+    const memberRoles = guildRoles.filter((role) =>
+      currentMember?.roleIds.includes(role.id),
+    );
+    const permissionHandler = new PermissionHandler(
+      clientUser.id,
+      currentMember?.owner ?? false,
+      memberRoles,
+      channels,
+    );
+    const channelsWeHaveReadAccessTo = channels.filter((channel) =>
+      permissionHandler.hasChannelPermission(channel.id, [
+        "ViewMessageHistory",
+      ]),
+    );
 
     if (lastChannelCache[guildId]) {
-      if (channelsWeHaveReadAccessTo.find((channel) => channel.id === lastChannelCache[guildId])) {
-        router.push(`/app/guilds/${guildId}/channels/${lastChannelCache[guildId]}`);
-        
+      if (
+        channelsWeHaveReadAccessTo.find(
+          (channel) => channel.id === lastChannelCache[guildId],
+        )
+      ) {
+        router.push(
+          `/app/guilds/${guildId}/channels/${lastChannelCache[guildId]}`,
+        );
+
         return;
       }
     }
 
-    const channel = channelsWeHaveReadAccessTo.find((channel) => channel.isTextBased() && !channel.isCategory())
+    const channel = channelsWeHaveReadAccessTo.find(
+      (channel) => channel.isTextBased() && !channel.isCategory(),
+    );
 
     if (channel) {
       setLastChannelCache({ ...lastChannelCache, [guildId]: channel.id });
@@ -89,7 +115,10 @@ const GuildChannelPage = () => {
                     No Text Channels
                   </Heading>
                   <br />
-                  <Text align={"center"} fontSize="lg" mb={4}>It seems that there are no channels in this guild, or you do not have access to any.</Text>
+                  <Text align={"center"} fontSize="lg" mb={4}>
+                    It seems that there are no channels in this guild, or you do
+                    not have access to any.
+                  </Text>
                 </Box>
               </Center>
             </GuildContent>

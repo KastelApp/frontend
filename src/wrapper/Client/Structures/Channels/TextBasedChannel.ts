@@ -1,90 +1,105 @@
-import { CreateMessageOptions, Message as MessageType } from "$/types/http/channels/messages.ts";
+import {
+  CreateMessageOptions,
+  Message as MessageType,
+} from "$/types/http/channels/messages.ts";
 import Message from "../Message.ts";
 import BaseChannel from "./BaseChannel.ts";
 import { useMessageStore, useUserStore } from "$/utils/Stores.ts";
 import constants from "$/utils/constants.ts";
 
 class TextBasedChannel extends BaseChannel {
-    public async fetchMessages(options?: {
-        limit: number,
-        before?: string,
-        after?: string,
-        around?: string;
-    }) {
-        const params = new URLSearchParams();
+  public async fetchMessages(options?: {
+    limit: number;
+    before?: string;
+    after?: string;
+    around?: string;
+  }) {
+    const params = new URLSearchParams();
 
-        if (options?.limit) params.append("limit", options.limit.toString());
-        if (options?.before) params.append("before", options.before);
-        if (options?.after) params.append("after", options.after);
-        if (options?.around) params.append("around", options.around);
+    if (options?.limit) params.append("limit", options.limit.toString());
+    if (options?.before) params.append("before", options.before);
+    if (options?.after) params.append("after", options.after);
+    if (options?.around) params.append("around", options.around);
 
-        const request = await this.ws.client?.api.get<MessageType[]>(`/channels/${this.id}/messages${params.size > 0 ? `?${params}` : ""}`);
+    const request = await this.ws.client?.api.get<MessageType[]>(
+      `/channels/${this.id}/messages${params.size > 0 ? `?${params}` : ""}`,
+    );
 
-        if (!request?.ok || request.status > 200) return null;
+    if (!request?.ok || request.status > 200) return null;
 
-        const json = await request.json();
+    const json = await request.json();
 
-        const finalMessages: Message[] = [];
+    const finalMessages: Message[] = [];
 
-        for (const msg of json) {
-            finalMessages.push(new Message(this.ws, msg, "sent", this.id));
-        }
-
-        return finalMessages;
+    for (const msg of json) {
+      finalMessages.push(new Message(this.ws, msg, "sent", this.id));
     }
 
-    public async sendMessage(opts: {
-        content: string;
-        replyingTo?: string;
-    }) {
-        const nonce = this.ws.snowflake.generate();
+    return finalMessages;
+  }
 
-        const tempMessage = new Message(this.ws, {
-            nonce,
-            content: opts.content,
-            author: useUserStore.getState().getCurrentUser()!,
-            ...(opts.replyingTo ? {
-                replyingTo: {
-                    channelId: this.id,
-                    messageId: opts.replyingTo
-                }
-            } : {}),
-        }, "sending", this.id);
+  public async sendMessage(opts: { content: string; replyingTo?: string }) {
+    const nonce = this.ws.snowflake.generate();
 
-        const msgs = useMessageStore.getState();
+    const tempMessage = new Message(
+      this.ws,
+      {
+        nonce,
+        content: opts.content,
+        author: useUserStore.getState().getCurrentUser()!,
+        ...(opts.replyingTo
+          ? {
+              replyingTo: {
+                channelId: this.id,
+                messageId: opts.replyingTo,
+              },
+            }
+          : {}),
+      },
+      "sending",
+      this.id,
+    );
 
-        msgs.addMessage(tempMessage);
+    const msgs = useMessageStore.getState();
 
-        const request = await this.ws.client?.api.post<MessageType, CreateMessageOptions>(`/channels/${this.id}/messages`, {
-            content: opts.content,
-            nonce,
-            flags: constants.messageFlags.Normal,
-            replyingTo: opts.replyingTo,
-            allowedMentions: constants.allowedMentions.All
-        });
+    msgs.addMessage(tempMessage);
 
-        if (!request?.ok || request.status > 200) return tempMessage.fastUpdate({}, "failed");
+    const request = await this.ws.client?.api.post<
+      MessageType,
+      CreateMessageOptions
+    >(`/channels/${this.id}/messages`, {
+      content: opts.content,
+      nonce,
+      flags: constants.messageFlags.Normal,
+      replyingTo: opts.replyingTo,
+      allowedMentions: constants.allowedMentions.All,
+    });
 
-        const json = await request.json();
+    if (!request?.ok || request.status > 200)
+      return tempMessage.fastUpdate({}, "failed");
 
-        return tempMessage.fastUpdate(json, "sent");
-    }
+    const json = await request.json();
 
-    public async sendTyping() {
-        const request = await this.ws.client?.api.post(`/channels/${this.id}/typing`);
+    return tempMessage.fastUpdate(json, "sent");
+  }
 
-        if (!request?.ok || request.status > 200) return false;
+  public async sendTyping() {
+    const request = await this.ws.client?.api.post(
+      `/channels/${this.id}/typing`,
+    );
 
-        return true;
-    }
+    if (!request?.ok || request.status > 200) return false;
 
-    public async ackChannel() {
-        const request = await this.ws.client?.api.post(`/channels/${this.id}/ack`);
+    return true;
+  }
 
-        if (!request?.ok || request.status > 200) return false;
+  public async ackChannel() {
+    const request = await this.ws.client?.api.post(`/channels/${this.id}/ack`);
 
-        return true;
-    }
+    if (!request?.ok || request.status > 200) return false;
+
+    return true;
+  }
 }
 
 export default TextBasedChannel;

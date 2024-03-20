@@ -8,7 +8,12 @@ import {
   Text,
   useColorModeValue,
 } from "@chakra-ui/react";
-import { useGuildStore, useMemberStore, useRoleStore, useUserStore } from "$/utils/Stores.ts";
+import {
+  useGuildStore,
+  useMemberStore,
+  useRoleStore,
+  useUserStore,
+} from "$/utils/Stores.ts";
 import UserPopOver from "./members/popover.tsx";
 
 const GuildMembers = () => {
@@ -29,7 +34,9 @@ const GuildMembers = () => {
       {members?.map((member, index) => {
         const user = users.find((u) => u.id === member.userId);
         const memberRoles = roles.filter((r) => member.roleIds.includes(r.id));
-        const topRole = memberRoles.sort((a, b) => b.position - a.position).find((r) => r.color !== 0);
+        const topRole = memberRoles
+          .sort((a, b) => b.position - a.position)
+          .find((r) => r.color !== 0);
 
         return (
           <Box key={index}>
@@ -87,12 +94,22 @@ const GuildMembers = () => {
                   </Box>
                   <Flex direction="column" align="start">
                     <Box>
-                      <Text ml={2} userSelect={"none"} color={topRole ? topRole.hexColor : ""} fontWeight={"400"}>
+                      <Text
+                        ml={2}
+                        userSelect={"none"}
+                        color={topRole ? topRole.hexColor : ""}
+                        fontWeight={"400"}
+                      >
                         {user?.username}
                       </Text>
                     </Box>
                     {user?.customStatus && (
-                      <Text ml={2} fontSize="xs" color="gray.500" userSelect={"none"}>
+                      <Text
+                        ml={2}
+                        fontSize="xs"
+                        color="gray.500"
+                        userSelect={"none"}
+                      >
                         {user?.customStatus ?? "No custom status"}
                       </Text>
                     )}

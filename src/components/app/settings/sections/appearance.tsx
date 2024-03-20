@@ -1,5 +1,17 @@
 import { useState } from "react";
-import { Box, Button, ButtonGroup, Slider, SliderFilledTrack, SliderMark, SliderThumb, SliderTrack, Text, VStack, useColorModeValue } from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  ButtonGroup,
+  Slider,
+  SliderFilledTrack,
+  SliderMark,
+  SliderThumb,
+  SliderTrack,
+  Text,
+  VStack,
+  useColorModeValue,
+} from "@chakra-ui/react";
 import { useSettingsStore, useUserStore } from "$/utils/Stores.ts";
 import Emoji from "../../markdown/components/emoji.tsx";
 
@@ -15,7 +27,9 @@ const SettingsAppearance = () => {
       <Text fontSize="xl" fontWeight="bold">
         Appearance
       </Text>
-      <VStack spacing={8} align="start"
+      <VStack
+        spacing={8}
+        align="start"
         w={"full"}
         bg={useColorModeValue("white", "gray.800")}
         rounded={"xl"}
@@ -24,7 +38,6 @@ const SettingsAppearance = () => {
         my={6}
       >
         <Box ml={5} w="full">
-
           {/* Additional settings */}
           <VStack spacing={4} mt={2} align="start">
             <Text fontSize="lg" fontWeight="medium">
@@ -35,11 +48,11 @@ const SettingsAppearance = () => {
                 onClick={() => {
                   setSettings({
                     ...settings,
-                    theme: "light"
+                    theme: "light",
                   });
 
                   void user?.updateSettings({
-                    theme: "light"
+                    theme: "light",
                   });
                 }}
                 colorScheme={settings.theme === "light" ? "blue" : "gray"}
@@ -50,11 +63,11 @@ const SettingsAppearance = () => {
                 onClick={() => {
                   setSettings({
                     ...settings,
-                    theme: "dark"
+                    theme: "dark",
                   });
 
                   void user?.updateSettings({
-                    theme: "dark"
+                    theme: "dark",
                   });
                 }}
                 colorScheme={settings.theme === "dark" ? "blue" : "gray"}
@@ -65,11 +78,11 @@ const SettingsAppearance = () => {
                 onClick={() => {
                   setSettings({
                     ...settings,
-                    theme: "system"
+                    theme: "system",
                   });
 
                   void user?.updateSettings({
-                    theme: "system"
+                    theme: "system",
                   });
                 }}
                 colorScheme={settings.theme === "system" ? "blue" : "gray"}
@@ -89,14 +102,16 @@ const SettingsAppearance = () => {
                 onClick={() => {
                   setSettings({
                     ...settings,
-                    navBarLocation: "left"
+                    navBarLocation: "left",
                   });
 
                   void user?.updateSettings({
-                    navBarLocation: "left"
+                    navBarLocation: "left",
                   });
                 }}
-                colorScheme={settings.navBarLocation === "left" ? "blue" : "gray"}
+                colorScheme={
+                  settings.navBarLocation === "left" ? "blue" : "gray"
+                }
               >
                 Left
               </Button>
@@ -104,14 +119,16 @@ const SettingsAppearance = () => {
                 onClick={() => {
                   setSettings({
                     ...settings,
-                    navBarLocation: "bottom"
+                    navBarLocation: "bottom",
                   });
 
                   void user?.updateSettings({
-                    navBarLocation: "bottom"
+                    navBarLocation: "bottom",
                   });
                 }}
-                colorScheme={settings.navBarLocation === "bottom" ? "blue" : "gray"}
+                colorScheme={
+                  settings.navBarLocation === "bottom" ? "blue" : "gray"
+                }
               >
                 Bottom
               </Button>
@@ -128,11 +145,11 @@ const SettingsAppearance = () => {
                 onClick={() => {
                   setSettings({
                     ...settings,
-                    emojiPack: "twemoji"
+                    emojiPack: "twemoji",
                   });
 
                   void user?.updateSettings({
-                    emojiPack: "twemoji"
+                    emojiPack: "twemoji",
                   });
                 }}
                 colorScheme={settings.emojiPack === "twemoji" ? "blue" : "gray"}
@@ -146,14 +163,16 @@ const SettingsAppearance = () => {
                 onClick={() => {
                   setSettings({
                     ...settings,
-                    emojiPack: "noto-emoji"
+                    emojiPack: "noto-emoji",
                   });
 
                   void user?.updateSettings({
-                    emojiPack: "noto-emoji"
+                    emojiPack: "noto-emoji",
                   });
                 }}
-                colorScheme={settings.emojiPack === "noto-emoji" ? "blue" : "gray"}
+                colorScheme={
+                  settings.emojiPack === "noto-emoji" ? "blue" : "gray"
+                }
               >
                 Noto Emoji (Google)
                 <Box ml={2}>
@@ -164,14 +183,16 @@ const SettingsAppearance = () => {
                 onClick={() => {
                   setSettings({
                     ...settings,
-                    emojiPack: "fluentui-emoji"
+                    emojiPack: "fluentui-emoji",
                   });
 
                   void user?.updateSettings({
-                    emojiPack: "fluentui-emoji"
+                    emojiPack: "fluentui-emoji",
                   });
                 }}
-                colorScheme={settings.emojiPack === "fluentui-emoji" ? "blue" : "gray"}
+                colorScheme={
+                  settings.emojiPack === "fluentui-emoji" ? "blue" : "gray"
+                }
               >
                 FluentUI Emoji (Microsoft)
                 <Box ml={2}>
@@ -182,11 +203,11 @@ const SettingsAppearance = () => {
                 onClick={() => {
                   setSettings({
                     ...settings,
-                    emojiPack: "native"
+                    emojiPack: "native",
                   });
 
                   void user?.updateSettings({
-                    emojiPack: "native"
+                    emojiPack: "native",
                   });
                 }}
                 colorScheme={settings.emojiPack === "native" ? "blue" : "gray"}
@@ -200,7 +221,13 @@ const SettingsAppearance = () => {
           </VStack>
 
           {/* font size (WIP) */}
-          <VStack spacing={4} mt={8} align="start" w="full" maxW="calc(100% - 100px)">
+          <VStack
+            spacing={4}
+            mt={8}
+            align="start"
+            w="full"
+            maxW="calc(100% - 100px)"
+          >
             <Text fontSize="lg" fontWeight="medium" mb={4}>
               Font Size (WIP)
             </Text>
@@ -218,7 +245,11 @@ const SettingsAppearance = () => {
                   key={size}
                   value={index}
                   top={"-30px"}
-                  left={index === 0 ? "0%" : `${((index / (fontSizes.length - 1)) * 100) - 1}% !important`}
+                  left={
+                    index === 0
+                      ? "0%"
+                      : `${(index / (fontSizes.length - 1)) * 100 - 1}% !important`
+                  }
                   fontSize="sm"
                 >
                   {size}px
@@ -230,7 +261,6 @@ const SettingsAppearance = () => {
               <SliderThumb />
             </Slider>
           </VStack>
-
         </Box>
       </VStack>
     </>

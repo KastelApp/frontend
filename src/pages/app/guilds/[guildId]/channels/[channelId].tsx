@@ -1,10 +1,18 @@
-import { useChannelStore, useGuildStore, useMemberStore, useRoleStore, useUserStore } from "$/utils/Stores.ts";
 import {
-  Box,
-} from "@chakra-ui/react";
+  useChannelStore,
+  useGuildStore,
+  useMemberStore,
+  useRoleStore,
+  useUserStore,
+} from "$/utils/Stores.ts";
+import { Box } from "@chakra-ui/react";
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/router";
-import { useLastChannelCache, useReadyStore, useTokenStore } from "@/utils/stores.ts";
+import {
+  useLastChannelCache,
+  useReadyStore,
+  useTokenStore,
+} from "@/utils/stores.ts";
 import SEO from "@/components/seo.tsx";
 import GuildContent from "@/components/app/guild/guildContent.tsx";
 import Loading from "@/components/app/loading.tsx";
@@ -26,7 +34,7 @@ const GuildChannelPage = () => {
   const channels = getCurrentChannels();
   const currentGuild = getCurrentGuild();
   const currentChannel = getCurrentChannel();
-  
+
   const ready = useReadyStore((s) => s.ready);
   const [flags, setFlags] = useState<{
     ignoreLimits: boolean;
@@ -67,12 +75,24 @@ const GuildChannelPage = () => {
     }
 
     const clientUser = users.find((u) => u.isClient)!;
-    const roles = currentRoles.filter((role) => currentMember?.roleIds.includes(role.id));
-    const permissionHandler = new PermissionHandler(clientUser.id, currentMember?.owner ?? false, roles, channels);
-    const channelsWeHaveReadAccessTo = channels.filter((channel) => permissionHandler.hasChannelPermission(channel.id, ["ViewMessageHistory"]));
+    const roles = currentRoles.filter((role) =>
+      currentMember?.roleIds.includes(role.id),
+    );
+    const permissionHandler = new PermissionHandler(
+      clientUser.id,
+      currentMember?.owner ?? false,
+      roles,
+      channels,
+    );
+    const channelsWeHaveReadAccessTo = channels.filter((channel) =>
+      permissionHandler.hasChannelPermission(channel.id, [
+        "ViewMessageHistory",
+      ]),
+    );
 
-    const channel =
-      channelsWeHaveReadAccessTo.find((channel) => channel.id === channelId && !channel.isCategory());
+    const channel = channelsWeHaveReadAccessTo.find(
+      (channel) => channel.id === channelId && !channel.isCategory(),
+    );
 
     if (!channel) {
       router.push(`/app/guilds/${guildId}/channels`);
@@ -83,7 +103,7 @@ const GuildChannelPage = () => {
 
   useEffect(() => {
     setLastChannelCache({ ...lastChannelCache, [guildId]: channelId });
-  }, [channelId])
+  }, [channelId]);
 
   const getChannelComponent = () => {
     if (!currentChannel) return null;
@@ -93,18 +113,17 @@ const GuildChannelPage = () => {
         setFlags({
           ignoreLimits: false,
           noMemberBar: false,
-          noChannelTopic: false
+          noChannelTopic: false,
         });
 
         return <TextChannel />;
       }
 
       case constants.channelTypes.GuildMarkdown: {
-
         setFlags({
           ignoreLimits: true,
           noMemberBar: false,
-          noChannelTopic: false
+          noChannelTopic: false,
         });
 
         return <MarkdownChannel />;
@@ -116,7 +135,10 @@ const GuildChannelPage = () => {
     }
   };
 
-  const channelComponent = useMemo(() => getChannelComponent(), [currentChannel]);
+  const channelComponent = useMemo(
+    () => getChannelComponent(),
+    [currentChannel],
+  );
 
   return (
     <>
@@ -128,7 +150,11 @@ const GuildChannelPage = () => {
       />
       {ready ? (
         <Box>
-          <GuildContent ignoreLimits={flags.ignoreLimits} noMemberBar={flags.noMemberBar} noChannelTopic={flags.noChannelTopic}>
+          <GuildContent
+            ignoreLimits={flags.ignoreLimits}
+            noMemberBar={flags.noMemberBar}
+            noChannelTopic={flags.noChannelTopic}
+          >
             {channelComponent}
           </GuildContent>
         </Box>

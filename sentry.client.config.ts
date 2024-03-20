@@ -6,7 +6,7 @@ Sentry.init({
     tunnel: "/api/monitor",
   }),
   integrations: [Sentry.replayIntegration()],
-  tracesSampleRate: 0.8,
+  tracesSampleRate: 0.4,
   replaysSessionSampleRate: 0.1,
   replaysOnErrorSampleRate: 1.0,
   enabled: process.env.NODE_ENV === "production",
