@@ -384,7 +384,7 @@ class Websocket extends Events {
     this.worker.postMessage({
       op: 1,
       data: {
-        interval: this.heartbeatInterval,
+        interval: this.heartbeatInterval - (this.heartbeatInterval * 0.1),
         session: this.workerId,
       },
     });
