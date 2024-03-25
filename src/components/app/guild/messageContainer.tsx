@@ -87,7 +87,7 @@ const GuildMessageContainer = ({
     { user: User<boolean>; since: number }[]
   >([]);
   const { state, messageId, setState, setMessageId } = useMessageStateStore();
-  const { experiments: presSettings } = usePresistantSettings();
+  const { settings: presSettings } = usePresistantSettings();
   const { messages } = useMessageStore();
   const { roles } = useRoleStore();
   const { members } = useMemberStore();
@@ -588,7 +588,7 @@ const GuildMessageContainer = ({
             </InputLeftAddon>
           )}
 
-          {presSettings.newChatBox ? (
+          {presSettings.experiments.newChatBox ? (
             <NewChatBox
               setLength={setLength}
               setMentioning={setMentioning}

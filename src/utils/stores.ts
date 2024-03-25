@@ -130,23 +130,31 @@ export const useLastStatusStore = create<LastStatusStore>((set) => ({
   setLastStatus: (lastStatus) => set(() => ({ lastStatus })),
 }));
 
-interface ExperimentsStore {
+interface PresistantSettings {
   experiments: {
     newChatBox: boolean;
   };
-  setExperiments: (settings: { newChatBox: boolean }) => void;
+  // ... other settings
 }
 
-export const usePresistantSettings = create<ExperimentsStore>()(
+interface PresistantSettingsStore {
+  settings: PresistantSettings;
+  setSettings: (settings: PresistantSettings) => void;
+}
+
+export const usePresistantSettings = create<PresistantSettingsStore>()(
   persist(
     (set) => ({
-      experiments: {
-        newChatBox: false,
+      settings: {
+        experiments: {
+          newChatBox: false,
+        }
       },
-      setExperiments: (experiments) => set(() => ({ experiments })),
+      setSettings: (settings) =>
+        set(() => ({ settings })),
     }),
     {
-      name: "experiments",
+      name: "presistantSettings",
     },
   ),
 );
