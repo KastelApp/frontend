@@ -131,7 +131,7 @@ const permissions = {
       RoleColor: 1n << 1n,
       RolePosition: 1n << 2n,
       RolePermissions: 1n << 3n,
-      GrantOtherRoles: 1n << 4n, // ? If you can give other users roles
+      ManageUsersRoles: 1n << 4n, // ? If you can give other users roles
     },
   },
   Channels: {

@@ -222,8 +222,7 @@ class Websocket extends Events {
 
       const parsed = this.parseMessageData(event.data);
 
-      // never trust the server :3 (for now until I fix any issues relating to sequence numbers)
-      if (parsed.seq) this.sequence++;
+      if (parsed.seq && parsed.seq > this.sequence) this.sequence = parsed.seq;
 
       switch (parsed.op) {
         case opCodes.hello: {
