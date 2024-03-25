@@ -44,6 +44,7 @@ import {
   useUserStore,
 } from "$/utils/Stores.ts";
 import PermissionHandler from "$/Client/Structures/BitFields/PermissionHandler.ts";
+import { CiUser } from "react-icons/ci";
 
 const GuildContent = ({
   children,
@@ -258,7 +259,7 @@ const GuildContent = ({
 
         {/* Main content */}
 
-        <Box flex="1" justifyContent="center" userSelect={"none"}>
+        <Box flex="1" justifyContent="center" userSelect={"none"} flexDirection="column">
           {!noChannelTopic && (
             <Box
               pos="sticky"
@@ -268,22 +269,28 @@ const GuildContent = ({
               p={2}
               display="flex"
               alignItems="center"
+              justifyContent="space-between"
             >
-              <ChannelIcon channel={currentChannel!} />
-              <Text>{currentChannel?.name}</Text>
-              {currentChannel?.description && (
-                <>
-                  <Divider orientation="vertical" h="20px" ml={3} />
-                  <Text
-                    ml={3}
-                    fontSize={"small"}
-                    color={"gray.400"}
-                    cursor={"pointer"}
-                  >
-                    {currentChannel?.description}
-                  </Text>
-                </>
-              )}
+              <Box display="flex" alignItems="center">
+                <ChannelIcon channel={currentChannel!} />
+                <Text>{currentChannel?.name}</Text>
+                {currentChannel?.description && (
+                    <>
+                      <Divider orientation="vertical" h="20px" ml={3} />
+                      <Text
+                          ml={3}
+                          fontSize={"small"}
+                          color={"gray.400"}
+                          cursor={"pointer"}
+                      >
+                        {currentChannel?.description}
+                      </Text>
+                    </>
+                )}
+              </Box>
+              <Box display="flex" alignItems="center">
+                <CiUser onClick={() => console.log("show members: " + noMemberBar)} />
+              </Box>
             </Box>
           )}
 
