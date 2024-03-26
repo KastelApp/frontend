@@ -71,6 +71,8 @@ const Message = ({
     message.mentions.users.includes(clientUser.id) ||
     clientMember.roleIds.some((id) => message.mentions.roles.includes(id));
 
+  console.log(replyMessage);
+
   return (
     <Box
       key={message.id}
