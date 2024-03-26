@@ -109,6 +109,7 @@ const GuildMembers = () => {
                         fontSize="xs"
                         color="gray.500"
                         userSelect={"none"}
+                        noOfLines={1}
                       >
                         {user?.customStatus ?? "No custom status"}
                       </Text>
