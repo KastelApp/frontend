@@ -1,7 +1,7 @@
 import BaseChannel from "$/Client/Structures/Channels/BaseChannel.ts";
 import constants from "$/utils/constants.ts";
 import React from "react";
-import { Hash, Megaphone, Volume2 } from 'lucide-react';
+import { Hash, Megaphone, Volume2 } from "lucide-react";
 
 const ChannelIcon = ({
   channel,
