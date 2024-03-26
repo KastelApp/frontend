@@ -27,7 +27,7 @@ const GuildMembers = () => {
   const hoverBg = useColorModeValue("gray.300", "gray.700");
 
   return currentGuild ? (
-    <Box mt={5}>
+    <Box mt={2}>
       <Text ml={3}>
         {members?.length === 1 ? "Member" : "Members"} - {members?.length}
       </Text>
