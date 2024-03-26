@@ -22,13 +22,13 @@ import {
   useColorModeValue,
 } from "@chakra-ui/react";
 import Link from "next/link";
-import { FaCog, FaHome, FaRegCompass, FaSignOutAlt } from "react-icons/fa";
 import { useClientStore, useTokenStore } from "@/utils/stores";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import Guild from "./guild/guild.tsx";
 import NewGuild from "./new-guild.tsx";
 import { useGuildStore, useUserStore } from "@/wrapper/utils/Stores.ts";
+import { Compass, Home, LogOut, Settings } from "lucide-react";
 
 const AppNavbar = ({
   onCustomStatusOpen,
@@ -141,8 +141,7 @@ const AppNavbar = ({
                   className="group flex justify-center"
                   cursor="pointer"
                 >
-                  {/* home button */}
-                  <FaHome size="1.25em" />
+                  <Home size={"1.5em"} />
                 </Box>
               </Link>
 
@@ -152,8 +151,7 @@ const AppNavbar = ({
                 cursor="pointer"
                 display={isSmallScreen ? "none" : "flex"}
               >
-                {/* explore button */}
-                <FaRegCompass size="1.25em" />
+                <Compass size={"1.5em"} />
               </Box>
             </HStack>
 
@@ -315,7 +313,7 @@ const AppNavbar = ({
                       <Button
                         w="194px"
                         variant="ghost"
-                        rightIcon={<FaCog />}
+                        rightIcon={<Settings size={"18px"} />}
                         justifyContent="space-between"
                         fontWeight="normal"
                         fontSize="sm"
@@ -327,7 +325,7 @@ const AppNavbar = ({
                       <Button
                         w="194px"
                         variant="ghost"
-                        rightIcon={<FaSignOutAlt />}
+                        rightIcon={<LogOut size={"18px"} />}
                         justifyContent="space-between"
                         fontWeight="normal"
                         colorScheme="red"

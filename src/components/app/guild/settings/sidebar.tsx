@@ -11,9 +11,9 @@ import {
   useColorModeValue,
   useDisclosure,
 } from "@chakra-ui/react";
-import { FiMenu } from "react-icons/fi";
 import { ElementType, ReactNode } from "react";
 import DeleteGuildPopup from "./deleteGuildPopup.tsx";
+import { Menu } from "lucide-react";
 
 const GuildSettingsSidebar = ({
   selectedPage,
@@ -311,7 +311,7 @@ const MobileNav = ({
         variant="outline"
         onClick={onOpen}
         aria-label="open menu"
-        icon={<FiMenu />}
+        icon={<Menu />}
       />
 
       {/*

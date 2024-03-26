@@ -21,7 +21,7 @@ import {
   useColorModeValue,
 } from "@chakra-ui/react";
 import { useState } from "react";
-import { CopyIcon } from "@chakra-ui/icons";
+import { ClipboardCopy } from "lucide-react";
 
 const SettingsInvites = () => {
   const [show, setShow] = useState(false);
@@ -89,7 +89,7 @@ const SettingsInvites = () => {
                           ml={2}
                           cursor={"pointer"}
                           onClick={() => handleCopy("1233456")}
-                          icon={<CopyIcon />}
+                          icon={<ClipboardCopy size={"1.25em"} />}
                         />
                       </Flex>
                     </Td>

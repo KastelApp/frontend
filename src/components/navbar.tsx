@@ -10,10 +10,10 @@ import {
   useDisclosure,
   VStack,
 } from "@chakra-ui/react";
-import { AiOutlineMenu } from "react-icons/ai";
 import NextLink from "next/link";
 import { useEffect, useState } from "react";
 import { useIsDesktop, useTokenStore } from "@/utils/stores.ts";
+import { Menu } from "lucide-react";
 
 const Navbar = () => {
   const bg = useColorModeValue("white", "gray.900");
@@ -116,7 +116,7 @@ const Navbar = () => {
                     color: "inherit",
                   }}
                   variant="ghost"
-                  icon={<AiOutlineMenu />}
+                  icon={<Menu />}
                   onClick={mobileNav.onOpen}
                 />
 

@@ -10,7 +10,7 @@ import {
   useColorModeValue,
   useDisclosure,
 } from "@chakra-ui/react";
-import { FiMenu } from "react-icons/fi";
+import { Menu } from "lucide-react";
 import pack from "../../../../package.json";
 import data from "../../../data/sidePanel";
 import { ElementType, ReactNode } from "react";
@@ -265,7 +265,7 @@ const MobileNav = ({
         variant="outline"
         onClick={onOpen}
         aria-label="open menu"
-        icon={<FiMenu />}
+        icon={<Menu />}
       />
 
       {/*

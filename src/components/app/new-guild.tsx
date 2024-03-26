@@ -22,7 +22,6 @@ import {
   useDisclosure,
   VStack,
 } from "@chakra-ui/react";
-import { FiPlus } from "react-icons/fi";
 import {
   ChangeEvent,
   Dispatch,
@@ -38,6 +37,7 @@ import constants from "$/utils/constants.ts";
 import Permissions from "$/Client/Structures/BitFields/Permissions.ts";
 import { useGuildStore } from "$/utils/Stores.ts";
 import { useRouter } from "next/router";
+import { Plus } from "lucide-react";
 // import { useRouter } from "next/router";
 
 const NewGuild = () => {
@@ -58,7 +58,7 @@ const NewGuild = () => {
           aria-label="New"
           boxSize="40px"
           borderRadius="full"
-          icon={<FiPlus />}
+          icon={<Plus />}
         />
       </Box>
 

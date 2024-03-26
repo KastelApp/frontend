@@ -24,7 +24,7 @@ import {
   useColorModeValue,
 } from "@chakra-ui/react";
 import Link from "next/link";
-import { FaCog, FaHome, FaRegCompass, FaSignOutAlt } from "react-icons/fa";
+import { Compass, Home, LogOut, Settings } from "lucide-react";
 import { useClientStore, useTokenStore } from "@/utils/stores";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
@@ -270,7 +270,7 @@ const LeftAppNavbar = ({
                           <Button
                             w="194px"
                             variant="ghost"
-                            rightIcon={<FaCog />}
+                            rightIcon={<Settings size={"18px"} />}
                             justifyContent="space-between"
                             fontWeight="normal"
                             fontSize="sm"
@@ -282,7 +282,7 @@ const LeftAppNavbar = ({
                           <Button
                             w="194px"
                             variant="ghost"
-                            rightIcon={<FaSignOutAlt />}
+                            rightIcon={<LogOut size={"18px"} />}
                             justifyContent="space-between"
                             fontWeight="normal"
                             colorScheme="red"
@@ -308,7 +308,7 @@ const LeftAppNavbar = ({
                 cursor="pointer"
               >
                 {/* home button */}
-                <FaHome size="1.25em" />
+                <Home size={"1.5em"} />
               </Box>
             </Link>
 
@@ -319,7 +319,7 @@ const LeftAppNavbar = ({
               display={isSmallScreen ? "none" : "flex"}
             >
               {/* explore button */}
-              <FaRegCompass size="1.25em" />
+              <Compass size={"1.5em"} />
             </Box>
           </VStack>
 

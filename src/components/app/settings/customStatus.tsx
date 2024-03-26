@@ -16,8 +16,8 @@ import {
   useColorModeValue,
 } from "@chakra-ui/react";
 import { useState } from "react";
-import { CloseIcon } from "@chakra-ui/icons";
 import { useUserStore } from "$/utils/Stores.ts";
+import { X } from "lucide-react";
 
 const CustomStatus = ({
   isOpen,
@@ -62,7 +62,7 @@ const CustomStatus = ({
               />
               <InputRightElement>
                 <Button onClick={() => setValue(null)} bg={"transparent"} p={0}>
-                  <CloseIcon w={3} h={3} />
+                  <X />
                 </Button>
               </InputRightElement>
             </InputGroup>

@@ -13,22 +13,12 @@ import {
   useColorModeValue,
   useDisclosure,
 } from "@chakra-ui/react";
-import {
-  AddIcon,
-  // AddIcon,
-  BellIcon,
-  ChevronDownIcon,
-  ChevronUpIcon,
-  DeleteIcon,
-  SettingsIcon,
-} from "@chakra-ui/icons";
 import React, { ReactNode, useEffect, useState } from "react";
 import { useCollapsedChannels, useReadyStore } from "@/utils/stores";
 import { sortChannels } from "@/utils/sortChannels";
 import GuildSettings from "@/components/app/guild/settings";
 import GuildInvites from "@/components/app/guild/invites";
 import GuildMembers from "@/components/app/guild/members.tsx";
-import { IoPeople } from "react-icons/io5";
 import CreateChannel from "@/components/app/guild/createChannel.tsx";
 import BaseChannel from "$/Client/Structures/Channels/BaseChannel.ts";
 import Channel from "./channels/index.tsx";
@@ -44,7 +34,7 @@ import {
   useUserStore,
 } from "$/utils/Stores.ts";
 import PermissionHandler from "$/Client/Structures/BitFields/PermissionHandler.ts";
-import { CiUser } from "react-icons/ci";
+import { Bell, ChevronDown, ChevronUp, LogOut, Plus, Settings, Users } from "lucide-react";
 
 const GuildContent = ({
   children,
@@ -165,7 +155,7 @@ const GuildContent = ({
                         {currentGuild?.name ?? "Loading"}
                       </Text>
                       <Spacer />
-                      {isOpen ? <ChevronUpIcon /> : <ChevronDownIcon />}
+                      {isOpen ? <ChevronUp /> : <ChevronDown />}
                     </HStack>
                   </MenuButton>
 
@@ -181,7 +171,7 @@ const GuildContent = ({
                     ]) && (
                       <MenuItem
                         onClick={settingsOnOpen}
-                        icon={<SettingsIcon />}
+                        icon={<Settings size={"1.25em"} />}
                       >
                         Guild Settings
                       </MenuItem>
@@ -190,21 +180,21 @@ const GuildContent = ({
                     {permissions?.hasAnyRole(["CreateChannel"]) && (
                       <MenuItem
                         onClick={createChannelOnOpen}
-                        icon={<AddIcon />}
+                        icon={<Plus size={"1.25em"} />}
                       >
                         Create Channel
                       </MenuItem>
                     )}
 
-                    <MenuItem onClick={invitesOnOpen} icon={<IoPeople />}>
+                    <MenuItem onClick={invitesOnOpen} icon={<Users size={"1.25em"} />}>
                       Invite Friends
                     </MenuItem>
-                    <MenuItem icon={<BellIcon />}>Notifications</MenuItem>
+                    <MenuItem icon={<Bell size={"1.25em"} />}>Notifications</MenuItem>
                     {!currentMember?.owner && (
                       <>
                         <MenuDivider />
-                        <MenuItem icon={<DeleteIcon color={"red.500"} />}>
-                          <Text color={"red.500"}>Leave Server</Text>
+                        <MenuItem icon={<LogOut size={"1.25em"} color={"#E53E3E"} />}>
+                          <Text mb={1} color={"red.500"}>Leave Server</Text>
                         </MenuItem>
                       </>
                     )}
@@ -289,7 +279,7 @@ const GuildContent = ({
                 )}
               </Box>
               <Box display="flex" alignItems="center">
-                <CiUser onClick={() => console.log("show members: " + noMemberBar)} />
+                <Users onClick={() => console.log("show members: " + noMemberBar)} />
               </Box>
             </Box>
           )}

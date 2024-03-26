@@ -1,5 +1,6 @@
 import BaseChannel from "$/Client/Structures/Channels/BaseChannel.ts";
 import constants from "$/utils/constants.ts";
+import React from "react";
 
 const ChannelIcon = ({
   channel,
