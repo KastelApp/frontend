@@ -1,6 +1,7 @@
 import {
   useChannelStore,
   useMemberStore,
+  useMessageStateStore,
   useRoleStore,
   useSettingsStore,
   useUserStore,
@@ -114,15 +115,15 @@ const GuildMessages = ({
           replyMessage={
             replyMessage
               ? {
-                  message: replyMessage,
-                  user:
-                    users.find((u) => u.id === replyMessage?.authorId) ?? null,
-                  member:
-                    members.find((m) => m.userId === replyMessage?.authorId) ??
-                    null,
-                  topRole:
-                    roles.find((r) => r.id === replyMessage?.authorId) ?? null,
-                }
+                message: replyMessage,
+                user:
+                  users.find((u) => u.id === replyMessage?.authorId) ?? null,
+                member:
+                  members.find((m) => m.userId === replyMessage?.authorId) ??
+                  null,
+                topRole:
+                  roles.find((r) => r.id === replyMessage?.authorId) ?? null,
+              }
               : null
           }
           clientUser={currentUser!}
@@ -158,6 +159,26 @@ const GuildMessages = ({
     );
   });
 
+  const { state } = useMessageStateStore();
+
+  const getsize = useCallback(() => {
+
+    if (settings.navBarLocation === "left") {
+      if (state === "replying") {
+        return "calc(100vh - 160px)";
+      } else {
+        return "calc(100vh - 125px)";
+      }
+    }
+
+    if (state === "replying") {
+      return "calc(100vh - 220px)";
+    } else {
+      return "calc(100vh - 185px)";
+    }
+
+  }, [state, settings.navBarLocation]);
+
   return (
     <Box
       id="scrollableDiv"
@@ -165,9 +186,7 @@ const GuildMessages = ({
       display={"flex"}
       flexDir={"column-reverse"}
       h={
-        settings.navBarLocation === "left"
-          ? "calc(100vh - 125px)"
-          : "calc(100vh - 185px)"
+        getsize()
       }
     >
       <InfiniteScroll

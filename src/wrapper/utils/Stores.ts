@@ -317,15 +317,15 @@ export const useChannelStoreWithNoMessages =
 
 interface MessageStateStore extends Versioning {
   messageId: string | null;
-  state: "editing" | "replying" | "idle";
+  state: "editing" | "replying" | "idle" | "jumped"
   setMessageId: (messageId: string | null) => void;
-  setState: (state: "editing" | "replying" | "idle") => void;
+  setState: (state: "editing" | "replying" | "idle" | "jumped") => void;
 }
 
 export const useMessageStateStore = create<MessageStateStore>((set) => ({
   messageId: null,
   state: "idle",
-  setState: (state: "editing" | "replying" | "idle") => set({ state }),
+  setState: (state: "editing" | "replying" | "idle" | "jumped") => set({ state }),
   setMessageId: (messageId: string | null) => set({ messageId: messageId }),
   version: 0,
   setVersion: (version: number) => set(() => ({ version })),

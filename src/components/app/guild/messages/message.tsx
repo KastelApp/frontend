@@ -71,11 +71,10 @@ const Message = ({
     message.mentions.users.includes(clientUser.id) ||
     clientMember.roleIds.some((id) => message.mentions.roles.includes(id));
 
-  console.log(replyMessage);
-
   return (
     <Box
       key={message.id}
+      id={`message-${message.id}`}
       bg={shouldBeMentioned ? "hsl( 40 86.4% 56.9% / 0.1)" : "unset"}
       _hover={{
         bg: shouldBeMentioned
@@ -86,6 +85,7 @@ const Message = ({
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       position="relative"
+      transition={"background-color 0.2s"}
     >
       {message.replyingTo && (
         <Flex
@@ -97,6 +97,34 @@ const Message = ({
           w={"full"}
           maxW={"calc(100vw - 500px)"}
           cursor={"pointer"}
+          onClick={() => {
+            const msg = document.getElementById(`message-${message.replyingTo!}`);
+
+            if (msg) {
+              msg.scrollIntoView({
+                behavior: "smooth",
+                block: "center",
+                inline: "nearest"
+              });
+
+
+              if (msg.getAttribute("jumpped")) {
+                return;
+              }
+
+              msg.setAttribute("jumpped", "true");
+
+              const oldBg = msg.style.backgroundColor;
+
+              msg.style.backgroundColor = "hsl(270, 86%, 57%, 0.1)";
+
+              setTimeout(() => {
+                msg.style.backgroundColor = oldBg;
+
+                msg.removeAttribute("jumpped");
+              }, 1000);
+            }
+          }}
         >
           <Icon
             as={HiOutlineReply}
@@ -382,7 +410,7 @@ const Message = ({
               aria-label="Delete"
               icon={<DeleteIcon />}
               colorScheme="red"
-              onClick={async () => {}}
+              onClick={async () => { }}
               size="xs"
             />
           </Tooltip>
