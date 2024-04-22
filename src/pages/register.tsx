@@ -79,8 +79,9 @@ const Register = () => {
       setError([
         { code: "PASSWORDS_DO_NOT_MATCH", message: "Passwords do not match." },
       ]);
-
       setLoading(false);
+
+      return;
     }
 
     // Testing against the regexes (which should be the same that the backend uses) helps prevent unnecessary requests.
