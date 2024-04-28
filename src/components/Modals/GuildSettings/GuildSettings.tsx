@@ -1,6 +1,7 @@
-import { Button, Input, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from "@nextui-org/react";
+import { Button, Input, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, useDisclosure } from "@nextui-org/react";
 import React, { useState } from "react";
 import { twMerge } from "tailwind-merge";
+import ConfirmDelete from "../ConfirmDelete.tsx";
 
 interface Section {
     title: string | null;
@@ -67,6 +68,12 @@ const GuildSettings = ({
     onClose: () => void;
 }) => {
 
+    const {
+        isOpen: isConfirmDeleteOpen,
+        onOpenChange: onOpenChangeConfirmDelete,
+        onClose: onCloseConfirmDelete
+    } = useDisclosure();
+
     const sections: Section[] = [
         {
             title: null,
@@ -101,7 +108,7 @@ const GuildSettings = ({
             title: "User Management",
             children: [
                 {
-                    title:"Co-Owners",
+                    title: "Co-Owners",
                     id: "co-owners",
                     section: <div>Co-Owners</div>,
                     disabled: false
@@ -135,7 +142,7 @@ const GuildSettings = ({
                     disabled: false,
                     danager: true,
                     onClick: () => {
-                        console.log("Clicked")
+                        onOpenChangeConfirmDelete();
                     }
                 }
             ]
@@ -144,34 +151,38 @@ const GuildSettings = ({
 
     const [section, setSection] = useState("overview");
 
-    return (
-        <Modal
-            isOpen={isOpen}
-            onOpenChange={onOpenChange}
-            size="full"
-            className="w-screen h-screen"
-            isDismissable={false} isKeyboardDismissDisabled={true}
-        >
-            <ModalContent>
-                <div className="flex flex-row w-full h-full m-0 overflow-x-hidden">
-                    <div
-                        className={twMerge(
-                            "w-60 h-full m-0 bg-accent overflow-y-auto overflow-x-hidden"
-                        )}
-                    >
-                        <p className="text-white text-md font-semibold p-4">This is a test — Settings</p>
-                        {sections.map((section) => (
-                            // eslint-disable-next-line react/no-children-prop
-                            <Section title={section.title} key={section.title} children={section.children} setSection={setSection} />
-                        ))}
-                    </div>
-                    {
-                        sections.find((s) => s.children.find((c) => c.id === section))?.children.find((c) => c.id === section)?.section
-                    }
-                </div>
-            </ModalContent>
-        </Modal>
+    
 
+    return (
+        <>
+            <ConfirmDelete isOpen={isConfirmDeleteOpen} onOpenChange={onOpenChangeConfirmDelete} onClose={onCloseConfirmDelete} />
+            <Modal
+                isOpen={isOpen}
+                onOpenChange={onOpenChange}
+                size="full"
+                className="w-screen h-screen"
+                isDismissable={false} isKeyboardDismissDisabled={true}
+            >
+                <ModalContent>
+                    <div className="flex flex-row w-full h-full m-0 overflow-x-hidden">
+                        <div
+                            className={twMerge(
+                                "w-60 h-full m-0 bg-accent overflow-y-auto overflow-x-hidden"
+                            )}
+                        >
+                            <p className="text-white text-md font-semibold p-4">This is a test — Settings</p>
+                            {sections.map((section) => (
+                                // eslint-disable-next-line react/no-children-prop
+                                <Section title={section.title} key={section.title} children={section.children} setSection={setSection} />
+                            ))}
+                        </div>
+                        {
+                            sections.find((s) => s.children.find((c) => c.id === section))?.children.find((c) => c.id === section)?.section
+                        }
+                    </div>
+                </ModalContent>
+            </Modal>
+        </>
     );
 };
 

@@ -2,6 +2,7 @@ import { Tabs, Tab, Chip } from "@nextui-org/react";
 import AllFriends from "./Friends/AllFriends.tsx";
 import PendingFriends from "./Friends/PendingFriends.tsx";
 import BlockedFriends from "./Friends/BlockedFriends.tsx";
+import AddFriend from "./Friends/AddFriend.tsx";
 
 const Friends = () => {
     return (
@@ -46,7 +47,9 @@ const Friends = () => {
                         title={
                             <span>Add a Friend</span>
                         }
-                    />
+                    >
+                        <AddFriend />
+                    </Tab>
                 </Tabs>
             </div>
 

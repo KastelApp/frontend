@@ -58,7 +58,7 @@ const Acknowledgements = () => {
        
     ];
 
-    const libraries = [
+    const libraries: Library[] = [
         
     ];
 
