@@ -1,8 +1,8 @@
 const Overview = () => {
     return (
-        <>
-        Hi
-        </>
+        <div className="flex flex-col w-full">
+            <h1 className="text-2xl font-semibold">Server Overview</h1>
+        </div>
     )
 }
 

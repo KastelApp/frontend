@@ -4,21 +4,23 @@ import { Tooltip } from "@nextui-org/react";
 import BugHunterLevel1 from "./BugHunter1.tsx";
 import BugHunterLevel2 from "./BugHunter2.tsx";
 import BugHunterLevel3 from "./BugHunter3.tsx";
-import { publicFlags as pubFlags } from "@/utils/Constants.ts"
+import { publicFlags as pubFlags } from "@/utils/Constants.ts";
 
 const AllBadges = ({
     privateFlags,
-    publicFlags
+    publicFlags,
+    size = 24
 }: {
     publicFlags: string;
     privateFlags: string;
+    size?: number;
 }) => {
     const flags = new FlagFields(privateFlags, publicFlags);
 
-    const badges = Object.entries(flags.PublicFlags.toJSON()).filter(([, value]) => value === true).map(([key]) => key) as (keyof typeof pubFlags)[]
+    const badges = Object.entries(flags.PublicFlags.toJSON()).filter(([, value]) => value === true).map(([key]) => key) as (keyof typeof pubFlags)[];
 
     return (
-        <div className="flex flex-wrap items-center justify-center gap-2 mt-4">
+        <div className="flex flex-wrap items-center justify-center gap-2">
             {badges.map((flag) => {
                 switch (flag) {
                     case "StaffBadge": {
@@ -26,7 +28,7 @@ const AllBadges = ({
                             <div className="relative">
                                 <Tooltip content="Staff" color="warning">
                                     <span className="text-lg text-warning cursor-pointer hover:opacity-75">
-                                        <StaffBadge size={24} />
+                                        <StaffBadge size={size} />
                                     </span>
                                 </Tooltip>
                             </div>
@@ -38,7 +40,7 @@ const AllBadges = ({
                             <div className="relative">
                                 <Tooltip content="Minor Bug Hunter" color="success">
                                     <span className="text-lg text-success cursor-pointer hover:opacity-75">
-                                        <BugHunterLevel1 size={24} />
+                                        <BugHunterLevel1 size={size} />
                                     </span>
                                 </Tooltip>
                             </div>
@@ -50,7 +52,7 @@ const AllBadges = ({
                             <div className="relative">
                                 <Tooltip content="Intermediate Bug Hunter" color="warning">
                                     <span className="text-lg text-success cursor-pointer hover:opacity-75">
-                                        <BugHunterLevel2 size={24} />
+                                        <BugHunterLevel2 size={size} />
                                     </span>
                                 </Tooltip>
                             </div>
@@ -60,9 +62,9 @@ const AllBadges = ({
                     case "BugHunterLevel3": {
                         return (
                             <div className="relative">
-                                <Tooltip content="Major Bug Hunter" color="primary">
+                                <Tooltip showArrow content="Major Bug Hunter" color="secondary">
                                     <span className="text-lg text-success cursor-pointer hover:opacity-75">
-                                        <BugHunterLevel3 size={24} />
+                                        <BugHunterLevel3 size={size} />
                                     </span>
                                 </Tooltip>
                             </div>

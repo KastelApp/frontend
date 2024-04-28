@@ -2,6 +2,7 @@ import { Button, Input, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader
 import React, { useState } from "react";
 import { twMerge } from "tailwind-merge";
 import ConfirmDelete from "../ConfirmDelete.tsx";
+import Overview from "./OverView.tsx";
 
 interface Section {
     title: string | null;
@@ -81,7 +82,7 @@ const GuildSettings = ({
                 {
                     title: "Overview",
                     id: "overview",
-                    section: <div>Overview</div>,
+                    section: <Overview />,
                     disabled: false
                 },
                 {
@@ -151,8 +152,6 @@ const GuildSettings = ({
 
     const [section, setSection] = useState("overview");
 
-    
-
     return (
         <>
             <ConfirmDelete isOpen={isConfirmDeleteOpen} onOpenChange={onOpenChangeConfirmDelete} onClose={onCloseConfirmDelete} />
@@ -176,9 +175,14 @@ const GuildSettings = ({
                                 <Section title={section.title} key={section.title} children={section.children} setSection={setSection} />
                             ))}
                         </div>
-                        {
+                        {/* {
                             sections.find((s) => s.children.find((c) => c.id === section))?.children.find((c) => c.id === section)?.section
-                        }
+                        } */}
+                        <div className="flex flex-col w-full h-full">
+                            <div className="flex flex-col w-full h-full p-12 pt-8">
+                                {sections.find((s) => s.children.find((c) => c.id === section))?.children.find((c) => c.id === section)?.section}
+                            </div>
+                        </div>
                     </div>
                 </ModalContent>
             </Modal>

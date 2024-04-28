@@ -2,6 +2,7 @@ import { useGuildSettingsStore, useIsOpenStore } from "@/wrapper/Stores.ts";
 import { Avatar, Badge, Chip, Popover, PopoverContent, PopoverTrigger, Spinner, User } from "@nextui-org/react";
 import { useEffect, useState } from "react";
 import { twMerge } from "tailwind-merge";
+import UserPopover from "../Popovers/UserPopover.tsx";
 
 interface Role {
     name: string;
@@ -66,7 +67,7 @@ const Member = ({ member, color }: { member: Member; color: string | null }) => 
                 </div>
             </PopoverTrigger>
             <PopoverContent className="whitespace-pre-wrap">
-                {!loading ? <Spinner /> : <>{"THIS IS A LOT OF TEXT\nSO YOU CAN SEE EASIER\nOKAY?\nTHIS IS A LOT OF TEXT\nSO YOU CAN SEE EASIER\nOKAY?\nTHIS IS A LOT OF TEXT\nSO YOU CAN SEE EASIER\nOKAY?\nTHIS IS A LOT OF TEXT\nSO YOU CAN SEE EASIER\nOKAY?\n"}</>}
+                {!loading ? <Spinner /> : <UserPopover member={member} />}
             </PopoverContent>
         </Popover>
     );
