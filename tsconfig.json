@@ -1,37 +1,24 @@
 {
   "compilerOptions": {
-    "target": "ES2021",
+    "target": "ES2022",
     "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
+    "forceConsistentCasingInFileNames": true,
     "noEmit": true,
     "esModuleInterop": true,
     "module": "esnext",
-    "moduleResolution": "bundler",
+    "moduleResolution": "node",
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "preserve",
     "incremental": true,
-    "paths": {
-      "$/*": ["./src/wrapper/*"],
-      "@/*": ["./src/*"]
-    },
     "allowImportingTsExtensions": true,
-    "experimentalDecorators": true
+    "paths": {
+      "@/*": ["./src/*"]
+    }
   },
-  "include": [
-    "next-env.d.ts",
-    "**/*.ts",
-    "**/*.tsx",
-    "next.config.mjs",
-    "sentry.client.config.ts",
-    "sentry.server.config.ts",
-    "sentry.edge.config.ts",
-    "next-seo.config.mjs",
-    "gitinfo.mjs",
-    "webpack.config.mjs",
-    "src/wrapper/WebSocket/heartbeat.worker.mjs"
-  ],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "tailwind.config.js"],
   "exclude": ["node_modules"]
 }

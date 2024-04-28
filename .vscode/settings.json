@@ -1,3 +1,4 @@
 {
-  "emmet.showExpandedAbbreviation": "never"
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "emmet.showExpandedAbbreviation": "never",
 }

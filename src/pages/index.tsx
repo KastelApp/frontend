@@ -1,70 +1,33 @@
-import SEO from "@/components/seo";
-import Layout from "@/components/layout";
-import { Box, Button, Container, Heading, Stack, Text } from "@chakra-ui/react";
-import Navbar from "@/components/navbar";
-import pack from "../../package.json";
-import { useIsDesktop, useTokenStore } from "@/utils/stores.ts";
-import NextLink from "next/link";
+import HomeLayout from "@/layouts/HomeLayout.tsx";
+import { Button } from "@nextui-org/react";
+import Link from "next/link";
+import { useEffect, useState } from "react";
 
-const Home = () => {
-  const { isDesktop } = useIsDesktop();
-  const { token } = useTokenStore();
+const IndexPage = () => {
 
-  return (
-    <>
-      <SEO
-        title={"Home"}
-        description={
-          "Kastel is a fresh take on chat apps. With a unique look and feel, it's the perfect way to connect with friends, family, and communities."
-        }
-      />
-      <Navbar />
-      <Layout>
-        <Container maxW={"3xl"}>
-          <Stack
-            as={Box}
-            textAlign={"center"}
-            align={"center"}
-            spacing={{ base: 4, md: 5 }}
-          >
-            <Heading
-              fontWeight={600}
-              fontSize={{ base: "2xl", sm: "4xl", md: "6xl" }}
-              lineHeight={"110%"}
-            >
-              Welcome to Kastel!
-            </Heading>
-            <Text fontSize={"xl"}>
-              You are viewing version {pack?.version || "0.0.0"}
-              <br />
-              On the {process.env.PUBLIC_GIT_BRANCH || "Development"} branch
-              {isDesktop && (
-                <>
-                  <br />
-                  <br />
-                  You are using the desktop app! :3
-                </>
-              )}
-            </Text>
+	const [device, setDevice] = useState<string>("");
 
-            <NextLink href={token ? "/app" : "/register"} passHref>
-              <Button
-                rounded={"full"}
-                px={6}
-                _hover={{
-                  bgGradient: "linear(to-r, red.400,pink.400)",
-                  boxShadow: "xl",
-                }}
-                bgGradient="linear(to-r, red.400,pink.400)"
-              >
-                {token ? "Open App" : "Register"}
-              </Button>
-            </NextLink>
-          </Stack>
-        </Container>
-      </Layout>
-    </>
-  );
+	useEffect(() => {
+		if (typeof window !== "undefined") {
+			setDevice(window.navigator.userAgent);
+		}
+	}, []);
+
+	return (
+		<HomeLayout>
+			<div className="bg-cover text-white py-32 flex items-center justify-center ">
+				<div className="text-center">
+					<h1 className="text-3xl font-bold">Ditch those platforms who just don't care!</h1>
+					<p className="text-medium mt-4">Why settle for less when you can have a platform that cares about you? Join Kastel, the platform that cares about you!</p>
+					<p className="text-medium">Kastel is free, secure, and works on your browser, desktop and mobile devices.</p>
+					<div className="mt-8">
+							<Button href="/register" as={Link} size="lg" variant="flat" color="primary">Get Started</Button>
+							<Button href="/download" as={Link} className="ml-4" size="lg" variant="flat" color="success" >Download for {device.includes("Android") ? "Android" : device.includes("iPhone") ? "iOS" : device.includes("Windows") ? "Windows" : "Unknown"}</Button>
+					</div>
+				</div>
+			</div>
+		</HomeLayout>
+	);
 };
 
-export default Home;
+export default IndexPage;

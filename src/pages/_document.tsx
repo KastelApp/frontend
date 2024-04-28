@@ -1,18 +1,13 @@
-import { ColorModeScript } from "@chakra-ui/react";
-import { Head, Html, Main, NextScript } from "next/document";
-import theme from "@/utils/theme";
+import { Html, Head, Main, NextScript } from 'next/document'
 
-const Document = () => {
+export default function Document() {
   return (
-    <Html lang={"en"}>
+    <Html lang="en">
       <Head />
-      <body>
-        <ColorModeScript initialColorMode={theme.config.initialColorMode} />
+      <body className="min-h-screen bg-background font-sans antialiased">
         <Main />
         <NextScript />
       </body>
     </Html>
-  );
-};
-
-export default Document;
+  )
+}
