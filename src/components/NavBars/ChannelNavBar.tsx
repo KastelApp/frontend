@@ -372,9 +372,13 @@ const
                                 }
                             ]}
                         />
-                        <MemberBar />
-                        <div className="ml-2 mt-4 overflow-y-auto">
-                            {children}
+                        <div className="flex flex-row ml-2 overflow-y-auto">
+                            <div className="flex-grow overflow-y-auto mt-4">
+                                {children}
+                            </div>
+                            <div className={twMerge(guildSettings.memberBarHidden ? "ml-2" : "ml-56")}>
+                                <MemberBar />
+                            </div>
                         </div>
                     </div>
                 </div>

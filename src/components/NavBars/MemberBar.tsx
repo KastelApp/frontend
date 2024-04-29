@@ -66,7 +66,7 @@ const Member = ({ member, color }: { member: Member; color: string | null }) => 
                     </div>
                 </div>
             </PopoverTrigger>
-            <PopoverContent className="whitespace-pre-wrap">
+            <PopoverContent>
                 {!loading ? <Spinner /> : <UserPopover member={member} />}
             </PopoverContent>
         </Popover>
@@ -109,7 +109,7 @@ const MemberBar = () => {
             username: "DarkerInk",
             discriminator: "0001",
             avatar: "https://development.kastelapp.com/icon-1.png",
-            roles: ["everyone", "admin"],
+            roles: ["Owner", "Team", "Developers", "user", "announcements", "backend", "polls"],
             isOwner: true,
             status: "online",
             tag: null,
@@ -297,7 +297,7 @@ const MemberBar = () => {
     return (
         <div className={twMerge("flex flex-row w-full h-screen m-0 overflow-y-auto justify-end", guildSettings.memberBarHidden ? "hidden" : "")}>
             <div
-                className="fixed w-52 h-screen m-0 overflow-y-auto bg-accent transition-opacity ease-in-out duration-300"
+                className="fixed w-52 h-screen m-0 overflow-y-auto bg-accent transition-opacity ease-in-out duration-300 !overflow-x-hidden"
             >
                 <div className="flex w-full flex-col ml-2 last:mb-12">
                     {sections?.map((section, index) => (

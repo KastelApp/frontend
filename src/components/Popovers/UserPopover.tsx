@@ -1,6 +1,6 @@
 import AllBadges from "@/badges/AllBadges.tsx";
-import { Avatar, Badge, Card, CardBody, Chip, Divider } from "@nextui-org/react";
-import { twMerge } from "tailwind-merge";
+import { Avatar, Badge, Card, CardBody, Divider } from "@nextui-org/react";
+import { X } from "lucide-react";
 
 interface Member {
     id: string;
@@ -21,7 +21,7 @@ const UserPopover = ({
 }) => {
     return (
         <div>
-            <div className="rounded-lg p-0 w-64">
+            <div className="rounded-lg p-0 w-[18.70rem]">
                 <div>
                     <div className="flex">
                         <Badge content={""} placement="bottom-right" size="lg" color={member.status === "online" ? "success" : member.status === "idle" ? "warning" : member.status === "dnd" ? "danger" : "default"} className="mb-2 right-1">
@@ -37,7 +37,7 @@ const UserPopover = ({
                 </div>
                 <div>
                     <Card className="mt-2 mb-2" isBlurred>
-                        <CardBody>
+                        <CardBody className="overflow-y-auto max-h-[85vh]">
                             <div>
                                 <p className="text-white text-lg font-semibold">{member.username}</p>
                                 <p className="text-gray-300 text-[0.7rem]">{member.username}#{member.discriminator}</p>
@@ -50,10 +50,17 @@ const UserPopover = ({
                             </div>
                             <div className="mt-2">
                                 <span className="text-gray-400">Roles:</span>
-                                <div className="flex flex-wrap">
-                                    {/* todo: refactor to use chips / badges */}
+                                <div className="flex flex-wrap select-none">
                                     {member.roles.map((role) => (
-                                        <span key={role} className="bg-gray-700 text-white rounded-full px-2 py-1 mt-2 mr-2">{role}</span>
+                                    <div className="flex flex-wrap bg-accent border-gray-400 border  rounded-md px-2 py-0 mt-2 mr-1 group" key={role}>
+                                        {/* todo: fix, for some reason the X gets smaller when changing the px */}
+                                        <span
+                                            className="flex box-border rounded-full border-background bg-warning w-3.5 h-3.5 min-w-3.5 min-h-3.5 px-1 mt-[0.1rem] mr-1"
+                                        >
+                                            <X size={14} className="hidden group-hover:block" strokeWidth={8} color="gray" />
+                                        </span>
+                                        <span className=" text-white text-xs">{role}</span>
+                                    </div>
                                     ))}
                                 </div>
                             </div>
