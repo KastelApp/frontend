@@ -21,8 +21,8 @@ const IndexPage = () => {
 					<p className="text-medium mt-4">Why settle for less when you can have a platform that cares about you? Join Kastel, the platform that cares about you!</p>
 					<p className="text-medium">Kastel is free, secure, and works on your browser, desktop and mobile devices.</p>
 					<div className="mt-8">
-							<Button href="/register" as={Link} size="lg" variant="flat" color="primary">Get Started</Button>
-							<Button href="/download" as={Link} className="ml-4" size="lg" variant="flat" color="success" >Download for {device.includes("Android") ? "Android" : device.includes("iPhone") ? "iOS" : device.includes("Windows") ? "Windows" : "Unknown"}</Button>
+						<Button href="/register" as={Link} size="lg" variant="flat" color="primary">Get Started</Button>
+						<Button href="/download" as={Link} className="ml-4" size="lg" variant="flat" color="success" >Download for {device.includes("Android") ? "Android" : device.includes("iPhone") ? "iOS" : device.includes("Windows") ? "Windows" : "Unknown"}</Button>
 					</div>
 				</div>
 			</div>

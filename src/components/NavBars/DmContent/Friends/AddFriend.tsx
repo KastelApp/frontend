@@ -1,9 +1,9 @@
 const AddFriend = () => {
     return (
         <>
-        Cats
+            Cats
         </>
-    )
-}
+    );
+};
 
 export default AddFriend;

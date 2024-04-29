@@ -33,12 +33,10 @@ interface Section {
     position: number;
 }
 
-const Member = ({ member, color }: { member: Member; color: string | null }) => {
+const Member = ({ member, color }: { member: Member; color: string | null; }) => {
     const { values, setOpen } = useIsOpenStore();
 
     const [loading, setLoading] = useState(false);
-
-    const roleColor = color ? `text-[${color}]` : "text-white"
 
     return (
         <Popover showArrow placement="left" key={member.id} isOpen={values[member.id] ?? false} onOpenChange={(v) => {
@@ -48,7 +46,7 @@ const Member = ({ member, color }: { member: Member; color: string | null }) => 
                 <div className="flex items-center justify-between w-full h-12 px-2 cursor-pointer rounded-lg hover:bg-slate-800 relative max-w-48" onClick={() => {
                     setOpen(member.id, !values[member.id] ?? false);
 
-                    setTimeout(() => setLoading(true), 2000)
+                    setTimeout(() => setLoading(true), 2000);
                 }}>
                     <div className="flex items-center">
                         <Badge content={""} placement="bottom-right" color={member.status === "online" ? "success" : member.status === "idle" ? "warning" : member.status === "dnd" ? "danger" : "default"} className="mb-1">
@@ -57,7 +55,7 @@ const Member = ({ member, color }: { member: Member; color: string | null }) => 
                         <div className="flex flex-col ml-1">
                             <div className={twMerge("flex items-center")}>
                                 <div className={twMerge("flex flex-col ml-2", member.tag ? "max-w-[6.75rem]" : "max-w-36")}>
-                                    <p className={twMerge("truncate text-sm", roleColor)}>{member.username}</p>
+                                    <p className={twMerge("truncate text-sm", color ? "" : "text-white")} style={color !== null ? { color } : {}}>{member.username}</p>
                                     {member.customStatus && <p className="text-xs text-gray-500 truncate">{member.customStatus}</p>}
                                 </div>
                                 {member.tag && <Chip color="success" variant="flat" className="ml-1 w-1 p-0 h-4 text-[10px] rounded-md">{member.tag}</Chip>}
@@ -109,7 +107,7 @@ const MemberBar = () => {
             username: "DarkerInk",
             discriminator: "0001",
             avatar: "https://development.kastelapp.com/icon-1.png",
-            roles: ["Owner", "Team", "Developers", "user", "announcements", "backend", "polls"],
+            roles: ["everyone", "admin", "Owner", "Team", "Developers", "user", "announcements", "backend", "polls"],
             isOwner: true,
             status: "online",
             tag: null,
@@ -183,8 +181,8 @@ const MemberBar = () => {
             }
         ];
 
-        
-        
+
+
         for (const member of members) {
             const topColorRole = member.roles.map(roleId => roles.find(role => role.id === roleId)?.color).filter(color => color !== undefined && color)[0];
 
@@ -209,23 +207,13 @@ const MemberBar = () => {
 
             // ? get their top role, if its hoisted then push the role into sections if it does not exist, and then push the user there
             // ? if the top role isn't hoisted keep going down until you find one that is hoisted or you reach the bottom (and in which case push to online)
-            let topRole: Role | undefined = undefined;
+            const topRole = member.roles.map(roleId => roles.find(role => role.id === roleId)).filter(role => role !== undefined && role.hoisted)
+                .sort((a, b) => {
+                    if (a && b && a.position > b.position) return 1;
+                    if (a && b && a.position < b.position) return -1;
 
-            for (const roleId of member.roles) {
-                const role = roles.find(role => role.id === roleId);
-
-                if (!role) continue;
-
-                if (!topRole) {
-                    topRole = role;
-
-                    continue;
-                }
-
-                if (role.position > topRole.position) {
-                    topRole = role;
-                }
-            }
+                    return 0;
+                }).reverse()[0];
 
             if (!topRole) {
                 defaultSections[1].members.push({

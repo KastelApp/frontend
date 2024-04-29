@@ -15,7 +15,7 @@ interface Library {
     description: string;
 }
 
-const AcknowledgementCard = ({ data }: { data: NormalAcknowledgementData[] }) => {
+const AcknowledgementCard = ({ data }: { data: NormalAcknowledgementData[]; }) => {
     return (
         <div className="grid grid-cols-4 gap-4">
             {data.map((person, index) => (
@@ -32,7 +32,7 @@ const AcknowledgementCard = ({ data }: { data: NormalAcknowledgementData[] }) =>
 
 
 
-const Libraries = ({ data }: { data: Library[] }) => {
+const Libraries = ({ data }: { data: Library[]; }) => {
     return (
         <div className="grid grid-cols-2 gap-4 overflow-auto max-h-[44rem]">
             {data.map((library, index) => (
@@ -51,15 +51,15 @@ const Libraries = ({ data }: { data: Library[] }) => {
 
 const Acknowledgements = () => {
     const kastelStaff: NormalAcknowledgementData[] = [
-       
+
     ];
 
     const contributors: NormalAcknowledgementData[] = [
-       
+
     ];
 
     const libraries: Library[] = [
-        
+
     ];
 
     return (
@@ -74,7 +74,7 @@ const Acknowledgements = () => {
                 <div className="text-center mt-8">
                     <h2 className="text-2xl font-bold mb-4">Contributors</h2>
                     <p className="text-gray-400">The people who help make Kastel better.</p>
-                </div>                
+                </div>
                 <AcknowledgementCard data={contributors} />
 
                 <div className="text-center mt-8">

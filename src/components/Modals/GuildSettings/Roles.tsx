@@ -1,9 +1,9 @@
 const Roles = () => {
     return (
         <>
-        Hi
+            Hi
         </>
-    )
-}
+    );
+};
 
 export default Roles;

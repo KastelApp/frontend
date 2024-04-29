@@ -52,15 +52,15 @@ const UserPopover = ({
                                 <span className="text-gray-400">Roles:</span>
                                 <div className="flex flex-wrap select-none">
                                     {member.roles.map((role) => (
-                                    <div className="flex flex-wrap bg-accent border-gray-400 border  rounded-md px-2 py-0 mt-2 mr-1 group" key={role}>
-                                        {/* todo: fix, for some reason the X gets smaller when changing the px */}
-                                        <span
-                                            className="flex box-border rounded-full border-background bg-warning w-3.5 h-3.5 min-w-3.5 min-h-3.5 px-1 mt-[0.1rem] mr-1"
-                                        >
-                                            <X size={14} className="hidden group-hover:block" strokeWidth={8} color="gray" />
-                                        </span>
-                                        <span className=" text-white text-xs">{role}</span>
-                                    </div>
+                                        <div className="flex flex-wrap bg-accent border-gray-400 border  rounded-md px-2 py-0 mt-2 mr-1 group" key={role}>
+                                            {/* todo: fix, for some reason the X gets smaller when changing the px */}
+                                            <span
+                                                className="flex box-border rounded-full border-background bg-warning w-3.5 h-3.5 min-w-3.5 min-h-3.5 px-1 mt-[0.1rem] mr-1"
+                                            >
+                                                <X size={14} className="hidden group-hover:block" strokeWidth={8} color="gray" />
+                                            </span>
+                                            <span className=" text-white text-xs">{role}</span>
+                                        </div>
                                     ))}
                                 </div>
                             </div>

@@ -18,6 +18,6 @@ const Temp = () => {
             <p>You should not be seeing this page</p>
         </div>
     );
-}
+};
 
 export default Temp;

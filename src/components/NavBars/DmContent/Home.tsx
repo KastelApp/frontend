@@ -1,9 +1,9 @@
 const Home = () => {
     return (
         <>
-        Cats
+            Cats
         </>
-    )
-}
+    );
+};
 
 export default Home;

@@ -1,9 +1,9 @@
 const DmChannel = () => {
     return (
         <>
-        TODO: finish
+            TODO: finish
         </>
-    )
-}
+    );
+};
 
 export default DmChannel;

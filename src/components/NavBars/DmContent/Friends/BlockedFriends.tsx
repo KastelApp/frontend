@@ -87,7 +87,7 @@ const BlockedFriends = () => {
         return columns.filter((column) => Array.from(visibleColumns).includes(column.uid));
     }, [visibleColumns]);
 
-   
+
     const sortedItems = useMemo(() => {
         return [...users].sort((a: User, b: User) => {
             const first = new Date(a[sortDescriptor.column as keyof User]);
@@ -109,7 +109,7 @@ const BlockedFriends = () => {
                         avatarProps={{ radius: "lg", src: user.avatar, imgProps: { className: "transition-none" } }}
                         description={`${user.username}#${user.tag}`}
                         name={cellValue}
-                        
+
                     >
                         {user.username}
                     </User>
@@ -117,17 +117,17 @@ const BlockedFriends = () => {
             }
             case "actions": {
                 return (
-                        <Dropdown>
-                            <DropdownTrigger>
-                                <Button isIconOnly size="sm" variant="light">
-                                    <EllipsisVertical className="text-default-300" />
-                                </Button>
-                            </DropdownTrigger>
-                            <DropdownMenu disabledKeys={["call"]}>
-                                <DropdownItem key="view-dm">View DMs</DropdownItem>
-                                <DropdownItem key="block" color="danger" variant="flat">UnBlock</DropdownItem>
-                            </DropdownMenu>
-                        </Dropdown>
+                    <Dropdown>
+                        <DropdownTrigger>
+                            <Button isIconOnly size="sm" variant="light">
+                                <EllipsisVertical className="text-default-300" />
+                            </Button>
+                        </DropdownTrigger>
+                        <DropdownMenu disabledKeys={["call"]}>
+                            <DropdownItem key="view-dm">View DMs</DropdownItem>
+                            <DropdownItem key="block" color="danger" variant="flat">UnBlock</DropdownItem>
+                        </DropdownMenu>
+                    </Dropdown>
                 );
             }
             case "blockedSince": {

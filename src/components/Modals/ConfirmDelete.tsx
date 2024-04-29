@@ -22,19 +22,19 @@ const ConfirmDelete = ({
                 setTimer((prev) => {
                     if (prev <= 0) {
                         clearInterval(interval);
-    
+
                         return 0;
                     }
-    
+
                     return prev - 1;
                 });
             }, 1000);
 
             return () => {
                 clearInterval(interval);
-            }
+            };
         }
-    }, [isOpen])
+    }, [isOpen]);
 
     return (
         <Modal

@@ -29,6 +29,6 @@ const Badge = ({ flag, size = 24 }: {
             return null;
         }
     }
-}
+};
 
 export default Badge;

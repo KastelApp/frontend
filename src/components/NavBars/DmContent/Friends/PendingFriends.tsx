@@ -24,7 +24,7 @@ const initialColumns = ["username", "pendingSince", "actions", "type"];
 const typeTypes: Record<string, ChipProps["color"]> = {
     incoming: "success",
     outgoing: "warning",
-}
+};
 
 const columns = [
     { name: "ID", uid: "id", sortable: true },
@@ -97,7 +97,7 @@ const PendingFriends = () => {
         return columns.filter((column) => Array.from(visibleColumns).includes(column.uid));
     }, [visibleColumns]);
 
-   
+
     const sortedItems = useMemo(() => {
         return [...users].sort((a: User, b: User) => {
             if (sortDescriptor.column === "type") {
@@ -134,18 +134,18 @@ const PendingFriends = () => {
             }
             case "actions": {
                 return (
-                        <Dropdown>
-                            <DropdownTrigger>
-                                <Button isIconOnly size="sm" variant="light">
-                                    <EllipsisVertical className="text-default-300" />
-                                </Button>
-                            </DropdownTrigger>
-                            <DropdownMenu disabledKeys={["call"]}>
-                                <DropdownItem key="view-dm">View DMs</DropdownItem>
-                                <DropdownItem key="remove" color="danger" variant="flat">Deny</DropdownItem>
-                                <DropdownItem key="block" color="danger" variant="flat">Block</DropdownItem>
-                            </DropdownMenu>
-                        </Dropdown>
+                    <Dropdown>
+                        <DropdownTrigger>
+                            <Button isIconOnly size="sm" variant="light">
+                                <EllipsisVertical className="text-default-300" />
+                            </Button>
+                        </DropdownTrigger>
+                        <DropdownMenu disabledKeys={["call"]}>
+                            <DropdownItem key="view-dm">View DMs</DropdownItem>
+                            <DropdownItem key="remove" color="danger" variant="flat">Deny</DropdownItem>
+                            <DropdownItem key="block" color="danger" variant="flat">Block</DropdownItem>
+                        </DropdownMenu>
+                    </Dropdown>
                 );
             }
             case "pendingSince": {

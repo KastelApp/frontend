@@ -118,7 +118,7 @@ const Register = () => {
                                         e.preventDefault();
                                         const x = e.clientX / window.innerWidth;
                                         const y = e.clientY / window.innerHeight;
-                                        
+
                                         confetti({
                                             origin: {
                                                 x,

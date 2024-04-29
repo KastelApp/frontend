@@ -19,14 +19,14 @@ const ChangeNickname = ({
             <ModalContent>
                 <ModalHeader className="flex flex-col gap-1">Change Your Nickname</ModalHeader>
                 <ModalBody>
-                        <Input
-                            autoFocus
-                            placeholder="DarkerInk"
-                            variant="bordered"
-                            description="Max of 32 characters - 5 remaining"
-                            maxLength={32}
-                            className="w-full min-w-64"
-                        />
+                    <Input
+                        autoFocus
+                        placeholder="DarkerInk"
+                        variant="bordered"
+                        description="Max of 32 characters - 5 remaining"
+                        maxLength={32}
+                        className="w-full min-w-64"
+                    />
                 </ModalBody>
                 <ModalFooter>
                     <Button color="danger" variant="flat" onPress={onClose}>

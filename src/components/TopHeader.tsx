@@ -9,27 +9,27 @@ const TopHeader = () => {
         href: string;
         newTab: boolean;
     }[] = [
-        {
-            title: "Documentation",
-            href: "/docs",
-            newTab: false
-        },
-        {
-            title: "Github",
-            href: "https://github.com/KastelApp",
-            newTab: true
-        },
-        {
-            title: "Blog",
-            href: "/blog",
-            newTab: false
-        },
-        {
-            title: "Support",
-            href: "#",
-            newTab: false
-        }
-    ];
+            {
+                title: "Documentation",
+                href: "/docs",
+                newTab: false
+            },
+            {
+                title: "Github",
+                href: "https://github.com/KastelApp",
+                newTab: true
+            },
+            {
+                title: "Blog",
+                href: "/blog",
+                newTab: false
+            },
+            {
+                title: "Support",
+                href: "#",
+                newTab: false
+            }
+        ];
 
     return (
         <Navbar onMenuOpenChange={setIsMenuOpen}>
@@ -92,6 +92,6 @@ const TopHeader = () => {
             </NavbarMenu>
         </Navbar>
     );
-}
+};
 
 export default TopHeader;
