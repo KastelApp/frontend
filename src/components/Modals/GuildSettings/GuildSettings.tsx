@@ -13,7 +13,7 @@ interface Section {
         endContent?: React.ReactElement | React.ReactElement[];
         disabled?: boolean;
         section?: React.ReactElement | React.ReactElement[];
-        danager?: boolean;
+        danger?: boolean;
         onClick?: () => void;
     }[];
 }
@@ -34,9 +34,10 @@ const Section = ({
                 <div
                     key={child.title}
                     className={twMerge(
-                        "flex items-center justify-between w-full h-14 cursor-pointer rounded-lg mb-0.5 transition-all duration-300 ease-in-out transform group active:scale-[.97]",
-                        child.disabled ? "cursor-not-allowed" : "",
-                        child.danager ? "bg-danger/20 hover:bg-danger/15 text-danger focus:bg-danger/20" : "text-white hover:bg-slate-800 bg-gray-900"
+                        "flex items-center justify-between w-full h-14 cursor-pointer rounded-lg mb-0.5 group",
+                        child.disabled ? "" : "hover:bg-slate-800 bg-gray-900",
+                        child.disabled ? "cursor-not-allowed bg-slate-950" : "transition-all duration-300 ease-in-out transform active:scale-[.97]",
+                        child.danger ? "bg-danger/20 hover:bg-danger/15 text-danger focus:bg-danger/20" : "text-white",
                     )}
                     onClick={() => {
                         if (child.onClick) {
@@ -100,7 +101,7 @@ const GuildSettings = ({
                     title: "Vanity URL",
                     id: "vanity-url",
                     section: <div>Vanity URL</div>,
-                    disabled: false
+                    disabled: true
                 }
             ]
         },
@@ -140,7 +141,7 @@ const GuildSettings = ({
                     title: "Delete",
                     id: "delete",
                     disabled: false,
-                    danager: true,
+                    danger: true,
                     onClick: () => {
                         onOpenChangeConfirmDelete();
                     }
