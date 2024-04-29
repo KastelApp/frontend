@@ -23,18 +23,19 @@ const UserPopover = ({
         <div>
             <div className="rounded-lg p-0 w-[18.70rem]">
                 <div>
-                    <div className="flex">
+                    <div className="flex items-end justify-between p-2">
                         <Badge content={""} placement="bottom-right" size="lg" color={member.status === "online" ? "success" : member.status === "idle" ? "warning" : member.status === "dnd" ? "danger" : "default"} className="mb-2 right-1">
                             <Avatar src={member.avatar ?? undefined} alt="User Avatar" size="lg" />
                         </Badge>
-                    </div>
-                    <div className="flex items-end justify-end">
-                        <div className="bg-[#131315] rounded-md p-1">
-                            <AllBadges privateFlags="0" publicFlags="999999999999" size={18} />
+                        <div className="flex items-end justify-end">
+                            <div className="bg-[#131315] rounded-md p-1 ml-[-10px]">
+                                <AllBadges privateFlags="0" publicFlags="999999999999" size={18} />
+                            </div>
                         </div>
                     </div>
                     <Divider className="mt-2" />
                 </div>
+
                 <div>
                     <Card className="mt-2 mb-2" isBlurred>
                         <CardBody className="overflow-y-auto max-h-[85vh]">
