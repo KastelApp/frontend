@@ -1,6 +1,8 @@
 import { Link } from "@nextui-org/react";
 
 const Footer = () => {
+    const year = new Date().getFullYear();
+
     return (
         <footer className="bg-accent">
             <div className="mx-auto w-full max-w-screen-xl p-4 py-6 lg:py-8">
@@ -67,7 +69,7 @@ const Footer = () => {
                 </div>
                 <hr className="my-6 sm:mx-auto border-gray-700 lg:my-8" />
                 <div className="sm:flex sm:items-center sm:justify-between">
-                    <span className="text-sm sm:text-center text-gray-400">© 2023 <Link href="https://kastelapp.com" className="hover:text-blue-500 hover:underline">Kastel</Link>. All Rights Reserved.
+                    <span className="text-sm sm:text-center text-gray-400">© {year} <Link href="https://kastelapp.com" className="hover:text-blue-500 hover:underline">Kastel</Link>. All Rights Reserved.
                     </span>
                     <div className="flex mt-4 sm:justify-center sm:mt-0">
                         <Link href="https://x.com/KastelApp" className="text-gray-500 hover: hover:text-white ms-5">
