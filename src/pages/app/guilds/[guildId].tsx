@@ -1,12 +1,11 @@
-import DmNavBar from "@/components/NavBars/ChannelNavBar.tsx";
-import MemberBar from "@/components/NavBars/MemberBar.tsx";
+import ChannelNavBar from "@/components/NavBars/ChannelNavBar.tsx";
 import AppLayout from "@/layouts/AppLayout.tsx";
 
 const Guild = () => {
 
     return (
         <AppLayout>
-            <DmNavBar>
+            <ChannelNavBar>
                 thisisatest
                 thisisatest
                 thisisatest
@@ -129,7 +128,7 @@ const Guild = () => {
                 t
                 t
                 test
-            </DmNavBar>
+            </ChannelNavBar>
         </AppLayout>
     );
 };
