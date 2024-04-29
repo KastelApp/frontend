@@ -93,6 +93,13 @@ const MemberBar = () => {
             position: 2 // ? 2 = top
         },
         {
+            name: "Test",
+            id: "test",
+            color: "green",
+            hoisted: false,
+            position: 3 // ? 3 = top
+        },
+        {
             name: "Moderator",
             id: "moderator",
             color: "#0088ff",
@@ -107,7 +114,7 @@ const MemberBar = () => {
             username: "DarkerInk",
             discriminator: "0001",
             avatar: "https://development.kastelapp.com/icon-1.png",
-            roles: ["everyone", "admin", "Owner", "Team", "Developers", "user", "announcements", "backend", "polls"],
+            roles: ["everyone", "admin", "test", "Team", "Developers", "user", "announcements", "backend", "polls"],
             isOwner: true,
             status: "online",
             tag: null,
@@ -184,7 +191,13 @@ const MemberBar = () => {
 
 
         for (const member of members) {
-            const topColorRole = member.roles.map(roleId => roles.find(role => role.id === roleId)?.color).filter(color => color !== undefined && color)[0];
+            // ? defaultSections[0] = offline
+            // ? defaultSections[1] = online
+            // ? defaultSections[number] = role
+
+            const topColorRole = member.roles.map(roleId => roles.find(role => role.id === roleId))
+                .filter(role => role !== undefined)
+                .sort((a, b) => a!.position - b!.position).reverse()[0]?.color;
 
             if (member.status === "offline") {
                 defaultSections[0].members.push({
@@ -206,14 +219,10 @@ const MemberBar = () => {
             }
 
             // ? get their top role, if its hoisted then push the role into sections if it does not exist, and then push the user there
-            // ? if the top role isn't hoisted keep going down until you find one that is hoisted or you reach the bottom (and in which case push to online)
-            const topRole = member.roles.map(roleId => roles.find(role => role.id === roleId)).filter(role => role !== undefined && role.hoisted)
-                .sort((a, b) => {
-                    if (a && b && a.position > b.position) return 1;
-                    if (a && b && a.position < b.position) return -1;
-
-                    return 0;
-                }).reverse()[0];
+            // ? If we could not find a hoisted role, push them to online
+            const topRole = member.roles.map(roleId => roles.find(role => role.id === roleId))
+                .filter(role => role !== undefined && role.hoisted)
+                .sort((a, b) => a!.position - b!.position).reverse()[0];
 
             if (!topRole) {
                 defaultSections[1].members.push({
