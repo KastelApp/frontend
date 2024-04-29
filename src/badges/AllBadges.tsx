@@ -5,6 +5,7 @@ import BugHunterLevel1 from "./BugHunter1.tsx";
 import BugHunterLevel2 from "./BugHunter2.tsx";
 import BugHunterLevel3 from "./BugHunter3.tsx";
 import { publicFlags as pubFlags } from "@/utils/Constants.ts";
+import Sponsor from "./Sponsor.tsx";
 
 const AllBadges = ({
     privateFlags,
@@ -69,6 +70,18 @@ const AllBadges = ({
                                 </Tooltip>
                             </div>
                         );
+                    }
+
+                    case "SponsorBadge": {
+                        return (
+                            <div className="relative">
+                                <Tooltip content="Has Sponsored Kastel" color="secondary">
+                                    <span className="text-lg text-secondary cursor-pointer hover:opacity-75">
+                                        <Sponsor size={size} />
+                                    </span>
+                                </Tooltip>
+                            </div>
+                        )
                     }
 
                     default: {
