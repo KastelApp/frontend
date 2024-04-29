@@ -109,7 +109,7 @@ const LeftNavBarIcon = ({
     onClick,
     onRightClick
 }: {
-    icon: React.ReactNode;
+    icon: React.ReactElement | React.ReactElement[];
     description?: string;
     isDisabled?: boolean,
     size?: number;
@@ -118,7 +118,7 @@ const LeftNavBarIcon = ({
     badgeColor?: "default" | "primary" | "secondary" | "success" | "warning" | "danger";
     badgePosition?: "top-right" | "top-left" | "bottom-right" | "bottom-left";
     href?: string;
-    InContent?: React.FC<{ children: React.ReactNode; }>;
+    InContent?: React.FC<{ children: React.ReactElement | React.ReactElement[]; }>;
     onClick?: () => void;
     onRightClick?: () => void;
 }) => {
@@ -128,18 +128,18 @@ const LeftNavBarIcon = ({
     const LinkWrapper = ({
         children,
         href
-    }: { href?: string, children: React.ReactNode; }) => href ? <Link href={href} passHref>{children}</Link> : children;
+    }: { href?: string, children: React.ReactElement | React.ReactElement[]; }): React.ReactElement => href ? <Link href={href} passHref>{children}</Link> : children as React.ReactElement;
 
     const InContentWrapper = ({
         children,
-    }: { children: React.ReactNode; }) => InContent ? <InContent>{children}</InContent> : children;
+    }: { children: React.ReactElement | React.ReactElement[]; }): React.ReactElement => InContent ? <InContent>{children}</InContent> : children as React.ReactElement;
 
-    const Tooltipornot = ({ children }: {
-        children: React.ReactNode;
-    }) => description ? <Tooltip content={description} showArrow className="select-none" placement="right">{children}</Tooltip> : children;
+    const TooltipOrNot = ({ children }: {
+        children: React.ReactElement | React.ReactElement[];
+    }): React.ReactElement => description ? <Tooltip content={description} showArrow className="select-none" placement="right">{children}</Tooltip> : children as React.ReactElement;
 
     return (
-        <Tooltipornot>
+        <TooltipOrNot>
             <div className={twMerge(`select-none flex justify-center items-center mt-2
             mb-2
             mx-auto
@@ -164,7 +164,7 @@ const LeftNavBarIcon = ({
                     </InContentWrapper>
                 </div>
             </div>
-        </Tooltipornot>
+        </TooltipOrNot>
     );
 };
 

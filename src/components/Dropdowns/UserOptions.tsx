@@ -8,7 +8,7 @@ import CustomStatus from "../Modals/CustomStatus.tsx";
 const UserOptions = ({
     children
 }: {
-    children: React.ReactNode;
+    children: React.ReactElement | React.ReactElement[];
 }) => {
     const [statusOpen, setStatusOpen] = useState(false);
     const [status, setStatus] = useState<"Online" | "Invisible" | "DND" | "Idle">("Invisible");

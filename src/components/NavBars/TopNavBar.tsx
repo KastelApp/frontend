@@ -3,7 +3,7 @@ import { CircleHelp, Inbox, Menu, X } from "lucide-react";
 import { motion } from "framer-motion";
 
 interface Icon {
-    icon: React.ReactNode;
+    icon: React.ReactElement | React.ReactElement[];
     tooltip: string;
     onClick?: () => void;
 }
@@ -17,17 +17,17 @@ const TopNavBar = ({
     setIsOpen
 }: {
     icons?: Icon[];
-    startContent?: React.ReactNode;
-    endContent?: React.ReactNode;
+    startContent?: React.ReactElement | React.ReactElement[];
+    endContent?: React.ReactElement | React.ReactElement[];
     beforeIcons?: boolean;
     isOpen: boolean;
     setIsOpen: (value: boolean) => void;
 }) => {
 
     const TooltipOrNot = ({ children, tooltip }: {
-        children: React.ReactNode;
+        children: React.ReactElement | React.ReactElement[];
         tooltip: string;
-    }) => tooltip ? <Tooltip className="select-none" content={tooltip} placement="bottom">{children}</Tooltip> : children;
+    }): React.ReactElement => tooltip ? <Tooltip className="select-none" content={tooltip} placement="bottom">{children}</Tooltip> : children as React.ReactElement;
 
     const baseIcons: Icon[] = [
         {

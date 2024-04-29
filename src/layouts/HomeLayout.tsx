@@ -2,7 +2,7 @@ import Footer from "@/components/Footer.tsx";
 import TopHeader from "@/components/TopHeader.tsx";
 
 const HomeLayout = ({ children }: {
-    children?: React.ReactNode;
+    children?: React.ReactElement | React.ReactElement[] | React.ReactElement | React.ReactElement[][];
 }) => {
     return (
         <div>

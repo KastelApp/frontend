@@ -20,11 +20,11 @@ const DmNavBarItem = ({
     className,
     textSize = "md"
 }: {
-    icon?: React.ReactNode;
+    icon?: React.ReactElement | React.ReactElement[];
     name: string;
     isActive?: boolean;
     onClick?: () => void;
-    endContent?: React.ReactNode;
+    endContent?: React.ReactElement | React.ReactElement[];
     isDisabled?: boolean;
     underName?: string | null;
     textSize?: "sm" | "md" | "lg";

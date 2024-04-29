@@ -1,5 +1,5 @@
 import { useGuildSettingsStore, useIsOpenStore } from "@/wrapper/Stores.ts";
-import { Avatar, Badge, Chip, Popover, PopoverContent, PopoverTrigger, Spinner, User } from "@nextui-org/react";
+import { Avatar, Badge, Chip, Popover, PopoverContent, PopoverTrigger, Spinner } from "@nextui-org/react";
 import { useEffect, useState } from "react";
 import { twMerge } from "tailwind-merge";
 import UserPopover from "../Popovers/UserPopover.tsx";
@@ -237,7 +237,7 @@ const MemberBar = () => {
             }
 
             if (topRole.hoisted) {
-                const section = defaultSections.find(section => section.name === topRole.name);
+                const section = defaultSections.find(section => section.name === topRole?.name);
 
                 if (!section) {
                     defaultSections.push({

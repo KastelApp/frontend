@@ -1,4 +1,4 @@
-import { Button, Input, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, useDisclosure } from "@nextui-org/react";
+import { Modal, ModalContent, useDisclosure } from "@nextui-org/react";
 import React, { useState } from "react";
 import { twMerge } from "tailwind-merge";
 import ConfirmDelete from "../ConfirmDelete.tsx";
@@ -9,10 +9,10 @@ interface Section {
     children: {
         title: string;
         id: string;
-        startContent?: React.ReactNode;
-        endContent?: React.ReactNode;
+        startContent?: React.ReactElement | React.ReactElement[];
+        endContent?: React.ReactElement | React.ReactElement[];
         disabled?: boolean;
-        section?: React.ReactNode;
+        section?: React.ReactElement | React.ReactElement[];
         danager?: boolean;
         onClick?: () => void;
     }[];
@@ -61,7 +61,6 @@ const Section = ({
 
 const GuildSettings = ({
     isOpen,
-    onClose,
     onOpenChange
 }: {
     isOpen: boolean;

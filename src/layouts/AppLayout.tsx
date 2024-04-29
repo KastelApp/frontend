@@ -5,7 +5,7 @@ import { memo } from "react";
 const AppLayout = memo(({
     children
 }: {
-    children?: React.ReactNode;
+    children?: React.ReactElement | React.ReactElement[];
 }) => {
     const { navBarLocation } = useSettingsStore();
 

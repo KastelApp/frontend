@@ -20,8 +20,8 @@ const ChannelIcon = ({
     shouldHideHover
 }: {
     text: string;
-    icon?: React.ReactNode;
-    rightIcon?: React.ReactNode;
+    icon?: React.ReactElement | React.ReactElement[];
+    rightIcon?: React.ReactElement | React.ReactElement[];
     onlyShowOnHover?: boolean;
     divider?: boolean;
     shouldHideHover?: boolean;
@@ -41,7 +41,7 @@ const ChannelIcon = ({
 
 interface Channel {
     name: string;
-    icon?: React.ReactNode;
+    icon?: React.ReactElement | React.ReactElement[];
     description?: string;
     channels?: Channel[];
 }
@@ -80,7 +80,7 @@ const
     ChannelNavBar = ({
         children
     }: {
-        children?: React.ReactNode;
+        children?: React.ReactElement | React.ReactElement[];
     }) => {
         const { navBarLocation, isSideBarOpen, setIsSideBarOpen } = useSettingsStore();
 

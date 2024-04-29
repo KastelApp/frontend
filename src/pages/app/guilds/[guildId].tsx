@@ -6,6 +6,7 @@ const Guild = () => {
     return (
         <AppLayout>
             <ChannelNavBar>
+                <>
                 thisisatest
                 thisisatest
                 thisisatest
@@ -128,6 +129,7 @@ const Guild = () => {
                 t
                 t
                 test
+                </>
             </ChannelNavBar>
         </AppLayout>
     );
