@@ -9,7 +9,8 @@ import { motion } from "framer-motion";
 import MemberBar from "./MemberBar.tsx";
 import ChangeNickname from "../Modals/ChangeNickname.tsx";
 import ConfirmLeave from "../Modals/ConfirmLeave.tsx";
-import GuildSettings from "../Modals/GuildSettings/GuildSettings.tsx";
+import GuildSettings from "../Modals/BaseSettings.tsx";
+import Overview from "../Modals/GuildSettings/OverView.tsx";
 
 const ChannelIcon = ({
     icon,
@@ -276,7 +277,81 @@ const
                 {/* the modals we use for the buttons */}
                 <ChangeNickname isOpen={isNicknameOpen} onOpenChange={onOpenChange} onClose={onClose} />
                 <ConfirmLeave isOpen={isConfirmLeaveOpen} onOpenChange={onOpenChangeConfirmLeave} onClose={onCloseConfirmLeave} />
-                <GuildSettings isOpen={isGuildSettingsOpen} onOpenChange={onOpenChangeGuildSettings} onClose={onCloseGuildSettings} />
+                <GuildSettings isOpen={isGuildSettingsOpen} onOpenChange={onOpenChangeGuildSettings} onClose={onCloseGuildSettings} sections={[
+        {
+            title: null,
+            children: [
+                {
+                    title: "Overview",
+                    id: "overview",
+                    section: <Overview />,
+                    disabled: false
+                },
+                {
+                    title: "Roles",
+                    id: "roles",
+                    section: <div>Roles</div>,
+                    disabled: false
+                },
+                {
+                    title: "Emojis",
+                    id: "emojis",
+                    section: <div>Emojis</div>,
+                    disabled: false
+                },
+                {
+                    title: "Vanity URL",
+                    id: "vanity-url",
+                    section: <div>Vanity URL</div>,
+                    disabled: true
+                }
+            ]
+        },
+        {
+            title: "User Management",
+            children: [
+                {
+                    title: "Co-Owners",
+                    id: "co-owners",
+                    section: <div>Co-Owners</div>,
+                    disabled: false
+                },
+                {
+                    title: "Members",
+                    id: "members",
+                    section: <div>Members</div>,
+                    disabled: false
+                },
+                {
+                    title: "Bans",
+                    id: "bans",
+                    section: <div>Bans</div>,
+                    disabled: false
+                },
+                {
+                    title: "Invites",
+                    id: "invites",
+                    section: <div>Invites</div>,
+                    disabled: false
+                }
+            ]
+        },
+        {
+            title: null,
+            children: [
+                {
+                    title: "Delete",
+                    id: "delete",
+                    disabled: false,
+                    danger: true,
+                    onClick: () => {
+                        // @ts-expect-error -- temp
+                        onOpenChangeConfirmDelete();
+                    }
+                }
+            ]
+        }
+    ]} initialSection={"overview"} />
                 <div className="flex flex-row w-full h-screen m-0 overflow-x-auto">
                     <div
                         className={twMerge(
@@ -352,11 +427,11 @@ const
                     </div>
                     <div className={twMerge("w-full overflow-hidden", isSideBarOpen ? "ml-[17rem]" : "")}>
                         <TopNavBar
-                            startContent={<div className="flex items-center gap-1">
+                            startContent={<div className="flex items-center gap-1 select-none">
                                 <Hash size={20} color="#acaebf" />
                                 <p className="text-gray-300 font-semibold">Test</p>
                                 <Divider orientation="vertical" className="h-6 ml-2 mr-2 w-[3px]" />
-                                <p className="text-gray-400 font-semibold">Welcome</p>
+                                <p className="text-gray-400 font-semibold text-sm cursor-pointer truncate w-96">Welcome</p>
                             </div>}
                             isOpen={isSideBarOpen}
                             setIsOpen={setIsSideBarOpen}

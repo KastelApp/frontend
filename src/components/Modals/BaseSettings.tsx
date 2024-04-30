@@ -1,8 +1,7 @@
 import { Modal, ModalContent, useDisclosure } from "@nextui-org/react";
 import React, { useState } from "react";
 import { twMerge } from "tailwind-merge";
-import ConfirmDelete from "../ConfirmDelete.tsx";
-import Overview from "./OverView.tsx";
+import ConfirmDelete from "./ConfirmDelete.tsx";
 
 interface Section {
     title: string | null;
@@ -62,11 +61,15 @@ const Section = ({
 
 const GuildSettings = ({
     isOpen,
-    onOpenChange
+    onOpenChange,
+    sections,
+    initialSection
 }: {
     isOpen: boolean;
     onOpenChange: () => void;
     onClose: () => void;
+    sections: Section[];
+    initialSection: string;
 }) => {
 
     const {
@@ -75,82 +78,7 @@ const GuildSettings = ({
         onClose: onCloseConfirmDelete
     } = useDisclosure();
 
-    const sections: Section[] = [
-        {
-            title: null,
-            children: [
-                {
-                    title: "Overview",
-                    id: "overview",
-                    section: <Overview />,
-                    disabled: false
-                },
-                {
-                    title: "Roles",
-                    id: "roles",
-                    section: <div>Roles</div>,
-                    disabled: false
-                },
-                {
-                    title: "Emojis",
-                    id: "emojis",
-                    section: <div>Emojis</div>,
-                    disabled: false
-                },
-                {
-                    title: "Vanity URL",
-                    id: "vanity-url",
-                    section: <div>Vanity URL</div>,
-                    disabled: true
-                }
-            ]
-        },
-        {
-            title: "User Management",
-            children: [
-                {
-                    title: "Co-Owners",
-                    id: "co-owners",
-                    section: <div>Co-Owners</div>,
-                    disabled: false
-                },
-                {
-                    title: "Members",
-                    id: "members",
-                    section: <div>Members</div>,
-                    disabled: false
-                },
-                {
-                    title: "Bans",
-                    id: "bans",
-                    section: <div>Bans</div>,
-                    disabled: false
-                },
-                {
-                    title: "Invites",
-                    id: "invites",
-                    section: <div>Invites</div>,
-                    disabled: false
-                }
-            ]
-        },
-        {
-            title: null,
-            children: [
-                {
-                    title: "Delete",
-                    id: "delete",
-                    disabled: false,
-                    danger: true,
-                    onClick: () => {
-                        onOpenChangeConfirmDelete();
-                    }
-                }
-            ]
-        }
-    ];
-
-    const [section, setSection] = useState("overview");
+    const [section, setSection] = useState(initialSection);
 
     return (
         <>
@@ -175,9 +103,6 @@ const GuildSettings = ({
                                 <Section title={section.title} key={section.title} children={section.children} setSection={setSection} />
                             ))}
                         </div>
-                        {/* {
-                            sections.find((s) => s.children.find((c) => c.id === section))?.children.find((c) => c.id === section)?.section
-                        } */}
                         <div className="flex flex-col w-full h-full">
                             <div className="flex flex-col w-full h-full p-12 pt-8">
                                 {sections.find((s) => s.children.find((c) => c.id === section))?.children.find((c) => c.id === section)?.section}

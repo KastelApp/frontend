@@ -6,18 +6,21 @@ import { fontSans, fontMono } from "@/config/fonts";
 import { useRouter } from "next/router";
 import "@/styles/globals.css";
 import ErrorBoundary from "@/layouts/ErrorBoundary.tsx";
+import ErrorHandler from "@/layouts/ErrorHandler.tsx";
 
 const App = ({ Component, pageProps }: AppProps) => {
 	const router = useRouter();
 
 	return (
-		<NextUIProvider navigate={router.push}>
-			<NextThemesProvider>
-				<ErrorBoundary>
-					<Component {...pageProps} />
-				</ErrorBoundary>
-			</NextThemesProvider>
-		</NextUIProvider>
+		<ErrorBoundary>
+			<ErrorHandler>
+				<NextUIProvider navigate={router.push}>
+					<NextThemesProvider>
+						<Component {...pageProps} />
+					</NextThemesProvider>
+				</NextUIProvider>
+			</ErrorHandler>
+		</ErrorBoundary>
 	);
 };
 
