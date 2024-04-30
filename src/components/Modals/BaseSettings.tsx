@@ -26,8 +26,8 @@ const Section = ({
     setSection: (section: string) => void;
 }) => {
     return (
-        <div className="flex flex-col gap-2 p-4">
-            {title && <h2 className="text-md font-semibold select-none mb-4 text-white ml-4">{title}</h2>}
+        <div className="flex flex-col gap-1 p-2">
+            {title && <h2 className="text-md font-semibold select-none mb-2 text-white ml-4">{title}</h2>}
             {children.map((child) => (
                 <div
                     key={child.title}
@@ -84,20 +84,20 @@ const BaseSettings = ({
                 isDismissable={false} isKeyboardDismissDisabled={true}
             >
                 <ModalContent>
-                    <div className="flex flex-row w-full h-full m-0 overflow-x-hidden">
-                        <div
-                            className={twMerge(
-                                "min-w-60 h-full m-0 bg-accent overflow-y-auto overflow-x-hidden"
-                            )}
-                        >
-                            <p className="text-white text-md font-semibold p-4">{title}</p>
-                            {sections.map((section) => (
-                                // eslint-disable-next-line react/no-children-prop
-                                <Section title={section.title} key={section.title} children={section.children} setSection={setSection} />
-                            ))}
-                        </div>
-                        <div className="flex flex-col w-full h-full">
-                            <div className="flex flex-col w-full h-full p-12 pt-8">
+                    <div className="flex flex-row w-full m-0 overflow-x-hidden h-full">
+                        <div className="flex w-full h-full">
+                            <div
+                                className={twMerge(
+                                    "min-w-64 m-0 bg-accent overflow-y-auto"
+                                )}
+                            >
+                                <p className="text-white text-md font-semibold p-4">{title}</p>
+                                {sections.map((section) => (
+                                    // eslint-disable-next-line react/no-children-prop
+                                    <Section title={section.title} key={section.title} children={section.children} setSection={setSection} />
+                                ))}
+                            </div>
+                            <div className="flex flex-col w-full p-5 pt-4 h-full">
                                 {sections.find((s) => s.children.find((c) => c.id === section))?.children.find((c) => c.id === section)?.section}
                             </div>
                         </div>

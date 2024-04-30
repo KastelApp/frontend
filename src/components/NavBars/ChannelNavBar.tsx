@@ -312,6 +312,23 @@ const
                     ]
                 },
                 {
+                    title: "Community",
+                    children: [
+                        {
+                            title: "Discovery",
+                            id: "discovery",
+                            section: <div>Discovery</div>,
+                            disabled: true
+                        },
+                        {
+                            title: "Partner & Verification",
+                            id: "partner",
+                            section: <div>Partner</div>,
+                            disabled: true
+                        }
+                    ]
+                },
+                {
                     title: "User Management",
                     children: [
                         {
