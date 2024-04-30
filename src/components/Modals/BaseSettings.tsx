@@ -1,7 +1,6 @@
-import { Modal, ModalContent, useDisclosure } from "@nextui-org/react";
+import { Modal, ModalContent } from "@nextui-org/react";
 import React, { useState } from "react";
 import { twMerge } from "tailwind-merge";
-import ConfirmDelete from "./ConfirmDelete.tsx";
 
 interface Section {
     title: string | null;
@@ -59,30 +58,24 @@ const Section = ({
     );
 };
 
-const GuildSettings = ({
+const BaseSettings = ({
     isOpen,
     onOpenChange,
     sections,
-    initialSection
+    initialSection,
+    title
 }: {
     isOpen: boolean;
     onOpenChange: () => void;
     onClose: () => void;
     sections: Section[];
     initialSection: string;
+    title: string;
 }) => {
-
-    const {
-        isOpen: isConfirmDeleteOpen,
-        onOpenChange: onOpenChangeConfirmDelete,
-        onClose: onCloseConfirmDelete
-    } = useDisclosure();
-
     const [section, setSection] = useState(initialSection);
 
     return (
         <>
-            <ConfirmDelete isOpen={isConfirmDeleteOpen} onOpenChange={onOpenChangeConfirmDelete} onClose={onCloseConfirmDelete} />
             <Modal
                 isOpen={isOpen}
                 onOpenChange={onOpenChange}
@@ -94,10 +87,10 @@ const GuildSettings = ({
                     <div className="flex flex-row w-full h-full m-0 overflow-x-hidden">
                         <div
                             className={twMerge(
-                                "w-60 h-full m-0 bg-accent overflow-y-auto overflow-x-hidden"
+                                "min-w-60 h-full m-0 bg-accent overflow-y-auto overflow-x-hidden"
                             )}
                         >
-                            <p className="text-white text-md font-semibold p-4">This is a test — Settings</p>
+                            <p className="text-white text-md font-semibold p-4">{title}</p>
                             {sections.map((section) => (
                                 // eslint-disable-next-line react/no-children-prop
                                 <Section title={section.title} key={section.title} children={section.children} setSection={setSection} />
@@ -115,4 +108,4 @@ const GuildSettings = ({
     );
 };
 
-export default GuildSettings;
+export default BaseSettings;

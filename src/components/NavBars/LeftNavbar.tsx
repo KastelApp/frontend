@@ -1,7 +1,7 @@
 // ? The left navbar is inspired by discord due to a ton of users wanting it since they are familiar with it.
 // ? Though the bottom bar is the one we will care about the most, the left navbar is still a good option for those who want it.
 
-import { memo, useEffect, useRef } from "react";
+import { memo } from "react";
 import { Compass, Plus } from "lucide-react";
 import { twMerge } from "tailwind-merge";
 import { Avatar, Badge, Tooltip, useDisclosure } from "@nextui-org/react";
@@ -9,23 +9,14 @@ import Link from "next/link";
 import Divider from "../Divider.tsx";
 import UserOptions from "../Dropdowns/UserOptions.tsx";
 import GuildModal from "../Modals/CreateGuild.tsx";
-import { createPortal } from "react-dom";
 import { useSettingsStore } from "@/wrapper/Stores.ts";
 
 const Modal = () => {
     const { isOpen, onOpenChange, onClose } = useDisclosure();
-    const ref = useRef<HTMLElement | null>(null);
-
-    useEffect(() => {
-        if (!document) return;
-
-        ref.current = document.createElement("div");
-    }, []);
 
     return (
         <>
-
-            {ref.current && createPortal(<GuildModal isOpen={isOpen} onOpenChange={onOpenChange} onClose={onClose} />, ref.current)}
+            <GuildModal isOpen={isOpen} onOpenChange={onOpenChange} onClose={onClose} />
             <LeftNavBarIcon onClick={() => {
                 onOpenChange();
             }} icon={<Plus className="mt-1.5" color="#acaebf" absoluteStrokeWidth />} description="Add Guild" />
@@ -58,39 +49,41 @@ const LeftNavbar = memo(() => {
     ];
 
     return (
-        <div className={twMerge("block", isSideBarOpen ? "" : "hidden")}>
-            <div className="fixed left-0 top-0 h-full w-16 flex flex-col shadow-lg z-10 overflow-y-auto overflow-x-hidden scrollbar-hide">
-                <LeftNavBarIcon
-                    icon={<Avatar src="https://development.kastelapp.com/icon-1.png"
-                        className="w-9 h-9 hover:scale-95 transition-all duration-300 ease-in-out transform" imgProps={{ className: "transition-none" }} />}
-                    isBackgroundDisabled
-                    badgeContent="9+"
-                    badgePosition="bottom-right"
-                    badgeColor="danger"
-                    InContent={UserOptions}
-                    href="/app"
-                />
-                <Divider size={"[2px]"} />
-                {guilds.map((guild, index) => (
+        <>
+            <div className={twMerge("block", isSideBarOpen ? "" : "hidden")}>
+                <div className="fixed left-0 top-0 h-full w-16 flex flex-col shadow-lg z-10 overflow-y-auto overflow-x-hidden scrollbar-hide">
                     <LeftNavBarIcon
-                        href={`/app/guilds/${guild.id}`}
+                        icon={<Avatar src="https://development.kastelapp.com/icon-1.png"
+                            className="w-9 h-9 hover:scale-95 transition-all duration-300 ease-in-out transform" imgProps={{ className: "transition-none" }} />}
+                        isBackgroundDisabled
+                        badgeContent="9+"
                         badgePosition="bottom-right"
                         badgeColor="danger"
-                        badgeContent={guild.mentionCount === "0" ? undefined : guild.mentionCount}
-                        key={index}
-                        icon={<Avatar
-                            name={guild.name}
-                            src={guild.icon}
-                            className="mt-1.5 w-10 h-10 rounded-3xl transition-all group-hover:rounded-xl duration-300 ease-in-out transform"
-                            imgProps={{ className: "transition-none" }}
-                        />}
-                        description={guild.name}
+                        InContent={UserOptions}
+                        href="/app"
                     />
-                ))}
-                <Modal />
-                <LeftNavBarIcon icon={<Compass className="mt-1.5" color="#acaebf" absoluteStrokeWidth />} description="Discover a guild" isDisabled />
+                    <Divider size={"[2px]"} />
+                    {guilds.map((guild, index) => (
+                        <LeftNavBarIcon
+                            href={`/app/guilds/${guild.id}`}
+                            badgePosition="bottom-right"
+                            badgeColor="danger"
+                            badgeContent={guild.mentionCount === "0" ? undefined : guild.mentionCount}
+                            key={index}
+                            icon={<Avatar
+                                name={guild.name}
+                                src={guild.icon}
+                                className="mt-1.5 w-10 h-10 rounded-3xl transition-all group-hover:rounded-xl duration-300 ease-in-out transform"
+                                imgProps={{ className: "transition-none" }}
+                            />}
+                            description={guild.name}
+                        />
+                    ))}
+                    <Modal />
+                    <LeftNavBarIcon icon={<Compass className="mt-1.5" color="#acaebf" absoluteStrokeWidth />} description="Discover a guild" isDisabled />
+                </div>
             </div>
-        </div>
+        </>
     );
 });
 

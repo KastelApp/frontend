@@ -4,6 +4,8 @@ import { useState } from "react";
 import { twMerge } from "tailwind-merge";
 import { motion } from "framer-motion";
 import CustomStatus from "../Modals/CustomStatus.tsx";
+import OverView from "../Settings/User/Overview.tsx";
+import BaseSettings from "../Modals/BaseSettings.tsx";
 
 const UserOptions = ({
     children
@@ -23,87 +25,127 @@ const UserOptions = ({
 
     const [dropdownOpen, setDropdownOpen] = useState(false);
 
+    const {
+        isOpen: isSettingsOpen,
+        onOpenChange: onSettingsOpenChange,
+        onClose: onSettingsClose
+    } = useDisclosure();
+
     return (
-        <div onContextMenu={(e) => {
-            e.preventDefault();
-
-            setDropdownOpen(!dropdownOpen);
-
-            if (!dropdownOpen) {
-                setStatusOpen(false);
-            }
-        }}>
-            <CustomStatus isOpen={isOpen} onOpenChange={onOpenChange} onClose={onClose} />
-            <Dropdown placement="right" closeOnSelect={false} onOpenChange={(isOpen) => {
-                if (!isOpen) {
-                    setDropdownOpen(false);
-                    setStatusOpen(false);
-                }
-            }} isOpen={dropdownOpen}>
-                <DropdownTrigger>
-                    <div>
-                        {children}
-                    </div>
-                </DropdownTrigger>
-                <DropdownMenu aria-label="Static Actions" onAction={(key) => {
-                    switch (key) {
-                        case "changeStatus": {
-                            setStatusOpen(!statusOpen);
-
-                            break;
-                        }
-
-                        case "customStatus": {
-                            onOpenChange();
-                            setDropdownOpen(false);
-
-                            break;
+        <>
+            <BaseSettings title="User Settings" isOpen={isSettingsOpen} onOpenChange={onSettingsOpenChange} onClose={onSettingsClose} sections={[{
+                title: null,
+                children: [
+                    {
+                        title: "Overview",
+                        id: "overview",
+                        section: <OverView />,
+                        disabled: false
+                    }
+                ]
+            },
+            {
+                title: null,
+                children: [
+                    {
+                        title: "Logout",
+                        id: "logout",
+                        disabled: false,
+                        danger: true,
+                        onClick: () => {
                         }
                     }
-                }}>
-                    <DropdownItem closeOnSelect={false} key="changeStatus" variant="flat" endContent={<ArrowRight size={20} className={twMerge("transition-transform duration-300", statusOpen ? "rotate-90" : "")} />}>
-                        <p>Status</p>
-                        <p className={twMerge("text-xs mt-1", `text-${color}`)}>{status}</p>
-                        <motion.div
-                            className="grid grid-cols-[repeat(2,minmax(0px,1fr))] items-center mt-2"
-                            initial="collapsed"
-                            animate={statusOpen ? "expanded" : "collapsed"}
-                            variants={{
-                                collapsed: { height: 0, opacity: 0 },
-                                expanded: { height: "auto", opacity: 1 },
-                            }}
-                            transition={{ duration: 0.3 }}
-                        >
-                            <Chip onClick={() => {
-                                setStatusOpen(true);
-                                setStatus("Online");
-                            }} variant="flat" className="mb-2 min-w-[60px]" radius="sm" size="sm" color="success">Online</Chip>
-                            <Chip onClick={() => {
-                                setStatusOpen(true);
-                                setStatus("Idle");
-                            }} variant="flat" className="right-2 mb-2 min-w-[60px]" radius="sm" size="sm" color="warning">Idle</Chip>
-                            <Chip onClick={() => {
-                                setStatusOpen(true);
-                                setStatus("DND");
-                            }} variant="flat" className="mb-2 min-w-[60px]" radius="sm" size="sm" color="danger">DND</Chip>
-                            <Chip onClick={() => {
-                                setStatusOpen(true);
-                                setStatus("Invisible");
-                            }} variant="flat" className="right-2 mb-2 min-w-[60px]" radius="sm" size="sm" color="default">Invisible</Chip>
-                        </motion.div>
-                    </DropdownItem>
+                ]
+            }
+            ]} initialSection={"overview"} />
+            <div onContextMenu={(e) => {
+                e.preventDefault();
 
-                    <DropdownItem closeOnSelect={true} key="customStatus" variant="flat">
-                        <p>Custom Status</p>
-                        <p className="text-xs text-gray-500">My Custom Status</p>
-                    </DropdownItem>
-                    <DropdownItem key="edit" variant="flat" endContent={<Settings size={20} />}>Settings</DropdownItem>
-                    <DropdownItem key="delete" variant="flat" className="text-danger" color="danger" endContent={<LogOut size={20} />}>
-                        Logout
-                    </DropdownItem>
-                </DropdownMenu>
-            </Dropdown>
-        </div>
+                setDropdownOpen(!dropdownOpen);
+
+                if (!dropdownOpen) {
+                    setStatusOpen(false);
+                }
+            }}>
+                <CustomStatus isOpen={isOpen} onOpenChange={onOpenChange} onClose={onClose} />
+                <Dropdown placement="right" closeOnSelect={false} onOpenChange={(isOpen) => {
+                    if (!isOpen) {
+                        setDropdownOpen(false);
+                        setStatusOpen(false);
+                    }
+                }} isOpen={dropdownOpen}>
+                    <DropdownTrigger>
+                        <div>
+                            {children}
+                        </div>
+                    </DropdownTrigger>
+                    <DropdownMenu aria-label="Static Actions" onAction={(key) => {
+                        switch (key) {
+                            case "changeStatus": {
+                                setStatusOpen(!statusOpen);
+
+                                break;
+                            }
+
+                            case "customStatus": {
+                                onOpenChange();
+                                setDropdownOpen(false);
+
+                                break;
+                            }
+
+                            case "settings": {
+                                onSettingsOpenChange();
+                                setDropdownOpen(false);
+
+                                break;
+                            }
+                        }
+                    }}>
+                        <DropdownItem closeOnSelect={false} key="changeStatus" variant="flat" endContent={<ArrowRight size={20} className={twMerge("transition-transform duration-300", statusOpen ? "rotate-90" : "")} />}>
+                            <p>Status</p>
+                            <p className={twMerge("text-xs mt-1", `text-${color}`)}>{status}</p>
+                            <motion.div
+                                className="grid grid-cols-[repeat(2,minmax(0px,1fr))] items-center mt-2"
+                                initial="collapsed"
+                                animate={statusOpen ? "expanded" : "collapsed"}
+                                variants={{
+                                    collapsed: { height: 0, opacity: 0 },
+                                    expanded: { height: "auto", opacity: 1 },
+                                }}
+                                transition={{ duration: 0.3 }}
+                            >
+                                <Chip onClick={() => {
+                                    setStatusOpen(true);
+                                    setStatus("Online");
+                                }} variant="flat" className="mb-2 min-w-[60px]" radius="sm" size="sm" color="success">Online</Chip>
+                                <Chip onClick={() => {
+                                    setStatusOpen(true);
+                                    setStatus("Idle");
+                                }} variant="flat" className="right-2 mb-2 min-w-[60px]" radius="sm" size="sm" color="warning">Idle</Chip>
+                                <Chip onClick={() => {
+                                    setStatusOpen(true);
+                                    setStatus("DND");
+                                }} variant="flat" className="mb-2 min-w-[60px]" radius="sm" size="sm" color="danger">DND</Chip>
+                                <Chip onClick={() => {
+                                    setStatusOpen(true);
+                                    setStatus("Invisible");
+                                }} variant="flat" className="right-2 mb-2 min-w-[60px]" radius="sm" size="sm" color="default">Invisible</Chip>
+                            </motion.div>
+                        </DropdownItem>
+
+                        <DropdownItem closeOnSelect={true} key="customStatus" variant="flat">
+                            <p>Custom Status</p>
+                            <p className="text-xs text-gray-500">My Custom Status</p>
+                        </DropdownItem>
+                        <DropdownItem key="settings" variant="flat" endContent={<Settings size={20} />}>Settings</DropdownItem>
+                        <DropdownItem key="delete" variant="flat" className="text-danger" color="danger" endContent={<LogOut size={20} />}>
+                            Logout
+                        </DropdownItem>
+                    </DropdownMenu>
+                </Dropdown>
+            </div>
+        </>
     );
 };
 

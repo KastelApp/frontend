@@ -9,8 +9,9 @@ import { motion } from "framer-motion";
 import MemberBar from "./MemberBar.tsx";
 import ChangeNickname from "../Modals/ChangeNickname.tsx";
 import ConfirmLeave from "../Modals/ConfirmLeave.tsx";
-import GuildSettings from "../Modals/BaseSettings.tsx";
-import Overview from "../Modals/GuildSettings/OverView.tsx";
+import BaseSettings from "../Modals/BaseSettings.tsx";
+import Overview from "../Settings/Guild/OverView.tsx";
+import ConfirmDelete from "../Modals/ConfirmDelete.tsx";
 
 const ChannelIcon = ({
     icon,
@@ -270,88 +271,92 @@ const
             closed: { rotate: 0 }
         };
 
-
+        const {
+            isOpen: isConfirmDeleteOpen,
+            onOpenChange: onOpenChangeConfirmDelete,
+            onClose: onCloseConfirmDelete
+        } = useDisclosure();
 
         return (
             <>
                 {/* the modals we use for the buttons */}
                 <ChangeNickname isOpen={isNicknameOpen} onOpenChange={onOpenChange} onClose={onClose} />
                 <ConfirmLeave isOpen={isConfirmLeaveOpen} onOpenChange={onOpenChangeConfirmLeave} onClose={onCloseConfirmLeave} />
-                <GuildSettings isOpen={isGuildSettingsOpen} onOpenChange={onOpenChangeGuildSettings} onClose={onCloseGuildSettings} sections={[
-        {
-            title: null,
-            children: [
-                {
-                    title: "Overview",
-                    id: "overview",
-                    section: <Overview />,
-                    disabled: false
+                <BaseSettings title="This is a test — Settings" isOpen={isGuildSettingsOpen} onOpenChange={onOpenChangeGuildSettings} onClose={onCloseGuildSettings} sections={[{
+                    title: null,
+                    children: [
+                        {
+                            title: "Overview",
+                            id: "overview",
+                            section: <Overview />,
+                            disabled: false
+                        },
+                        {
+                            title: "Roles",
+                            id: "roles",
+                            section: <div>Roles</div>,
+                            disabled: false
+                        },
+                        {
+                            title: "Emojis",
+                            id: "emojis",
+                            section: <div>Emojis</div>,
+                            disabled: false
+                        },
+                        {
+                            title: "Vanity URL",
+                            id: "vanity-url",
+                            section: <div>Vanity URL</div>,
+                            disabled: true
+                        }
+                    ]
                 },
                 {
-                    title: "Roles",
-                    id: "roles",
-                    section: <div>Roles</div>,
-                    disabled: false
+                    title: "User Management",
+                    children: [
+                        {
+                            title: "Co-Owners",
+                            id: "co-owners",
+                            section: <div>Co-Owners</div>,
+                            disabled: false
+                        },
+                        {
+                            title: "Members",
+                            id: "members",
+                            section: <div>Members</div>,
+                            disabled: false
+                        },
+                        {
+                            title: "Bans",
+                            id: "bans",
+                            section: <div>Bans</div>,
+                            disabled: false
+                        },
+                        {
+                            title: "Invites",
+                            id: "invites",
+                            section: <div>Invites</div>,
+                            disabled: false
+                        }
+                    ]
                 },
                 {
-                    title: "Emojis",
-                    id: "emojis",
-                    section: <div>Emojis</div>,
-                    disabled: false
-                },
-                {
-                    title: "Vanity URL",
-                    id: "vanity-url",
-                    section: <div>Vanity URL</div>,
-                    disabled: true
+                    title: null,
+                    children: [
+                        {
+                            title: "Delete",
+                            id: "delete",
+                            disabled: false,
+                            danger: true,
+                            onClick: () => {
+                                onOpenChangeConfirmDelete();
+                            }
+                        }
+                    ]
                 }
-            ]
-        },
-        {
-            title: "User Management",
-            children: [
-                {
-                    title: "Co-Owners",
-                    id: "co-owners",
-                    section: <div>Co-Owners</div>,
-                    disabled: false
-                },
-                {
-                    title: "Members",
-                    id: "members",
-                    section: <div>Members</div>,
-                    disabled: false
-                },
-                {
-                    title: "Bans",
-                    id: "bans",
-                    section: <div>Bans</div>,
-                    disabled: false
-                },
-                {
-                    title: "Invites",
-                    id: "invites",
-                    section: <div>Invites</div>,
-                    disabled: false
-                }
-            ]
-        },
-        {
-            title: null,
-            children: [
-                {
-                    title: "Delete",
-                    id: "delete",
-                    disabled: false,
-                    danger: true,
-                    onClick: () => {
-                        // @ts-expect-error -- temp
-                        onOpenChangeConfirmDelete();
-                    }
-                }
-            ]
-        }
-    ]} initialSection={"overview"} />
+                ]} initialSection={"overview"} />
+                <ConfirmDelete isOpen={isConfirmDeleteOpen} onOpenChange={onOpenChangeConfirmDelete} onClose={onCloseConfirmDelete} />
+
                 <div className="flex flex-row w-full h-screen m-0 overflow-x-auto">
                     <div
                         className={twMerge(
