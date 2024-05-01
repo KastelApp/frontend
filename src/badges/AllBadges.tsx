@@ -81,7 +81,7 @@ const AllBadges = ({
                                     </span>
                                 </Tooltip>
                             </div>
-                        )
+                        );
                     }
 
                     default: {

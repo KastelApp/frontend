@@ -9,7 +9,7 @@ const ErrorHandler = ({ children }: {
     useEffect(() => {
         window.onerror = (____, _, __, ___, error) => {
             setError(error!);
-        }
+        };
 
         window.addEventListener("unhandledrejection", (event) => {
             setError(event.reason);
@@ -17,16 +17,16 @@ const ErrorHandler = ({ children }: {
 
         return () => {
             window.onerror = null;
-            window.removeEventListener("unhandledrejection", () => {});
-        }
-    }, [])
+            window.removeEventListener("unhandledrejection", () => { });
+        };
+    }, []);
 
     useEffect(() => {
         if (error) {
             throw error;
         }
 
-    }, [error])
+    }, [error]);
 
     return (
         <>

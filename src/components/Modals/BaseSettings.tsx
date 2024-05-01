@@ -72,7 +72,7 @@ const BaseSettings = ({
     initialSection: string;
     title: string;
 }) => {
-    const [section, setSection] = useState(initialSection);
+    const [selectedSection, setSelectedSection] = useState(initialSection);
 
     return (
         <>
@@ -94,11 +94,11 @@ const BaseSettings = ({
                                 <p className="text-white text-md font-semibold p-4">{title}</p>
                                 {sections.map((section) => (
                                     // eslint-disable-next-line react/no-children-prop
-                                    <Section title={section.title} key={section.title} children={section.children} setSection={setSection} />
+                                    <Section title={section.title} key={section.title} children={section.children} setSection={setSelectedSection} />
                                 ))}
                             </div>
                             <div className="flex flex-col w-full p-5 pt-4 h-full">
-                                {sections.find((s) => s.children.find((c) => c.id === section))?.children.find((c) => c.id === section)?.section}
+                                {sections.find((s) => s.children.find((c) => c.id === selectedSection))?.children.find((c) => c.id === selectedSection)?.section}
                             </div>
                         </div>
                     </div>

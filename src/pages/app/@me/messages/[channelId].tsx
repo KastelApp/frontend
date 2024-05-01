@@ -1,7 +1,9 @@
+import SlateEditor from "@/components/MessageContainer/SlateEditor.tsx";
+
 const DmChannel = () => {
     return (
         <>
-            TODO: finish
+            <SlateEditor placeholder="test" />
         </>
     );
 };
