@@ -19,6 +19,12 @@ export default {
         "secondary": "#8446c7",
         "accent": "#101319",
        },
+       fontSize: {
+        "2xs": ".625rem",
+        "3xs": ".5rem",
+        "4xs": ".375rem",
+        "5xs": ".25rem",
+       }
     },
     fontFamily: {
       "roboto": ["Roboto", "sans-serif"],

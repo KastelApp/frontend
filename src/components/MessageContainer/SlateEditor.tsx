@@ -21,7 +21,6 @@ const SlateEditor = ({
     }, []);
     const renderElement = useCallback((props: MainProps) => <Element {...props} />, []);
 
-
     // ? The ref is used since if you edit the text, the editor will be re-rendered, but the useMemo also gets re-rendered causing the text box's
     // ? state to be lost causing pathing issues, the ref should not get re-rendered
     const editorRef = useRef<ReactEditor | null>(null);
@@ -82,7 +81,8 @@ const SlateEditor = ({
                 // @ts-expect-error -- Unsure how to fix these types
                 renderElement={renderElement}
                 placeholder={placeholder}
-                className="outline-none overflow-y-auto"
+                className="outline-none overflow-y-auto z-20"
+                
             />
         </Slate>
     );
