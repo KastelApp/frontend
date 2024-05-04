@@ -3,6 +3,7 @@ import SlateEditor from "./SlateEditor.tsx";
 import { Divider, Image, Tooltip } from "@nextui-org/react";
 import TypingDots from "./TypingDats.tsx";
 import { useState } from "react";
+import { twMerge } from "tailwind-merge";
 
 
 const FileComponent = ({
@@ -42,6 +43,7 @@ const MessageContainer = ({
     placeholder: string;
 }) => {
     const [files, setFiles] = useState<{ name: string; url: string; }[]>([]);
+    const [replying, setReplying] = useState<boolean>(true);
 
     return (
         <>
@@ -50,7 +52,17 @@ const MessageContainer = ({
                     Cats
                 </div>
                 <div className="mb-[4rem]">
-                    <div className="w-full ml-1 py-1 px-4 bg-gray-800 rounded-lg max-h-96 overflow-y-auto overflow-x-hidden">
+                    <div className="ml-1 w-full bg-accent rounded-md rounded-b-none flex">
+                        <div className="p-2">
+                            Replying to <span className="text-orange-600 font-semibold">Testing</span>
+                        </div>
+                        <div className="flex items-center gap-2 ml-auto mr-2">
+                            <Tooltip content="Close Reply">
+                                <X size={22} color="#acaebf" className="cursor-pointer" onClick={() => setReplying(false)} />
+                            </Tooltip>
+                        </div>
+                    </div>
+                    <div className={twMerge("w-full ml-1 py-1 px-4 bg-gray-800 rounded-lg max-h-96 overflow-y-auto overflow-x-hidden", replying ? "rounded-t-none" : "")}>
                         <div className="mb-3 mt-2">
                             {files.length > 0 &&
                                 <div className="flex flex-wrap justify-start mb-4 mt-4 gap-2">
