@@ -2,6 +2,7 @@ import { X, Pen, CirclePlus, SendHorizontal, SmilePlus } from "lucide-react";
 import SlateEditor from "./SlateEditor.tsx";
 import { Divider, Image, Tooltip } from "@nextui-org/react";
 import TypingDots from "./TypingDats.tsx";
+import { useState } from "react";
 
 
 const FileComponent = ({
@@ -40,14 +41,7 @@ const MessageContainer = ({
 }: {
     placeholder: string;
 }) => {
-
-
-    const files = [
-        {
-            name: "test.png",
-            url: "https://development.kastelapp.com/icon-1.png"
-        }
-    ];
+    const [files, setFiles] = useState<{ name: string; url: string; }[]>([]);
 
     return (
         <>
@@ -57,17 +51,21 @@ const MessageContainer = ({
                 </div>
                 <div className="mb-[4rem]">
                     <div className="w-full ml-1 py-1 px-4 bg-gray-800 rounded-lg max-h-96 overflow-y-auto overflow-x-hidden">
-                        <div className="mb-3 mt-4">
-                            <div className="flex flex-wrap justify-start mb-4 mt-4">
-                                {files.map((file, index) => (
-                                    <FileComponent key={index} fileName={file.name} imageUrl={file.url} />
-                                ))}
-                                <Divider className="mt-2" />
-                            </div>
+                        <div className="mb-3 mt-2">
+                            {files.length > 0 &&
+                                <div className="flex flex-wrap justify-start mb-4 mt-4 gap-2">
+                                    {files.map((file, index) => (
+                                        <FileComponent key={index} fileName={file.name} imageUrl={file.url} />
+                                    ))}
+                                    <Divider className="mt-2" />
+                                </div>
+                            }
                             <div className="flex">
                                 <div className="mr-4">
                                     {/*// todo: File select */}
-                                    <CirclePlus size={22} color="#acaebf" className="cursor-pointer" />
+                                    <CirclePlus size={22} color="#acaebf" className="cursor-pointer" onClick={() => {
+                                        setFiles((old) => [...old, ({ name: "test.png", url: "https://development.kastelapp.com/icon-1.png" })]);
+                                    }} />
                                 </div>
                                 <div className="w-full">
                                     <SlateEditor placeholder={placeholder} />

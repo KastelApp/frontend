@@ -81,7 +81,7 @@ const SlateEditor = ({
                 // @ts-expect-error -- Unsure how to fix these types
                 renderElement={renderElement}
                 placeholder={placeholder}
-                className="outline-none overflow-y-auto z-20"
+                className="outline-none overflow-y-auto"
                 
             />
         </Slate>

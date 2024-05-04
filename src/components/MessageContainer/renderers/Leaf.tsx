@@ -7,7 +7,12 @@ const Leaf = ({ attributes, children, leaf }: LeafProps) => {
     let tailwindStyles = "";
 
     if (bold) {
-        tailwindStyles += "font-bold ";
+        // todo: better way of doing this, slatejs docs are shit so idk yet
+        if (children?.props.leaf.text.startsWith("__") && children.props.leaf.text.endsWith("__")) {
+            tailwindStyles += "underline ";
+        } else {
+            tailwindStyles += "font-bold ";
+        }
     }
 
     if (italic) {
@@ -20,10 +25,6 @@ const Leaf = ({ attributes, children, leaf }: LeafProps) => {
 
     if (list) {
         tailwindStyles += "list-disc ";
-    }
-
-    if (bold && children?.props.leaf.text.startsWith("__") && children.props.leaf.text.endsWith("__")) {
-        tailwindStyles += "underline ";
     }
 
     if (blockquote) {
