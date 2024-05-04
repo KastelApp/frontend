@@ -18,6 +18,7 @@ export default {
         "primary": "#9aa9e0",
         "secondary": "#8446c7",
         "accent": "#101319",
+        "mention": "hsl( 40 86.4% 56.9% / 0.1)"
        },
        fontSize: {
         "2xs": ".625rem",

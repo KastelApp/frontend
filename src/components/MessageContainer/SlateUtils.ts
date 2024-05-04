@@ -8,8 +8,8 @@ const getLength = (token: Token): number => {
     } else {
         return token.content.reduce((l, t) => l + getLength(t), 0);
     }
-}
+};
 
 export {
     getLength
-}
+};

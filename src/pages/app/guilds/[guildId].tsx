@@ -1,3 +1,4 @@
+import Message from "@/components/Message/Message.tsx";
 import MessageContainer from "@/components/MessageContainer/MessageContainer.tsx";
 import ChannelNavBar from "@/components/NavBars/ChannelNavBar.tsx";
 import AppLayout from "@/layouts/AppLayout.tsx";
@@ -8,7 +9,11 @@ const Guild = () => {
         <AppLayout>
             <ChannelNavBar>
                 <>
-                    <MessageContainer placeholder="Message #general" />
+                    <MessageContainer placeholder="Message #general">
+                        <Message />
+                        <Message />
+                        <Message />
+                    </MessageContainer>
                 </>
             </ChannelNavBar>
         </AppLayout>

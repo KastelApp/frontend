@@ -82,7 +82,6 @@ const SlateEditor = ({
                 renderElement={renderElement}
                 placeholder={placeholder}
                 className="outline-none overflow-y-auto"
-                
             />
         </Slate>
     );

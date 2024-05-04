@@ -469,11 +469,11 @@ const
                                 }
                             ]}
                         />
-                        <div className="flex flex-row ml-2 overflow-y-auto">
-                            <div className="flex-grow overflow-y-auto mt-4">
+                        <div className="flex flex-row overflow-y-auto w-full">
+                            <div className="flex-grow overflow-y-auto">
                                 {children}
                             </div>
-                            <div className={twMerge(guildSettings.memberBarHidden ? "ml-2" : "ml-56")}>
+                            <div className={twMerge(guildSettings.memberBarHidden ? "ml-1" : "ml-[13.2rem]")}>
                                 <MemberBar />
                             </div>
                         </div>

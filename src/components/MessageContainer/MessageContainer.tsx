@@ -38,9 +38,11 @@ const FileComponent = ({
 };
 
 const MessageContainer = ({
-    placeholder
+    placeholder,
+    children
 }: {
     placeholder: string;
+    children?: React.ReactNode;
 }) => {
     const [files, setFiles] = useState<{ name: string; url: string; }[]>([]);
     const [replying, setReplying] = useState<boolean>(true);
@@ -48,10 +50,10 @@ const MessageContainer = ({
     return (
         <>
             <div className="flex flex-col h-screen overflow-x-hidden">
-                <div className="flex-grow overflow-auto whitespace">
-                    Cats
+                <div className="flex-grow overflow-auto">
+                    {children}
                 </div>
-                <div className="mb-[4rem]">
+                <div className="mb-12 w-[98%] ml-2">
                     <div className="ml-1 w-full bg-accent rounded-md rounded-b-none flex">
                         <div className="p-2">
                             Replying to <span className="text-orange-600 font-semibold">Testing</span>
