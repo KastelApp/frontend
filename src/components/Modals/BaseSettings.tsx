@@ -13,15 +13,14 @@ const Section = ({
     setSection: (section: string) => void;
 }) => {
     return (
-        <div className="flex flex-col gap-1 p-2">
+        <div className="flex flex-col gap-1 p-2 select-none">
             {title && <h2 className="text-md font-semibold select-none mb-2 text-white ml-4">{title}</h2>}
             {children.map((child) => (
                 <div
                     key={child.title}
                     className={twMerge(
                         "flex items-center justify-between w-full h-14 cursor-pointer rounded-lg mb-0.5 group",
-                        child.disabled ? "" : "hover:bg-slate-800 bg-gray-900",
-                        child.disabled ? "cursor-not-allowed bg-slate-950" : "transition-all duration-300 ease-in-out transform active:scale-[.97]",
+                        child.disabled ? "cursor-not-allowed bg-charcoal-900" : "hover:bg-charcoal-600 bg-charcoal-700 transition-all duration-300 ease-in-out transform active:scale-[.97]",
                         child.danger ? "bg-danger/20 hover:bg-danger/15 text-danger focus:bg-danger/20" : "text-white",
                     )}
                     onClick={() => {
@@ -79,7 +78,7 @@ const BaseSettings = ({
                                     "min-w-64 m-0 bg-accent overflow-y-auto"
                                 )}
                             >
-                                <p className="text-white text-md font-semibold p-4">{title}</p>
+                                <p className="text-white text-md font-semibold p-4 select-none">{title}</p>
                                 {sections.map((section) => (
                                     // eslint-disable-next-line react/no-children-prop
                                     <Section title={section.title} key={section.title} children={section.children} setSection={setSelectedSection} />

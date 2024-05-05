@@ -1,10 +1,11 @@
-import SlateEditor from "@/components/MessageContainer/SlateEditor.tsx";
+import DmNavBar from "@/components/NavBars/DmNavBar.tsx";
+import AppLayout from "@/layouts/AppLayout.tsx";
 
 const DmChannel = () => {
     return (
-        <>
-            <SlateEditor placeholder="test" />
-        </>
+        <AppLayout>
+            <DmNavBar />
+        </AppLayout>
     );
 };
 

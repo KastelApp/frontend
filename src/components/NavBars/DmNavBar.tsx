@@ -47,7 +47,15 @@ const DmNavBarItem = ({
     );
 };
 
-const DmNavBar = () => {
+const DmNavBar = ({
+    children,
+    defaultSection,
+    title
+}: {
+    children?: React.ReactNode;
+    defaultSection?: string | null
+    title?: string | null | React.ReactElement;
+}) => {
     const { navBarLocation, isSideBarOpen, setIsSideBarOpen } = useSettingsStore();
 
     const tabs = [
@@ -102,7 +110,7 @@ const DmNavBar = () => {
         }
     ];
 
-    const [selectedTab, setSelectedTab] = useState("home");
+    const [selectedTab, setSelectedTab] = useState<string | null>(defaultSection ? defaultSection : tabs[0].id);
 
     return (
         <div className="flex flex-row w-full h-screen m-0 overflow-hidden">
@@ -144,13 +152,13 @@ const DmNavBar = () => {
             </div>
             <div className={twMerge("w-full", isSideBarOpen ? "ml-[17rem]" : "")}>
                 <TopNavBar
-                    startContent={<p className="text-gray-300 font-semibold">{tabs.find(tab => tab.id === selectedTab)?.name}</p>}
+                    startContent={<p className="text-gray-300 font-semibold">{title ? title : tabs.find(tab => tab.id === selectedTab)?.name}</p>}
                     isOpen={isSideBarOpen}
                     setIsOpen={setIsSideBarOpen}
                 />
                 <div className="ml-2 mt-4">
                     {
-                        selectedTab === "game-library" ? <Library /> : selectedTab === "friends" ? <Friends /> : <HomeContent />
+                        selectedTab === null && children ? children : selectedTab === "game-library" ? <Library /> : selectedTab === "friends" ? <Friends /> : <HomeContent />
                     }
                 </div>
             </div>
