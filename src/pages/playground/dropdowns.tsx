@@ -13,7 +13,7 @@ const DropDowns = () => {
             <br />
             <br />
 
-            <UserOptions><Button>Right Click me!</Button></UserOptions>
+            <UserOptions><Button as="span">Right Click me!</Button></UserOptions>
 
             <br />
             <br />
@@ -53,7 +53,7 @@ const DropDowns = () => {
                     }
                 ]}
             >
-                <Button>Right Click me!</Button>
+                <Button as="span">Right Click me!</Button>
             </BaseContextMenu>
         </div>
     );

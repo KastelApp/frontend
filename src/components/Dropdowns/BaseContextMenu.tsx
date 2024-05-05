@@ -85,8 +85,8 @@ const BaseContextMenu = ({
                                         key: -1
                                     });
                                 }
-                            }} placement="right" offset={10} radius="md" closeOnSelect={false}>
-                                <DropdownTrigger className="rounded-md">
+                            }} placement="right" offset={5} radius="md" closeOnSelect={false}>
+                                <DropdownTrigger className="rounded-md aria-expanded:scale-100 aria-expanded:opacity-100" >
                                     <div>
                                         {children}
                                     </div>
