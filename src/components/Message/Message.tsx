@@ -1,10 +1,10 @@
 import { Avatar, Popover, PopoverContent, PopoverTrigger } from "@nextui-org/react";
 import UserPopover from "../Popovers/UserPopover.tsx";
 import { useState } from "react";
-
 import { Reply } from "lucide-react";
+import { twMerge } from "tailwind-merge";
 
-const Message = ({ content, replying }: { content: string; replying: boolean; }) => {
+const Message = ({ content, replying, mention }: { content: string; replying: boolean; mention: boolean }) => {
     const PopOverData = ({ children }: {
         children: React.ReactElement | React.ReactElement[];
     }) => {
@@ -39,7 +39,7 @@ const Message = ({ content, replying }: { content: string; replying: boolean; })
     };
 
     return (
-        <div className="w-full hover:bg-msg-hover flex flex-col mb-2">
+        <div className={twMerge("w-full hover:bg-msg-hover flex flex-col mb-2", mention ? "bg-mention hover:bg-mention-hover" : "")}>
             <div className="ml-4">
                 {replying && <div className="flex items-center ml-4">
                     <Reply size={22} color="#acaebf" className="cursor-pointer" style={{
