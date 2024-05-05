@@ -54,7 +54,7 @@ const Message = ({ content, replying, mention }: { content: string; replying: bo
             </div>}
             <div className="flex">
                 <PopOverData>
-                    <Avatar src="https://development.kastelapp.com/icon-1.png" className="ml-2 cursor-pointer min-w-8 min-h-8 w-8 h-8 hover:scale-95 transition-all duration-300 ease-in-out transform" imgProps={{ className: "transition-none" }} />
+                    <Avatar src="https://development.kastelapp.com/icon-1.png" className=" mt-1 ml-2 cursor-pointer min-w-8 min-h-8 w-8 h-8 hover:scale-95 transition-all duration-300 ease-in-out transform" imgProps={{ className: "transition-none" }} />
                 </PopOverData>
                 <div className="relative">
                     <div className="flex flex-col ml-2">
