@@ -9,9 +9,9 @@ const Guild = () => {
         <AppLayout>
             <ChannelNavBar>
                 <MessageContainer placeholder="Message #general">
-                    <div className="flex flex-col-reverse overflow-auto">
-                        {Array.from({ length: 13 }, (_, i) => (
-                            <Message key={i} content={`${i}`} />
+                    <div className="flex flex-col-reverse overflow-x-hidden w-full">
+                        {Array.from({ length: 20 }, (_, i) => (
+                            <Message key={i} content={`${i}`} replying={i % 5 === 0} />
                         ))}
                     </div>
                     <div id="bottom" />

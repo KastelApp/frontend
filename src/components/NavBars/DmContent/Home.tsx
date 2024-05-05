@@ -1,7 +1,7 @@
 const Home = () => {
     return (
         <>
-            Cats
+            Got any suggestions for what to put here?
         </>
     );
 };
