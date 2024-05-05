@@ -6,6 +6,7 @@ import { motion } from "framer-motion";
 import CustomStatus from "../Modals/CustomStatus.tsx";
 import OverView from "../Settings/User/Overview.tsx";
 import BaseSettings from "../Modals/BaseSettings.tsx";
+import { Section } from "@/types/settings.ts";
 
 const UserOptions = ({
     children
@@ -17,47 +18,68 @@ const UserOptions = ({
 
     const color = status === "Online" ? "success" : status === "Idle" ? "warning" : status === "DND" ? "danger" : "gray-500";
 
+    // ? Custom Status Modal
     const {
         isOpen,
         onOpenChange,
         onClose
     } = useDisclosure();
 
-    const [dropdownOpen, setDropdownOpen] = useState(false);
-
+    // ? Settings Modal
     const {
         isOpen: isSettingsOpen,
         onOpenChange: onSettingsOpenChange,
         onClose: onSettingsClose
     } = useDisclosure();
 
+    const [dropdownOpen, setDropdownOpen] = useState(false);
+
+    const handleAction = (action: string | number) => {
+        switch (action) {
+            case "changeStatus": {
+                setStatusOpen(!statusOpen);
+
+                break;
+            }
+
+            case "customStatus": {
+                onOpenChange();
+                setDropdownOpen(false);
+
+                break;
+            }
+
+            case "settings": {
+                onSettingsOpenChange();
+                setDropdownOpen(false);
+
+                break;
+            }
+        }
+    };
+
+    const handleStatus = (status: "Online" | "Idle" | "DND" | "Invisible") => {
+        setStatusOpen(true);
+        setStatus(status);
+
+        // todo: handle other logic
+    };
+
+    const sections: Section[] = [{
+        title: null,
+        children: [
+            {
+                title: "Overview",
+                id: "overview",
+                section: <OverView />,
+                disabled: false
+            }
+        ]
+    }];
+
     return (
         <>
-            <BaseSettings title="User Settings" isOpen={isSettingsOpen} onOpenChange={onSettingsOpenChange} onClose={onSettingsClose} sections={[{
-                title: null,
-                children: [
-                    {
-                        title: "Overview",
-                        id: "overview",
-                        section: <OverView />,
-                        disabled: false
-                    }
-                ]
-            },
-            {
-                title: null,
-                children: [
-                    {
-                        title: "Logout",
-                        id: "logout",
-                        disabled: false,
-                        danger: true,
-                        onClick: () => {
-                        }
-                    }
-                ]
-            }
-            ]} initialSection={"overview"} />
+            <BaseSettings title="User Settings" isOpen={isSettingsOpen} onOpenChange={onSettingsOpenChange} onClose={onSettingsClose} sections={sections} initialSection={"overview"} />
             <div onContextMenu={(e) => {
                 e.preventDefault();
 
@@ -75,33 +97,11 @@ const UserOptions = ({
                     }
                 }} isOpen={dropdownOpen}>
                     <DropdownTrigger>
-                        <div>
+                        <button>
                             {children}
-                        </div>
+                        </button>
                     </DropdownTrigger>
-                    <DropdownMenu aria-label="Static Actions" onAction={(key) => {
-                        switch (key) {
-                            case "changeStatus": {
-                                setStatusOpen(!statusOpen);
-
-                                break;
-                            }
-
-                            case "customStatus": {
-                                onOpenChange();
-                                setDropdownOpen(false);
-
-                                break;
-                            }
-
-                            case "settings": {
-                                onSettingsOpenChange();
-                                setDropdownOpen(false);
-
-                                break;
-                            }
-                        }
-                    }}>
+                    <DropdownMenu aria-label="Static Actions" onAction={handleAction}>
                         <DropdownItem closeOnSelect={false} key="changeStatus" variant="flat" endContent={<ArrowRight size={20} className={twMerge("transition-transform duration-300", statusOpen ? "rotate-90" : "")} />}>
                             <p>Status</p>
                             <p className={twMerge("text-xs mt-1", `text-${color}`)}>{status}</p>
@@ -115,22 +115,10 @@ const UserOptions = ({
                                 }}
                                 transition={{ duration: 0.3 }}
                             >
-                                <Chip onClick={() => {
-                                    setStatusOpen(true);
-                                    setStatus("Online");
-                                }} variant="flat" className="mb-2 min-w-[60px]" radius="sm" size="sm" color="success">Online</Chip>
-                                <Chip onClick={() => {
-                                    setStatusOpen(true);
-                                    setStatus("Idle");
-                                }} variant="flat" className="right-2 mb-2 min-w-[60px]" radius="sm" size="sm" color="warning">Idle</Chip>
-                                <Chip onClick={() => {
-                                    setStatusOpen(true);
-                                    setStatus("DND");
-                                }} variant="flat" className="mb-2 min-w-[60px]" radius="sm" size="sm" color="danger">DND</Chip>
-                                <Chip onClick={() => {
-                                    setStatusOpen(true);
-                                    setStatus("Invisible");
-                                }} variant="flat" className="right-2 mb-2 min-w-[60px]" radius="sm" size="sm" color="default">Invisible</Chip>
+                                <Chip onClick={() => handleStatus("Online")} variant="flat" className="mb-2 min-w-[60px]" radius="sm" size="sm" color="success">Online</Chip>
+                                <Chip onClick={() => handleStatus("Idle")} variant="flat" className="right-2 mb-2 min-w-[60px]" radius="sm" size="sm" color="warning">Idle</Chip>
+                                <Chip onClick={() => handleStatus("DND")} variant="flat" className="mb-2 min-w-[60px]" radius="sm" size="sm" color="danger">DND</Chip>
+                                <Chip onClick={() => handleStatus("Invisible")} variant="flat" className="right-2 mb-2 min-w-[60px]" radius="sm" size="sm" color="default">Invisible</Chip>
                             </motion.div>
                         </DropdownItem>
 
@@ -138,7 +126,9 @@ const UserOptions = ({
                             <p>Custom Status</p>
                             <p className="text-xs text-gray-500">My Custom Status</p>
                         </DropdownItem>
-                        <DropdownItem key="settings" variant="flat" endContent={<Settings size={20} />}>Settings</DropdownItem>
+                        <DropdownItem key="settings" variant="flat" endContent={<Settings size={20} />}>
+                            Settings
+                        </DropdownItem>
                         <DropdownItem key="delete" variant="flat" className="text-danger" color="danger" endContent={<LogOut size={20} />}>
                             Logout
                         </DropdownItem>

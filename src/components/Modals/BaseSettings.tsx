@@ -1,20 +1,7 @@
+import { type Section } from "@/types/settings.ts";
 import { Modal, ModalContent } from "@nextui-org/react";
 import React, { useState } from "react";
 import { twMerge } from "tailwind-merge";
-
-interface Section {
-    title: string | null;
-    children: {
-        title: string;
-        id: string;
-        startContent?: React.ReactElement | React.ReactElement[];
-        endContent?: React.ReactElement | React.ReactElement[];
-        disabled?: boolean;
-        section?: React.ReactElement | React.ReactElement[];
-        danger?: boolean;
-        onClick?: () => void;
-    }[];
-}
 
 const Section = ({
     title,
@@ -81,7 +68,8 @@ const BaseSettings = ({
                 onOpenChange={onOpenChange}
                 size="full"
                 className="w-screen h-screen"
-                isDismissable={false} isKeyboardDismissDisabled={true}
+                isDismissable={false}
+                isKeyboardDismissDisabled={true}
             >
                 <ModalContent>
                     <div className="flex flex-row w-full m-0 overflow-x-hidden h-full">

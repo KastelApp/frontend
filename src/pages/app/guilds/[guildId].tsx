@@ -8,13 +8,14 @@ const Guild = () => {
     return (
         <AppLayout>
             <ChannelNavBar>
-                <>
-                    <MessageContainer placeholder="Message #general">
-                        <Message />
-                        <Message />
-                        <Message />
-                    </MessageContainer>
-                </>
+                <MessageContainer placeholder="Message #general">
+                    <div className="flex flex-col-reverse overflow-auto">
+                        {Array.from({ length: 13 }, (_, i) => (
+                            <Message key={i} content={`${i}`} />
+                        ))}
+                    </div>
+                    <div id="bottom" />
+                </MessageContainer>
             </ChannelNavBar>
         </AppLayout>
     );
