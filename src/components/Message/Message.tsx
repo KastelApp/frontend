@@ -1,10 +1,10 @@
-import { Avatar, Popover, PopoverContent, PopoverTrigger } from "@nextui-org/react";
+import { Avatar, Popover, PopoverContent, PopoverTrigger, Tooltip } from "@nextui-org/react";
 import UserPopover from "../Popovers/UserPopover.tsx";
 import { useState } from "react";
-import { Reply } from "lucide-react";
+import { Pen, Reply, Trash2, Ellipsis } from "lucide-react";
 import { twMerge } from "tailwind-merge";
 
-const Message = ({ content, replying, mention }: { content: string; replying: boolean; mention: boolean }) => {
+const Message = ({ content, replying, mention }: { content: string; replying: boolean; mention: boolean; }) => {
     const PopOverData = ({ children }: {
         children: React.ReactElement | React.ReactElement[];
     }) => {
@@ -39,36 +39,54 @@ const Message = ({ content, replying, mention }: { content: string; replying: bo
     };
 
     return (
-        <div className={twMerge("w-full hover:bg-msg-hover flex flex-col mb-2", mention ? "bg-mention hover:bg-mention-hover" : "")}>
-            <div className="ml-4">
-                {replying && <div className="flex items-center ml-4">
-                    <Reply size={22} color="#acaebf" className="cursor-pointer" style={{
-                        transform: "rotate(180deg) scale(1, -1)"
-                    }} />
-                    <PopOverData>
-                        <div className="flex items-center cursor-pointer">
-                            <Avatar src="https://development.kastelapp.com/icon-1.png" className="ml-2 cursor-pointer w-4 h-4" />
-                            <p className="text-orange-500 font-semibold text-xs ml-1">DarkerInk</p>
-                        </div>
-                    </PopOverData>
-                    <p className="text-gray-300 text-2xs ml-2">Hello World</p>
-                </div>}
-                <div className="flex items-center justify-between">
-                    <div className="flex items-center">
-                        <PopOverData>
-                            <Avatar src="https://development.kastelapp.com/icon-1.png" className="cursor-pointer w-9 h-9 hover:scale-95 transition-all duration-300 ease-in-out transform" imgProps={{ className: "transition-none" }} />
-                        </PopOverData>
-                        <div className="ml-2">
-                            <span className="flex">
-                                <PopOverData>
-                                    <p className="text-orange-500 font-semibold cursor-pointer">DarkerInk</p>
-                                </PopOverData>
-                                <p className="text-gray-400 text-xs mt-1 ml-2">Today at 12:00 PM</p>
-                            </span>
-                            <p className="text-white">{content}</p>
+        <div className={twMerge("group w-full hover:bg-msg-hover mb-2 relative", mention ? "bg-mention hover:bg-mention-hover" : "")}>
+            {replying && <div className="flex items-center ml-4 mb-1">
+                <Reply size={22} color="#acaebf" className="cursor-pointer" style={{
+                    transform: "rotate(180deg) scale(1, -1)"
+                }} />
+                <PopOverData>
+                    <div className="flex items-center cursor-pointer">
+                        <Avatar src="https://development.kastelapp.com/icon-1.png" className="ml-2 cursor-pointer w-4 h-4" />
+                        <p className="text-orange-500 text-xs ml-1">{mention ? "@" : ""}DarkerInk</p>
+                    </div>
+                </PopOverData>
+                <p className="text-gray-300 text-2xs ml-2">Hello World</p>
+            </div>}
+            <div className="flex">
+                <PopOverData>
+                    <Avatar src="https://development.kastelapp.com/icon-1.png" className="ml-2 cursor-pointer min-w-8 min-h-8 w-8 h-8 hover:scale-95 transition-all duration-300 ease-in-out transform" imgProps={{ className: "transition-none" }} />
+                </PopOverData>
+                <div className="relative">
+                    <div className="flex flex-col ml-2">
+                        <span>
+                            <PopOverData>
+                                <span className="inline cursor-pointer text-orange-500">DarkerInk</span>
+                            </PopOverData>
+                            <Tooltip content="temp" placement="top">
+                                <span className="text-gray-400 text-xs mt-1 ml-2">Today at 12:00 PM</span>
+                            </Tooltip>
+                        </span>
+                        <div className="text-white whitespace-pre-line overflow-hidden break-all">
+                            <p>
+                                {content}
+                            </p>
                         </div>
                     </div>
                 </div>
+            </div>
+            <div className="z-10 items-center gap-2 bg-gray-800 absolute top-[-1rem] right-0 hidden group-hover:flex hover:flex p-1 rounded-md mr-2">
+                <Tooltip content="Reply">
+                    <Reply size={18} color="#acaebf" className="cursor-pointer" />
+                </Tooltip>
+                <Tooltip content="Edit">
+                    <Pen size={18} color="#acaebf" className="cursor-pointer" />
+                </Tooltip>
+                <Tooltip content="Delete">
+                    <Trash2 size={18} className="text-danger cursor-pointer" />
+                </Tooltip>
+                <Tooltip content="More">
+                    <Ellipsis size={18} color="#acaebf" className="cursor-pointer" />
+                </Tooltip>
             </div>
         </div>
     );

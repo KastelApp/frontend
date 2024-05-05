@@ -453,7 +453,7 @@ const
                                 <Hash size={20} color="#acaebf" />
                                 <p className="text-gray-300 font-semibold">Test</p>
                                 <Divider orientation="vertical" className="h-6 ml-2 mr-2 w-[3px]" />
-                                <p className="text-gray-400 font-semibold text-sm cursor-pointer truncate w-96">Welcome</p>
+                                <p className="text-gray-400 text-sm cursor-pointer truncate w-96">Welcome</p>
                             </div>}
                             isOpen={isSideBarOpen}
                             setIsOpen={setIsSideBarOpen}
