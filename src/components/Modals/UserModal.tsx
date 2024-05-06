@@ -26,12 +26,13 @@ const UserModal = ({
     return (
         <>
             <Modal
-                size={"5xl"}
+                size={"3xl"}
                 isOpen={isOpen}
                 onClose={onClose}
                 hideCloseButton
                 placement="top-center"
-                className="z-50"
+                className="z-50 w-[100vw]"
+        
             >
                 <ModalContent>
                     <ModalBody>
