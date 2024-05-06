@@ -1,8 +1,9 @@
-import { useGuildSettingsStore, useIsOpenStore } from "@/wrapper/Stores.ts";
-import { Avatar, Badge, Chip, Popover, PopoverContent, PopoverTrigger, Spinner } from "@nextui-org/react";
+import { useGuildSettingsStore } from "@/wrapper/Stores.ts";
+import { Avatar, Badge, Chip, Popover, PopoverContent, PopoverTrigger, Spinner, useDisclosure } from "@nextui-org/react";
 import { useEffect, useState } from "react";
 import { twMerge } from "tailwind-merge";
 import UserPopover from "../Popovers/UserPopover.tsx";
+import UserModal from "../Modals/UserModal.tsx";
 
 interface Role {
     name: string;
@@ -34,40 +35,64 @@ interface Section {
 }
 
 const Member = ({ member, color }: { member: Member; color: string | null; }) => {
-    const { values, setOpen } = useIsOpenStore();
-
     const [loading, setLoading] = useState(false);
+    const [isOpen, setIsOpen] = useState(false);
+
+    const {
+        isOpen: isModalOpen,
+        onOpen,
+        onClose
+    } = useDisclosure();
 
     return (
-        <Popover showArrow placement="left" key={member.id} isOpen={values[member.id] ?? false} onOpenChange={(v) => {
-            setTimeout(() => setOpen(member.id, v), 25);
-        }}>
-            <PopoverTrigger>
-                <div className="flex items-center justify-between w-full h-12 px-2 cursor-pointer rounded-lg hover:bg-slate-800 relative max-w-48" onClick={() => {
-                    setOpen(member.id, !values[member.id] ?? false);
+        <>
+        <UserModal isOpen={isModalOpen} onClose={onClose} />
+            <Popover
+                showArrow
+                placement="left"
+                key={member.id}
+                isOpen={isOpen}
+                onOpenChange={setIsOpen}
+                shouldCloseOnInteractOutside={() => {
+                    setIsOpen(false);
+                    return false;
+                }}
+                style={{
+                    zIndex: "15"
+                }}
+            >
+                <PopoverTrigger>
+                    <div className="flex items-center justify-between w-full h-12 px-2 cursor-pointer rounded-lg hover:bg-slate-800 relative max-w-48" onClick={() => {
+                        setLoading(true);
 
-                    setTimeout(() => setLoading(true), 2000);
-                }}>
-                    <div className="flex items-center">
-                        <Badge content={""} placement="bottom-right" color={member.status === "online" ? "success" : member.status === "idle" ? "warning" : member.status === "dnd" ? "danger" : "default"} className="mb-1">
-                            <Avatar src={member.avatar ?? undefined} size="sm" className="" />
-                        </Badge>
-                        <div className="flex flex-col ml-1">
-                            <div className={twMerge("flex items-center")}>
-                                <div className={twMerge("flex flex-col ml-2", member.tag ? "max-w-[6.75rem]" : "max-w-36")}>
-                                    <p className={twMerge("truncate text-sm", color ? "" : "text-white")} style={color !== null ? { color } : {}}>{member.username}</p>
-                                    {member.customStatus && <p className="text-xs text-gray-500 truncate">{member.customStatus}</p>}
+                        setTimeout(() => {
+                            setLoading(false);
+                        }, 1000);
+                    }}>
+                        <div className="flex items-center">
+                            <Badge content={""} placement="bottom-right" color={member.status === "online" ? "success" : member.status === "idle" ? "warning" : member.status === "dnd" ? "danger" : "default"} className="mb-1">
+                                <Avatar src={member.avatar ?? undefined} size="sm" className="" />
+                            </Badge>
+                            <div className="flex flex-col ml-1">
+                                <div className={twMerge("flex items-center")}>
+                                    <div className={twMerge("flex flex-col ml-2", member.tag ? "max-w-[6.75rem]" : "max-w-36")}>
+                                        <p className={twMerge("truncate text-sm", color ? "" : "text-white")} style={color !== null ? { color } : {}}>{member.username}</p>
+                                        {member.customStatus && <p className="text-xs text-gray-500 truncate">{member.customStatus}</p>}
+                                    </div>
+                                    {member.tag && <Chip color="success" variant="flat" className="ml-1 w-1 p-0 h-4 text-[10px] rounded-md">{member.tag}</Chip>}
                                 </div>
-                                {member.tag && <Chip color="success" variant="flat" className="ml-1 w-1 p-0 h-4 text-[10px] rounded-md">{member.tag}</Chip>}
                             </div>
                         </div>
                     </div>
-                </div>
-            </PopoverTrigger>
-            <PopoverContent>
-                {!loading ? <Spinner /> : <UserPopover member={member} />}
-            </PopoverContent>
-        </Popover>
+                </PopoverTrigger>
+                <PopoverContent>
+                    {loading ? <Spinner /> : <UserPopover member={member} onClick={() => {
+                        onOpen();
+                        setIsOpen(false);
+                    }} />}
+                </PopoverContent>
+            </Popover>
+        </>
     );
 };
 

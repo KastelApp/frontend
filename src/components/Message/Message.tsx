@@ -1,8 +1,9 @@
-import { Avatar, Popover, PopoverContent, PopoverTrigger, Tooltip } from "@nextui-org/react";
+import { Avatar, Popover, PopoverContent, PopoverTrigger, Tooltip, useDisclosure } from "@nextui-org/react";
 import UserPopover from "../Popovers/UserPopover.tsx";
 import { useState } from "react";
 import { Pen, Reply, Trash2, Ellipsis } from "lucide-react";
 import { twMerge } from "tailwind-merge";
+import UserModal from "../Modals/UserModal.tsx";
 
 const Message = ({ content, replying, mention }: { content: string; replying: boolean; mention: boolean; }) => {
     const PopOverData = ({ children }: {
@@ -10,31 +11,43 @@ const Message = ({ content, replying, mention }: { content: string; replying: bo
     }) => {
         const [isOpen, setIsOpen] = useState(false);
 
+        const {
+            isOpen: isModalOpen,
+            onOpen,
+            onClose
+        } = useDisclosure();
+
         return (
-            <Popover placement="right" isOpen={isOpen}
-                onOpenChange={setIsOpen}
-                shouldCloseOnInteractOutside={() => {
-                    setIsOpen(false);
-                    return false;
-                }}
-            >
-                <PopoverTrigger>
-                    {children}
-                </PopoverTrigger>
-                <PopoverContent>
-                    <UserPopover member={{
-                        avatar: "https://development.kastelapp.com/icon-1.png",
-                        customStatus: "Hey",
-                        discriminator: "0001",
-                        id: "1",
-                        isOwner: false,
-                        roles: ["admin"],
-                        status: "online",
-                        tag: null,
-                        username: "DarkerInk"
-                    }} />
-                </PopoverContent>
-            </Popover>
+            <>
+                <UserModal isOpen={isModalOpen} onClose={onClose} />
+                <Popover placement="right" isOpen={isOpen}
+                    onOpenChange={setIsOpen}
+                    shouldCloseOnInteractOutside={() => {
+                        setIsOpen(false);
+                        return false;
+                    }}
+                >
+                    <PopoverTrigger>
+                        {children}
+                    </PopoverTrigger>
+                    <PopoverContent>
+                        <UserPopover member={{
+                            avatar: "https://development.kastelapp.com/icon-1.png",
+                            customStatus: "Hey",
+                            discriminator: "0001",
+                            id: "1",
+                            isOwner: false,
+                            roles: ["admin"],
+                            status: "online",
+                            tag: null,
+                            username: "DarkerInk"
+                        }} onClick={() => {
+                            onOpen();
+                            setIsOpen(false);
+                        }} />
+                    </PopoverContent>
+                </Popover>
+            </>
         );
     };
 

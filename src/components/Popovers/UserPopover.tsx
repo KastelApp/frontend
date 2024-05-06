@@ -15,17 +15,29 @@ interface Member {
 }
 
 const UserPopover = ({
-    member
+    member,
+    onClick
 }: {
     member: Member;
+    onClick?: () => void;
 }) => {
     return (
         <div>
             <div className="rounded-lg p-0 w-[18.70rem]">
                 <div>
                     <div className="flex items-end justify-between p-2">
-                        <Badge content={""} placement="bottom-right" size="lg" color={member.status === "online" ? "success" : member.status === "idle" ? "warning" : member.status === "dnd" ? "danger" : "default"} className="mb-2 right-1">
-                            <Avatar src={member.avatar ?? undefined} alt="User Avatar" size="lg" />
+                        <Badge
+                            content={""}
+                            placement="bottom-right"
+                            size="lg"
+                            color={member.status === "online" ? "success" : member.status === "idle" ? "warning" : member.status === "dnd" ? "danger" : "default"}
+                            className="mb-2 right-1"
+                        >
+                            <div className="avatar-container relative cursor-pointer transition-opacity duration-300 ease-in-out group" onClick={onClick}>
+                                <Avatar src={member.avatar ?? undefined} alt="User Avatar" className="w-16 h-16 inset-0" />
+                                <p className="hidden group-hover:block text-white font-bold text-2xs absolute inset-0 ml-1 mt-5 w-full min-w-full items-center justify-center !z-20">View Profile</p>
+                                <div className="group-hover:bg-opacity-50 rounded-full absolute inset-0 bg-black bg-opacity-0"></div>
+                            </div>
                         </Badge>
                         <div className="flex items-end justify-end">
                             <div className="bg-[#131315] rounded-md p-1 ml-[-10px]">
