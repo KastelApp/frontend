@@ -1,30 +1,40 @@
-import { Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, useDisclosure } from "@nextui-org/react";
+import { Dropdown, DropdownItem, DropdownItemProps, DropdownMenu, DropdownTrigger, useDisclosure } from "@nextui-org/react";
 import { ChevronRight } from "lucide-react";
 import { useState } from "react";
+import { twMerge } from "tailwind-merge";
 
 interface ModalOptions {
     close: () => void;
 }
+
+type OverlayPlacement = "top" | "bottom" | "right" | "left" | "top-start" | "top-end" | "bottom-start" | "bottom-end" | "left-start" | "left-end" | "right-start" | "right-end";
+
 
 interface BaseContextMenuProps {
     values: {
         startContent?: React.ReactElement;
         endContent?: React.ReactElement;
         label: string;
+        props?: DropdownItemProps
         subValues?: { // ? we only allow for one recursion for now (maybe later if needed?)
             label: string;
             startContent?: React.ReactElement;
             endContent?: React.ReactElement;
             onClick: (modal: ModalOptions) => void;
+            props?: DropdownItemProps;
         }[];
         onClick?: (modal: ModalOptions) => void;
     }[];
     children: React.ReactElement | React.ReactElement[];
+    inverse?: boolean; // ? if it requires you to actually rightclick or to function as a normal dropdown
+    placement?: OverlayPlacement;
 }
 
 const BaseContextMenu = ({
     values,
-    children // ? this is the trigger
+    children, // ? this is the trigger
+    inverse,
+    placement = "bottom-end"
 }: BaseContextMenuProps) => {
     const {
         isOpen,
@@ -49,11 +59,15 @@ const BaseContextMenu = ({
                     isOpen: false,
                     key: -1
                 });
+            } else if (inverse) {
+                onOpen();
             }
-        }} placement="bottom-end" radius="md" closeOnSelect={false}>
+        }} placement={placement} radius="md" closeOnSelect={false}>
             <DropdownTrigger>
                 <div onContextMenu={(e) => {
                     e.preventDefault();
+
+                    if (inverse) return;
 
                     onOpen();
                 }}>
@@ -102,7 +116,7 @@ const BaseContextMenu = ({
                                                     });
                                                 }
                                             });
-                                        }}>
+                                        }} {...subValue.props} className={twMerge("rounded-md", subValue.props?.className)}>
                                             <div className="flex flex-row items-center">
                                                 {subValue.startContent &&
                                                     <div className="mr-auto ml-2 my-auto">
@@ -134,7 +148,7 @@ const BaseContextMenu = ({
                                 isOpen: false,
                                 key: -1
                             });
-                        }} className="rounded-md">
+                        }} {...value.props} className={twMerge("rounded-md", value.props?.className)} >
                             <PossiblyDropdown>
                                 <div className="flex items-center">
                                     <span>{value.label}</span>
