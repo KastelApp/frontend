@@ -26,7 +26,7 @@ const UserModal = ({
     return (
         <>
             <Modal
-                size={"3xl"}
+                size={"2xl"}
                 isOpen={isOpen}
                 onClose={onClose}
                 hideCloseButton

@@ -15,6 +15,7 @@
     "autoprefixer": "10.4.19",
     "canvas-confetti": "^1.9.2",
     "clsx": "^2.0.0",
+    "country-flag-icons": "^1.5.11",
     "eslint-config-next": "^14.2.2",
     "framer-motion": "^11.1.7",
     "intl-messageformat": "^10.5.0",

@@ -1,13 +1,15 @@
 import { NavBarLocation } from "@/types/payloads/ready.ts";
-import { useSettingsStore } from "@/wrapper/Stores.ts";
+import { useSelectedTab, useSettingsStore } from "@/wrapper/Stores.ts";
 import { Avatar, Badge, Chip } from "@nextui-org/react";
 import { Backpack, Home, UserRound, X } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { twMerge } from "tailwind-merge";
 import HomeContent from "./DmContent/Home.tsx";
 import Library from "./DmContent/Library.tsx";
 import Friends from "./DmContent/Friends.tsx";
 import TopNavBar from "./TopNavBar.tsx";
+import { useRouter } from "next/router";
+import Link from "next/link";
 
 const DmNavBarItem = ({
     isActive,
@@ -18,7 +20,8 @@ const DmNavBarItem = ({
     isDisabled,
     underName,
     className,
-    textSize = "md"
+    textSize = "md",
+    href
 }: {
     icon?: React.ReactElement | React.ReactElement[];
     name: string;
@@ -29,19 +32,29 @@ const DmNavBarItem = ({
     underName?: string | null;
     textSize?: "sm" | "md" | "lg";
     className?: string;
+    href?: string;
 }) => {
+
+    const LinkMaybe = ({
+        children
+    }: {
+        children: React.ReactNode;
+    }) => href ? <Link href={href} passHref>{children}</Link> : <>{children}</>;
+
     return (
         <div className={twMerge("transition-all duration-300 ease-in-out transform group select-none flex items-center justify-start w-[12rem] ml-2 mt-2 h-10 cursor-pointer rounded-lg", isActive ? "bg-slate-700" : "hover:bg-slate-800", isDisabled ? "cursor-not-allowed" : "")} onClick={!isDisabled ? onClick : undefined}>
-            <div className="flex items-center justify-between w-full">
-                <div className="flex items-center">
-                    {icon}
-                    <div className={twMerge("flex flex-col ml-2", className)}>
-                        <p className={twMerge("text-white truncate", isDisabled ? "text-gray-500" : "", textSize ? `text-${textSize}` : "")}>{name}</p>
-                        {underName && <p className="text-xs text-gray-500 truncate">{underName}</p>}
+            <LinkMaybe>
+                <div className="flex items-center justify-between w-full">
+                    <div className="flex items-center">
+                        {icon}
+                        <div className={twMerge("flex flex-col ml-2", className)}>
+                            <p className={twMerge("text-white truncate", isDisabled ? "text-gray-500" : "", textSize ? `text-${textSize}` : "")}>{name}</p>
+                            {underName && <p className="text-xs text-gray-500 truncate">{underName}</p>}
+                        </div>
                     </div>
+                    {endContent}
                 </div>
-                {endContent}
-            </div>
+            </LinkMaybe>
         </div>
 
     );
@@ -49,14 +62,15 @@ const DmNavBarItem = ({
 
 const DmNavBar = ({
     children,
-    defaultSection,
     title
 }: {
     children?: React.ReactNode;
-    defaultSection?: string | null
     title?: string | null | React.ReactElement;
 }) => {
     const { navBarLocation, isSideBarOpen, setIsSideBarOpen } = useSettingsStore();
+    const { selectedTab, setSelectedTab } = useSelectedTab();
+
+    const router = useRouter();
 
     const tabs = [
         {
@@ -110,7 +124,11 @@ const DmNavBar = ({
         }
     ];
 
-    const [selectedTab, setSelectedTab] = useState<string | null>(defaultSection ? defaultSection : tabs[0].id);
+    const [selectedChannel, setSelectedChannel] = useState<string | null>(null);
+
+    useEffect(() => {
+        setSelectedChannel(router.query.channelId as string ?? null);
+    }, [router]);
 
     return (
         <div className="flex flex-row w-full h-screen m-0 overflow-hidden">
@@ -121,7 +139,17 @@ const DmNavBar = ({
                             key={index}
                             name={tab.name}
                             isActive={selectedTab === tab.id}
-                            onClick={() => setSelectedTab(tab.id)}
+                            onClick={() => {
+                                setSelectedTab(tab.id);
+
+                                window.history.replaceState({
+                                    ...window.history.state,
+                                    as: "/app",
+                                    url: "/app"
+                                }, "", "/app");
+
+                                setSelectedChannel(null);
+                            }}
                             icon={tab.icon}
                             endContent={tab.endContent}
                             isDisabled={tab.disabled}
@@ -140,23 +168,28 @@ const DmNavBar = ({
                             icon={
                                 <>
                                     <Badge content={""} placement="bottom-right" color={dm.status === "Online" ? "success" : dm.status === "Idle" ? "warning" : dm.status === "DND" ? "danger" : "default"} className="mb-1">
-                                        <Avatar src={dm.avatar ?? undefined} size="sm" name={dm.username} className="ml-1" />
+                                        <Avatar src={dm.avatar ?? undefined} size="sm" name={dm.username} className="ml-1" imgProps={{ className: "transition-none" }} />
                                     </Badge>
                                 </>
                             }
                             endContent={<X color="#c7c7c7" size={20} className="scale-0 group-hover:scale-100 transition-transform duration-300 ease-in-out mr-2" />}
                             className="truncate w-28"
+                            href={`/app/@me/messages/${dm.username}`}
+                            isActive={selectedChannel === dm.username}
+                            onClick={() => {
+                                setSelectedTab(null);
+                            }}
                         />
                     ))}
                 </div>
             </div>
             <div className={twMerge("w-full", isSideBarOpen ? "ml-[17rem]" : "")}>
                 <TopNavBar
-                    startContent={<p className="text-gray-300 font-semibold">{title ? title : tabs.find(tab => tab.id === selectedTab)?.name}</p>}
+                    startContent={<div className="text-gray-300 font-semibold">{selectedTab === null && title ? title : tabs.find(tab => tab.id === selectedTab)?.name}</div>}
                     isOpen={isSideBarOpen}
                     setIsOpen={setIsSideBarOpen}
                 />
-                <div className="ml-2 mt-4">
+                <div className="ml-2 ">
                     {
                         selectedTab === null && children ? children : selectedTab === "game-library" ? <Library /> : selectedTab === "friends" ? <Friends /> : <HomeContent />
                     }

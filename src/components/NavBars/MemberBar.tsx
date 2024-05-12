@@ -79,7 +79,7 @@ const Member = ({ member, color }: { member: Member; color: string | null; }) =>
                                         <p className={twMerge("truncate text-sm", color ? "" : "text-white")} style={color !== null ? { color } : {}}>{member.username}</p>
                                         {member.customStatus && <p className="text-xs text-gray-500 truncate">{member.customStatus}</p>}
                                     </div>
-                                    {member.tag && <Chip color="success" variant="flat" className="ml-1 w-1 p-0 h-4 text-[10px] rounded-md">{member.tag}</Chip>}
+                                    {member.tag && <Chip color="success" variant="flat" className="ml-1 w-1 p-0 h-4 text-[10px] rounded-sm" radius="none">{member.tag}</Chip>}
                                 </div>
                             </div>
                         </div>

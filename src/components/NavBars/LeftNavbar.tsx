@@ -61,6 +61,8 @@ const LeftNavbar = memo(() => {
                         badgeColor="danger"
                         InContent={UserOptions}
                         href="/app"
+                        description="Right click to open context menu"
+                        delay={1000}
                     />
                     <Divider size={"[2px]"} />
                     {guilds.map((guild, index) => (
@@ -100,7 +102,8 @@ const LeftNavBarIcon = ({
     href,
     InContent,
     onClick,
-    onRightClick
+    onRightClick,
+    delay
 }: {
     icon: React.ReactElement | React.ReactElement[];
     description?: string;
@@ -114,6 +117,7 @@ const LeftNavBarIcon = ({
     InContent?: React.FC<{ children: React.ReactElement | React.ReactElement[]; }>;
     onClick?: () => void;
     onRightClick?: () => void;
+    delay?: number;
 }) => {
     const width = `w-${size}`;
     const height = `h-${size}`;
@@ -129,7 +133,7 @@ const LeftNavBarIcon = ({
 
     const TooltipOrNot = ({ children }: {
         children: React.ReactElement | React.ReactElement[];
-    }): React.ReactElement => description ? <Tooltip content={description} showArrow className="select-none" placement="right">{children}</Tooltip> : children as React.ReactElement;
+    }): React.ReactElement => description ? <Tooltip content={description} showArrow className="select-none" placement="right" delay={delay}>{children}</Tooltip> : children as React.ReactElement;
 
     return (
         <TooltipOrNot>

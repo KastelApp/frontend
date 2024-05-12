@@ -67,22 +67,12 @@ export const useGuildSettingsStore = createTrackedSelector(create(persist<GuildS
     name: "guild-settings"
 })));
 
-interface IsOpenStore {
-    values: Record<string, boolean>;
-    setOpen: (key: string, value: boolean) => void;
+interface SelectedTabStore {
+    selectedTab: string | null;
+    setSelectedTab: (selectedTab: string | null) => void;
 }
 
-export const useIsOpenStore = createTrackedSelector(create<IsOpenStore>((set) => ({
-    values: {},
-    setOpen: (key: string, value: boolean) => set((state) => ({
-        values: value ? {
-            ...state.values,
-            [key]: value
-        } : Object.keys(state.values).reduce((acc, k) => {
-            if (k !== key) {
-                acc[k] = state.values[k];
-            }
-            return acc;
-        }, {} as Record<string, boolean>)
-    }))
+export const useSelectedTab = createTrackedSelector(create<SelectedTabStore>((set) => ({
+    selectedTab: null,
+    setSelectedTab: (selectedTab: string | null) => set({ selectedTab })
 })));

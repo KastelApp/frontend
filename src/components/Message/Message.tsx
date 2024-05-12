@@ -1,4 +1,4 @@
-import { Avatar, Popover, PopoverContent, PopoverTrigger, Tooltip, useDisclosure } from "@nextui-org/react";
+import { Avatar, Chip, Popover, PopoverContent, PopoverTrigger, Tooltip, useDisclosure } from "@nextui-org/react";
 import UserPopover from "../Popovers/UserPopover.tsx";
 import { useState } from "react";
 import { Pen, Reply, Trash2, Ellipsis } from "lucide-react";
@@ -59,11 +59,11 @@ const Message = ({ content, replying, mention }: { content: string; replying: bo
                 }} />
                 <PopOverData>
                     <div className="flex items-center cursor-pointer">
-                        <Avatar src="https://development.kastelapp.com/icon-1.png" className="ml-2 cursor-pointer w-4 h-4" />
+                        <Avatar src="https://development.kastelapp.com/icon-1.png" className="ml-2 cursor-pointer w-4 h-4" imgProps={{ className: "transition-none" }} />
                         <p className="text-orange-500 text-xs ml-1">{mention ? "@" : ""}DarkerInk</p>
                     </div>
                 </PopOverData>
-                <p className="text-gray-300 text-2xs ml-2">Hello World</p>
+                <p className="text-gray-300 text-2xs ml-2">{Number(content.slice(0, 2)) + 1}</p>
             </div>}
             <div className="flex">
                 <PopOverData>
@@ -75,8 +75,9 @@ const Message = ({ content, replying, mention }: { content: string; replying: bo
                             <PopOverData>
                                 <span className="inline cursor-pointer text-orange-500">DarkerInk</span>
                             </PopOverData>
+                            <Chip color="success" variant="flat" className="ml-1 w-1 p-0 h-4 text-[10px] rounded-sm" radius="none">System</Chip>
                             <Tooltip content="temp" placement="top">
-                                <span className="text-gray-400 text-xs mt-1 ml-2">Today at 12:00 PM</span>
+                                <span className="text-gray-400 text-xs mt-1 ml-1">Today at 12:00 PM</span>
                             </Tooltip>
                         </span>
                         <div className="text-white whitespace-pre-line overflow-hidden break-all">
