@@ -127,7 +127,13 @@ const DmNavBar = ({
     const [selectedChannel, setSelectedChannel] = useState<string | null>(null);
 
     useEffect(() => {
+        if (!router.isReady) return;
+
         setSelectedChannel(router.query.channelId as string ?? null);
+
+        if (!router.query.channelId && !selectedTab) {
+            setSelectedTab(tabs[0].id)
+        }
     }, [router]);
 
     return (
