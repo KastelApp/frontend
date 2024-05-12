@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Input, Avatar, Badge, Switch, Select, SelectSection, SelectItem, Textarea, Divider, Card, CardBody } from "@nextui-org/react";
+import { Input, Avatar, Badge, Switch, Select, SelectSection, SelectItem, Textarea, Divider } from "@nextui-org/react";
 
 const Overview = () => {
     const [maintenanceMode, setMaintenanceMode] = useState<boolean>(false);
@@ -14,8 +14,8 @@ const Overview = () => {
     const [guildRegion, setGuildRegion] = useState<string>("");
 
     return (
-        <Card className="mr-2 bg-accent">
-            <CardBody className="flex flex-col p-4">
+        <div className="mr-2 bg-accent rounded-lg">
+            <div className="flex flex-col p-4">
                 <h1 className="text-2xl font-semibold">Guild Overview</h1>
                 <div className="flex justify-start mt-4">
                     <div className="flex flex-col items-center">
@@ -119,9 +119,8 @@ const Overview = () => {
                         <Switch checked={sendGuildChangelog} onValueChange={setSendGuildChangelog} />
                     </div>
                 </div>
-            </CardBody>
-        </Card>
-
+            </div>
+        </div>
     );
 };
 

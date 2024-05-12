@@ -10,6 +10,7 @@ import Divider from "../Divider.tsx";
 import UserOptions from "../Dropdowns/UserOptions.tsx";
 import GuildModal from "../Modals/CreateGuild.tsx";
 import { useSettingsStore } from "@/wrapper/Stores.ts";
+import { BaseContextMenuProps } from "../Dropdowns/BaseContextMenu.tsx";
 
 const Modal = () => {
     const { isOpen, onOpenChange, onClose } = useDisclosure();
@@ -79,6 +80,14 @@ const LeftNavbar = memo(() => {
                                 imgProps={{ className: "transition-none" }}
                             />}
                             description={guild.name}
+                            contextMenuItemsProps={{
+                                values: [
+                                    {
+                                        label: "Test",
+                                    }
+                                ],
+                                placement: "right"
+                            }}
                         />
                     ))}
                     <Modal />
@@ -102,8 +111,8 @@ const LeftNavBarIcon = ({
     href,
     InContent,
     onClick,
-    onRightClick,
-    delay
+    delay,
+    // contextMenuItemsProps
 }: {
     icon: React.ReactElement | React.ReactElement[];
     description?: string;
@@ -116,8 +125,8 @@ const LeftNavBarIcon = ({
     href?: string;
     InContent?: React.FC<{ children: React.ReactElement | React.ReactElement[]; }>;
     onClick?: () => void;
-    onRightClick?: () => void;
     delay?: number;
+    contextMenuItemsProps?: BaseContextMenuProps
 }) => {
     const width = `w-${size}`;
     const height = `h-${size}`;
@@ -135,6 +144,14 @@ const LeftNavBarIcon = ({
         children: React.ReactElement | React.ReactElement[];
     }): React.ReactElement => description ? <Tooltip content={description} showArrow className="select-none" placement="right" delay={delay}>{children}</Tooltip> : children as React.ReactElement;
 
+    // const RightClickMenuOrNot = ({ children }: {
+    //     children: React.ReactElement | React.ReactElement[];
+    // }): React.ReactElement => contextMenuItemsProps ? <BaseContextMenu {...contextMenuItemsProps}>{children}</BaseContextMenu> : children as React.ReactElement;
+
+    const RightClickMenuOrNot = ({ children }: {
+        children: React.ReactElement | React.ReactElement[];
+    }): React.ReactElement => children as React.ReactElement;
+
     return (
         <TooltipOrNot>
             <div className={twMerge(`select-none flex justify-center items-center mt-2
@@ -147,19 +164,17 @@ const LeftNavBarIcon = ({
             transform
             group
             `, isDisabled ? `cursor-not-allowed ${!isBackgroundDisabled ? "bg-gray-800 hover:bg-gray-700" : ""}` : `cursor-pointer hover:rounded-xl ${!isBackgroundDisabled ? "bg-gray-600 hover:bg-gray-700" : ""}`, width, height)}>
-                <div onClick={onClick} onContextMenu={onRightClick ? (e) => {
-                    e.preventDefault();
-
-                    onRightClick();
-                } : undefined}>
-                    <InContentWrapper>
-                        <LinkWrapper href={href}>
-                            <Badge content={badgeContent} isInvisible={!badgeContent} color={badgeColor} placement={badgePosition} className="mb-1">
-                                {icon}
-                            </Badge>
-                        </LinkWrapper>
-                    </InContentWrapper>
-                </div>
+                <RightClickMenuOrNot>
+                    <div onClick={onClick}>
+                        <InContentWrapper>
+                            <LinkWrapper href={href}>
+                                <Badge content={badgeContent} isInvisible={!badgeContent} color={badgeColor} placement={badgePosition} className="mb-1">
+                                    {icon}
+                                </Badge>
+                            </LinkWrapper>
+                        </InContentWrapper>
+                    </div>
+                </RightClickMenuOrNot>
             </div>
         </TooltipOrNot>
     );

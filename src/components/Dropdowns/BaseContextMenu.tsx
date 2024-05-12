@@ -10,7 +10,7 @@ interface ModalOptions {
 type OverlayPlacement = "top" | "bottom" | "right" | "left" | "top-start" | "top-end" | "bottom-start" | "bottom-end" | "left-start" | "left-end" | "right-start" | "right-end";
 
 
-interface BaseContextMenuProps {
+export interface BaseContextMenuProps {
     values: {
         startContent?: React.ReactElement;
         endContent?: React.ReactElement;
@@ -25,7 +25,7 @@ interface BaseContextMenuProps {
         }[];
         onClick?: (modal: ModalOptions) => void;
     }[];
-    children: React.ReactElement | React.ReactElement[];
+    children?: React.ReactElement | React.ReactElement[];
     inverse?: boolean; // ? if it requires you to actually rightclick or to function as a normal dropdown
     placement?: OverlayPlacement;
 }

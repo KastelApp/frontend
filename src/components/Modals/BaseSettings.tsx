@@ -84,7 +84,7 @@ const BaseSettings = ({
                                     <Section title={section.title} key={section.title} children={section.children} setSection={setSelectedSection} />
                                 ))}
                             </div>
-                            <div className="flex flex-col w-full p-5 pt-4 h-full">
+                            <div className="flex flex-col w-full p-5 pt-4 h-full overflow-auto">
                                 {sections.find((s) => s.children.find((c) => c.id === selectedSection))?.children.find((c) => c.id === selectedSection)?.section}
                             </div>
                         </div>

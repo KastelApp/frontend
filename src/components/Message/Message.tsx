@@ -5,17 +5,21 @@ import { Pen, Reply, Trash2, Ellipsis } from "lucide-react";
 import { twMerge } from "tailwind-merge";
 import UserModal from "../Modals/UserModal.tsx";
 
-const Message = ({ content, replying, mention }: { content: string; replying: boolean; mention: boolean; }) => {
+const Message = ({ content, replying, mention, className, disableButtons, tag }: { content: string; replying: boolean; mention: boolean; className?: string; disableButtons?: boolean; tag?: "System" | "Bot" }) => {
     const PopOverData = ({ children }: {
         children: React.ReactElement | React.ReactElement[];
     }) => {
-        const [isOpen, setIsOpen] = useState(false);
 
+        
+        const [isOpen, setIsOpen] = useState(false);
+        
         const {
             isOpen: isModalOpen,
             onOpen,
             onClose
         } = useDisclosure();
+        
+        if (disableButtons) return children as React.ReactElement;
 
         return (
             <>
@@ -52,7 +56,7 @@ const Message = ({ content, replying, mention }: { content: string; replying: bo
     };
 
     return (
-        <div className={twMerge("group w-full hover:bg-msg-hover mb-2 relative", mention ? "bg-mention hover:bg-mention-hover" : "")}>
+        <div className={twMerge("group w-full hover:bg-msg-hover mb-2 relative", className, mention ? "bg-mention hover:bg-mention-hover" : "")}>
             {replying && <div className="flex items-center ml-4 mb-1">
                 <Reply size={22} color="#acaebf" className="cursor-pointer" style={{
                     transform: "rotate(180deg) scale(1, -1)"
@@ -75,9 +79,9 @@ const Message = ({ content, replying, mention }: { content: string; replying: bo
                             <PopOverData>
                                 <span className="inline cursor-pointer text-orange-500">DarkerInk</span>
                             </PopOverData>
-                            <Chip color="success" variant="flat" className="ml-1 w-1 p-0 h-4 text-[10px] rounded-sm" radius="none">System</Chip>
-                            <Tooltip content="temp" placement="top">
-                                <span className="text-gray-400 text-xs mt-1 ml-1">Today at 12:00 PM</span>
+                            {tag && <Chip color="success" variant="flat" className="ml-1 w-1 p-0 h-4 text-[10px] rounded-sm" radius="none">{tag}</Chip>}
+                            <Tooltip content="Saturday, May 11. 2024 12:00 PM" placement="top">
+                                <span className="text-gray-400 text-2xs mt-1 ml-1">Today at 12:00 PM</span>
                             </Tooltip>
                         </span>
                         <div className="text-white whitespace-pre-line overflow-hidden break-all">
@@ -88,20 +92,22 @@ const Message = ({ content, replying, mention }: { content: string; replying: bo
                     </div>
                 </div>
             </div>
-            <div className="z-10 items-center gap-2 bg-gray-800 absolute top-[-1rem] right-0 hidden group-hover:flex hover:flex p-1 rounded-md mr-2">
-                <Tooltip content="Reply">
-                    <Reply size={18} color="#acaebf" className="cursor-pointer" />
-                </Tooltip>
-                <Tooltip content="Edit">
-                    <Pen size={18} color="#acaebf" className="cursor-pointer" />
-                </Tooltip>
-                <Tooltip content="Delete">
-                    <Trash2 size={18} className="text-danger cursor-pointer" />
-                </Tooltip>
-                <Tooltip content="More">
-                    <Ellipsis size={18} color="#acaebf" className="cursor-pointer" />
-                </Tooltip>
-            </div>
+            {!disableButtons &&
+                <div className="z-10 items-center gap-2 bg-gray-800 absolute top-[-1rem] right-0 hidden group-hover:flex hover:flex p-1 rounded-md mr-2">
+                    <Tooltip content="Reply">
+                        <Reply size={18} color="#acaebf" className="cursor-pointer" />
+                    </Tooltip>
+                    <Tooltip content="Edit">
+                        <Pen size={18} color="#acaebf" className="cursor-pointer" />
+                    </Tooltip>
+                    <Tooltip content="Delete">
+                        <Trash2 size={18} className="text-danger cursor-pointer" />
+                    </Tooltip>
+                    <Tooltip content="More">
+                        <Ellipsis size={18} color="#acaebf" className="cursor-pointer" />
+                    </Tooltip>
+                </div>
+            }
         </div>
     );
 };
