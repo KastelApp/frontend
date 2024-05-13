@@ -62,10 +62,12 @@ const DmNavBarItem = ({
 
 const DmNavBar = ({
     children,
-    title
+    title,
+    topNavBarEndContent
 }: {
     children?: React.ReactNode;
     title?: string | null | React.ReactElement;
+    topNavBarEndContent?: React.ReactElement;
 }) => {
     const { navBarLocation, isSideBarOpen, setIsSideBarOpen } = useSettingsStore();
     const { selectedTab, setSelectedTab } = useSelectedTab();
@@ -194,6 +196,7 @@ const DmNavBar = ({
                     startContent={<div className="text-gray-300 font-semibold">{selectedTab === null && title ? title : tabs.find(tab => tab.id === selectedTab)?.name}</div>}
                     isOpen={isSideBarOpen}
                     setIsOpen={setIsSideBarOpen}
+                    endContent={topNavBarEndContent}
                 />
                 <div className="ml-2 ">
                     {
