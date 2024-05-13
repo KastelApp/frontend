@@ -36,7 +36,7 @@ const OverView = () => {
                     <div>
                         <div className="flex items-end justify-between p-2">
                             <div className="flex items-end justify-between">
-                                <Tooltip content="Remove Avatar" placement="top-left">
+                                <Tooltip content="Remove Avatar" placement="right">
                                     <Badge
                                         content={<X />}
                                         placement="top-right"
