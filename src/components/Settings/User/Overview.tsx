@@ -60,35 +60,35 @@ const OverView = () => {
                                             <p className="text-lg font-semibold">Global Nickname</p>
                                             <p className="text-md">DarkerInk</p>
                                         </div>
-                                        <Button color="primary" className="ml-auto max-h-8 min-h-8 min-w-20 max-w-20" variant="flat">Edit</Button>
+                                        <Button color="primary" className="ml-auto max-h-8 min-h-8 min-w-16 max-w-16 rounded-md" radius="none" variant="flat">Edit</Button>
                                     </div>
                                     <div className="flex justify-between items-center mb-4">
                                         <div>
                                             <p className="text-lg font-semibold">Username#tag</p>
                                             <p className="text-md">DarkerInk#1750</p>
                                         </div>
-                                        <Button color="primary" className="ml-auto max-h-8 min-h-8 min-w-20 max-w-20" variant="flat">Edit</Button>
+                                        <Button color="primary" className="ml-auto max-h-8 min-h-8 min-w-16 max-w-16 rounded-md" radius="none" variant="flat">Edit</Button>
                                     </div>
                                     <div className="flex justify-between items-center mb-4">
                                         <div>
                                             <p className="text-lg font-semibold">Email</p>
                                             <p className="text-md blur-sm hover:blur-0 transition-all duration-300">darkerink@kastelapp.com</p>
                                         </div>
-                                        <Button color="primary" className="ml-auto max-h-8 min-h-8 min-w-20 max-w-20" variant="flat">Edit</Button>
+                                        <Button color="primary" className="ml-auto max-h-8 min-h-8 min-w-16 max-w-16 rounded-md" radius="none" variant="flat">Edit</Button>
                                     </div>
                                     <div className="flex justify-between items-center mb-4">
                                         <div>
                                             <p className="text-lg font-semibold">Phone Number</p>
                                             <p className="text-md">N/A</p>
                                         </div>
-                                        <Button color="primary" className="ml-auto max-h-8 min-h-8 min-w-20 max-w-20" variant="flat">Edit</Button>
+                                        <Button color="primary" className="ml-auto max-h-8 min-h-8 min-w-16 max-w-16 rounded-md" radius="none" variant="flat">Edit</Button>
                                     </div>
                                     <div className="flex justify-between items-center mb-4">
                                         <div>
                                             <p className="text-lg font-semibold">About Me</p>
                                             <p className="text-md">Testing</p>
                                         </div>
-                                        <Button color="primary" className="ml-auto max-h-8 min-h-8 min-w-20 max-w-20" variant="flat">Edit</Button>
+                                        <Button color="primary" className="ml-auto max-h-8 min-h-8 min-w-16 max-w-16 rounded-md" radius="none" variant="flat">Edit</Button>
                                     </div>
                                 </CardBody>
                             </Card>
