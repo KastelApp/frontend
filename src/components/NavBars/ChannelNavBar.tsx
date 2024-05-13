@@ -301,7 +301,7 @@ const
                             title: "Emojis",
                             id: "emojis",
                             section: <div>Emojis</div>,
-                            disabled: false
+                            disabled: true
                         },
                         {
                             title: "Vanity URL",
@@ -335,7 +335,7 @@ const
                             title: "Co-Owners",
                             id: "co-owners",
                             section: <div>Co-Owners</div>,
-                            disabled: false
+                            disabled: true
                         },
                         {
                             title: "Members",
@@ -347,7 +347,7 @@ const
                             title: "Bans",
                             id: "bans",
                             section: <div>Bans</div>,
-                            disabled: false
+                            disabled: true
                         },
                         {
                             title: "Invites",

@@ -13,7 +13,7 @@ const UserModal = ({
 
     const member = {
         avatar: "https://development.kastelapp.com/icon-1.png",
-        customStatus: "Hey",
+        customStatus: "This is a custom status",
         discriminator: "0001",
         id: "1",
         isOwner: false,
@@ -46,9 +46,9 @@ const UserModal = ({
                                             className="mb-2 mr-2 h-6 w-6"
                                             color={member.status === "online" ? "success" : member.status === "idle" ? "warning" : member.status === "dnd" ? "danger" : "default"}
                                         >
-                                            <Avatar src={member.avatar ?? undefined} alt="User Avatar" className="h-24 w-24" />
+                                            <Avatar src={member.avatar ?? undefined} alt="User Avatar" className="h-24 w-24 mt-4" />
                                         </Badge>
-                                        <div className="bg-[#131315] rounded-md p-1">
+                                        <div className="bg-charcoal-600 rounded-md p-1 ml-2">
                                             <AllBadges privateFlags="0" publicFlags="999999999999" size={20} />
                                         </div>
                                     </div>
@@ -68,19 +68,19 @@ const UserModal = ({
                                         </BaseContextMenu>
                                     </div>
                                 </div>
-                                <Divider className="mt-2" />
+                                <Divider className="mt-2 mb-4" />
                                 <div>
                                     <Card className="mt-2 mb-2" isBlurred>
                                         <CardBody className="overflow-y-auto max-h-[85vh]">
                                             <div>
                                                 <p className="text-white text-xl font-semibold">{member.username}</p>
                                                 <p className="text-gray-300 text-sm">{member.username}#{member.discriminator}</p>
-                                                {member.customStatus && <p className="text-gray-200 text-md mt-2 ml-1">{member.customStatus}</p>}
+                                                {member.customStatus && <p className="text-gray-200 text-md mt-2">{member.customStatus}</p>}
                                             </div>
                                             <Divider className="mt-2" />
                                             <div className="mt-2">
-                                                <span className="text-gray-400">About Me:</span>
-                                                <p className="text-gray-300 mt-2">{"Hey"}</p>
+                                                <span className="text-white font-bold">About Me</span>
+                                                <p className="text-gray-300">{"This is an about me"}</p>
                                             </div>
                                         </CardBody>
                                     </Card>
