@@ -19,7 +19,7 @@ const Footer = () => {
                                     <Link href="https://support.kastelapp.com/" className="hover:text-blue-500 hover:underline">Support</Link>
                                 </li>
                                 <li>
-                                    <Link href="https://kastelapp.com/report" className="hover:text-blue-500 hover:underline">Reporting</Link>
+                                    <Link href="/report" className="hover:text-blue-500 hover:underline">Reporting</Link>
                                 </li>
                             </ul>
                         </div>
@@ -47,10 +47,10 @@ const Footer = () => {
                                     <Link href="https://github.com/KastelApp" className="hover:text-blue-500 hover:underline ">Github</Link>
                                 </li>
                                 <li className="mb-1">
-                                    <Link href="https://kastelapp.com/developers/docs" className="hover:text-blue-500 hover:underline">Documentation</Link>
+                                    <Link href="/developers/docs" className="hover:text-blue-500 hover:underline">Documentation</Link>
                                 </li>
                                 <li className="mb-1">
-                                    <Link href="https://kastelapp.com/developers/apps" className="hover:text-blue-500 hover:underline">Bots</Link>
+                                    <Link href="/developers/apps" className="hover:text-blue-500 hover:underline">Bots</Link>
                                 </li>
                             </ul>
                         </div>
@@ -58,10 +58,10 @@ const Footer = () => {
                             <h2 className="mb-2 text-sm font-semibold  uppercase text-white">Legal</h2>
                             <ul className="text-gray-400 font-medium">
                                 <li className="mb-1">
-                                    <Link href="/pp" className="hover:text-blue-500 hover:underline">Privacy Policy</Link>
+                                    <Link href="/privacy" className="hover:text-blue-500 hover:underline">Privacy Policy</Link>
                                 </li>
                                 <li>
-                                    <Link href="/tos" className="hover:text-blue-500 hover:underline">Terms &amp; Conditions</Link>
+                                    <Link href="/terms" className="hover:text-blue-500 hover:underline">Terms &amp; Conditions</Link>
                                 </li>
                             </ul>
                         </div>
