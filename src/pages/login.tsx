@@ -2,6 +2,7 @@ import HomeLayout from "@/layouts/HomeLayout.tsx";
 import { Card, Input, Link, useDisclosure, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button } from "@nextui-org/react";
 import { useState } from "react";
 import { EyeIcon, EyeOffIcon } from "lucide-react";
+import { useTranslationStore } from "@/wrapper/Stores.ts";
 
 const Login = () => {
     const [isVisible, setIsVisible] = useState(false);
@@ -25,35 +26,37 @@ const Login = () => {
     // ? Captcha Model specific state
     const { onClose: onCloseCaptcha, isOpen: isOpenCaptcha, onOpenChange: onOpenChangeCaptcha } = useDisclosure();
 
+    const { t } = useTranslationStore();
+
     return (
         <HomeLayout>
             <div className="flex justify-center items-center">
                 <Card className="flex items-center justify-center mt-32 w-full max-w-md p-8 bg-accent">
                     <div className="w-full max-w-md">
                         <div className="text-center">
-                            <h1 className="text-3xl font-bold">Welcome back!</h1>
-                            <p className="text-medium mt-4">Login to your account to continue.</p>
+                            <h1 className="text-3xl font-bold">{t("login.title")}</h1>
+                            <p className="text-medium mt-4">{t("login.subtitle")}</p>
                         </div>
                         <form className="mt-8">
                             <div className="flex flex-col space-y-4 items-center">
                                 <Input
                                     isClearable
                                     type="email"
-                                    label="Email"
+                                    label={t("login.email.label")}
                                     variant="bordered"
                                     placeholder="kiki@kastelapp.com"
                                     onClear={() => setEmail("")}
                                     className="max-w-xs"
-                                    description="The email address you used to sign up"
+                                    description={t("login.email.description")}
                                     onValueChange={setEmail}
                                     value={email}
                                     isRequired
-                                    errorMessage={emailError || "Please enter a valid email address"}
+                                    errorMessage={emailError || t("login.email.error")}
                                 />
                                 <Input
-                                    label="Password"
+                                    label={t("login.password.label")}
                                     variant="bordered"
-                                    placeholder="Enter your password"
+                                    placeholder={t("login.password.placeholder")}
                                     endContent={
                                         <button className="focus:outline-none" type="button" onClick={toggleVisibility}>
                                             {isVisible ? (
@@ -65,11 +68,11 @@ const Login = () => {
                                     }
                                     type={isVisible ? "text" : "password"}
                                     className="max-w-xs"
-                                    description="The password to your account"
+                                    description={t("login.password.description")}
                                     onValueChange={setPassword}
                                     value={password}
                                     isRequired
-                                    errorMessage={passwordError || "Please enter a valid password"}
+                                    errorMessage={passwordError || t("login.password.error")}
                                     minLength={4}
                                     maxLength={72}
                                 />
@@ -107,12 +110,12 @@ const Login = () => {
                                     variant="flat"
                                     className="w-full"
                                 >
-                                    Login
+                                    {t("login.button")}
                                 </Button>
                             </div>
                             <div className="mt-4 flex justify-between">
-                                <Link href="/register" color="primary" className="text-sm">Don't have an account? Register</Link>
-                                <Link href="/register" color="primary" className="text-sm">Forgot Password?</Link>
+                                <Link href="/register" color="primary" className="text-sm">{t("login.register")}</Link>
+                                <Link href="/register" color="primary" className="text-sm">{t("login.forgot")}</Link>
                             </div>
                         </form>
                     </div>

@@ -7,9 +7,15 @@ import { useRouter } from "next/router";
 import "@/styles/globals.css";
 import ErrorBoundary from "@/layouts/ErrorBoundary.tsx";
 import ErrorHandler from "@/layouts/ErrorHandler.tsx";
+import { useTranslationStore } from "@/wrapper/Stores.ts";
 
 const App = ({ Component, pageProps }: AppProps) => {
 	const router = useRouter();
+
+	// eslint-disable-next-line @typescript-eslint/naming-convention
+	const { _hasHydrated } = useTranslationStore();
+
+	if (!_hasHydrated) return null;
 
 	return (
 		<ErrorBoundary>

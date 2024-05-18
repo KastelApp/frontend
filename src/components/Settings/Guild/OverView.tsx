@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { Input, Avatar, Badge, Switch, Select, SelectSection, SelectItem, Textarea, Divider } from "@nextui-org/react";
+import { Input, Avatar, Badge, Switch, Select, SelectSection, SelectItem, Textarea, Divider, Tooltip } from "@nextui-org/react";
+import { X } from "lucide-react";
 
 const Overview = () => {
     const [maintenanceMode, setMaintenanceMode] = useState<boolean>(false);
@@ -19,11 +20,24 @@ const Overview = () => {
                 <h1 className="text-2xl font-semibold">Guild Overview</h1>
                 <div className="flex justify-start mt-4">
                     <div className="flex flex-col items-center">
-                        <div className="cursor-pointer hover:scale-95 transition-all duration-300 ease-in-out transform hover:opacity-50">
-                            <Badge content="+" color="primary" size="lg">
-                                <Avatar src="https://development.kastelapp.com/icon-1.png" className="w-20 h-20" />
+                        <Tooltip content="Remove Icon" placement="right" delay={750} className="select-none">
+                            <Badge
+                                content={<X />}
+                                placement="top-right"
+                                className="mb-2 mr-1 h-8 w-8 hover:scale-95 active:scale-85 cursor-pointer hover:opacity-95 z-50"
+                                color={"danger"}
+                                onClick={() => {
+                                    console.log("Remove Icon");
+                                }}
+                            >
+                                <div className="avatar-container relative transition-opacity duration-300 ease-in-out group">
+                                    <Avatar src={"/icon-1.png"!} alt="User Avatar" className="h-24 w-24 bg-transparent" />
+                                    <p className="hidden group-hover:block text-white font-bold text-xs absolute inset-0 ml-2.5 mt-10 w-full min-w-full items-center justify-center !z-20">Change Icon</p>
+                                    <input type="file" accept=".png,.jpg,.jpeg,.apng,.gif" className="cursor-pointer absolute inset-0 w-full h-full opacity-0 z-20" title="" onChange={() => { }} />
+                                    <div className="group-hover:bg-opacity-50 rounded-full absolute inset-0 bg-black bg-opacity-0" />
+                                </div>
                             </Badge>
-                        </div>
+                        </Tooltip>
                         <p className="text-sm text-gray-500 mt-2">Upload a guild icon</p>
                     </div>
                     <div className="flex flex-col ml-16">

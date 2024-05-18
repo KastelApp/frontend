@@ -1,0 +1,14 @@
+{
+  "languages": [
+    {
+      "code": "en",
+      "status": "complete",
+      "notes": ["English is the baseline so in theory it should always be complete"]
+    },
+    {
+      "code": "fr",
+      "status": "incomplete",
+      "notes": ["Missing almost everything"]
+    }
+  ]
+}

@@ -1,4 +1,5 @@
 import HomeLayout from "@/layouts/HomeLayout.tsx";
+import { useTranslationStore } from "@/wrapper/Stores.ts";
 import { Avatar, Card } from "@nextui-org/react";
 
 interface NormalAcknowledgementData {
@@ -62,24 +63,27 @@ const Acknowledgements = () => {
 
     ];
 
+    const { t } = useTranslationStore();
+
+
     return (
         <HomeLayout>
             <div className="container mx-auto p-4 flex flex-col gap-4">
                 <div className="text-center">
-                    <h2 className="text-2xl font-bold mb-4">Meet the Staff</h2>
-                    <p className="text-gray-400">The people who make Kastel possible.</p>
+                    <h2 className="text-2xl font-bold mb-4">{t("acknowledgements.staff.title")}</h2>
+                    <p className="text-gray-400">{t("acknowledgements.staff.message")}</p>
                 </div>
                 <AcknowledgementCard data={kastelStaff} />
 
                 <div className="text-center mt-8">
-                    <h2 className="text-2xl font-bold mb-4">Contributors</h2>
-                    <p className="text-gray-400">The people who help make Kastel better.</p>
+                    <h2 className="text-2xl font-bold mb-4">{t("acknowledgements.contributors.title")}</h2>
+                    <p className="text-gray-400">{t("acknowledgements.contributors.message")}</p>
                 </div>
                 <AcknowledgementCard data={contributors} />
 
                 <div className="text-center mt-8">
-                    <h2 className="text-2xl font-bold mb-4">Libraries</h2>
-                    <p className="text-gray-400">Without these libraries, Kastel wouldn't be possible, please check them out!</p>
+                    <h2 className="text-2xl font-bold mb-4">{t("acknowledgements.libraries.title")}</h2>
+                    <p className="text-gray-400">{t("acknowledgements.libraries.message")}</p>
                 </div>
                 <Libraries data={libraries} />
             </div>

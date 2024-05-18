@@ -1,8 +1,11 @@
 import React, { useState } from "react";
 import { Navbar, NavbarBrand, NavbarContent, NavbarItem, NavbarMenuToggle, NavbarMenu, NavbarMenuItem, Link, Button } from "@nextui-org/react";
+import { useTranslationStore } from "@/wrapper/Stores.ts";
 
 const TopHeader = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const { t } = useTranslationStore();
+
 
     const menuItems: {
         title: string;
@@ -10,7 +13,7 @@ const TopHeader = () => {
         newTab: boolean;
     }[] = [
             {
-                title: "Documentation",
+                title: t("home.navbar.docs"),
                 href: "/docs",
                 newTab: false
             },
@@ -20,12 +23,12 @@ const TopHeader = () => {
                 newTab: true
             },
             {
-                title: "Blog",
+                title: t("home.navbar.blog"),
                 href: "/blog",
                 newTab: false
             },
             {
-                title: "Support",
+                title: t("home.navbar.support"),
                 href: "#",
                 newTab: false
             }
@@ -46,7 +49,7 @@ const TopHeader = () => {
             <NavbarContent className="hidden sm:flex gap-4" justify="center">
                 <NavbarItem>
                     <Link color="foreground" href="/docs">
-                        Documentation
+                        {t("home.navbar.docs")}
                     </Link>
                 </NavbarItem>
                 <NavbarItem>
@@ -56,22 +59,22 @@ const TopHeader = () => {
                 </NavbarItem>
                 <NavbarItem>
                     <Link color="foreground" href="/blog">
-                        Blog
+                        {t("home.navbar.blog")}
                     </Link>
                 </NavbarItem>
                 <NavbarItem >
                     <Link color="foreground" href="#">
-                        Support
+                        {t("home.navbar.support")}
                     </Link>
                 </NavbarItem>
             </NavbarContent>
             <NavbarContent justify="end">
                 <NavbarItem>
-                    <Link href="/login">Login</Link>
+                    <Link href="/login">{t("home.navbar.login")}</Link>
                 </NavbarItem>
                 <NavbarItem className="hidden lg:flex">
                     <Button as={Link} color="primary" href="/register" variant="flat">
-                        Sign Up
+                        {t("home.navbar.signup")}
                     </Button>
                 </NavbarItem>
             </NavbarContent>

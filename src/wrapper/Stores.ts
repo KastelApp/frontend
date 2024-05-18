@@ -2,6 +2,7 @@ import { Theme, EmojiPack, NavBarLocation } from "@/types/payloads/ready.ts";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { createTrackedSelector } from "react-tracked";
+import Translation, { MetaData } from "@/utils/Translation.ts";
 
 interface SettingsStore {
     language: string;
@@ -75,4 +76,37 @@ interface SelectedTabStore {
 export const useSelectedTab = createTrackedSelector(create<SelectedTabStore>((set) => ({
     selectedTab: null,
     setSelectedTab: (selectedTab: string | null) => set({ selectedTab })
+})));
+
+interface TranslationStore {
+    rawTranslation: Translation;
+    setLanguage: (language: string) => void;
+    t: (key: string, ...anything: never[]) => string;
+    fetchLanguages: () => MetaData["languages"];
+    currentLanguage: string;
+    _hasHydrated: boolean;
+    setHasHydrated: (hasHydrated: boolean) => void;
+}
+
+export const useTranslationStore = createTrackedSelector(create(persist<TranslationStore>((set, get) => ({
+    rawTranslation: new Translation(),
+    currentLanguage: "en",
+    _hasHydrated: false,
+    setHasHydrated: (hasHydrated) => set({ _hasHydrated: hasHydrated }),
+    setLanguage: async (language: string) => {
+        await get().rawTranslation.fetchTranslation(language);
+        set({ currentLanguage: language });
+    },
+    t: (key: string, ...anything: never[]) => get().rawTranslation.t(get().currentLanguage, key, ...anything),
+    fetchLanguages: () => get().rawTranslation.metaData.languages,
+}), {
+    name: "translation",
+    partialize: (state) => Object.fromEntries(Object.entries(state).filter(([key]) => key === "currentLanguage")) as unknown as TranslationStore,
+    onRehydrateStorage: () => async (state) => {
+        await state?.rawTranslation.fetchMetaData();
+
+        await state?.rawTranslation.fetchTranslation(state?.currentLanguage);
+
+        state!.setHasHydrated(true);
+      },
 })));

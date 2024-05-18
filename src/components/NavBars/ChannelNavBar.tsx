@@ -12,6 +12,7 @@ import ConfirmLeave from "../Modals/ConfirmLeave.tsx";
 import BaseSettings from "../Modals/BaseSettings.tsx";
 import Overview from "../Settings/Guild/OverView.tsx";
 import ConfirmDelete from "../Modals/ConfirmDelete.tsx";
+import Roles from "../Settings/Guild/Roles.tsx";
 
 const ChannelIcon = ({
     icon,
@@ -282,7 +283,7 @@ const
                 {/* the modals we use for the buttons */}
                 <ChangeNickname isOpen={isNicknameOpen} onOpenChange={onOpenChange} onClose={onClose} />
                 <ConfirmLeave isOpen={isConfirmLeaveOpen} onOpenChange={onOpenChangeConfirmLeave} onClose={onCloseConfirmLeave} />
-                <BaseSettings title="This is a test — Settings" isOpen={isGuildSettingsOpen} onOpenChange={onOpenChangeGuildSettings} onClose={onCloseGuildSettings} sections={[{
+                <BaseSettings title="This is a test — Settings" isOpen={true} onOpenChange={onOpenChangeGuildSettings} onClose={onCloseGuildSettings} sections={[{
                     title: null,
                     children: [
                         {
@@ -294,7 +295,7 @@ const
                         {
                             title: "Roles",
                             id: "roles",
-                            section: <div>Roles</div>,
+                            section: <Roles />,
                             disabled: false
                         },
                         {

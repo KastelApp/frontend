@@ -1,8 +1,10 @@
 const Roles = () => {
     return (
-        <>
-            Hi
-        </>
+        <div className="mr-2 bg-accent rounded-lg">
+            <div className="flex flex-col p-4">
+                <h1 className="text-2xl font-semibold">Roles</h1>
+            </div>
+        </div>
     );
 };
 

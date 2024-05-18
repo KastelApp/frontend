@@ -1,0 +1,71 @@
+{
+  "_meta": {
+    "name": "French",
+    "code": "fr",
+    "contributors": [
+      {
+        "name": "DarkerInk",
+        "id": "1234567890"
+      }
+    ]
+  },
+  "_debug": {
+    "title": "This is always translated (FR)"
+  },
+  "error": {
+    "forohfor": {
+      "header": "404 - Page Not Found",
+      "message": "La page que vous recherchez n'existe pas.",
+      "buttons": {
+        "home": "Accueil",
+        "back": "Retour"
+      }
+    }
+  },
+  "home": {
+    "title": "Abandonnez ces plateformes qui s'en fichent !",
+    "subtitle": "Pourquoi se contenter de moins quand vous pouvez avoir une plateforme qui se soucie de vous ? Rejoignez Kastel, la plateforme qui se soucie de vous !",
+    "subtitle2": "Kastel est gratuit, sécurisé et fonctionne sur votre navigateur, votre ordinateur de bureau et vos appareils mobiles.",
+    "getStarted": "Commencer",
+    "download": "Télécharger pour",
+    "navbar": {
+      "login": "Connexion",
+      "signup": "S'inscrire",
+      "blog": "Blog",
+      "support": "Support !",
+      "docs": "Documentation"
+    }
+  },
+  "acknowledgements": {
+    "staff": {
+      "title": "Rencontrez le Personnel",
+      "message": "Les personnes qui rendent Kastel possible."
+    },
+    "contributors": {
+      "title": "Contributeurs",
+      "message": "Les personnes qui aident à rendre Kastel meilleur."
+    },
+    "libraries": {
+      "title": "Bibliothèques",
+      "message": "Les bibliothèques qui rendent Kastel possible."
+    }
+  },
+  "login": {
+    "title": "Bienvenue de Retour !",
+    "subtitle": "Connectez-vous à votre compte pour continuer.",
+    "email": {
+      "label": "Email",
+      "description": "L'adresse e-mail que vous avez utilisée pour vous inscrire",
+      "error": "Veuillez saisir une adresse e-mail valide"
+    },
+    "password": {
+      "placeholder": "Entrez votre mot de passe",
+      "label": "Mot de passe",
+      "description": "Le mot de passe de votre compte",
+      "error": "Veuillez entrer un mot de passe valide"
+    },
+    "register": "Vous n'avez pas de compte ? S'inscrire",
+    "forgot": "Mot de passe oublié ?",
+    "button": "Connexion"
+  }
+}
