@@ -8,6 +8,8 @@ import "@/styles/globals.css";
 import ErrorBoundary from "@/layouts/ErrorBoundary.tsx";
 import ErrorHandler from "@/layouts/ErrorHandler.tsx";
 import { useTranslationStore } from "@/wrapper/Stores.ts";
+import SEO from "@/components/SEO.tsx";
+import { DefaultSeo } from "next-seo";
 
 const App = ({ Component, pageProps }: AppProps) => {
 	const router = useRouter();
@@ -18,15 +20,18 @@ const App = ({ Component, pageProps }: AppProps) => {
 	if (!_hasHydrated) return null;
 
 	return (
-		<ErrorBoundary>
-			<ErrorHandler>
-				<NextUIProvider navigate={router.push}>
-					<NextThemesProvider>
-						<Component {...pageProps} />
-					</NextThemesProvider>
-				</NextUIProvider>
-			</ErrorHandler>
-		</ErrorBoundary>
+		<>
+			<DefaultSeo {...SEO} />
+			<ErrorBoundary>
+				<ErrorHandler>
+					<NextUIProvider navigate={router.push}>
+						<NextThemesProvider>
+							<Component {...pageProps} />
+						</NextThemesProvider>
+					</NextUIProvider>
+				</ErrorHandler>
+			</ErrorBoundary>
+		</>
 	);
 };
 

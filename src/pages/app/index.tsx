@@ -5,6 +5,7 @@ const App = () => {
 
     return (
         <AppLayout>
+
             <DmNavBar />
         </AppLayout>
     );

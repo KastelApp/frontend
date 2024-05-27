@@ -3,6 +3,7 @@ import { Card, Input, Link, useDisclosure, Modal, ModalContent, ModalHeader, Mod
 import { useState } from "react";
 import { EyeIcon, EyeOffIcon } from "lucide-react";
 import confetti from "canvas-confetti";
+import SEO from "@/components/SEO.tsx";
 
 const Register = () => {
     const [isVisible, setIsVisible] = useState(false);
@@ -27,6 +28,10 @@ const Register = () => {
     const { onClose: onCloseCaptcha, isOpen: isOpenCaptcha, onOpenChange: onOpenChangeCaptcha } = useDisclosure();
 
     return (
+        <>
+            <SEO
+                title={"Register"}
+            />
         <HomeLayout>
             <div className="flex justify-center items-center">
                 <Card className="flex items-center justify-center mt-32 w-full max-w-md p-8 bg-accent">
@@ -160,6 +165,7 @@ const Register = () => {
                 </ModalContent>
             </Modal>
         </HomeLayout>
+            </>
     );
 };
 

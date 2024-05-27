@@ -3,6 +3,7 @@ import { useTranslationStore } from "@/wrapper/Stores.ts";
 import { Button } from "@nextui-org/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import SEO from "@/components/SEO.tsx";
 
 const FourOhFour = () => {
 	const router = useRouter();
@@ -10,6 +11,10 @@ const FourOhFour = () => {
 	const { t } = useTranslationStore();
 
 	return (
+		<>
+			<SEO
+				title={"Page Not Found"}
+			/>
 		<HomeLayout>
 			<div className="bg-cover text-white py-32 flex items-center justify-center ">
 				<div className="text-center">
@@ -22,6 +27,7 @@ const FourOhFour = () => {
 				</div>
 			</div>
 		</HomeLayout>
+			</>
 	);
 };
 

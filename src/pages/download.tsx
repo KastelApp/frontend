@@ -2,6 +2,7 @@ import HomeLayout from "@/layouts/HomeLayout.tsx";
 import { Button } from "@nextui-org/react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import SEO from "@/components/SEO.tsx";
 
 const IndexPage = () => {
 
@@ -14,6 +15,10 @@ const IndexPage = () => {
     }, []);
 
     return (
+        <>
+            <SEO
+                title={"Download"}
+            />
         <HomeLayout>
             <div className="bg-cover text-white py-32 flex items-center justify-center ">
                 <div className="text-center">
@@ -25,6 +30,7 @@ const IndexPage = () => {
                 </div>
             </div>
         </HomeLayout>
+            </>
     );
 };
 

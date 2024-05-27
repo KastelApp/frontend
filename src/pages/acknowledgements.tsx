@@ -1,6 +1,7 @@
 import HomeLayout from "@/layouts/HomeLayout.tsx";
 import { useTranslationStore } from "@/wrapper/Stores.ts";
 import { Avatar, Card } from "@nextui-org/react";
+import SEO from "@/components/SEO.tsx";
 
 interface NormalAcknowledgementData {
     name: string;
@@ -67,6 +68,10 @@ const Acknowledgements = () => {
 
 
     return (
+        <>
+            <SEO
+                title={"Acknowledgements"}
+            />
         <HomeLayout>
             <div className="container mx-auto p-4 flex flex-col gap-4">
                 <div className="text-center">
@@ -88,6 +93,7 @@ const Acknowledgements = () => {
                 <Libraries data={libraries} />
             </div>
         </HomeLayout>
+            </>
     );
 };
 
