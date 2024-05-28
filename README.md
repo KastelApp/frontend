@@ -23,6 +23,7 @@ refactoring code, etc)
 ## Maintainers
 
 - [Tea Cup](https://github.com/TheTeaCup)
+- [DarkerInk](https://github.com/Darker-Ink)
 
 # License
 

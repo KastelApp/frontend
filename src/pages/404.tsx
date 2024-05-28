@@ -12,22 +12,24 @@ const FourOhFour = () => {
 
 	return (
 		<>
-			<SEO
-				title={"Page Not Found"}
-			/>
-		<HomeLayout>
-			<div className="bg-cover text-white py-32 flex items-center justify-center ">
-				<div className="text-center">
-					<h1 className="text-3xl font-bold">{t("error.forohfor.header")}</h1>
-					<p className="text-medium mt-4">{t("error.forohfor.message")}</p>
-					<div className="mt-8">
-						<Button href="/" as={Link} size="lg" variant="flat" color="primary">{t("error.forohfor.buttons.home")}</Button>
-						<Button onClick={() => router.back()} className="ml-4" size="lg" variant="flat" color="success" >{t("error.forohfor.buttons.back")}</Button>
+			<SEO title={"Page Not Found"} />
+			<HomeLayout>
+				<div className="bg-cover text-white py-32 flex items-center justify-center ">
+					<div className="text-center">
+						<h1 className="text-3xl font-bold">{t("error.forohfor.header")}</h1>
+						<p className="text-medium mt-4">{t("error.forohfor.message")}</p>
+						<div className="mt-8">
+							<Button href="/" as={Link} size="lg" variant="flat" color="primary">
+								{t("error.forohfor.buttons.home")}
+							</Button>
+							<Button onClick={() => router.back()} className="ml-4" size="lg" variant="flat" color="success">
+								{t("error.forohfor.buttons.back")}
+							</Button>
+						</div>
 					</div>
 				</div>
-			</div>
-		</HomeLayout>
-			</>
+			</HomeLayout>
+		</>
 	);
 };
 

@@ -1,72 +1,72 @@
 {
-  "_meta": {
-    "name": "English",
-    "code": "en",
-    "contributors": [
-      {
-        "name": "DarkerInk",
-        "id": "1234567890"
-      }
-    ]
-  },
-  "_debug": {
-    "title": "This is always translated",
-    "test": "{{lorempsum.words:25}}"
-  },
-  "error": {
-    "forohfor": {
-      "header": "404 - Page Not Found",
-      "message": "The page you are looking for does not exist.",
-      "buttons": {
-        "home": "Go Home",
-        "back": "Go Back"
-      }
-    }
-  },
-  "home": {
-    "title": "Ditch those platforms who just don't care!",
-    "subtitle": "Why settle for less when you can have a platform that cares about you? Join Kastel, the platform that cares about you!",
-    "subtitle2": "Kastel is free, secure, and works on your browser, desktop and mobile devices.",
-    "getStarted": "Get Started",
-    "download": "Download for",
-    "navbar": {
-      "login": "Login",
-      "signup": "Sign Up",
-      "blog": "Blog",
-      "support": "Support!",
-      "docs": "Documentation"
-    }
-  },
-  "acknowledgements": {
-    "staff": {
-      "title": "Meet the Staff",
-      "message": "The people who make Kastel possible."
-    },
-    "contributors": {
-      "title": "Contributors",
-      "message": "The people who help make Kastel better."
-    },
-    "libraries": {
-      "title": "Libraries",
-      "message": "The libraries that make Kastel possible."
-    }
-  },
-  "login": {
-    "title": "Welcome Back!",
-    "subtitle": "Login to your account to continue.",
-    "email": {
-      "label": "Email",
-      "description": "The email address you used to sign up",
-      "error": "Please enter a valid email address"
-    },
-    "password": {
-      "placeholder": "Enter your password",
-      "label": "Password",
-      "description": "The password to your account",
-      "error": "Please enter a valid password"
-    },
-    "register": "Don't have an account? Register",
-    "forgot": "Forgot password?",
-    "button": "Login"
-  }
+	"_meta": {
+		"name": "English",
+		"code": "en",
+		"contributors": [
+			{
+				"name": "DarkerInk",
+				"id": "1234567890"
+			}
+		]
+	},
+	"_debug": {
+		"title": "This is always translated",
+		"test": "{{lorempsum.words:25}}"
+	},
+	"error": {
+		"forohfor": {
+			"header": "404 - Page Not Found",
+			"message": "The page you are looking for does not exist.",
+			"buttons": {
+				"home": "Go Home",
+				"back": "Go Back"
+			}
+		}
+	},
+	"home": {
+		"title": "Ditch those platforms who just don't care!",
+		"subtitle": "Why settle for less when you can have a platform that cares about you? Join Kastel, the platform that cares about you!",
+		"subtitle2": "Kastel is free, secure, and works on your browser, desktop and mobile devices.",
+		"getStarted": "Get Started",
+		"download": "Download for",
+		"navbar": {
+			"login": "Login",
+			"signup": "Sign Up",
+			"blog": "Blog",
+			"support": "Support!",
+			"docs": "Documentation"
+		}
+	},
+	"acknowledgements": {
+		"staff": {
+			"title": "Meet the Staff",
+			"message": "The people who make Kastel possible."
+		},
+		"contributors": {
+			"title": "Contributors",
+			"message": "The people who help make Kastel better."
+		},
+		"libraries": {
+			"title": "Libraries",
+			"message": "The libraries that make Kastel possible."
+		}
+	},
+	"login": {
+		"title": "Welcome Back!",
+		"subtitle": "Login to your account to continue.",
+		"email": {
+			"label": "Email",
+			"description": "The email address you used to sign up",
+			"error": "Please enter a valid email address"
+		},
+		"password": {
+			"placeholder": "Enter your password",
+			"label": "Password",
+			"description": "The password to your account",
+			"error": "Please enter a valid password"
+		},
+		"register": "Don't have an account? Register",
+		"forgot": "Forgot password?",
+		"button": "Login"
+	}
 }

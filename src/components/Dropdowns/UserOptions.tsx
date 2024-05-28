@@ -8,135 +8,190 @@ import OverView from "../Settings/User/Overview.tsx";
 import BaseSettings from "../Modals/BaseSettings.tsx";
 import { Section } from "@/types/settings.ts";
 
-const UserOptions = ({
-    children
-}: {
-    children: React.ReactElement | React.ReactElement[];
-}) => {
-    const [statusOpen, setStatusOpen] = useState(false);
-    const [status, setStatus] = useState<"Online" | "Invisible" | "DND" | "Idle">("Invisible");
+const UserOptions = ({ children }: { children: React.ReactElement | React.ReactElement[] }) => {
+	const [statusOpen, setStatusOpen] = useState(false);
+	const [status, setStatus] = useState<"Online" | "Invisible" | "DND" | "Idle">("Invisible");
 
-    const color = status === "Online" ? "success" : status === "Idle" ? "warning" : status === "DND" ? "danger" : "gray-500";
+	const color =
+		status === "Online" ? "success" : status === "Idle" ? "warning" : status === "DND" ? "danger" : "gray-500";
 
-    // ? Custom Status Modal
-    const {
-        isOpen,
-        onOpenChange,
-        onClose
-    } = useDisclosure();
+	// ? Custom Status Modal
+	const { isOpen, onOpenChange, onClose } = useDisclosure();
 
-    // ? Settings Modal
-    const {
-        isOpen: isSettingsOpen,
-        onOpenChange: onSettingsOpenChange,
-        onClose: onSettingsClose
-    } = useDisclosure();
+	// ? Settings Modal
+	const { isOpen: isSettingsOpen, onOpenChange: onSettingsOpenChange, onClose: onSettingsClose } = useDisclosure();
 
-    const [dropdownOpen, setDropdownOpen] = useState(false);
+	const [dropdownOpen, setDropdownOpen] = useState(false);
 
-    const handleAction = (action: string | number) => {
-        switch (action) {
-            case "changeStatus": {
-                setStatusOpen(!statusOpen);
+	const handleAction = (action: string | number) => {
+		switch (action) {
+			case "changeStatus": {
+				setStatusOpen(!statusOpen);
 
-                break;
-            }
+				break;
+			}
 
-            case "customStatus": {
-                onOpenChange();
-                setDropdownOpen(false);
+			case "customStatus": {
+				onOpenChange();
+				setDropdownOpen(false);
 
-                break;
-            }
+				break;
+			}
 
-            case "settings": {
-                onSettingsOpenChange();
-                setDropdownOpen(false);
+			case "settings": {
+				onSettingsOpenChange();
+				setDropdownOpen(false);
 
-                break;
-            }
-        }
-    };
+				break;
+			}
+		}
+	};
 
-    const handleStatus = (status: "Online" | "Idle" | "DND" | "Invisible") => {
-        setStatusOpen(true);
-        setStatus(status);
+	const handleStatus = (status: "Online" | "Idle" | "DND" | "Invisible") => {
+		setStatusOpen(true);
+		setStatus(status);
 
-        // todo: handle other logic
-    };
+		// todo: handle other logic
+	};
 
-    const sections: Section[] = [{
-        title: null,
-        children: [
-            {
-                title: "Overview",
-                id: "overview",
-                section: <OverView />,
-                disabled: false
-            }
-        ]
-    }];
+	const sections: Section[] = [
+		{
+			title: null,
+			children: [
+				{
+					title: "Overview",
+					id: "overview",
+					section: <OverView />,
+					disabled: false,
+				},
+			],
+		},
+	];
 
-    return (
-        <>
-            <BaseSettings title="User Settings" isOpen={isSettingsOpen} onOpenChange={onSettingsOpenChange} onClose={onSettingsClose} sections={sections} initialSection={"overview"} />
-            <div onContextMenu={(e) => {
-                e.preventDefault();
+	return (
+		<>
+			<BaseSettings
+				title="User Settings"
+				isOpen={isSettingsOpen}
+				onOpenChange={onSettingsOpenChange}
+				onClose={onSettingsClose}
+				sections={sections}
+				initialSection={"overview"}
+			/>
+			<div
+				onContextMenu={(e) => {
+					e.preventDefault();
 
-                setDropdownOpen(!dropdownOpen);
+					setDropdownOpen(!dropdownOpen);
 
-                if (!dropdownOpen) {
-                    setStatusOpen(false);
-                }
-            }}>
-                <CustomStatus isOpen={isOpen} onOpenChange={onOpenChange} onClose={onClose} />
-                <Dropdown placement="right" closeOnSelect={false} onOpenChange={(isOpen) => {
-                    if (!isOpen) {
-                        setDropdownOpen(false);
-                        setStatusOpen(false);
-                    }
-                }} isOpen={dropdownOpen}>
-                    <DropdownTrigger>
-                        <button>
-                            {children}
-                        </button>
-                    </DropdownTrigger>
-                    <DropdownMenu aria-label="Static Actions" onAction={handleAction}>
-                        <DropdownItem closeOnSelect={false} key="changeStatus" variant="flat" endContent={<ArrowRight size={20} className={twMerge("transition-transform duration-300", statusOpen ? "rotate-90" : "")} />}>
-                            <p>Status</p>
-                            <p className={twMerge("text-xs mt-1", `text-${color}`)}>{status}</p>
-                            <motion.div
-                                className="grid grid-cols-[repeat(2,minmax(0px,1fr))] items-center mt-2"
-                                initial="collapsed"
-                                animate={statusOpen ? "expanded" : "collapsed"}
-                                variants={{
-                                    collapsed: { height: 0, opacity: 0 },
-                                    expanded: { height: "auto", opacity: 1 },
-                                }}
-                                transition={{ duration: 0.3 }}
-                            >
-                                <Chip onClick={() => handleStatus("Online")} variant="flat" className="mb-2 min-w-[60px]" radius="sm" size="sm" color="success">Online</Chip>
-                                <Chip onClick={() => handleStatus("Idle")} variant="flat" className="right-2 mb-2 min-w-[60px]" radius="sm" size="sm" color="warning">Idle</Chip>
-                                <Chip onClick={() => handleStatus("DND")} variant="flat" className="mb-2 min-w-[60px]" radius="sm" size="sm" color="danger">DND</Chip>
-                                <Chip onClick={() => handleStatus("Invisible")} variant="flat" className="right-2 mb-2 min-w-[60px]" radius="sm" size="sm" color="default">Invisible</Chip>
-                            </motion.div>
-                        </DropdownItem>
+					if (!dropdownOpen) {
+						setStatusOpen(false);
+					}
+				}}
+			>
+				<CustomStatus isOpen={isOpen} onOpenChange={onOpenChange} onClose={onClose} />
+				<Dropdown
+					placement="right"
+					closeOnSelect={false}
+					onOpenChange={(isOpen) => {
+						if (!isOpen) {
+							setDropdownOpen(false);
+							setStatusOpen(false);
+						}
+					}}
+					isOpen={dropdownOpen}
+				>
+					<DropdownTrigger>
+						<button>{children}</button>
+					</DropdownTrigger>
+					<DropdownMenu aria-label="Static Actions" onAction={handleAction}>
+						<DropdownItem
+							closeOnSelect={false}
+							key="changeStatus"
+							variant="flat"
+							endContent={
+								<ArrowRight
+									size={20}
+									className={twMerge("transition-transform duration-300", statusOpen ? "rotate-90" : "")}
+								/>
+							}
+						>
+							<p>Status</p>
+							<p className={twMerge("text-xs mt-1", `text-${color}`)}>{status}</p>
+							<motion.div
+								className="grid grid-cols-[repeat(2,minmax(0px,1fr))] items-center mt-2"
+								initial="collapsed"
+								animate={statusOpen ? "expanded" : "collapsed"}
+								variants={{
+									collapsed: { height: 0, opacity: 0 },
+									expanded: { height: "auto", opacity: 1 },
+								}}
+								transition={{ duration: 0.3 }}
+							>
+								<Chip
+									onClick={() => handleStatus("Online")}
+									variant="flat"
+									className="mb-2 min-w-[60px]"
+									radius="sm"
+									size="sm"
+									color="success"
+								>
+									Online
+								</Chip>
+								<Chip
+									onClick={() => handleStatus("Idle")}
+									variant="flat"
+									className="right-2 mb-2 min-w-[60px]"
+									radius="sm"
+									size="sm"
+									color="warning"
+								>
+									Idle
+								</Chip>
+								<Chip
+									onClick={() => handleStatus("DND")}
+									variant="flat"
+									className="mb-2 min-w-[60px]"
+									radius="sm"
+									size="sm"
+									color="danger"
+								>
+									DND
+								</Chip>
+								<Chip
+									onClick={() => handleStatus("Invisible")}
+									variant="flat"
+									className="right-2 mb-2 min-w-[60px]"
+									radius="sm"
+									size="sm"
+									color="default"
+								>
+									Invisible
+								</Chip>
+							</motion.div>
+						</DropdownItem>
 
-                        <DropdownItem closeOnSelect={true} key="customStatus" variant="flat">
-                            <p>Custom Status</p>
-                            <p className="text-xs text-gray-500">My Custom Status</p>
-                        </DropdownItem>
-                        <DropdownItem key="settings" variant="flat" endContent={<Settings size={20} />}>
-                            Settings
-                        </DropdownItem>
-                        <DropdownItem key="delete" variant="flat" className="text-danger" color="danger" endContent={<LogOut size={20} />}>
-                            Logout
-                        </DropdownItem>
-                    </DropdownMenu>
-                </Dropdown>
-            </div>
-        </>
-    );
+						<DropdownItem closeOnSelect={true} key="customStatus" variant="flat">
+							<p>Custom Status</p>
+							<p className="text-xs text-gray-500">My Custom Status</p>
+						</DropdownItem>
+						<DropdownItem key="settings" variant="flat" endContent={<Settings size={20} />}>
+							Settings
+						</DropdownItem>
+						<DropdownItem
+							key="delete"
+							variant="flat"
+							className="text-danger"
+							color="danger"
+							endContent={<LogOut size={20} />}
+						>
+							Logout
+						</DropdownItem>
+					</DropdownMenu>
+				</Dropdown>
+			</div>
+		</>
+	);
 };
 
 export default UserOptions;

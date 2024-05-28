@@ -1,9 +1,5 @@
 const Library = () => {
-    return (
-        <>
-            Library
-        </>
-    );
+	return <>Library</>;
 };
 
 export default Library;

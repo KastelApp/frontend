@@ -3,14 +3,13 @@ import ChannelNavBar from "@/components/NavBars/ChannelNavBar.tsx";
 import AppLayout from "@/layouts/AppLayout.tsx";
 
 const Guild = () => {
-
-    return (
-        <AppLayout>
-            <ChannelNavBar>
-                <TextBasedChannel />
-            </ChannelNavBar>
-        </AppLayout>
-    );
+	return (
+		<AppLayout>
+			<ChannelNavBar>
+				<TextBasedChannel />
+			</ChannelNavBar>
+		</AppLayout>
+	);
 };
 
 export default Guild;

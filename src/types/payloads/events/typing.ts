@@ -1,4 +1,4 @@
 export interface TypingPayload {
-  userId: string;
-  channelId: string;
+	userId: string;
+	channelId: string;
 }

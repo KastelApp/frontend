@@ -16,12 +16,10 @@ const IndexPage = () => {
 		}
 	}, []);
 
-
 	return (
 		<>
-			<SEO
-				title={"Home"}
-			/>
+			<SEO title={"Home"} />
+
 			<HomeLayout>
 				<div className="bg-cover text-white py-32 flex items-center justify-center ">
 					<div className="text-center">
@@ -29,8 +27,19 @@ const IndexPage = () => {
 						<p className="text-medium mt-4">{t("home.subtitle")}</p>
 						<p className="text-medium">{t("home.subtitle2")}</p>
 						<div className="mt-8">
-							<Button href="/register" as={Link} size="lg" variant="flat" color="primary">{t("home.getStarted")}</Button>
-							<Button href="/download" as={Link} className="ml-4" size="lg" variant="flat" color="success" >{t("home.download")} {device.includes("Android") ? "Android" : device.includes("iPhone") ? "iOS" : device.includes("Windows") ? "Windows" : "Unknown"}</Button>
+							<Button href="/register" as={Link} size="lg" variant="flat" color="primary">
+								{t("home.getStarted")}
+							</Button>
+							<Button href="/download" as={Link} className="ml-4" size="lg" variant="flat" color="success">
+								{t("home.download")}{" "}
+								{device.includes("Android")
+									? "Android"
+									: device.includes("iPhone")
+										? "iOS"
+										: device.includes("Windows")
+											? "Windows"
+											: "Unknown"}
+							</Button>
 						</div>
 					</div>
 				</div>

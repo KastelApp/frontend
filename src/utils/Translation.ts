@@ -1,302 +1,303 @@
 interface Contributor {
-    name: string;
-    email?: string;
-    id?: string;
+	name: string;
+	email?: string;
+	id?: string;
 }
 
 interface RawTranslation {
-    _meta: {
-        name: string;
-        code: string;
-        contributors: Contributor[];
-    };
-    [key: string]: string | RawTranslation | {
-        name: string;
-        code: string;
-        contributors: Contributor[];
-    };
+	_meta: {
+		name: string;
+		code: string;
+		contributors: Contributor[];
+	};
+	[key: string]:
+		| string
+		| RawTranslation
+		| {
+				name: string;
+				code: string;
+				contributors: Contributor[];
+		  };
 }
 
 type TranslationType = {
-    [key: string]: string | TranslationType;
+	[key: string]: string | TranslationType;
 };
 
 interface CachedTranslation {
-    data: TranslationType;
-    contributors: Contributor[];
+	data: TranslationType;
+	contributors: Contributor[];
 }
 
 interface MetaData {
-    languages: {
-        code: string;
-        // ? You can use a language if its complete, incomplete or in-progress. Planned ones are not allowed to be used.
-        status: "complete" | "incomplete" | "in-progress" | "planned";
-        // ? 0 = 0%, 1 = 100%. Warning should be showed if its under 65% (we default to english for any missing translations)
-        // ? progress is unknown until we fetch the translation since we compare the keys vs the english keys.
-        progress?: number;
-        notes: string[];
-    }[];
+	languages: {
+		code: string;
+		// ? You can use a language if its complete, incomplete or in-progress. Planned ones are not allowed to be used.
+		status: "complete" | "incomplete" | "in-progress" | "planned";
+		// ? 0 = 0%, 1 = 100%. Warning should be showed if its under 65% (we default to english for any missing translations)
+		// ? progress is unknown until we fetch the translation since we compare the keys vs the english keys.
+		progress?: number;
+		notes: string[];
+	}[];
 }
 
-const lorempsum = (options: { count: number; type: "word" | "words" | "sentence" | "sentences" | "paragraph" | "paragraphs"; }) => {
-    const placeholderText =
-        `Lorem ipsum dolor sit amet  
+const lorempsum = (options: {
+	count: number;
+	type: "word" | "words" | "sentence" | "sentences" | "paragraph" | "paragraphs";
+}) => {
+	const placeholderText = `Lorem ipsum dolor sit amet  
     consectetur adipiscing elit sed  
     do eiusmod tempor incididunt ut 
     labore et dolore magna aliqua.`;
 
-    const split = placeholderText.split(" ");
+	const split = placeholderText.split(" ");
 
-    switch (options.type) {
-        case "word":
-            return split[0];
-        case "words":
-            return split.slice(0, options.count).join(" ");
-        case "sentence":
-            return split.slice(0, 5).join(" ");
-        case "sentences":
-            return split.slice(0, 5 * options.count).join(" ");
-        case "paragraph":
-            return split.slice(0, 5).join(" ");
-        case "paragraphs":
-            return split.slice(0, 5 * options.count).join(" ");
-    }
+	switch (options.type) {
+		case "word":
+			return split[0];
+		case "words":
+			return split.slice(0, options.count).join(" ");
+		case "sentence":
+			return split.slice(0, 5).join(" ");
+		case "sentences":
+			return split.slice(0, 5 * options.count).join(" ");
+		case "paragraph":
+			return split.slice(0, 5).join(" ");
+		case "paragraphs":
+			return split.slice(0, 5 * options.count).join(" ");
+	}
 };
 
 class Translation {
-    public cachedTranslations: Map<string, CachedTranslation> = new Map();
+	public cachedTranslations: Map<string, CachedTranslation> = new Map();
 
-    public metaData: MetaData = {
-        languages: []
-    };
+	public metaData: MetaData = {
+		languages: [],
+	};
 
-    public defaultFunctions = {
-        date: {
-            now: (type: "eu" | "us" = "us") => {
-                const date = new Date();
+	public defaultFunctions = {
+		date: {
+			now: (type: "eu" | "us" = "us") => {
+				const date = new Date();
 
-                return type === "us"
-                    ? `${date.getMonth() + 1
-                    }/${date.getDate()}/${date.getFullYear()} ${date.toLocaleTimeString()}`
-                    : `${date.getDate()}/${date.getMonth() + 1
-                    }/${date.getFullYear()} ${date.toLocaleTimeString()}`;
-            },
-            time: (format: "12" | "24" = "12") => {
-                const date = new Date();
-                return format === "12"
-                    ? date.toLocaleTimeString()
-                    : `${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;
-            },
-        },
-        lorempsum: {
-            word: () => lorempsum({ count: 1, type: "word" }),
-            words: (count: number) => lorempsum({ count, type: "words" }),
-            sentence: () => lorempsum({ count: 1, type: "sentence" }),
-            sentences: (count: number) => lorempsum({ count, type: "sentences" }),
-            paragraph: () => lorempsum({ count: 1, type: "paragraph" }),
-            paragraphs: (count: number) => lorempsum({ count, type: "paragraphs" }),
-        }
-    };
+				return type === "us"
+					? `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()} ${date.toLocaleTimeString()}`
+					: `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()} ${date.toLocaleTimeString()}`;
+			},
+			time: (format: "12" | "24" = "12") => {
+				const date = new Date();
+				return format === "12"
+					? date.toLocaleTimeString()
+					: `${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;
+			},
+		},
+		lorempsum: {
+			word: () => lorempsum({ count: 1, type: "word" }),
+			words: (count: number) => lorempsum({ count, type: "words" }),
+			sentence: () => lorempsum({ count: 1, type: "sentence" }),
+			sentences: (count: number) => lorempsum({ count, type: "sentences" }),
+			paragraph: () => lorempsum({ count: 1, type: "paragraph" }),
+			paragraphs: (count: number) => lorempsum({ count, type: "paragraphs" }),
+		},
+	};
 
+	private async safeFetch(url: string, options?: RequestInit): Promise<object | null> {
+		try {
+			const fetched = await fetch(url, options);
 
+			if (!fetched.ok) {
+				return null;
+			}
 
-    private async safeFetch(url: string, options?: RequestInit): Promise<object | null> {
-        try {
-            const fetched = await fetch(url, options);
+			const text = await fetched.text();
 
-            if (!fetched.ok) {
-                return null;
-            }
+			return JSON.parse(text);
+		} catch {
+			return null;
+		}
+	}
 
-            const text = await fetched.text();
+	public async fetchTranslation(language: string) {
+		if (this.cachedTranslations.has(language)) {
+			return this.cachedTranslations.get(language)?.data;
+		}
 
-            return JSON.parse(text);
-        } catch {
-            return null;
-        }
-    }
+		const response = (await this.safeFetch(`/locales/${language}.json`)) as RawTranslation;
 
-    public async fetchTranslation(language: string) {
+		if (!response) {
+			return null;
+		}
 
-        if (this.cachedTranslations.has(language)) {
-            return this.cachedTranslations.get(language)?.data;
-        }
+		if (!response._meta) {
+			return null;
+		}
 
-        const response = await this.safeFetch(`/locales/${language}.json`) as RawTranslation;
+		const contributors = response._meta.contributors;
 
-        if (!response) {
-            return null;
-        }
+		// @ts-expect-error idc
+		delete response._meta;
 
-        if (!response._meta) {
-            return null;
-        }
+		this.cachedTranslations.set(language, {
+			data: response as TranslationType,
+			contributors,
+		});
 
-        const contributors = response._meta.contributors;
+		if (language === "en") return response as TranslationType;
 
-        // @ts-expect-error idc
-        delete response._meta;
+		const progress = this.compareProgress(response as TranslationType);
+		const found = this.metaData.languages.find((lang) => lang.code === language);
 
-        this.cachedTranslations.set(language, {
-            data: response as TranslationType,
-            contributors
-        });
+		if (!found) {
+			this.metaData.languages.push({
+				code: language,
+				status: "incomplete",
+				progress,
+				notes: [],
+			});
+		} else {
+			found.progress = progress;
+		}
 
-        if (language === "en") return response as TranslationType;
+		return response as TranslationType;
+	}
 
-        const progress = this.compareProgress(response as TranslationType);
-        const found = this.metaData.languages.find((lang) => lang.code === language);
+	private countKeys(value: number, obj: TranslationType) {
+		for (const key in obj) {
+			if (typeof obj[key] === "object") {
+				this.countKeys(value, obj[key] as TranslationType);
+			}
 
-        if (!found) {
-            this.metaData.languages.push({
-                code: language,
-                status: "incomplete",
-                progress,
-                notes: []
-            });
-        } else {
-            found.progress = progress;
-        }
+			value++;
+		}
 
-        return response as TranslationType;
-    }
-    
-    private countKeys (value: number, obj: TranslationType) {
-        for (const key in obj) {
-            if (typeof obj[key] === "object") {
-                this.countKeys(value, obj[key] as TranslationType);
-            }
+		return value;
+	}
 
-            value++;
-        }
+	private compareProgress(translation: TranslationType) {
+		// english should always be cached
+		const english = this.cachedTranslations.get("en");
 
-        return value;
-    }
+		if (!english) {
+			throw new Error("English translation is not cached?");
+		}
 
-    private compareProgress(translation: TranslationType) {
-        // english should always be cached
-        const english = this.cachedTranslations.get("en");
+		const englishKeys = this.countKeys(0, english.data);
+		const totalKeys = this.countKeys(0, translation);
 
-        if (!english) {
-            throw new Error("English translation is not cached?");
-        }
+		return totalKeys / englishKeys;
+	}
 
+	public async fetchMetaData() {
+		if (!("window" in globalThis)) return;
 
-        const englishKeys = this.countKeys(0, english.data);
-        const totalKeys = this.countKeys(0, translation);
+		const response = (await this.safeFetch("/locales/meta.json")) as MetaData;
 
-        return totalKeys / englishKeys;
-    }
+		if (!response) {
+			throw new Error("Failed to fetch meta data");
+		}
 
-    public async fetchMetaData() {
-        if (!("window" in globalThis)) return;
+		this.metaData = response;
 
-        const response = await this.safeFetch("/locales/meta.json") as MetaData;
+		await this.fetchTranslation("en");
 
-        if (!response) {
-            throw new Error("Failed to fetch meta data");
-        }
+		return response;
+	}
 
-        this.metaData = response;
+	public t(lang: string, key: string, ...anything: never[]): string {
+		const translation = this.cachedTranslations.get(lang) ?? this.cachedTranslations.get("en");
+		const foundEnglish = this.cachedTranslations.get("en");
 
-        await this.fetchTranslation("en");
+		if (!translation || !foundEnglish) {
+			throw new Error("No translation found");
+		}
 
-        return response;
-    }
+		const keys = key.split(".");
 
-    public t(lang: string, key: string, ...anything: never[]): string {
-        const translation = this.cachedTranslations.get(lang) ?? this.cachedTranslations.get("en");
-        const foundEnglish = this.cachedTranslations.get("en");
+		let current = translation.data;
+		let englishCurrent = foundEnglish.data;
 
-        if (!translation || !foundEnglish) {
-            throw new Error("No translation found");
-        }
+		for (const k of keys) {
+			if (!current[k]) {
+				if (englishCurrent[k]) {
+					current = englishCurrent[k] as TranslationType;
 
-        const keys = key.split(".");
+					if (process.env.NODE_ENV === "development")
+						console.warn(`Translation key "${key}" is missing in ${lang}, defaulting to english (${k})`);
+				} else {
+					if (process.env.NODE_ENV === "development")
+						console.warn(`Translation key "${key}" is missing in ${lang} and english (${k})`);
 
-        let current = translation.data;
-        let englishCurrent = foundEnglish.data;
+					return key;
+				}
 
-        for (const k of keys) {
-            if (!current[k]) {
-                if (englishCurrent[k]) {
-                    current = englishCurrent[k] as TranslationType;
+				continue;
+			}
 
-                    if (process.env.NODE_ENV === "development") console.warn(`Translation key "${key}" is missing in ${lang}, defaulting to english (${k})`);
-                } else {
-                    if (process.env.NODE_ENV === "development") console.warn(`Translation key "${key}" is missing in ${lang} and english (${k})`);
+			current = current?.[k] as TranslationType;
+			englishCurrent = englishCurrent?.[k] as TranslationType;
+		}
 
-                    return key;
-                }
+		if (typeof current === "string") {
+			return this.parse(current, ...anything);
+		}
 
-                continue;
-            }
+		return key;
+	}
 
-            current = current?.[k] as TranslationType;
-            englishCurrent = englishCurrent?.[k] as TranslationType;
-        }
+	private parse(str: string, ...anything: never[]) {
+		const functions = {
+			...this.defaultFunctions,
+			...anything.reduce((acc, cur) => ({ ...acc, ...(cur as object) }), {}),
+		};
 
-        if (typeof current === "string") {
-            return this.parse(current, ...anything);
-        }
+		let newString = str;
 
-        return key;
-    }
+		const matches = newString.match(/{{(.*?)}}/g);
 
-    private parse(str: string, ...anything: never[]) {
-        const functions = {
-            ...this.defaultFunctions,
-            ...anything.reduce((acc, cur) => ({ ...acc, ...cur as object }), {}),
-        };
+		if (!matches) return newString;
 
-        let newString = str;
+		for (const match of matches) {
+			const matchWithoutBrackets = match.replace("{{", "").replace("}}", "");
+			const split = matchWithoutBrackets.split(":");
+			const key = split[0];
+			const args = split.slice(1);
 
-        const matches = newString.match(/{{(.*?)}}/g);
+			const splitKey = key.split(".");
 
-        if (!matches) return newString;
+			let current: unknown = functions;
 
-        for (const match of matches) {
-            const matchWithoutBrackets = match.replace("{{", "").replace("}}", "");
-            const split = matchWithoutBrackets.split(":");
-            const key = split[0];
-            const args = split.slice(1);
+			for (const key of splitKey) {
+				if (typeof current === "string") break;
 
-            const splitKey = key.split(".");
+				const found = current?.[key as keyof typeof current];
 
-            let current: unknown = functions;
+				if (!found) {
+					current = "";
 
-            for (const key of splitKey) {
-                if (typeof current === "string") break;
+					continue;
+				}
 
-                const found = current?.[key as keyof typeof current];
+				current = found;
+			}
 
-                if (!found) {
-                    current = "";
+			if (typeof current === "function") {
+				newString = newString.replace(match, current(...args));
+			} else {
+				newString = newString.replace(match, current as string);
+			}
+		}
 
-                    continue;
-                }
-
-                current = found;
-            }
-
-            if (typeof current === "function") {
-                newString = newString.replace(match, current(...args));
-            } else {
-                newString = newString.replace(match, current as string);
-            }
-        }
-
-        return newString;
-    }
+		return newString;
+	}
 }
 
 export default Translation;
 
 export {
-    Translation,
-    type TranslationType,
-    type MetaData,
-    type CachedTranslation,
-    type Contributor,
-    type RawTranslation
+	Translation,
+	type TranslationType,
+	type MetaData,
+	type CachedTranslation,
+	type Contributor,
+	type RawTranslation,
 };
