@@ -66,6 +66,20 @@ const UserOptions = ({ children }: { children: React.ReactElement | React.ReactE
 				},
 			],
 		},
+		{ // t! If the user does not have developer mode enabled, do not show these
+			title: "Developer",
+			children: [
+				{
+					title: "Experiments",
+					id: "experiments",
+					// t! Users should have access to "public" experiments, but not "private" ones
+					// t! private ones are something that are still in the works but may break or may need access for a certian api endpoint
+					// t! which we haven't finalized yet (or if we just want a low roll outs)
+					section: <div>Experiments</div>,
+					disabled: false,
+				}
+			],
+		}
 	];
 
 	return (

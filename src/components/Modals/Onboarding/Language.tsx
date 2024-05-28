@@ -10,6 +10,8 @@ interface SupportedLanguages {
 	id: string;
 }
 
+// t! Work on this file since we've added translation support
+
 const Language = () => {
 	const currentSupportedLanguages: SupportedLanguages[] = [
 		{

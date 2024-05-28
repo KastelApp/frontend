@@ -7,6 +7,9 @@ import BugHunterLevel3 from "./BugHunter3.tsx";
 import { publicFlags as pubFlags } from "@/utils/Constants.ts";
 import Sponsor from "./Sponsor.tsx";
 
+/**
+ * Just a small helper component to display all badges a user has.
+ */
 const AllBadges = ({
 	privateFlags,
 	publicFlags,

@@ -166,6 +166,9 @@ const ChannelNavBar = ({ children }: { children?: React.ReactElement | React.Rea
 		],
 	};
 
+	// ? Built in channels are something like what a few other platforms have, ModMail will be a feature where users can message the mods
+	// ? And have it be easier for mods to see the messages, and respond to them instead of using a 3rd party bot PLUS these don't count towards
+	// ? The server channel limit, and Channels lets users customize what channels they can see client side
 	const builtInChannels = [
 		{
 			name: "Channels",
@@ -188,6 +191,7 @@ const ChannelNavBar = ({ children }: { children?: React.ReactElement | React.Rea
 		},
 	];
 
+	// t! These are temporary and will be removed once API support arrives
 	const normalChannels: Channel[] = [
 		{
 			name: "Uncategorized",

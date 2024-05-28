@@ -11,13 +11,20 @@ interface ExperimentProps {
 	children: React.ReactNode;
 }
 
+/**
+ * This is the experiment item, anything inside of this component will be shown / hidden depending on if the user has access to the experiment
+ */
 const ExperimentItem: React.FC<ExperimentItemProps> = ({ children }) => {
+	// ! While we don't use experiment, priority or isDefault, they are required since we use it in the root Experiment component
 	return <>{children}</>;
 };
 
 // ? Just so we can locate the component in the tree
 ExperimentItem.displayName = "ExperimentItem";
 
+/**
+ * This is the experiment root, this will handle all the logic for showing the correct experiments
+ */
 const Experiment: React.FC<ExperimentProps> = ({ children }) => {
 	const [activeExperiments, setActiveExperiments] = useState<string[]>([]);
 

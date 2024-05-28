@@ -49,6 +49,10 @@ export interface BaseContextMenuProps {
 	placement?: OverlayPlacement;
 }
 
+/**
+ * ContextMenu is used for a few things, this is just a helper to mimic the context menu
+ * Main use is for guilds, messages and member context menu's
+ */
 const BaseContextMenu = ({
 	values,
 	children, // ? this is the trigger

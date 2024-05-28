@@ -14,7 +14,7 @@ const Section = ({
 }) => {
 	return (
 		<div className="flex flex-col gap-1 p-2 select-none">
-			{title && <h2 className="text-md font-semibold select-none mb-2 text-white ml-4">{title}</h2>}
+			{title && <h2 className="text-md font-semibold select-none mb-2 text-white ml-2">{title}</h2>}
 			{children.map((child) => (
 				<div
 					key={child.title}
@@ -46,6 +46,9 @@ const Section = ({
 	);
 };
 
+/**
+ * This is a helper made to make creating setting modals easier, only two spots using this right now are user and guild settings
+ */
 const BaseSettings = ({
 	isOpen,
 	onOpenChange,

@@ -1,6 +1,9 @@
 import Message from "@/components/Message/Message.tsx";
 import MessageContainer from "@/components/MessageContainer/MessageContainer.tsx";
 
+/**
+ * This is for TextBased Channel's, i.e DM's, Guild Text Channels, etc.
+ */
 const TextBasedChannel = () => {
 	return (
 		<MessageContainer placeholder="Message #general">

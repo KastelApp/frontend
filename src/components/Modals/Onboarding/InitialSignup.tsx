@@ -5,6 +5,9 @@ import { twMerge } from "tailwind-merge";
 import Language from "./Language.tsx";
 import Appearance from "./Appearance.tsx";
 
+// note: Currently this is a WIP and will not be shown after signup, in the future it should though
+// note: the reasoning is due to the fact of idk what else to show nor how I want to show it
+
 interface Steps {
 	title: string;
 	id: string;
