@@ -1,70 +1,70 @@
 {
-    "_meta": {
-      "name": "German",
-      "code": "de",
-      "contributors": [
-        {
-          "name": "Rayk"
-        }
-      ]
-    },
-    "_debug": {
-      "title": "Dies ist immer übersetzt."
-    },
-    "error": {
-      "forohfor": {
-        "header": "404 - Seite nicht gefunden",
-        "message": "Die gesuchte Seite existiert nicht.",
-        "buttons": {
-          "home": "Home",
-          "back": "Zurück"
-        }
-      }
-    },
-    "home": {
-      "title": "Weg mit den Plattformen, die sich einfach nicht kümmern!",
-      "subtitle": "Warum sollte man sich mit weniger zufrieden geben, wenn man eine Plattform haben kann, die sich um einen kümmert? Werde ein Mitglied von Kastel, der Plattform, die sich um dich kümmert!",
-      "subtitle2": "Kastel ist kostenlos, sicher, und funktioniert in deinem Browser, Desktop und Mobilgeräten.",
-      "getStarted": "Los geht's",
-      "download": "Herunterladen für",
-      "navbar": {
-        "login": "Anmelden",
-        "signup": "Registrieren",
-        "blog": "Blog",
-        "support": "Hilfe!",
-        "docs": "Dokumentation"
-      }
-    },
-    "acknowledgements": {
-      "staff": {
-        "title": "Lerne das Staff-Team kennen",
-        "message": "Lerne die Leute kennen, die Kastel ermöglichen."
-      },
-      "contributors": {
-        "title": "Mitwirkende",
-        "message": "Die Leute, die Kastel besser machen."
-      },
-      "libraries": {
-        "title": "Bibliotheken",
-        "message": "Die Bibliotheken, die Kastel ermöglichen."
-      }
-    },
-    "login": {
-      "title": "Willkommen zurück!",
-      "subtitle": "Melde dich an, um fortzufahren.",
-      "email": {
-        "label": "E-Mail",
-        "description": "Die E-Mail-Adresse, mit der du dich angemeldet hast.",
-        "error": "Bitte gib eine gültige E-Mail-Adresse ein."
-      },
-      "password": {
-        "placeholder": "Gib dein Passwort ein.",
-        "label": "Passwort",
-        "description": "Das Passwort für deinen Account.",
-        "error": "Bitte gib ein gültiges Passwort ein."
-      },
-      "register": "Du hast keinen Account? Registrieren",
-      "forgot": "Passwort vergessen?",
-      "button": "Anmelden"
-    }
-  }
+	"_meta": {
+		"name": "German",
+		"code": "de",
+		"contributors": [
+			{
+				"name": "Rayk"
+			}
+		]
+	},
+	"_debug": {
+		"title": "Dies ist immer übersetzt."
+	},
+	"error": {
+		"forohfor": {
+			"header": "404 - Seite nicht gefunden",
+			"message": "Die gesuchte Seite existiert nicht.",
+			"buttons": {
+				"home": "Home",
+				"back": "Zurück"
+			}
+		}
+	},
+	"home": {
+		"title": "Weg mit den Plattformen, die sich einfach nicht kümmern!",
+		"subtitle": "Warum sollte man sich mit weniger zufrieden geben, wenn man eine Plattform haben kann, die sich um einen kümmert? Werde ein Mitglied von Kastel, der Plattform, die sich um dich kümmert!",
+		"subtitle2": "Kastel ist kostenlos, sicher, und funktioniert in deinem Browser, Desktop und Mobilgeräten.",
+		"getStarted": "Los geht's",
+		"download": "Herunterladen für",
+		"navbar": {
+			"login": "Anmelden",
+			"signup": "Registrieren",
+			"blog": "Blog",
+			"support": "Hilfe!",
+			"docs": "Dokumentation"
+		}
+	},
+	"acknowledgements": {
+		"staff": {
+			"title": "Lerne das Staff-Team kennen",
+			"message": "Lerne die Leute kennen, die Kastel ermöglichen."
+		},
+		"contributors": {
+			"title": "Mitwirkende",
+			"message": "Die Leute, die Kastel besser machen."
+		},
+		"libraries": {
+			"title": "Bibliotheken",
+			"message": "Die Bibliotheken, die Kastel ermöglichen."
+		}
+	},
+	"login": {
+		"title": "Willkommen zurück!",
+		"subtitle": "Melde dich an, um fortzufahren.",
+		"email": {
+			"label": "E-Mail",
+			"description": "Die E-Mail-Adresse, mit der du dich angemeldet hast.",
+			"error": "Bitte gib eine gültige E-Mail-Adresse ein."
+		},
+		"password": {
+			"placeholder": "Gib dein Passwort ein.",
+			"label": "Passwort",
+			"description": "Das Passwort für deinen Account.",
+			"error": "Bitte gib ein gültiges Passwort ein."
+		},
+		"register": "Du hast keinen Account? Registrieren",
+		"forgot": "Passwort vergessen?",
+		"button": "Anmelden"
+	}
+}
