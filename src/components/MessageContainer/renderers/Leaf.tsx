@@ -1,11 +1,11 @@
 import { LeafProps } from "../SlateTypes.ts";
 
 const shouldBeBold = (text: string): boolean => {
-	return text.startsWith("**") && text.endsWith("**");
+	return text?.startsWith("**") && text?.endsWith("**");
 };
 
 const shouldBeUnderlined = (text: string): boolean => {
-	return text.startsWith("__") && text.endsWith("__");
+	return text?.startsWith("__") && text?.endsWith("__");
 };
 
 const Leaf = ({ attributes, children, leaf }: LeafProps) => {
@@ -13,14 +13,14 @@ const Leaf = ({ attributes, children, leaf }: LeafProps) => {
     let tailwindStyles = "";
 
     // ? Check for bold styling first to handle nested cases correctly
-    if (shouldBeBold(children.props.leaf.text)) {
+    if (shouldBeBold(children?.props?.leaf?.text)) {
         tailwindStyles += "font-bold ";
         // ? Remove bold markers for further processing
-        const textWithoutBoldMarkers = children.props.leaf.text.slice(2, -2);
+        const textWithoutBoldMarkers = children?.props?.leaf?.text?.slice(2, -2);
         if (shouldBeUnderlined(textWithoutBoldMarkers)) {
             tailwindStyles += "underline ";
         }
-    } else if (shouldBeUnderlined(children.props.leaf.text)) {
+    } else if (shouldBeUnderlined(children?.props?.leaf?.text)) {
         tailwindStyles += "underline ";
     }
 

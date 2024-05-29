@@ -13,7 +13,7 @@ const Section = ({
 	setSection: (section: string) => void;
 }) => {
 	return (
-		<div className="flex flex-col gap-1 p-2 select-none">
+		<div className="flex flex-col gap-1 p-2 select-none xl:min-w-64 min-w-60 w-full">
 			{title && <h2 className="text-md font-semibold select-none mb-2 text-white ml-2">{title}</h2>}
 			{children.map((child) => (
 				<div
@@ -76,20 +76,26 @@ const BaseSettings = ({
 				isKeyboardDismissDisabled={true}
 			>
 				<ModalContent>
-					<div className="flex flex-row w-full m-0 overflow-x-hidden h-full">
+					<div className="flex w-full m-0 overflow-x-hidden h-full">
 						<div className="flex w-full h-full">
-							<div className={twMerge("min-w-64 m-0 bg-accent overflow-y-auto")}>
-								<p className="text-white text-md font-semibold p-4 select-none">{title}</p>
-								{sections.map((section) => (
-									<Section
-										title={section.title}
-										key={section.title}
-										// eslint-disable-next-line react/no-children-prop
-										children={section.children}
-										setSection={setSelectedSection}
-									/>
-								))}
+							<div className="bg-accent overflow-y-auto h-screen xl:min-w-96 min-w-64 flex justify-end">
+								<div className="justify-end mr-2">
+									<p className="text-white text-md font-semibold p-4 select-none truncate max-w-64">
+										{title}
+									</p>
+									{sections.map((section) => (
+										<Section
+											title={section.title}
+											key={section.title}
+											// eslint-disable-next-line react/no-children-prop
+											children={section.children}
+											setSection={setSelectedSection}
+										/>
+									))}
+
+								</div>
 							</div>
+
 							<div className="flex flex-col w-full p-5 pt-4 h-full overflow-auto">
 								{
 									sections

@@ -119,7 +119,7 @@ const ChannelNavBar = ({ children }: { children?: React.ReactElement | React.Rea
 	} = useDisclosure();
 
 	const currentGuild = {
-		name: "This is a test",
+		name: "Kastel Development",
 		owner: true,
 		icon: {
 			text: "Official & Partnered",
@@ -305,7 +305,7 @@ const ChannelNavBar = ({ children }: { children?: React.ReactElement | React.Rea
 			<ChangeNickname isOpen={isNicknameOpen} onOpenChange={onOpenChange} onClose={onClose} />
 			<ConfirmLeave isOpen={isConfirmLeaveOpen} onOpenChange={onOpenChangeConfirmLeave} onClose={onCloseConfirmLeave} />
 			<BaseSettings
-				title="This is a test — Settings"
+				title={currentGuild.name}
 				isOpen={true}
 				onOpenChange={onOpenChangeGuildSettings}
 				onClose={onCloseGuildSettings}

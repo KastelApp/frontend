@@ -5,6 +5,7 @@ import { ThemeProvider as NextThemesProvider } from "next-themes";
 import { fontSans, fontMono } from "@/config/fonts";
 import { useRouter } from "next/router";
 import "@/styles/globals.css";
+import "@/styles/colorPalette.css";
 import ErrorBoundary from "@/layouts/ErrorBoundary.tsx";
 import ErrorHandler from "@/layouts/ErrorHandler.tsx";
 import { useTranslationStore } from "@/wrapper/Stores.ts";
