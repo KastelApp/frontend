@@ -98,11 +98,13 @@ const ColorPicker = ({ selectedRole }: {
 				}
 			}}>
 				<PopoverTrigger>
-					<Tooltip content="Custom Color">
-						<div className="cursor-pointer w-11 h-11 rounded-md mr-2" style={{ backgroundColor: selectedRole?.color }} />
-					</Tooltip>
+					<div>
+						<Tooltip content="Custom Color">
+							<div className="cursor-pointer w-11 h-11 rounded-md mr-2" style={{ backgroundColor: selectedRole?.color }} />
+						</Tooltip>
+					</div>
 				</PopoverTrigger>
-				<PopoverContent className="w-full">
+				<PopoverContent className="">
 					{delayOpen && <CustomColorPicker
 						color={color}
 						onChange={(color) => {
