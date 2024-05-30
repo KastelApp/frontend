@@ -113,7 +113,7 @@ const ChannelNavBar = ({ children }: { children?: React.ReactElement | React.Rea
 	} = useDisclosure();
 
 	const {
-		// isOpen: isGuildSettingsOpen,
+		isOpen: isGuildSettingsOpen,
 		onOpenChange: onOpenChangeGuildSettings,
 		onClose: onCloseGuildSettings,
 	} = useDisclosure();
@@ -306,7 +306,7 @@ const ChannelNavBar = ({ children }: { children?: React.ReactElement | React.Rea
 			<ConfirmLeave isOpen={isConfirmLeaveOpen} onOpenChange={onOpenChangeConfirmLeave} onClose={onCloseConfirmLeave} />
 			<BaseSettings
 				title={currentGuild.name}
-				isOpen={true}
+				isOpen={isGuildSettingsOpen}
 				onOpenChange={onOpenChangeGuildSettings}
 				onClose={onCloseGuildSettings}
 				sections={[

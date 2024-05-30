@@ -1,46 +1,14 @@
 import { useState } from "react";
 import { Tabs, Tab, Button, Input, Switch, Chip, Divider, Popover, PopoverTrigger, PopoverContent, Tooltip } from "@nextui-org/react";
-import { useColor, ColorPicker as CustomColorPicker } from "react-color-palette";
+import { useColor, ColorPicker as CustomColorPicker, ColorService } from "react-color-palette";
+import { Trash } from "lucide-react";
+import PermissionsDescriptions from "@/utils/PermissionsDescriptions.ts";
 
 const generateRgbAndHsv = (color: string) => {
-	const r = parseInt(color.slice(1, 3), 16);
-	const g = parseInt(color.slice(3, 5), 16);
-	const b = parseInt(color.slice(5, 7), 16);
-
-	const max = Math.max(r, g, b);
-	const min = Math.min(r, g, b);
-
-	const v = max / 255;
-	const delta = max - min;
-
-	let h = 0;
-	let s = 0;
-
-	if (max !== 0) {
-		s = delta / max;
-	}
-
-	if (max === min) {
-		h = 0;
-	} else {
-		switch (max) {
-			case r:
-				h = (g - b) / delta + (g < b ? 6 : 0);
-				break;
-			case g:
-				h = (b - r) / delta + 2;
-				break;
-			case b:
-				h = (r - g) / delta + 4;
-				break;
-		}
-		h /= 6;
-	}
-
 	return {
 		hex: color,
-		rgb: { r, g, b, a: 1 },
-		hsv: { h: h * 360, s: s * 100, v: v * 100, a: 1 }
+		rgb: ColorService.toRgb(color),
+		hsv: ColorService.toHsv(color)
 	};
 };
 
@@ -104,7 +72,7 @@ const ColorPicker = ({ selectedRole }: {
 						</Tooltip>
 					</div>
 				</PopoverTrigger>
-				<PopoverContent className="">
+				<PopoverContent className="w-full h-full">
 					{delayOpen && <CustomColorPicker
 						color={color}
 						onChange={(color) => {
@@ -112,7 +80,7 @@ const ColorPicker = ({ selectedRole }: {
 							selectedRole.color = color.hex;
 						}}
 						hideAlpha
-						hideInput={["hsv"]}
+						hideInput={["hsv", "rgb"]}
 						height={150}
 					/>}
 				</PopoverContent>
@@ -174,29 +142,40 @@ const Roles = () => {
 		}
 	];
 
+	roles.push(...roles);
+	roles.push(...roles);
+	roles.push(...roles);
+	roles.push(...roles);
+	roles.push(...roles);
+	roles.push(...roles);
+
 	const [selectedRole, setSelectedRole] = useState(roles[0]);
+	const [advancedMode, setAdvancedMode] = useState(false);
 
 	return (
 		<div className="mr-2 bg-accent rounded-lg p-4">
 			<h1 className="text-2xl font-semibold mb-4">Roles</h1>
-			<div className="flex">
+			<div className="flex h-screen">
 				<div>
-					<Button className="mb-4 min-w-64 rounded-md">Create New Role</Button>
+					<Button className="mb-4 min-w-80 max-w-80 rounded-md text-white">Create New Role</Button>
 					<div className="flex">
-						<div className="flex flex-col space-y-2 mr-4">
+						<div className="flex flex-col space-y-2 mr-4 overflow-y-auto max-h-[95vh]">
 							{roles.map((role, index) => (
 								<Chip
 									key={index}
 									onClick={() => setSelectedRole(role)}
-									variant="bordered"
-									className="min-w-64 max-w-64 rounded-md cursor-pointer h-10"
+									variant="flat"
+									className="min-w-80 max-w-80 rounded-md cursor-pointer min-h-10"
 								>
-									<span className="flex items-center space-x-2">
-										<div className={"w-4 h-4 rounded-full mr-1"} style={{
-											backgroundColor: role.color
-										}}></div>
-										{role.name}
-									</span>
+									<div className="flex group select-none">
+										<span className="flex items-center space-x-2 text-white">
+											<div className={"w-4 h-4 rounded-full mr-1"} style={{
+												backgroundColor: role.color
+											}} />
+											{role.name}
+										</span>
+										<Trash size={16} className="cursor-pointer ml-auto scale-0 group-hover:scale-100 transition-transform duration-100 ease-in-out text-danger" />
+									</div>
 								</Chip>
 							))}
 						</div>
@@ -204,42 +183,83 @@ const Roles = () => {
 				</div>
 				<div className="flex w-full">
 					<Divider orientation="vertical" />
-					<div className="pl-4 flex-1 bg-charcoal-700 rounded-md ml-2">
+					<div className="pl-4 pr-4 flex-1 bg-charcoal-700 rounded-md ml-2">
 						<Tabs
-
 							color="primary"
 							variant="light"
 							className="w-full border-b-2 border-slate-800 text-slate-800"
-
 						>
 							<Tab key="1" title="Information">
 								<div className="flex flex-col space-y-4">
-									<Input
-										label="Role Name"
-										defaultValue={selectedRole.name}
-										isRequired
-										className="w-1/3"
-									/>
-									<div className="flex space-x-2">
-										<ColorPicker selectedRole={selectedRole} />
-
+									<div className="space-y-2">
+										<p className="text-white font-semibold">Role Name</p>
+										<Input
+											value={selectedRole.name}
+											isRequired
+											className="w-full h-8"
+											radius="sm"
+											classNames={{
+												inputWrapper: "h-8"
+											}}
+										/>
 									</div>
-									<Switch checked={false}>
-										Display Role Separately
-									</Switch>
-									<Switch checked={false}>
-										Allow anyone to mention
-									</Switch>
-									<Switch checked={false}>
-										Allow access to age restricted channels
-									</Switch>
+									<div className="space-y-2">
+										<p className="text-white font-semibold">Role Color</p>
+										<ColorPicker selectedRole={selectedRole} />
+									</div>
+									<Divider />
+									<div className="cursor-pointer h-full w-full">
+										<Switch checked={false}>
+											Display role members separately from online members
+										</Switch>
+										<p className="text-gray-500 text-sm select-none">This will display role members in a separate category in the member list</p>
+									</div>
+									<Divider />
+									<div className="cursor-pointer h-full w-full">
+										<Switch checked={false}>
+											Mentionable
+										</Switch>
+										<p className="text-gray-500 text-sm select-none">This will allow anyone to mention this role</p>
+									</div>
+									<Divider />
+									<div className="cursor-pointer h-full w-full">
+										<Switch checked={false}>
+											Allow access to age restricted channels
+										</Switch>
+										<p className="text-gray-500 text-sm select-none">This will allow anyone with this role to access age restricted channels</p>
+									</div>
+									<Divider />
 								</div>
 							</Tab>
 							<Tab key="2" title="Permissions">
-								<div>Permissions Content</div>
+								<div className="flex flex-col space-y-6">
+									<div className="cursor-pointer h-full w-full flex">
+										<p className="text-white select-none font-semibold">Advanced Mode</p>
+										<Switch className="ml-auto" checked={advancedMode} onChange={() => setAdvancedMode(!advancedMode)} size="sm" />
+									</div>
+									<Input
+										placeholder="Search Permissions"
+										className="w-full h-8"
+										radius="sm"
+										classNames={{
+											inputWrapper: "h-8"
+										}}
+									/>
+									<div className="flex flex-col space-y-2 overflow-y-auto max-h-[80vh]">
+										{Object.entries(advancedMode ? PermissionsDescriptions.advanced.groups : PermissionsDescriptions.simple.groups).map(([index, permission]) => (
+											<div key={index} className="bg-accent rounded-md p-4">
+												<div className="flex">
+													<p className="text-white font-semibold">{permission.label}</p>
+													<Switch className="ml-auto" checked={false} size="sm" />
+												</div>
+												<p className="text-gray-300 text-sm select-none mt-2">{permission.description}</p>
+											</div>
+										))}
+									</div>
+								</div>
 							</Tab>
-							<Tab key="3" title="Users">
-								<div>Users Content</div>
+							<Tab key="3" title="Users" isDisabled>
+								Coming Soon
 							</Tab>
 						</Tabs>
 					</div>
