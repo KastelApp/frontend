@@ -123,8 +123,8 @@ const RichEmbed = ({
                             <div key={groupIndex} className="flex flex-wrap mb-2">
                                 {group.map((field, fieldIndex) => (
                                     <span key={fieldIndex} className={twMerge("mr-2", field.inline ? "max-w-xs" : "max-w-lg")}>
-                                        <strong>{field.name}</strong>
-                                        <p>{field.value}</p>
+                                        <strong className="text-md text-white">{field.name}</strong>
+                                        <p className="text-sm text-white">{field.value}</p>
                                     </span>
                                 ))}
                             </div>
@@ -133,7 +133,7 @@ const RichEmbed = ({
                 </CardBody>
                 {(embed.footer?.text || embed.footer?.timestamp) && (
                     <CardFooter className="mr-3">
-                        <div className="flex items-center justify-between text-xs">
+                        <div className="flex items-center justify-between text-xs text-white">
                             {embed.footer.iconUrl && <>
                                 <Avatar src={embed.footer.iconUrl} className="h-6 w-6 rounded-full" />
                                 <span className="ml-1.5 mr-1 select-none">•</span>
