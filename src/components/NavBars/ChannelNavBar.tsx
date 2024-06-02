@@ -78,19 +78,20 @@ interface Channel {
 	channels?: Channel[];
 }
 
-const HandleChannels = ({ channel }: { channel: Channel }) => {
+const HandleChannels = ({ channel, onClick }: { channel: Channel, onClick?: () => void }) => {
 	return (
 		<div>
 			<ChannelIcon
 				text={channel.name}
-				rightIcon={channel.channels && <ChevronDown size={20} color="#acaebf" />}
+				rightIcon={channel.channels ? <ChevronDown size={20} color="#acaebf" /> : <Settings size={16} onClick={onClick} />}
 				icon={channel.icon}
 				shouldHideHover={Boolean(channel.channels)}
+				onlyShowOnHover={!channel.channels}
 			/>
 			{channel.channels && (
 				<div className="ml-1">
 					{channel.channels?.map((subChannel, index) => (
-						<ChannelIcon key={index} text={subChannel.name} icon={subChannel.icon} />
+						<ChannelIcon key={index} text={subChannel.name} icon={subChannel.icon} rightIcon={<Settings size={16} onClick={onClick} />} onlyShowOnHover />
 					))}
 				</div>
 			)}
@@ -116,6 +117,12 @@ const ChannelNavBar = ({ children }: { children?: React.ReactElement | React.Rea
 		isOpen: isGuildSettingsOpen,
 		onOpenChange: onOpenChangeGuildSettings,
 		onClose: onCloseGuildSettings,
+	} = useDisclosure();
+	
+	const {
+		isOpen: isChannelSettingsOpen,
+		onOpenChange: onOpenChangeChannelSettings,
+		onClose: onCloseChannelSettings,
 	} = useDisclosure();
 
 	const currentGuild = {
@@ -305,6 +312,36 @@ const ChannelNavBar = ({ children }: { children?: React.ReactElement | React.Rea
 			<ChangeNickname isOpen={isNicknameOpen} onOpenChange={onOpenChange} onClose={onClose} />
 			<ConfirmLeave isOpen={isConfirmLeaveOpen} onOpenChange={onOpenChangeConfirmLeave} onClose={onCloseConfirmLeave} />
 			<BaseSettings
+			title="Channel Settings"
+			isOpen={isChannelSettingsOpen}
+			onOpenChange={onOpenChangeChannelSettings}
+			onClose={onCloseChannelSettings}
+			initialSection="overview"
+			sections={[
+				{
+					title: null,
+					children: [
+						{
+							title: "Overview",
+							id: "overview",
+							section: <>Channel ovewview</>,
+							disabled: false,
+						}
+					]
+				},
+				{
+					title: null,
+					children: [
+						{
+							id: "delete",
+							title: "Delete",
+							danger: true,
+						}
+					]
+				}
+			]}
+			/>
+			<BaseSettings
 				title={currentGuild.name}
 				isOpen={isGuildSettingsOpen}
 				onOpenChange={onOpenChangeGuildSettings}
@@ -467,7 +504,9 @@ const ChannelNavBar = ({ children }: { children?: React.ReactElement | React.Rea
 							/>
 						))}
 						{normalChannels.map((channel, index) => (
-							<HandleChannels key={index} channel={channel} />
+							<HandleChannels key={index} channel={channel} onClick={() => {
+								onOpenChangeChannelSettings();
+							}} />
 						))}
 					</div>
 				</div>

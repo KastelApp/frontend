@@ -40,6 +40,13 @@ const nextConfig = {
 	eslint: {
 		ignoreDuringBuilds: true, // todo: remove since this is temp
 	},
+	env: {
+		API_URL: process.env.PUBLIC_API_URL,
+		API_WS_URL: process.env.PUBLIC_API_WS_URL,
+		API_VERSION: process.env.PUBLIC_API_VERSION,
+		KASTEL_DESKTOP_APP: process.env.PUBLIC_KASTEL_DESKTOP_APP,
+		CLOUDFLARE_TURNSTILE_SITE_KEY: process.env.PUBLIC_CLOUDFLARE_TURNSTILE_SITE_KEY,
+	}
 };
 
 module.exports = nextConfig;

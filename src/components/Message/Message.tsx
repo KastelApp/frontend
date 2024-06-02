@@ -4,6 +4,8 @@ import { useState } from "react";
 import { Pen, Reply, Trash2, Ellipsis } from "lucide-react";
 import { twMerge } from "tailwind-merge";
 import UserModal from "../Modals/UserModal.tsx";
+import RichEmbed, { Embed } from "./Embeds/RichEmbed.tsx";
+import IFrameEmbed from "./Embeds/IFrameEmbed.tsx";
 
 const Message = ({
 	content,
@@ -12,6 +14,7 @@ const Message = ({
 	className,
 	disableButtons,
 	tag,
+	embeds
 }: {
 	content: string;
 	replying: boolean;
@@ -19,8 +22,9 @@ const Message = ({
 	className?: string;
 	disableButtons?: boolean;
 	tag?: "System" | "Bot";
+	embeds?: Embed[];
 }) => {
-	const PopOverData = ({ children }: { children: React.ReactElement | React.ReactElement[] }) => {
+	const PopOverData = ({ children }: { children: React.ReactElement | React.ReactElement[]; }) => {
 		const [isOpen, setIsOpen] = useState(false);
 
 		const { isOpen: isModalOpen, onOpen, onClose } = useDisclosure();
@@ -121,6 +125,12 @@ const Message = ({
 						<div className="text-white whitespace-pre-line overflow-hidden break-all">
 							<p>{content}</p>
 						</div>
+						{embeds && embeds.map((embed, index) => (
+							<div key={index} className="mt-2 inline-block max-w-full overflow-hidden">
+								{embed.type === "Rich" ? 
+								<RichEmbed embed={embed} /> : embed.type === "Iframe" ? <IFrameEmbed embed={embed} /> : null}
+							</div>
+						))}
 					</div>
 				</div>
 			</div>

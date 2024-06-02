@@ -14,7 +14,7 @@ interface Member {
 	customStatus?: string;
 }
 
-const UserPopover = ({ member, onClick }: { member: Member; onClick?: () => void }) => {
+const UserPopover = ({ member, onClick }: { member: Member; onClick?: () => void; }) => {
 	return (
 		<div>
 			<div className="rounded-lg p-0 w-[18.70rem]">
@@ -60,29 +60,31 @@ const UserPopover = ({ member, onClick }: { member: Member; onClick?: () => void
 						<CardBody className="overflow-y-auto max-h-[85vh]">
 							<div>
 								<p className="text-white text-lg font-semibold">{member.username}</p>
-								<p className="text-gray-300 text-[0.7rem]">
+								<p className="text-gray-300 text-sm">
 									{member.username}#{member.discriminator}
 								</p>
-								{member.customStatus && <p className="text-gray-200 text-md mt-2 ml-1">{member.customStatus}</p>}
+								{member.customStatus && <p className="text-gray-200 text-md mt-2">{member.customStatus}</p>}
 							</div>
 							<Divider className="mt-2" />
 							<div className="mt-2">
-								<span className="text-gray-400">About Me:</span>
+								<span className="text-white font-bold">About Me</span>
 								<p className="text-gray-300 mt-2">{"Hey"}</p>
 							</div>
 							<div className="mt-2">
-								<span className="text-gray-400">Roles:</span>
+								<span className="text-white font-bold">Roles</span>
 								<div className="flex flex-wrap select-none">
 									{member.roles.map((role) => (
 										<div
-											className="flex flex-wrap bg-accent border-gray-400 border  rounded-md px-2 py-0 mt-2 mr-1 group"
+											className="flex flex-wrap bg-accent border-gray-400 border rounded-md px-2 py-0 mt-2 mr-1 group"
 											key={role}
 										>
-											{/* todo: fix, for some reason the X gets smaller when changing the px */}
-											<span className="flex box-border rounded-full border-background bg-warning w-3.5 h-3.5 min-w-3.5 min-h-3.5 px-1 mt-[0.1rem] mr-1">
+											{/*// todo: fix, for some reason the X gets smaller when changing the px */}
+											<span className="flex box-border rounded-full border-background w-3.5 h-3.5 min-w-3.5 min-h-3.5 px-1 mt-[0.1rem] mr-1" style={{
+												backgroundColor: "green",
+											}}>
 												<X size={14} className="hidden group-hover:block" strokeWidth={8} color="gray" />
 											</span>
-											<span className=" text-white text-xs">{role}</span>
+											<span className="text-white text-xs">{role}</span>
 										</div>
 									))}
 								</div>
