@@ -1,6 +1,7 @@
 import { type Section } from "@/types/settings.ts";
 import { Modal, ModalContent } from "@nextui-org/react";
-import React, { useState } from "react";
+import { Menu } from "lucide-react";
+import React, { useEffect, useState } from "react";
 import { twMerge } from "tailwind-merge";
 
 const Section = ({
@@ -64,6 +65,11 @@ const BaseSettings = ({
 	title: string;
 }) => {
 	const [selectedSection, setSelectedSection] = useState(initialSection);
+	const [open, setOpen] = useState(false);
+
+	useEffect(() => {
+		setOpen(false);
+	}, [selectedSection]);
 
 	return (
 		<>
@@ -78,8 +84,14 @@ const BaseSettings = ({
 				<ModalContent>
 					<div className="flex w-full m-0 overflow-x-hidden h-full">
 						<div className="flex w-full h-full">
-							<div className="bg-accent overflow-y-auto h-screen xl:min-w-96 min-w-64 flex justify-end">
+							<div className={twMerge("bg-accent overflow-y-auto h-screen xl:min-w-96 min-w-64 sm:flex justify-end", !open ? "hidden" : "absolute z-20 w-[100vw]")}>
 								<div className="justify-end mr-2">
+									<Menu
+										color="#acaebf"
+										size={24}
+										onClick={() => setOpen(!open)}
+										className="cursor-pointer sm:hidden"
+									/>
 									<p className="text-white text-md font-semibold p-4 select-none truncate max-w-64">
 										{title}
 									</p>
@@ -94,6 +106,14 @@ const BaseSettings = ({
 									))}
 
 								</div>
+							</div>
+
+							<div className={twMerge("overflow-auto sm:hidden justify-center cursor-pointer", open ? "hidden" : "")}>
+								<Menu
+									color="#acaebf"
+									size={24}
+									onClick={() => setOpen(!open)}
+								/>
 							</div>
 
 							<div className="flex flex-col w-full p-5 pt-4 h-full overflow-auto">
