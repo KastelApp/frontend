@@ -38,32 +38,35 @@ import ConfirmDelete from "../Modals/ConfirmDelete.tsx";
 import Roles from "../Settings/Guild/Roles.tsx";
 
 const ChannelIcon = ({
-	icon,
+	startContent,
 	text,
 	onlyShowOnHover,
-	rightIcon,
+	endContent,
 	divider,
 	shouldHideHover,
+	hasUnreadMessages
 }: {
 	text: string;
-	icon?: React.ReactElement | React.ReactElement[];
-	rightIcon?: React.ReactElement | React.ReactElement[];
+	startContent?: React.ReactElement | React.ReactElement[];
+	endContent?: React.ReactElement | React.ReactElement[];
 	onlyShowOnHover?: boolean;
 	divider?: boolean;
 	shouldHideHover?: boolean;
+	hasUnreadMessages?: boolean;
 }) => {
 	return (
 		<div className="first:mt-2">
 			<div
 				className={twMerge(
-					"flex items-center gap-1 p-1 cursor-pointer group rounded-md w-48 mb-1 text-white ",
+					"flex items-center gap-1 p-1 cursor-pointer group rounded-md w-48 mb-1 text-white transition-all duration-75 ease-in-out",
 					!shouldHideHover ? "hover:bg-slate-500" : "hover:text-slate-400",
 				)}
 			>
-				{icon}
-				<p className=" text-sm truncate">{text}</p>
-				{rightIcon && (
-					<div className={twMerge("ml-auto", onlyShowOnHover ? "scale-0 group-hover:scale-100" : "")}>{rightIcon}</div>
+				{hasUnreadMessages && <div className="w-1 h-2 bg-white absolute left-1 rounded-r-lg" />}
+				{startContent}
+				<p className={twMerge("text-sm truncate", hasUnreadMessages ? "font-bold" : "")}>{text}</p>
+				{endContent && (
+					<div className={twMerge("ml-auto", onlyShowOnHover ? "scale-0 group-hover:scale-100" : "")}>{endContent}</div>
 				)}
 			</div>
 			{divider && <Divider />}
@@ -83,15 +86,17 @@ const HandleChannels = ({ channel, onClick }: { channel: Channel, onClick?: () =
 		<div>
 			<ChannelIcon
 				text={channel.name}
-				rightIcon={channel.channels ? <ChevronDown size={20} color="#acaebf" /> : <Settings size={16} onClick={onClick} />}
-				icon={channel.icon}
+				endContent={channel.channels ? <ChevronDown size={20} color="#acaebf" /> : <Settings size={16} onClick={onClick} />}
+				startContent={channel.icon}
 				shouldHideHover={Boolean(channel.channels)}
 				onlyShowOnHover={!channel.channels}
 			/>
 			{channel.channels && (
 				<div className="ml-1">
 					{channel.channels?.map((subChannel, index) => (
-						<ChannelIcon key={index} text={subChannel.name} icon={subChannel.icon} rightIcon={<Settings size={16} onClick={onClick} />} onlyShowOnHover />
+						<ChannelIcon key={index} text={subChannel.name} startContent={subChannel.icon} endContent={<Settings size={16} onClick={onClick} />} onlyShowOnHover hasUnreadMessages={
+							index % 2 === 0
+						} />
 					))}
 				</div>
 			)}
@@ -498,8 +503,8 @@ const ChannelNavBar = ({ children }: { children?: React.ReactElement | React.Rea
 							<ChannelIcon
 								key={index}
 								text={channel.name}
-								icon={channel.icon}
-								rightIcon={channel.rightIcon}
+								startContent={channel.icon}
+								endContent={channel.rightIcon}
 								divider={index === builtInChannels.length - 1}
 							/>
 						))}

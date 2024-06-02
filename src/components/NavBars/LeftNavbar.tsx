@@ -99,6 +99,7 @@ const LeftNavbar = memo(() => {
 								],
 								placement: "right",
 							}}
+							hasUnReadMessages
 						/>
 					))}
 					<Modal />
@@ -126,6 +127,7 @@ const LeftNavBarIcon = ({
 	InContent,
 	onClick,
 	delay,
+	hasUnReadMessages
 	// contextMenuItemsProps
 }: {
 	icon: React.ReactElement | React.ReactElement[];
@@ -137,10 +139,11 @@ const LeftNavBarIcon = ({
 	badgeColor?: "default" | "primary" | "secondary" | "success" | "warning" | "danger";
 	badgePosition?: "top-right" | "top-left" | "bottom-right" | "bottom-left";
 	href?: string;
-	InContent?: React.FC<{ children: React.ReactElement | React.ReactElement[] }>;
+	InContent?: React.FC<{ children: React.ReactElement | React.ReactElement[]; }>;
 	onClick?: () => void;
 	delay?: number;
 	contextMenuItemsProps?: BaseContextMenuProps;
+	hasUnReadMessages?: boolean;
 }) => {
 	const width = `w-${size}`;
 	const height = `h-${size}`;
@@ -166,7 +169,7 @@ const LeftNavBarIcon = ({
 		children: React.ReactElement | React.ReactElement[];
 	}): React.ReactElement => (InContent ? <InContent>{children}</InContent> : (children as React.ReactElement));
 
-	const TooltipOrNot = ({ children }: { children: React.ReactElement | React.ReactElement[] }): React.ReactElement =>
+	const TooltipOrNot = ({ children }: { children: React.ReactElement | React.ReactElement[]; }): React.ReactElement =>
 		description ? (
 			<Tooltip content={description} showArrow className="select-none" placement="right" delay={delay}>
 				{children}
@@ -206,6 +209,8 @@ const LeftNavBarIcon = ({
 					height,
 				)}
 			>
+
+				{hasUnReadMessages && <div className="w-1 h-2 bg-white absolute -left-2 rounded-r-lg z-10 group-hover:h-4 transition-all ease-in-out duration-300" />}
 				<RightClickMenuOrNot>
 					<div onClick={onClick}>
 						<InContentWrapper>
@@ -217,6 +222,7 @@ const LeftNavBarIcon = ({
 									placement={badgePosition}
 									className="mb-1"
 								>
+
 									{icon}
 								</Badge>
 							</LinkWrapper>
