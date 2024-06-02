@@ -23,14 +23,12 @@ const Overview = () => {
 	const [changelogChannel, setChangelogChannel] = useState<string>("");
 	const [sendUserChangelog, setSendUserChangelog] = useState<boolean>(false);
 	const [sendGuildChangelog, setSendGuildChangelog] = useState<boolean>(false);
-	const [guildRegion, setGuildRegion] = useState<string>("");
-
 	return (
 		<div className="mr-2 bg-accent rounded-lg">
 			<div className="flex flex-col p-4">
 				<h1 className="text-2xl font-semibold">Guild Overview</h1>
-				<div className="flex justify-start mt-4">
-					<div className="flex flex-col items-center">
+				<div className="grid grid-cols-1 sm:grid-cols-5 gap-4 mt-4">
+					<div className="flex flex-col items-center col-span-1 sm:col-span-1">
 						<Tooltip content="Remove Icon" placement="right" delay={750} className="select-none">
 							<Badge
 								content={<X />}
@@ -41,8 +39,8 @@ const Overview = () => {
 									console.log("Remove Icon");
 								}}
 							>
-								<div className="avatar-container relative transition-opacity duration-300 ease-in-out group">
-									<Avatar src={"/icon-1.png"!} alt="User Avatar" className="h-24 w-24 bg-transparent" />
+								<div className="relative transition-opacity duration-300 ease-in-out group">
+									<Avatar src={"/icon-1.png"} alt="User Avatar" className="h-24 w-24 bg-transparent" />
 									<p className="hidden group-hover:block text-white font-bold text-xs absolute inset-0 ml-2.5 mt-10 w-full min-w-full items-center justify-center !z-20">
 										Change Icon
 									</p>
@@ -51,7 +49,7 @@ const Overview = () => {
 										accept=".png,.jpg,.jpeg,.apng,.gif"
 										className="cursor-pointer absolute inset-0 w-full h-full opacity-0 z-20"
 										title=""
-										onChange={() => {}}
+										onChange={() => { }}
 									/>
 									<div className="group-hover:bg-opacity-50 rounded-full absolute inset-0 bg-black bg-opacity-0" />
 								</div>
@@ -59,45 +57,25 @@ const Overview = () => {
 						</Tooltip>
 						<p className="text-sm text-gray-500 mt-2">Upload a guild icon</p>
 					</div>
-					<div className="flex flex-col ml-16">
+					<div className="flex flex-col col-span-1 sm:col-span-2">
 						<Input
 							label="Guild Name"
 							placeholder="Enter a guild name"
-							className="w-[25vw]"
+							className="w-full"
 							description="The name of your guild"
 						/>
 					</div>
-					<div className="flex flex-col ml-4">
-						{/* note: Region isn't used yet, though will be used for discovery once I work on that, so for now ignore */}
-						<Select
-							label="Guild Region"
-							placeholder="Select a region"
-							className="w-[15vw]"
-							size="md"
-							description="The region your guild"
-							value={guildRegion}
-							onChange={(e) => setGuildRegion(e.target.value)}
-						>
-							<SelectSection title="Regions">
-								<SelectItem key="region1" value="region1">
-									United States
-								</SelectItem>
-								<SelectItem key="region2" value="region2">
-									Japan
-								</SelectItem>
-							</SelectSection>
-						</Select>
-					</div>
-					<div className="flex flex-col ml-4">
+					<div className="flex flex-col col-span-1 sm:col-span-2">
 						<Textarea
 							label="Guild Description"
 							placeholder="Enter a guild description"
-							className="w-[25vw]"
+							className="w-full"
 							description="The description of your guild"
 							maxRows={3}
 						/>
 					</div>
 				</div>
+
 				<Divider className="mb-8 mt-8" />
 				<h2 className="text-xl font-semibold">Guild Features</h2>
 				<div className="flex flex-col mt-4">

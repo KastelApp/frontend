@@ -36,7 +36,7 @@ const UserPopover = ({ member, onClick }: { member: Member; onClick?: () => void
 							className="mb-2 right-1"
 						>
 							<div
-								className="avatar-container relative cursor-pointer transition-opacity duration-300 ease-in-out group"
+								className="relative cursor-pointer transition-opacity duration-300 ease-in-out group"
 								onClick={onClick}
 							>
 								<Avatar src={member.avatar ?? undefined} alt="User Avatar" className="w-16 h-16 inset-0" />

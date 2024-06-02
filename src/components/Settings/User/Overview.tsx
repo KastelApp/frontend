@@ -65,7 +65,7 @@ const OverView = () => {
 											console.log("Remove Avatar");
 										}}
 									>
-										<div className="avatar-container relative transition-opacity duration-300 ease-in-out group">
+										<div className="relative transition-opacity duration-300 ease-in-out group">
 											<Avatar src={avatarUrl!} alt="User Avatar" className="h-24 w-24 bg-transparent" />
 											<p className="hidden group-hover:block text-white font-bold text-xs absolute inset-0 ml-1 mt-10 w-full min-w-full items-center justify-center !z-20">
 												Change Avatar
