@@ -118,6 +118,17 @@ const TextBasedChannel = () => {
 								url: "https://www.youtube.com/@Noffy"
 							}
 						}] : undefined}
+						invites={i % 11 === 0 ? [{
+							code: "kastel-development",
+							guild: {
+								icon: null,
+								members: {
+									online: 50,
+									total: 100
+								},
+								name: "Kastel Development"
+							}
+						}] : undefined}
 					/>
 				))}
 			</div>

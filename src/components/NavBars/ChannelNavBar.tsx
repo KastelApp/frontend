@@ -81,7 +81,7 @@ interface Channel {
 	channels?: Channel[];
 }
 
-const HandleChannels = ({ channel, onClick }: { channel: Channel, onClick?: () => void }) => {
+const HandleChannels = ({ channel, onClick }: { channel: Channel, onClick?: () => void; }) => {
 	return (
 		<div>
 			<ChannelIcon
@@ -104,7 +104,7 @@ const HandleChannels = ({ channel, onClick }: { channel: Channel, onClick?: () =
 	);
 };
 
-const ChannelNavBar = ({ children }: { children?: React.ReactElement | React.ReactElement[] }) => {
+const ChannelNavBar = ({ children }: { children?: React.ReactElement | React.ReactElement[]; }) => {
 	const { navBarLocation, isSideBarOpen, setIsSideBarOpen } = useSettingsStore();
 
 	const { guildSettings: rawGuildSettings, setGuildSettings } = useGuildSettingsStore();
@@ -123,7 +123,7 @@ const ChannelNavBar = ({ children }: { children?: React.ReactElement | React.Rea
 		onOpenChange: onOpenChangeGuildSettings,
 		onClose: onCloseGuildSettings,
 	} = useDisclosure();
-	
+
 	const {
 		isOpen: isChannelSettingsOpen,
 		onOpenChange: onOpenChangeChannelSettings,
@@ -141,7 +141,7 @@ const ChannelNavBar = ({ children }: { children?: React.ReactElement | React.Rea
 			{
 				name: "Invite Friends",
 				icon: <UserRound size={20} color="#acaebf" />,
-				onClick: () => {},
+				onClick: () => { },
 				end: true, // ? if end is true, then we have a divider
 			},
 			{
@@ -155,7 +155,7 @@ const ChannelNavBar = ({ children }: { children?: React.ReactElement | React.Rea
 			{
 				name: "Create Channel",
 				icon: <Hash size={20} color="#acaebf" />,
-				onClick: () => {},
+				onClick: () => { },
 				end: false,
 			},
 			{
@@ -317,34 +317,34 @@ const ChannelNavBar = ({ children }: { children?: React.ReactElement | React.Rea
 			<ChangeNickname isOpen={isNicknameOpen} onOpenChange={onOpenChange} onClose={onClose} />
 			<ConfirmLeave isOpen={isConfirmLeaveOpen} onOpenChange={onOpenChangeConfirmLeave} onClose={onCloseConfirmLeave} />
 			<BaseSettings
-			title="Channel Settings"
-			isOpen={isChannelSettingsOpen}
-			onOpenChange={onOpenChangeChannelSettings}
-			onClose={onCloseChannelSettings}
-			initialSection="overview"
-			sections={[
-				{
-					title: null,
-					children: [
-						{
-							title: "Overview",
-							id: "overview",
-							section: <>Channel ovewview</>,
-							disabled: false,
-						}
-					]
-				},
-				{
-					title: null,
-					children: [
-						{
-							id: "delete",
-							title: "Delete",
-							danger: true,
-						}
-					]
-				}
-			]}
+				title="Channel Settings"
+				isOpen={isChannelSettingsOpen}
+				onOpenChange={onOpenChangeChannelSettings}
+				onClose={onCloseChannelSettings}
+				initialSection="overview"
+				sections={[
+					{
+						title: null,
+						children: [
+							{
+								title: "Overview",
+								id: "overview",
+								section: <>Channel ovewview</>,
+								disabled: false,
+							}
+						]
+					},
+					{
+						title: null,
+						children: [
+							{
+								id: "delete",
+								title: "Delete",
+								danger: true,
+							}
+						]
+					}
+				]}
 			/>
 			<BaseSettings
 				title={currentGuild.name}

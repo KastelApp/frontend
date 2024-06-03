@@ -6,6 +6,7 @@ import { twMerge } from "tailwind-merge";
 import UserModal from "../Modals/UserModal.tsx";
 import RichEmbed, { Embed } from "./Embeds/RichEmbed.tsx";
 import IFrameEmbed from "./Embeds/IFrameEmbed.tsx";
+import InviteEmbed from "./Embeds/InviteEmbed.tsx";
 
 const Message = ({
 	content,
@@ -14,7 +15,8 @@ const Message = ({
 	className,
 	disableButtons,
 	tag,
-	embeds
+	embeds,
+	invites
 }: {
 	content: string;
 	replying: boolean;
@@ -23,6 +25,17 @@ const Message = ({
 	disableButtons?: boolean;
 	tag?: "System" | "Bot";
 	embeds?: Embed[];
+	invites?: {
+		code: string;
+		guild: {
+			name: string;
+			icon: string | null;
+			members: {
+				online: number;
+				total: number;
+			};
+		};
+	}[];
 }) => {
 	const PopOverData = ({ children }: { children: React.ReactElement | React.ReactElement[]; }) => {
 		const [isOpen, setIsOpen] = useState(false);
@@ -125,10 +138,15 @@ const Message = ({
 						<div className="text-white whitespace-pre-line overflow-hidden break-all">
 							<p>{content}</p>
 						</div>
+						{invites && invites.map((invite, index) => (
+							<div key={index} className="mt-2 inline-block max-w-full overflow-hidden">
+								<InviteEmbed invite={invite} />
+							</div>
+						))}
 						{embeds && embeds.map((embed, index) => (
 							<div key={index} className="mt-2 inline-block max-w-full overflow-hidden">
-								{embed.type === "Rich" ? 
-								<RichEmbed embed={embed} /> : embed.type === "Iframe" ? <IFrameEmbed embed={embed} /> : null}
+								{embed.type === "Rich" ?
+									<RichEmbed embed={embed} /> : embed.type === "Iframe" ? <IFrameEmbed embed={embed} /> : null}
 							</div>
 						))}
 					</div>
