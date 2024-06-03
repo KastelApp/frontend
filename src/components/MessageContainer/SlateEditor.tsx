@@ -1,7 +1,7 @@
 // @ts-expect-error -- I don't want the types
 import Prism from "prismjs";
 import "prismjs/components/prism-markdown";
-import React, { useCallback, useRef } from "react";
+import React, { useCallback, useEffect, useRef } from "react";
 import { Slate, Editable, withReact, ReactEditor } from "slate-react";
 import { Text, createEditor } from "slate";
 import { withHistory } from "slate-history";
@@ -11,7 +11,7 @@ import withMentions from "./plugins/withMentions.tsx";
 import { getLength } from "./SlateUtils.ts";
 import Element from "./renderers/Element.tsx";
 
-const SlateEditor = ({ placeholder }: { placeholder: string }) => {
+const SlateEditor = ({ placeholder }: { placeholder: string; }) => {
 	const renderLeaf = useCallback((props: LeafProps) => {
 		return <Leaf {...props} />;
 	}, []);
@@ -27,9 +27,40 @@ const SlateEditor = ({ placeholder }: { placeholder: string }) => {
 
 	const editor = editorRef.current;
 
+	// useEffect(() => {
+	// 	const slateEditor = document.getElementById("slate-editor");
+
+	// 	document.addEventListener("keydown", (event) => {
+	// 		if (event.key.length !== 1) return;
+
+	// 		if (ReactEditor.isFocused(editor)) return;
+
+	// 		event.preventDefault();
+
+	// 		const observerOptions = {
+	// 			root: null,
+	// 			rootMargin: "0px",
+	// 			threshold: 0,
+	// 			trackVisibility: true,
+	// 			delay: 100			
+	// 		};
+
+	// 		const observer = new IntersectionObserver((entries) => {
+	// 			if (!entries[0].isVisible) return;
+
+	// 			ReactEditor.focus(editor);
+
+	// 			editor.insertText(event.key);
+	// 		}, observerOptions);
+
+	// 		observer.observe(slateEditor!);
+	// 	});
+
+	// }, []);
+
 	const decorate = useCallback(([node, path]: [Text, number[]]) => {
 		const ranges: {
-			[key: string]: boolean | { path: number[]; offset: number };
+			[key: string]: boolean | { path: number[]; offset: number; };
 		}[] = [];
 
 		if (!Text.isText(node)) {
@@ -77,6 +108,7 @@ const SlateEditor = ({ placeholder }: { placeholder: string }) => {
 				renderElement={renderElement}
 				placeholder={placeholder}
 				className="outline-none overflow-y-auto"
+				id="slate-editor"
 			/>
 		</Slate>
 	);

@@ -101,7 +101,10 @@ const RichEmbed = ({
                                 <HyperLinkPossibly url={embed.author.url} noColor>
                                     <User name={embed.author.name} avatarProps={{
                                         src: embed.author.iconUrl,
-                                        className: "h-6 w-6 rounded-full"
+                                        className: "h-6 w-6 rounded-full",
+                                        imgProps: {
+                                            referrerPolicy: "no-referrer"
+                                        }
                                     }} className="font-bold truncate max-w-md" classNames={{
                                         name: "text-xs"
                                     }} />

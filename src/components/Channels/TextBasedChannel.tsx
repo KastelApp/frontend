@@ -93,7 +93,7 @@ const TextBasedChannel = () => {
 							type: "Iframe",
 							iframeSource: {
 								provider: "Youtube",
-								url: "https://www.youtube.com/embed/cMg8KaMdDYo?autoplay=0&auto_play=0"
+								url: "https://www.youtube.com/embed/cMg8KaMdDYo?autoplay=1&auto_play=1"
 							},
 							color: parseInt("ff0000", 16),
 							title: "TheFatRat - Fly Away feat. Anjulie",
@@ -107,7 +107,7 @@ const TextBasedChannel = () => {
 							type: "Iframe",
 							iframeSource: {
 								provider: "Youtube",
-								url: "https://www.youtube.com/embed/4467BRmTUPw?autoplay=0&auto_play=0"
+								url: "https://www.youtube.com/embed/4467BRmTUPw?autoplay=1&auto_play=1"
 							},
 							color: parseInt("ff0000", 16),
 							title: "Raphlesia & BilliumMoto - My Love / Original MV",
