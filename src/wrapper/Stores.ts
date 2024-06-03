@@ -2,32 +2,8 @@ import { Theme, EmojiPack, NavBarLocation } from "@/types/payloads/ready.ts";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { createTrackedSelector } from "react-tracked";
-import Translation, { MetaData } from "@/utils/Translation.ts";
-
-interface SettingsStore {
-	language: string;
-	privacy: number;
-	theme: Theme;
-	guildOrder: {
-		guildId: string;
-		position: number;
-	}[];
-	navBarLocation: NavBarLocation;
-	emojiPack: EmojiPack;
-	isSideBarOpen: boolean;
-	setLanguage: (language: string) => void;
-	setPrivacy: (privacy: number) => void;
-	setTheme: (theme: Theme) => void;
-	setGuildOrder: (
-		guildOrder: {
-			guildId: string;
-			position: number;
-		}[],
-	) => void;
-	setNavBarLocation: (navBarLocation: NavBarLocation) => void;
-	setEmojiPack: (emojiPack: EmojiPack) => void;
-	setIsSideBarOpen: (isSideBarOpen: boolean) => void;
-}
+import Translation from "@/utils/Translation.ts";
+import { GuildSettings, GuildSettingsStore, SelectedTabStore, SettingsStore, TranslationStore } from "./Stores.types.ts";
 
 export const useSettingsStore = createTrackedSelector(
 	create<SettingsStore>((set) => ({
@@ -53,14 +29,6 @@ export const useSettingsStore = createTrackedSelector(
 	})),
 );
 
-interface GuildSettings {
-	memberBarHidden: boolean;
-}
-
-interface GuildSettingsStore {
-	guildSettings: Record<string, GuildSettings>;
-	setGuildSettings: (guildId: string, guildSettings: GuildSettings) => void;
-}
 
 export const useGuildSettingsStore = createTrackedSelector(
 	create(
@@ -82,11 +50,6 @@ export const useGuildSettingsStore = createTrackedSelector(
 	),
 );
 
-interface SelectedTabStore {
-	selectedTab: string | null;
-	setSelectedTab: (selectedTab: string | null) => void;
-}
-
 export const useSelectedTab = createTrackedSelector(
 	create<SelectedTabStore>((set) => ({
 		selectedTab: null,
@@ -94,17 +57,9 @@ export const useSelectedTab = createTrackedSelector(
 	})),
 );
 
-interface TranslationStore {
-	rawTranslation: Translation;
-	setLanguage: (language: string) => void;
-	t: (key: string, ...anything: never[]) => string;
-	fetchLanguages: () => MetaData["languages"];
-	currentLanguage: string;
-	_hasHydrated: boolean;
-	setHasHydrated: (hasHydrated: boolean) => void;
-}
-
-export const useTranslationStore = createTrackedSelector(
+// ? The reason we don't use "createTrackedSelector" here is we still want to update components when something like the current language changes, without requiring it in the component
+// ? There's a few other things we want to do that as well (i.e settings etc)
+export const useTranslationStore =
 	create(
 		persist<TranslationStore>(
 			(set, get) => ({
@@ -114,6 +69,7 @@ export const useTranslationStore = createTrackedSelector(
 				setHasHydrated: (hasHydrated) => set({ _hasHydrated: hasHydrated }),
 				setLanguage: async (language: string) => {
 					await get().rawTranslation.fetchTranslation(language);
+
 					set({ currentLanguage: language });
 				},
 				t: (key: string, ...anything: never[]) => get().rawTranslation.t(get().currentLanguage, key, ...anything),
@@ -134,5 +90,4 @@ export const useTranslationStore = createTrackedSelector(
 				},
 			},
 		),
-	),
-);
+	);

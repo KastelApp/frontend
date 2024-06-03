@@ -1,0 +1,52 @@
+import type { Theme, EmojiPack, NavBarLocation } from "@/types/payloads/ready.ts";
+import type Translation from "@/utils/Translation.ts";
+import type { MetaData } from "@/utils/Translation.ts";
+
+export interface SettingsStore {
+	language: string;
+	privacy: number;
+	theme: Theme;
+	guildOrder: {
+		guildId: string;
+		position: number;
+	}[];
+	navBarLocation: NavBarLocation;
+	emojiPack: EmojiPack;
+	isSideBarOpen: boolean;
+	setLanguage: (language: string) => void;
+	setPrivacy: (privacy: number) => void;
+	setTheme: (theme: Theme) => void;
+	setGuildOrder: (
+		guildOrder: {
+			guildId: string;
+			position: number;
+		}[],
+	) => void;
+	setNavBarLocation: (navBarLocation: NavBarLocation) => void;
+	setEmojiPack: (emojiPack: EmojiPack) => void;
+	setIsSideBarOpen: (isSideBarOpen: boolean) => void;
+}
+
+export interface GuildSettings {
+	memberBarHidden: boolean;
+}
+
+export interface GuildSettingsStore {
+	guildSettings: Record<string, GuildSettings>;
+	setGuildSettings: (guildId: string, guildSettings: GuildSettings) => void;
+}
+
+export interface SelectedTabStore {
+	selectedTab: string | null;
+	setSelectedTab: (selectedTab: string | null) => void;
+}
+
+export interface TranslationStore {
+	rawTranslation: Translation;
+	setLanguage: (language: string) => void;
+	t: (key: string, ...anything: never[]) => string;
+	fetchLanguages: () => MetaData["languages"];
+	currentLanguage: string;
+	_hasHydrated: boolean;
+	setHasHydrated: (hasHydrated: boolean) => void;
+}

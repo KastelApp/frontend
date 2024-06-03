@@ -6,13 +6,22 @@ import { useEffect, useState } from "react";
 import SEO from "@/components/SEO.tsx";
 
 const IndexPage = () => {
-	const { t } = useTranslationStore();
+	const { t, setLanguage, fetchLanguages } = useTranslationStore();
 
 	const [device, setDevice] = useState<string>("");
 
 	useEffect(() => {
 		if (typeof window !== "undefined") {
 			setDevice(window.navigator.userAgent);
+		}
+
+		// @ts-expect-error -- For now, we will keep this here
+		globalThis.setLanguage = setLanguage;
+		// @ts-expect-error -- For now, we will keep this here
+		globalThis.getLanguages = () => {
+			const langs = fetchLanguages();
+
+			console.log("pick a lang (use the code i.e en, fr, de then do setLanguage('langCode')\n\n", langs.map((lang) => (`${lang.code} [${lang.status}] - ${lang.notes.join(", ") || "No Notes"}`)).join("\n\n"));
 		}
 	}, []);
 

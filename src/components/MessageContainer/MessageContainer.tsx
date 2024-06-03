@@ -37,7 +37,7 @@ const MessageContainer = ({ placeholder, children }: { placeholder: string; chil
 	return (
 		<>
 			<div className="flex flex-col h-screen overflow-x-hidden">
-				<div className="flex-grow overflow-auto">{children}</div>
+				<div className="flex-grow overflow-auto pr-2">{children}</div>
 				<div className="mb-12 w-[98%] ml-2">
 					<div className="ml-1 w-full bg-accent rounded-md rounded-b-none flex">
 						<div className="p-2">

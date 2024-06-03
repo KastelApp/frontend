@@ -141,7 +141,7 @@ const Member = ({ member, color }: { member: Member; color: string | null }) => 
 const MemberBar = () => {
 	const { guildSettings: rawGuildSettings } = useGuildSettingsStore();
 
-	const guildSettings = rawGuildSettings["123"] ?? { memberBarHidden: false };
+	const guildSettings = rawGuildSettings["123"] ?? { memberBarHidden: false }
 
 	const roles: Role[] = [
 		{
