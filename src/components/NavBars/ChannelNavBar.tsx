@@ -25,7 +25,7 @@ import {
 	Volume2,
 	X,
 } from "lucide-react";
-import React, { useState } from "react";
+import { useState } from "react";
 import { twMerge } from "tailwind-merge";
 import TopNavBar from "./TopNavBar.tsx";
 import { motion } from "framer-motion";

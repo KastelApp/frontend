@@ -1,7 +1,7 @@
 // @ts-expect-error -- I don't want the types
 import Prism from "prismjs";
 import "prismjs/components/prism-markdown";
-import React, { useCallback, useRef } from "react";
+import { useCallback, useRef } from "react";
 import { Slate, Editable, withReact, ReactEditor } from "slate-react";
 import { Text, createEditor } from "slate";
 import { withHistory } from "slate-history";

@@ -1,7 +1,7 @@
 import { type Section } from "@/types/settings.ts";
 import { Modal, ModalContent } from "@nextui-org/react";
 import { Menu } from "lucide-react";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { twMerge } from "tailwind-merge";
 
 const Section = ({

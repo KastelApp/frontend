@@ -1,4 +1,4 @@
-import React, { Key, useCallback, useMemo, useState } from "react";
+import { Key, useCallback, useMemo, useState } from "react";
 import {
 	Table,
 	TableHeader,

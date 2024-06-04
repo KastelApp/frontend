@@ -1,5 +1,5 @@
 import API from "@/wrapper/API.ts";
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 
 
 /**
