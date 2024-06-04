@@ -11,6 +11,7 @@ import {
 	Button,
 } from "@nextui-org/react";
 import { useTranslationStore } from "@/wrapper/Stores.ts";
+import NextLink from "next/link"
 
 const TopHeader = () => {
 	const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -48,7 +49,7 @@ const TopHeader = () => {
 			<NavbarContent>
 				<NavbarMenuToggle aria-label={isMenuOpen ? "Close menu" : "Open menu"} className="sm:hidden text-white" />
 				<NavbarBrand>
-					<Link className="font-bold text-inherit" href="/">
+					<Link className="font-bold text-inherit" href="/" as={NextLink}>
 						Kastel
 					</Link>
 				</NavbarBrand>
@@ -56,32 +57,32 @@ const TopHeader = () => {
 
 			<NavbarContent className="hidden sm:flex gap-4" justify="center">
 				<NavbarItem>
-					<Link color="foreground" href="/docs">
+					<Link color="foreground" href="/docs" as={NextLink}>
 						{t("home.navbar.docs")}
 					</Link>
 				</NavbarItem>
 				<NavbarItem>
-					<Link href="https://github.com/KastelApp" color="foreground" target="_blank">
+					<Link href="https://github.com/KastelApp" color="foreground" target="_blank" as={NextLink}>
 						Github
 					</Link>
 				</NavbarItem>
 				<NavbarItem>
-					<Link color="foreground" href="/blog">
+					<Link color="foreground" href="/blog" as={NextLink}>
 						{t("home.navbar.blog")}
 					</Link>
 				</NavbarItem>
 				<NavbarItem>
-					<Link color="foreground" href="#">
+					<Link color="foreground" href="#" as={NextLink}>
 						{t("home.navbar.support")}
 					</Link>
 				</NavbarItem>
 			</NavbarContent>
 			<NavbarContent justify="end">
 				<NavbarItem>
-					<Link href="/login">{t("home.navbar.login")}</Link>
+					<Link href="/login" as={NextLink}>{t("home.navbar.login")}</Link>
 				</NavbarItem>
 				<NavbarItem className="hidden lg:flex">
-					<Button as={Link} color="primary" href="/register" variant="flat">
+					<Button as={NextLink} color="primary" href="/register" variant="flat">
 						{t("home.navbar.signup")}
 					</Button>
 				</NavbarItem>
@@ -95,6 +96,7 @@ const TopHeader = () => {
 							href={item.href}
 							size="lg"
 							target={item.newTab ? "_blank" : "_self"}
+							as={NextLink}
 						>
 							{item.title}
 						</Link>

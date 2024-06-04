@@ -11,12 +11,12 @@ const JoinGuild = ({ setSection }: { setSection: (section: "join" | "create" | "
 				<p className="text-sm text-gray-500">Enter an invite link to join a guild</p>
 			</ModalHeader>
 			<ModalBody>
-				<Input autoFocus label="Invite Link" placeholder="https://kstl.app/f5HgvkRbVP" variant="bordered" />
+				<Input autoFocus label="Invite Link" placeholder="https://kastelapp.com/invite/f5HgvkRbVP" variant="bordered" />
 				<p className="text-sm mt-2">Invites should look like this:</p>
 				<ul className="list-disc ml-6">
 					<li className="text-sm">f5HgvkRbVP</li>
-					<li className="text-sm">https://kstl.app/f5HgvkRbVP</li>
-					<li className="text-sm">https://kstl.app/secret-place</li>
+					<li className="text-sm">https://kastelapp.com/invite/f5HgvkRbVP</li>
+					<li className="text-sm">https://kastelapp.com/invite/secret-place</li>
 				</ul>
 				<div className="mt-2 flex justify-between">
 					<Button

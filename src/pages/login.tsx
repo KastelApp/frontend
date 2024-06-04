@@ -15,6 +15,7 @@ import { useState } from "react";
 import { EyeIcon, EyeOffIcon } from "lucide-react";
 import { useTranslationStore } from "@/wrapper/Stores.ts";
 import SEO from "@/components/SEO.tsx";
+import NextLink from "next/link"
 
 const Login = () => {
 	const [isVisible, setIsVisible] = useState(false);
@@ -129,10 +130,10 @@ const Login = () => {
 									</Button>
 								</div>
 								<div className="mt-4 flex justify-between">
-									<Link href="/register" color="primary" className="text-sm">
+									<Link href="/register" color="primary" className="text-sm" as={NextLink}>
 										{t("login.register")}
 									</Link>
-									<Link href="/register" color="primary" className="text-sm">
+									<Link href="/register" color="primary" className="text-sm" as={NextLink}>
 										{t("login.forgot")}
 									</Link>
 								</div>

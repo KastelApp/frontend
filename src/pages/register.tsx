@@ -15,6 +15,7 @@ import { useState } from "react";
 import { EyeIcon, EyeOffIcon } from "lucide-react";
 import confetti from "canvas-confetti";
 import SEO from "@/components/SEO.tsx";
+import NextLink from "next/link"
 
 const Register = () => {
 	const [isVisible, setIsVisible] = useState(false);
@@ -150,7 +151,7 @@ const Register = () => {
 									</Button>
 								</div>
 								<div className="mt-4 flex justify-between">
-									<Link href="/login" color="primary" className="text-sm">
+									<Link href="/login" color="primary" className="text-sm" as={NextLink}>
 										Got an account? Login
 									</Link>
 								</div>
