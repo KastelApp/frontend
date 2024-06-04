@@ -12,8 +12,8 @@ type MethodOptions<ForcedPayload = RequestData> = string | {
     /**
      * This can be an object, form data, or a string
      */
-    data: ForcedPayload;
-    headers: Record<string, string | number>;
+    data?: ForcedPayload;
+    headers?: Record<string, string | number>;
     /**
      * Some stuff may not require authorization, so we may not want to send it in the headers This disables it
      */
@@ -70,20 +70,23 @@ class API {
         if (!this.VERSION) throw new Error("API_VERSION is required");
     }
 
-    private determineContentType(data: unknown): string {
+    private determineContentType(data: unknown): string | null {
+        if (data === null || data === undefined) return null
+        
         if (data instanceof FormData) {
             return "multipart/form-data";
-        } else if (typeof data === "string") {
-            return "application/json";
-        } else {
-            return "application/json";
         }
+
+        return "application/json";
     }
 
     async #makeRequest<Request = RequestData, ResponseOpt = ResponseData>(method: string, options: MethodOptions<Request>): Promise<Response<ResponseOpt>> {
+
+		if (!("window" in globalThis) || !("fetch" in globalThis)) return null as unknown as Response<ResponseOpt>;
+
         const fixedOptions = {
             url: typeof options === "string" ? options : options.url,
-            data: typeof options === "string" ? {} : options.data,
+            data: typeof options === "string" ? undefined : options.data,
             headers: typeof options === "string" ? {} : options.headers,
             noAuth: typeof options === "string" ? false : options.noAuth,
             noVersion: typeof options === "string" ? false : options.noVersion,
@@ -91,20 +94,23 @@ class API {
 
         const fullUrl = this.URL_CHECK_REGEX.test(fixedOptions.url)
             ? fixedOptions.url
-            : `${this.API_URL}/${!fixedOptions.noVersion ? `v${this.VERSION}` : ""}/${fixedOptions.url}`;
+            : `${this.API_URL}${!fixedOptions.noVersion ? `/v${this.VERSION}` : ""}/${fixedOptions.url}`;
+
+        const determinedType = this.determineContentType(fixedOptions.data);
 
         const endingHeaders = this.URL_CHECK_REGEX.test(fixedOptions.url) ? {}
             : {
-                "Content-Type": this.determineContentType(fixedOptions.data),
+                ...(determinedType ? { "Content-Type": determinedType } : {}),
                 ...((fixedOptions.noAuth || !this.#token) ? {} : {
                     "Authorization": this.#token
                 }),
                 ...this.defaultHeaders,
+                ...fixedOptions.headers,
             };
 
-        const fixedBody = this.determineContentType(fixedOptions.data) === "application/json" ? JSON.stringify(fixedOptions.data) : fixedOptions.data;
+        const fixedBody = determinedType === "application/json" ? JSON.stringify(fixedOptions.data) : fixedOptions.data;
 
-        const fetched = await fetch(fullUrl, {
+        const fetched = await fetch(fullUrl.replace(/\/+$/, "/"), {
             method,
             headers: endingHeaders,
             // note: we are assuming the person making the request handles the body correctly if not boo hoo if it error's out, handle it better
