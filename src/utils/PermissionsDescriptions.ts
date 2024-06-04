@@ -1,4 +1,5 @@
 // ? thanks kodarru for the permissions descriptions <3
+// todo: translation
 const permissionsDescriptions = {
     simple: {
         groups: {
