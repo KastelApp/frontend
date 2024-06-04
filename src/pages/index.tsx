@@ -30,7 +30,7 @@ const IndexPage = () => {
 			<SEO title={"Home"} />
 
 			<HomeLayout>
-				<div className="bg-cover text-white py-32 flex items-center justify-center ">
+				<div className="bg-cover text-white py-36 flex items-center justify-center ">
 					<div className="text-center">
 						<h1 className="text-3xl font-bold">{t("home.title")}</h1>
 						<p className="text-medium mt-4">{t("home.subtitle")}</p>
