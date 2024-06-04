@@ -24,6 +24,11 @@ class FlagUtils<
 		this.Flags = flags;
 	}
 
+	/**
+	 * Check's if a bit is present
+	 * @param bit The bit to check
+	 * @returns If the bit is present
+	 */
 	public has(bit: bigint | number | keyof (typeof this)["Flags"]) {
 		const bits = typeof bit === "string" ? this.Flags[bit] ?? 0n : BigInt(bit as number);
 
@@ -32,6 +37,11 @@ class FlagUtils<
 		return (this.bits & bits) === bits;
 	}
 
+	/**
+	 * Add a bit to the instance
+	 * @param bit The bit to add
+	 * @returns the instance
+	 */
 	public add(bit: bigint | number | keyof (typeof this)["Flags"]): this {
 		const bits = typeof bit === "string" ? this.Flags[bit] ?? 0n : BigInt(bit as number);
 
@@ -42,6 +52,11 @@ class FlagUtils<
 		return this;
 	}
 
+	/**
+	 * Removes a bit from the instance
+	 * @param bit The bit to remove
+	 * @returns the instance
+	 */
 	public remove(bit: bigint | number | keyof (typeof this)["Flags"]): this {
 		const bits = typeof bit === "string" ? this.Flags[bit] ?? 0n : BigInt(bit as number);
 
@@ -56,12 +71,20 @@ class FlagUtils<
 		return this.bits;
 	}
 
+	/**
+	 * Return's an array of all the bits in a string format
+	 * @returns An array of all the bits
+	 */
 	public toArray(): (keyof (typeof this)["Flags"])[] {
 		return Object.entries(this.Flags)
 			.filter(([, value]) => this.has(value))
 			.map(([key]) => key) as (keyof (typeof this)["Flags"])[];
 	}
 
+	/**
+	 * Returns a list of all the bits in a JSON format with a boolean if it is present or not
+	 * @returns A list of all the bits in a JSON format
+	 */
 	public toJSON(): Record<keyof (typeof this)["Flags"], boolean> {
 		return Object.fromEntries(Object.entries(this.Flags).map(([key, value]) => [key, this.has(value)])) as Record<
 			keyof (typeof this)["Flags"],
@@ -69,10 +92,20 @@ class FlagUtils<
 		>;
 	}
 
+	/**
+	 * Check's if all the bits are present
+	 * @param bits The bits you want to check
+	 * @returns If all the bits are present
+	 */
 	public hasArray(bits: (keyof (typeof this)["Flags"])[]) {
 		return bits.every((bit) => this.has(bit));
 	}
 
+	/**
+	 * Check's if one of the bits is present
+	 * @param bits The amount of bits you want to check
+	 * @returns If one of the bits is present
+	 */
 	public hasOneArray(bits: (keyof (typeof this)["Flags"])[]) {
 		return bits.some((bit) => this.has(bit));
 	}

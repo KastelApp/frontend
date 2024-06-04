@@ -2,6 +2,7 @@ import type { Theme, EmojiPack, NavBarLocation } from "@/types/payloads/ready.ts
 import type Translation from "@/utils/Translation.ts";
 import type { MetaData } from "@/utils/Translation.ts";
 import API from "./API.ts";
+import Client from "./Client.ts";
 
 export interface SettingsStore {
 	language: string;
@@ -66,4 +67,9 @@ export interface TokenStore {
 export interface IsReadyStore {
 	isReady: boolean;
 	setIsReady: (isReady: boolean) => void;
+}
+
+export interface ClientStore {
+	client: Client;
+	setClient: (client: Client) => void;
 }

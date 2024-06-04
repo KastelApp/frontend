@@ -3,8 +3,9 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { createTrackedSelector } from "react-tracked";
 import Translation from "@/utils/Translation.ts";
-import { APIStore, GuildSettings, GuildSettingsStore, IsReadyStore, SelectedTabStore, SettingsStore, TokenStore, TranslationStore } from "./Stores.types.ts";
+import { APIStore, ClientStore, GuildSettings, GuildSettingsStore, IsReadyStore, SelectedTabStore, SettingsStore, TokenStore, TranslationStore } from "./Stores.types.ts";
 import API from "./API.ts";
+import Client from "./Client.ts";
 
 export const useSettingsStore = createTrackedSelector(
 	create<SettingsStore>((set) => ({
@@ -113,4 +114,9 @@ export const useTokenStore = create(
 export const useIsReady = create<IsReadyStore>((set) => ({
 	isReady: false,
 	setIsReady: (isReady: boolean) => set({ isReady }),
+}));
+
+export const useClientStore = create<ClientStore>((set) => ({
+	client: new Client(),
+	setClient: (client: Client) => set({ client })
 }));

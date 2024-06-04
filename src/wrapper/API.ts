@@ -63,7 +63,7 @@ class API {
         if (options.urlCheckRegex) {
             this.URL_CHECK_REGEX = options.urlCheckRegex;
 
-            Logger.warn("A custom URL check regex was provided, be wary of what you're doing!", "API Class")
+            Logger.warn("A custom URL check regex was provided, be wary of what you're doing!", "API Class");
         };
 
         if (!this.API_URL) throw new Error("API_URL is required");
@@ -74,9 +74,14 @@ class API {
         this.#token = token;
     }
 
+    /**
+     * Determine the content type of the data
+     * @param data The data to determine the content type of
+     * @returns The content type of the data (or null if something went wrong / there's no data to compare to)
+     */
     private determineContentType(data: unknown): string | null {
-        if (data === null || data === undefined) return null
-        
+        if (data === null || data === undefined) return null;
+
         if (data instanceof FormData) {
             return "multipart/form-data";
         }
@@ -84,9 +89,14 @@ class API {
         return "application/json";
     }
 
+    /**
+     * Make a HTTP request
+     * @param method The method to use
+     * @param options The options for the request (string or object)
+     * @returns The response object
+     */
     async #makeRequest<Request = RequestData, ResponseOpt = ResponseData>(method: string, options: MethodOptions<Request>): Promise<Response<ResponseOpt>> {
-
-		if (!("window" in globalThis) || !("fetch" in globalThis)) return null as unknown as Response<ResponseOpt>;
+        if (!("window" in globalThis) || !("fetch" in globalThis)) return null as unknown as Response<ResponseOpt>;
 
         const fixedOptions = {
             url: typeof options === "string" ? options : options.url,
@@ -144,18 +154,38 @@ class API {
         return this.#makeRequest("GET", options);
     }
 
+    /**
+     * Delete a request
+     * @param options The options for the request
+     * @returns The response object
+     */
     public async del<Request = RequestData, ResponseOpt = ResponseData>(options: MethodOptions<Request>): Promise<Response<ResponseOpt>> {
         return this.#makeRequest("DELETE", options);
     }
 
+    /**
+     * Get a request
+     * @param options The options for the request
+     * @returns The response object
+     */
     public async patch<Request = RequestData, ResponseOpt = ResponseData>(options: MethodOptions<Request>): Promise<Response<ResponseOpt>> {
         return this.#makeRequest("PATCH", options);
     }
 
+    /**
+     * Post a request
+     * @param options The options for the request
+     * @returns The response object
+     */
     public async post<Request = RequestData, ResponseOpt = ResponseData>(options: MethodOptions<Request>): Promise<Response<ResponseOpt>> {
         return this.#makeRequest("POST", options);
     }
 
+    /**
+     * Put a request
+     * @param options The options for the request
+     * @returns The response object
+     */
     public async put<Request = RequestData, ResponseOpt = ResponseData>(options: MethodOptions<Request>): Promise<Response<ResponseOpt>> {
         return this.#makeRequest("PUT", options);
     }

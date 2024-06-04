@@ -174,7 +174,7 @@ class Translation {
 	}
 
 	private compareProgress(translation: TranslationType) {
-		// english should always be cached
+		// ! english should always be cached
 		const english = this.cachedTranslations.get("en");
 
 		if (!english) {
