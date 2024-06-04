@@ -11,6 +11,7 @@ import ErrorHandler from "@/layouts/ErrorHandler.tsx";
 import { useTranslationStore } from "@/wrapper/Stores.ts";
 import SEO from "@/components/SEO.tsx";
 import { DefaultSeo } from "next-seo";
+import Init from "@/components/Init.tsx";
 
 const App = ({ Component, pageProps }: AppProps) => {
 	const router = useRouter();
@@ -27,6 +28,7 @@ const App = ({ Component, pageProps }: AppProps) => {
 				<ErrorHandler>
 					<NextUIProvider navigate={router.push}>
 						<NextThemesProvider>
+							<Init />
 							<Component {...pageProps} />
 						</NextThemesProvider>
 					</NextUIProvider>

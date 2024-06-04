@@ -54,7 +54,7 @@ class API {
 
     private defaultHeaders: Record<string, string> = {};
 
-    public constructor(token: string, defaultHeaders: Record<string, string> = {}, options: MixedOptions = {}) {
+    public constructor(token: string | null, defaultHeaders: Record<string, string> = {}, options: MixedOptions = {}) {
         this.#token = token;
         this.defaultHeaders = defaultHeaders;
 
@@ -68,6 +68,10 @@ class API {
 
         if (!this.API_URL) throw new Error("API_URL is required");
         if (!this.VERSION) throw new Error("API_VERSION is required");
+    }
+
+    public set token(token: string | null) {
+        this.#token = token;
     }
 
     private determineContentType(data: unknown): string | null {

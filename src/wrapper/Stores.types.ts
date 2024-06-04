@@ -1,6 +1,7 @@
 import type { Theme, EmojiPack, NavBarLocation } from "@/types/payloads/ready.ts";
 import type Translation from "@/utils/Translation.ts";
 import type { MetaData } from "@/utils/Translation.ts";
+import API from "./API.ts";
 
 export interface SettingsStore {
 	language: string;
@@ -49,4 +50,20 @@ export interface TranslationStore {
 	currentLanguage: string;
 	_hasHydrated: boolean;
 	setHasHydrated: (hasHydrated: boolean) => void;
+}
+
+
+export interface APIStore {
+	api: API;
+	setAPI: (api: API) => void;
+}
+
+export interface TokenStore {
+	token: string | null;
+	setToken: (token: string | null) => void;
+}
+
+export interface IsReadyStore {
+	isReady: boolean;
+	setIsReady: (isReady: boolean) => void;
 }

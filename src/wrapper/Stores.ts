@@ -3,7 +3,8 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { createTrackedSelector } from "react-tracked";
 import Translation from "@/utils/Translation.ts";
-import { GuildSettings, GuildSettingsStore, SelectedTabStore, SettingsStore, TranslationStore } from "./Stores.types.ts";
+import { APIStore, GuildSettings, GuildSettingsStore, IsReadyStore, SelectedTabStore, SettingsStore, TokenStore, TranslationStore } from "./Stores.types.ts";
+import API from "./API.ts";
 
 export const useSettingsStore = createTrackedSelector(
 	create<SettingsStore>((set) => ({
@@ -91,3 +92,25 @@ export const useTranslationStore =
 			},
 		),
 	);
+
+export const useAPIStore = create<APIStore>((set) => ({
+	api: new API(null),
+	setAPI: (api: API) => set({ api }),
+}));
+
+export const useTokenStore = create(
+	persist<TokenStore>(
+		(set) => ({
+			token: null,
+			setToken: (token: string | null) => set({ token }),
+		}),
+		{
+			name: "token",
+		},
+	),
+)
+
+export const useIsReady = create<IsReadyStore>((set) => ({
+	isReady: false,
+	setIsReady: (isReady: boolean) => set({ isReady }),
+}));
