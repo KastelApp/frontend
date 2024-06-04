@@ -1,24 +1,77 @@
+import Logo from "@/badges/Logo.tsx";
 import { confettiDark } from "./confetti.tsx";
+import { useEffect, useState } from "react";
 
-const quotes = [
-  "Insert random quote here - Dev",
-  "One of the devs loves otters",
-  "Todo: Add a quote here",
-  "I'll chat to you on Dis... I mean Kastel",
-  "The name of our platform actually came from Supernatural and a tiny bit of mispelling",
-  "Kastel.initialize()... wow, didn't work :(",
-  "I can't code without a fresh glass of Tea", // :3
-  ":3 - some Ink guy",
+interface Quote {
+    quote: string;
+    type: "FACT" | "JOKE" | "QUOTE" | "NOTE";
+}
+
+enum Mappings {
+    FACT = "Did you know?",
+    JOKE = "Wanna hear a joke?",
+    QUOTE = "Quote of the day",
+    NOTE = "Note:"
+}
+
+const quotes: Quote[] = [
+    {
+        quote: "Insert random quote here - Dev",
+        type: "NOTE"
+    },
+    {
+        quote: "One of the devs loves otters",
+        type: "FACT"
+    },
+    {
+        quote: "I can't code without a fresh glass of Tea",
+        type: "QUOTE"
+    },
+    {
+        quote: "That the name of our platform actually came from Supernatural and a tiny bit of mispelling",
+        type: "FACT"
+    }
 ];
 
 const Loading = () => {
+
+    const [quote, setQuote] = useState<Quote>({ quote: "", type: "QUOTE" });
+    const [prevQuote, setPrevQuote] = useState<Quote>({ quote: "", type: "QUOTE" });
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setPrevQuote(quote);
+
+            let newQuote = quotes[Math.floor(Math.random() * quotes.length)];
+
+            while (newQuote.quote === prevQuote.quote) {
+                newQuote = quotes[Math.floor(Math.random() * quotes.length)];
+            }
+
+            setQuote(newQuote);
+        }, 2500);
+
+        setQuote(quotes[Math.floor(Math.random() * quotes.length)]);
+
+        return () => clearInterval(interval);
+    }, []);
+
     return (
         <div style={{
             backgroundImage: confettiDark,
-        }} className="flex min-h-[100vh] items-center justify-center">
-            todo: finish
+        }} className="flex min-h-[100vh] items-start justify-center py-64">
+            <div className="mx-auto max-w-lg">
+                <div className="justify-center flex">
+                    <Logo size={128} bgColor="transparent" />
+                </div>
+                <div className="text-center mt-4">
+                    <p className="text-2xl font-bold">{Mappings[quote.type]}</p>
+                    <p className="mt-2 text-lg max-h-40 overflow-auto">{quote.quote}</p>
+                </div>
+            </div>
         </div>
-    )
-}
 
-export default Loading
+    );
+};
+
+export default Loading;
