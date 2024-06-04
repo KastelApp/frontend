@@ -28,8 +28,9 @@ const App = ({ Component, pageProps }: AppProps) => {
 				<ErrorHandler>
 					<NextUIProvider navigate={router.push}>
 						<NextThemesProvider>
-							<Init />
-							<Component {...pageProps} />
+							<Init>
+								<Component {...pageProps} />
+							</Init>
 						</NextThemesProvider>
 					</NextUIProvider>
 				</ErrorHandler>
