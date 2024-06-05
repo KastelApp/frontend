@@ -11,6 +11,13 @@ const settings = {
 
 const guildFeatures = ["Partnered", "Verified", "Official", "Maintenance"];
 
+export enum GuildFeatures {
+	Partnered = "Partnered",
+	Verified = "Verified",
+	Official = "Official",
+	Maintenance = "Maintenance",
+}
+
 const allowedMentions: {
 	All?: number;
 	Everyone: number;

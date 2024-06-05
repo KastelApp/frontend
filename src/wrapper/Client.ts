@@ -8,6 +8,8 @@ class Client {
     public websocket: Websocket | null = null
 
     #token: string | null
+
+    #listeners = new Map<string, ((...args: unknown[]) => void)[]>()
     
     public constructor() {
         this.api = useAPIStore.getState().api;
@@ -17,6 +19,26 @@ class Client {
 
     public get token() {
         return this.#token
+    }
+
+    public on(event: string, listener: () => void) {
+        const current = this.#listeners.get(event) || []
+
+        current.push(listener)
+
+        this.#listeners.set(event, current)
+    }
+
+    public off(event: string) {
+        this.#listeners.delete(event)
+    }
+
+    public emit(event: string, ...args: unknown[]) {
+        const listeners = this.#listeners.get(event)
+
+        if (!listeners) return;
+
+        listeners.forEach((listener) => listener(...args))
     }
 
     public set token(token: string | null) {
@@ -34,6 +56,14 @@ class Client {
         this.websocket = new Websocket(token)
 
         this.websocket.connect();
+
+        this.websocket.on("ready", () => {
+            this.emit("ready")
+        })
+
+        this.websocket.on("close", () => {
+            this.emit("close")
+        })
     }
 }
 

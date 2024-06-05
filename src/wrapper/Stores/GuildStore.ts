@@ -4,7 +4,7 @@ import { create } from "zustand";
 export interface Guild {
     name: string;
     description: string | null;
-    features: string[] | null;
+    features: string[];
     id: string;
     icon: string | null;
     ownerId: string | null;
@@ -29,7 +29,21 @@ export interface GuildStore {
 
 export const useGuildStore = create<GuildStore>((set, get) => ({
     guilds: [],
-    addGuild: (guild) => set({ guilds: [...get().guilds, guild] }),
+    addGuild: (guild) => {
+        const currentGuilds = get().guilds;
+
+        const foundGuild = currentGuilds.find((currentGuild) => currentGuild.id === guild.id) ?? {};
+
+        set({
+            guilds: [
+                ...currentGuilds,
+                {
+                    ...foundGuild,
+                    ...guild
+                }
+            ]
+        })
+    },
     removeGuild: (id) => set({ guilds: get().guilds.filter(guild => guild.id !== id) }),
     getGuild: (id) => get().guilds.find(guild => guild.id === id),
 }));

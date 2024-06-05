@@ -7,6 +7,8 @@ import { HelloPayload } from "@/types/payloads/hello.ts";
 import event from "./Events/Event.ts";
 import { ReadyPayload } from "@/types/payloads/ready.ts";
 import { useUserStore } from "../Stores/UserStore.ts";
+import { useGuildStore } from "../Stores/GuildStore.ts";
+import { useChannelStore } from "../Stores/ChannelStore.ts";
 
 const handleMessage = async (ws: Websocket, data: unknown) => {
     const decompressed = safeParse<EventPayload>(ws.decompress(data));
@@ -66,6 +68,31 @@ const handleMessage = async (ws: Websocket, data: unknown) => {
                 ...data.user,
                 isClient: true,
             })
+
+            for (const guild of data.guilds) {
+                useGuildStore.getState().addGuild({
+                    name: guild.name,
+                    unavailable: guild.unavailable,
+                    ownerId: guild.owner.id,
+                    maxMembers: guild.maxMembers,
+                    id: guild.id,
+                    icon: guild.icon,
+                    flags: guild.flags,
+                    features: guild.features,
+                    description: guild.description,
+                    coOwners: guild.coOwners.map((coOwner) => coOwner.id),
+                    channelProperties: guild.channelProperties
+                });
+
+                for (const channel of guild.channels) {
+                    useChannelStore.getState().addChannel({
+                        ...channel,
+                        guildId: guild.id
+                    })
+                }
+            }
+
+            ws.emit("ready");
 
             break;
         }

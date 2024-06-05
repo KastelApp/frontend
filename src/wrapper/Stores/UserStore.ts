@@ -28,7 +28,21 @@ export interface UserStore {
 
 export const useUserStore = create<UserStore>((set, get) => ({
     users: [],
-    addUser: (user) => set((state) => ({ users: [...state.users, user] })),
+    addUser: (user) => {
+        const currentUsers = get().users;
+
+        const foundUser = currentUsers.find((currentUser) => currentUser.id === user.id) ?? {}
+
+        set({
+            users: [
+                ...currentUsers,
+                {
+                    ...foundUser,
+                    ...user
+                }
+            ]
+        })
+    },
     getCurrentUser: () => get().users.find((user) => user.isClient),
     getUser: async (id) => {
         const foundUser = get().users.find((user) => user.id === id);

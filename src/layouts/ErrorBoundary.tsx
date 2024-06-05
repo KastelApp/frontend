@@ -31,7 +31,8 @@ class ErrorBoundary extends Component {
 	public render() {
 		if (this.state.hasError) {
 
-			Logger.error(`An error occurred and we caught it ${this.state?.error?.error?.stack}`, "ErrorBoundary")
+			Logger.error("An error occurred and we caught it", "ErrorBoundary")
+			console.log(this.state.error?.error.stack)
 
 			return (
 				<div className="bg-cover text-white py-32 flex items-center justify-center ">

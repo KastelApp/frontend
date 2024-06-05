@@ -11,6 +11,8 @@ import UserOptions from "../Dropdowns/UserOptions.tsx";
 import GuildModal from "../Modals/CreateGuild.tsx";
 import { useSettingsStore } from "@/wrapper/Stores.ts";
 import { BaseContextMenuProps } from "../Dropdowns/BaseContextMenu.tsx";
+import { useGuildStore } from "@/wrapper/Stores/GuildStore.ts";
+import { useChannelStore } from "@/wrapper/Stores/ChannelStore.ts";
 
 const Modal = () => {
 	const { isOpen, onOpenChange, onClose } = useDisclosure();
@@ -31,27 +33,8 @@ const Modal = () => {
 
 const LeftNavbar = memo(() => {
 	const { isSideBarOpen } = useSettingsStore();
-
-	const guilds = [
-		{
-			name: "Kastel Development",
-			icon: "https://development.kastelapp.com/icon-1.png",
-			mentionCount: "4",
-			id: "123",
-		},
-		{
-			name: "Kastel Bazar",
-			icon: undefined,
-			mentionCount: "2",
-			id: "456",
-		},
-		{
-			name: "Kastel Support",
-			icon: "https://development.kastelapp.com/icon-1.png",
-			mentionCount: "0",
-			id: "789",
-		},
-	];
+	const { guilds } = useGuildStore();
+	const { getChannels } = useChannelStore()
 
 	return (
 		<>
@@ -75,33 +58,47 @@ const LeftNavbar = memo(() => {
 						delay={1000}
 					/>
 					<Divider size={"[2px]"} />
-					{guilds.map((guild, index) => (
-						<LeftNavBarIcon
-							href={`/app/guilds/${guild.id}`}
-							badgePosition="bottom-right"
-							badgeColor="danger"
-							badgeContent={guild.mentionCount === "0" ? undefined : guild.mentionCount}
-							key={index}
-							icon={
-								<Avatar
-									name={guild.name}
-									src={guild.icon}
-									className="mt-1.5 w-10 h-10 rounded-3xl transition-all group-hover:rounded-xl duration-300 ease-in-out transform"
-									imgProps={{ className: "transition-none" }}
-								/>
+					{guilds.map((guild, index) => {
+						let hasUnread = false;
+
+						const gotChannels = getChannels(guild.id);
+
+						for (const channel of gotChannels) {
+							if (guild.channelProperties.find((channelProperty) => channelProperty.channelId === channel.id)?.lastMessageAckId !== channel.lastMessageId) {
+								hasUnread = true;
+								
+								break;
 							}
-							description={guild.name}
-							contextMenuItemsProps={{
-								values: [
-									{
-										label: "Test",
-									},
-								],
-								placement: "right",
-							}}
-							hasUnReadMessages
-						/>
-					))}
+						}
+
+						return (
+							<LeftNavBarIcon
+								href={`/app/guilds/${guild.id}`}
+								badgePosition="bottom-right"
+								badgeColor="danger"
+								// badgeContent={guild.mentionCount === "0" ? undefined : guild.mentionCount}
+								key={index}
+								icon={
+									<Avatar
+										name={guild.name}
+										src={guild.icon ?? undefined}
+										className="mt-1.5 w-10 h-10 rounded-3xl transition-all group-hover:rounded-xl duration-300 ease-in-out transform"
+										imgProps={{ className: "transition-none" }}
+									/>
+								}
+								description={guild.name}
+								contextMenuItemsProps={{
+									values: [
+										{
+											label: "Test",
+										},
+									],
+									placement: "right",
+								}}
+								hasUnReadMessages={hasUnread}
+							/>
+						)
+					})}
 					<Modal />
 					<LeftNavBarIcon
 						icon={<Compass className="mt-1.5" color="#acaebf" absoluteStrokeWidth />}

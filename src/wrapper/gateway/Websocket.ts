@@ -25,6 +25,8 @@ class Websocket {
 
     public sequence: number = 0;
 
+    #listeners = new Map<string, ((...args: unknown[]) => void)[]>()
+
     public constructor(token: string) {
         this.#token = token;
 
@@ -52,6 +54,27 @@ class Websocket {
             }
         };
     }
+
+    public on(event: string, listener: () => void) {
+        const current = this.#listeners.get(event) || []
+
+        current.push(listener)
+
+        this.#listeners.set(event, current)
+    }
+
+    public off(event: string) {
+        this.#listeners.delete(event)
+    }
+
+    public emit(event: string, ...args: unknown[]) {
+        const listeners = this.#listeners.get(event)
+
+        if (!listeners) return;
+
+        listeners.forEach((listener) => listener(...args))
+    }
+
 
     public get token() {
         return this.#token;
@@ -83,6 +106,8 @@ class Websocket {
 
         this.ws.onopen = () => {
             Logger.info("Connected to the gateway", "Wrapper | WebSocket");
+
+            this.emit("open")
         };
 
         this.ws.onmessage = (event) => {
@@ -95,6 +120,8 @@ class Websocket {
             this.ws = null;
 
             this.reconnect();
+
+            this.emit("close")
         };
     }
 

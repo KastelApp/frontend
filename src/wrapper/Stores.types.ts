@@ -73,3 +73,10 @@ export interface ClientStore {
 	client: Client;
 	setClient: (client: Client) => void;
 }
+
+export interface CurrentStore {
+	currentGuildId: string | null;
+	currentChannelId: string | null;
+	setCurrentGuildId: (guildId: string | null) => void;
+	setCurrentChannelId: (channelId: string | null) => void;
+}

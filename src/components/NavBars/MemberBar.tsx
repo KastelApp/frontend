@@ -1,4 +1,4 @@
-import { useGuildSettingsStore } from "@/wrapper/Stores.ts";
+import { useCurrentStore, useGuildSettingsStore } from "@/wrapper/Stores.ts";
 import {
 	Avatar,
 	Badge,
@@ -141,7 +141,9 @@ const Member = ({ member, color }: { member: Member; color: string | null }) => 
 const MemberBar = () => {
 	const { guildSettings: rawGuildSettings } = useGuildSettingsStore();
 
-	const guildSettings = rawGuildSettings["123"] ?? { memberBarHidden: false }
+	const { currentGuildId } = useCurrentStore();
+
+	const guildSettings = rawGuildSettings[currentGuildId ?? ""] ?? { memberBarHidden: false }
 
 	const roles: Role[] = [
 		{

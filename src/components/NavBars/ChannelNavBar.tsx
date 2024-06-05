@@ -1,5 +1,5 @@
 import { NavBarLocation } from "@/types/payloads/ready.ts";
-import { useGuildSettingsStore, useSettingsStore } from "@/wrapper/Stores.ts";
+import { useCurrentStore, useGuildSettingsStore, useSettingsStore } from "@/wrapper/Stores.ts";
 import {
 	Chip,
 	Divider,
@@ -7,13 +7,10 @@ import {
 	DropdownItem,
 	DropdownMenu,
 	DropdownTrigger,
-	Tooltip,
 	useDisclosure,
 } from "@nextui-org/react";
 import {
 	AlignJustify,
-	BadgeCheck,
-	BookA,
 	ChevronDown,
 	ChevronRight,
 	Hash,
@@ -22,10 +19,9 @@ import {
 	Settings,
 	UserRound,
 	UsersRound,
-	Volume2,
 	X,
 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { twMerge } from "tailwind-merge";
 import TopNavBar from "./TopNavBar.tsx";
 import { motion } from "framer-motion";
@@ -36,8 +32,14 @@ import BaseSettings from "../Modals/BaseSettings.tsx";
 import Overview from "../Settings/Guild/OverView.tsx";
 import ConfirmDelete from "../Modals/ConfirmDelete.tsx";
 import Roles from "../Settings/Guild/Roles.tsx";
+import { useGuildStore } from "@/wrapper/Stores/GuildStore.ts";
+import { useChannelStore } from "@/wrapper/Stores/ChannelStore.ts";
+// import { useUserStore } from "@/wrapper/Stores/UserStore.ts";
+import { channelTypes } from "@/utils/Constants.ts";
+import ChannelIcon from "../ChannelIcon.tsx";
+import GuildIcon from "../GuildIcon.tsx";
 
-const ChannelIcon = ({
+const Channel = ({
 	startContent,
 	text,
 	onlyShowOnHover,
@@ -77,26 +79,26 @@ const ChannelIcon = ({
 interface Channel {
 	name: string;
 	icon?: React.ReactElement | React.ReactElement[];
-	description?: string;
+	description?: string | null;
 	channels?: Channel[];
+	hasUnread?: boolean;
 }
 
 const HandleChannels = ({ channel, onClick }: { channel: Channel, onClick?: () => void; }) => {
 	return (
 		<div>
-			<ChannelIcon
+			<Channel
 				text={channel.name}
 				endContent={channel.channels ? <ChevronDown size={20} color="#acaebf" /> : <Settings size={16} onClick={onClick} />}
 				startContent={channel.icon}
 				shouldHideHover={Boolean(channel.channels)}
 				onlyShowOnHover={!channel.channels}
+				hasUnreadMessages={channel.hasUnread}
 			/>
 			{channel.channels && (
 				<div className="ml-1">
 					{channel.channels?.map((subChannel, index) => (
-						<ChannelIcon key={index} text={subChannel.name} startContent={subChannel.icon} endContent={<Settings size={16} onClick={onClick} />} onlyShowOnHover hasUnreadMessages={
-							index % 2 === 0
-						} />
+						<Channel key={index} text={subChannel.name} startContent={subChannel.icon} endContent={<Settings size={16} onClick={onClick} />} onlyShowOnHover hasUnreadMessages={subChannel.hasUnread} />
 					))}
 				</div>
 			)}
@@ -108,75 +110,70 @@ const ChannelNavBar = ({ children }: { children?: React.ReactElement | React.Rea
 	const { navBarLocation, isSideBarOpen, setIsSideBarOpen } = useSettingsStore();
 
 	const { guildSettings: rawGuildSettings, setGuildSettings } = useGuildSettingsStore();
-	const guildSettings = rawGuildSettings["123"] ?? { memberBarHidden: false };
-
 	const { isOpen: isNicknameOpen, onOpenChange, onClose } = useDisclosure();
-
 	const {
 		isOpen: isConfirmLeaveOpen,
 		onOpenChange: onOpenChangeConfirmLeave,
 		onClose: onCloseConfirmLeave,
 	} = useDisclosure();
-
 	const {
 		isOpen: isGuildSettingsOpen,
 		onOpenChange: onOpenChangeGuildSettings,
 		onClose: onCloseGuildSettings,
 	} = useDisclosure();
-
 	const {
 		isOpen: isChannelSettingsOpen,
 		onOpenChange: onOpenChangeChannelSettings,
 		onClose: onCloseChannelSettings,
 	} = useDisclosure();
 
-	const currentGuild = {
-		name: "Kastel Development",
-		owner: true,
-		icon: {
-			text: "Official & Partnered",
-			icon: <BadgeCheck size={18} color="#17c964" strokeWidth={3} />,
+	const { currentGuildId } = useCurrentStore();
+	const { getGuild } = useGuildStore();
+	const { getChannels } = useChannelStore();
+	// const { getCurrentUser } = useUserStore();
+
+	const guildSettings = rawGuildSettings[currentGuildId ?? ""] ?? { memberBarHidden: false };
+	const foundGuild = getGuild(currentGuildId ?? "")!;
+
+	const dropdownItems = [
+		{
+			name: "Invite Friends",
+			icon: <UserRound size={20} color="#acaebf" />,
+			onClick: () => { },
+			end: true, // ? if end is true, then we have a divider
 		},
-		dropDownTabs: [
-			{
-				name: "Invite Friends",
-				icon: <UserRound size={20} color="#acaebf" />,
-				onClick: () => { },
-				end: true, // ? if end is true, then we have a divider
+		{
+			name: "Guild Settings",
+			icon: <Settings size={20} color="#acaebf" />,
+			onClick: () => {
+				onOpenChangeGuildSettings();
 			},
-			{
-				name: "Guild Settings",
-				icon: <Settings size={20} color="#acaebf" />,
-				onClick: () => {
-					onOpenChangeGuildSettings();
-				},
-				end: false,
+			end: false,
+		},
+		{
+			name: "Create Channel",
+			icon: <Hash size={20} color="#acaebf" />,
+			onClick: () => { },
+			end: false,
+		},
+		{
+			name: "Change Nickname",
+			icon: <Pencil size={20} color="#acaebf" />,
+			onClick: () => {
+				onOpenChange();
 			},
-			{
-				name: "Create Channel",
-				icon: <Hash size={20} color="#acaebf" />,
-				onClick: () => { },
-				end: false,
+			end: true,
+		},
+		{
+			name: "Leave Guild",
+			icon: <X size={20} color="#acaebf" />,
+			onClick: () => {
+				onOpenChangeConfirmLeave();
 			},
-			{
-				name: "Change Nickname",
-				icon: <Pencil size={20} color="#acaebf" />,
-				onClick: () => {
-					onOpenChange();
-				},
-				end: true,
-			},
-			{
-				name: "Leave Guild",
-				icon: <X size={20} color="#acaebf" />,
-				onClick: () => {
-					onOpenChangeConfirmLeave();
-				},
-				end: false,
-				color: "danger",
-			},
-		],
-	};
+			end: false,
+			color: "danger",
+		},
+	];
 
 	// ? Built in channels are something like what a few other platforms have, ModMail will be a feature where users can message the mods
 	// ? And have it be easier for mods to see the messages, and respond to them instead of using a 3rd party bot PLUS these don't count towards
@@ -203,100 +200,41 @@ const ChannelNavBar = ({ children }: { children?: React.ReactElement | React.Rea
 		},
 	];
 
-	// t! These are temporary and will be removed once API support arrives
-	const normalChannels: Channel[] = [
-		{
-			name: "Uncategorized",
-			icon: <Hash size={18} color="#acaebf" />,
-		},
-		{
-			name: "Welcome",
-			channels: [
-				{
-					name: "info",
-					icon: <BookA size={18} color="#acaebf" />,
-				},
-				{
-					name: "announcements",
-					icon: <Hash size={18} color="#acaebf" />,
-				},
-				{
-					name: "updates",
-					icon: <Hash size={18} color="#acaebf" />,
-				},
-				{
-					name: "todos",
-					icon: <Hash size={18} color="#acaebf" />,
-				},
-				{
-					name: "github",
-					icon: <Hash size={18} color="#acaebf" />,
-				},
-				{
-					name: "welcome",
-					icon: <Hash size={18} color="#acaebf" />,
-				},
-				{
-					name: "polls",
-					icon: <Hash size={18} color="#acaebf" />,
-				},
-			],
-		},
-		{
-			name: "Messaging",
-			channels: [
-				{
-					name: "lounge",
-					icon: <Hash size={18} color="#acaebf" />,
-				},
-				{
-					name: "bots",
-					icon: <Hash size={18} color="#acaebf" />,
-				},
-				{
-					name: "media",
-					icon: <Hash size={18} color="#acaebf" />,
-				},
-				{
-					name: "stream",
-					icon: <Volume2 size={18} color="#acaebf" />,
-				},
-				{
-					name: "priv",
-					icon: <Volume2 size={18} color="#acaebf" />,
-				},
-			],
-		},
-		{
-			name: "Alpha",
-			channels: [
-				{
-					name: "alpha-info",
-					icon: <Hash size={18} color="#acaebf" />,
-				},
-				{
-					name: "alpha-updates",
-					icon: <Hash size={18} color="#acaebf" />,
-				},
-				{
-					name: "known-issues",
-					icon: <Hash size={18} color="#acaebf" />,
-				},
-				{
-					name: "alpha-chat",
-					icon: <Hash size={18} color="#acaebf" />,
-				},
-				{
-					name: "server-invites",
-					icon: <Hash size={18} color="#acaebf" />,
-				},
-				{
-					name: "unofficial-bot-development",
-					icon: <Hash size={18} color="#acaebf" />,
-				},
-			],
-		},
-	];
+	const [normalChannels, setNormalChannels] = useState<Channel[]>([]);
+
+	useEffect(() => {
+		const dos = async () => {
+			const gotChannels = await getChannels(currentGuildId ?? "");
+
+			const handledChannels: Channel[] = [];
+
+			for (const channel of gotChannels) {
+				switch (channel.type) {
+					case channelTypes.GuildCategory: {
+						const children = gotChannels.filter((c) => c.parentId === channel.id);
+
+						console.log(foundGuild.channelProperties, children);
+
+						handledChannels.push({
+							name: channel.name,
+							channels: children.map((child) => {
+								return {
+									name: child.name,
+									icon: <ChannelIcon type={child.type} />,
+									description: child.description,
+									hasUnread: foundGuild.channelProperties.find((p) => p.channelId === child.id)?.lastMessageAckId !== child.lastMessageId,
+								};
+							}),
+						});
+					}
+				}
+			}
+
+			setNormalChannels(handledChannels);
+		};
+
+		dos();
+	}, [currentGuildId]);
 
 	const [isOpen, setIsOpen] = useState(false);
 
@@ -347,7 +285,7 @@ const ChannelNavBar = ({ children }: { children?: React.ReactElement | React.Rea
 				]}
 			/>
 			<BaseSettings
-				title={currentGuild.name}
+				title={foundGuild.name}
 				isOpen={isGuildSettingsOpen}
 				onOpenChange={onOpenChangeGuildSettings}
 				onClose={onCloseGuildSettings}
@@ -462,12 +400,8 @@ const ChannelNavBar = ({ children }: { children?: React.ReactElement | React.Rea
 							<DropdownTrigger>
 								<div className="flex items-center justify-between w-full mb-2 ml-3 cursor-pointer">
 									<div className="flex items-center gap-1">
-										{currentGuild.icon && (
-											<Tooltip content={currentGuild.icon.text} showArrow>
-												<div>{currentGuild.icon.icon}</div>
-											</Tooltip>
-										)}
-										<p className="text-white text-sm truncate">{currentGuild.name}</p>
+										<GuildIcon features={foundGuild.features} />
+										<p className="text-white text-sm truncate">{foundGuild.name}</p>
 									</div>
 									<motion.div animate={isOpen ? "open" : "closed"} variants={variants}>
 										<ChevronRight size={20} color="#acaebf" />
@@ -478,14 +412,14 @@ const ChannelNavBar = ({ children }: { children?: React.ReactElement | React.Rea
 								variant="faded"
 								aria-label="Dropdown menu with description"
 								onAction={(k) => {
-									const found = currentGuild.dropDownTabs[k as number];
+									const found = dropdownItems[k as number];
 
 									if (found) {
 										found.onClick();
 									}
 								}}
 							>
-								{currentGuild.dropDownTabs.map((tab, index) => (
+								{dropdownItems.map((tab, index) => (
 									<DropdownItem
 										key={index}
 										color={tab.color as "danger" | undefined}
@@ -500,7 +434,7 @@ const ChannelNavBar = ({ children }: { children?: React.ReactElement | React.Rea
 					</div>
 					<div className="flex flex-col items-center justify-start p-1 m-0 overflow-y-auto">
 						{builtInChannels.map((channel, index) => (
-							<ChannelIcon
+							<Channel
 								key={index}
 								text={channel.name}
 								startContent={channel.icon}
@@ -532,7 +466,7 @@ const ChannelNavBar = ({ children }: { children?: React.ReactElement | React.Rea
 								icon: <UsersRound size={22} color="#acaebf" />,
 								tooltip: guildSettings.memberBarHidden ? "Show Members" : "Hide Members",
 								onClick: () => {
-									setGuildSettings("123", {
+									setGuildSettings(currentGuildId ?? "", {
 										memberBarHidden: !guildSettings.memberBarHidden,
 									});
 								},
