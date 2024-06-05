@@ -1,5 +1,5 @@
 import { NavBarLocation } from "@/types/payloads/ready.ts";
-import { useCurrentStore, useGuildSettingsStore, useSettingsStore } from "@/wrapper/Stores.ts";
+import { useGuildSettingsStore, useSettingsStore } from "@/wrapper/Stores.ts";
 import {
 	Chip,
 	Divider,
@@ -38,6 +38,7 @@ import { useChannelStore } from "@/wrapper/Stores/ChannelStore.ts";
 import { channelTypes } from "@/utils/Constants.ts";
 import ChannelIcon from "../ChannelIcon.tsx";
 import GuildIcon from "../GuildIcon.tsx";
+import { useRouter } from "next/router";
 
 const Channel = ({
 	startContent,
@@ -107,8 +108,9 @@ const HandleChannels = ({ channel, onClick }: { channel: Channel, onClick?: () =
 };
 
 const ChannelNavBar = ({ children }: { children?: React.ReactElement | React.ReactElement[]; }) => {
-	const { navBarLocation, isSideBarOpen, setIsSideBarOpen } = useSettingsStore();
+	const router = useRouter();
 
+	const { navBarLocation, isSideBarOpen, setIsSideBarOpen } = useSettingsStore();
 	const { guildSettings: rawGuildSettings, setGuildSettings } = useGuildSettingsStore();
 	const { isOpen: isNicknameOpen, onOpenChange, onClose } = useDisclosure();
 	const {
@@ -127,10 +129,10 @@ const ChannelNavBar = ({ children }: { children?: React.ReactElement | React.Rea
 		onClose: onCloseChannelSettings,
 	} = useDisclosure();
 
-	const { currentGuildId } = useCurrentStore();
 	const { getGuild } = useGuildStore();
 	const { getChannels } = useChannelStore();
 	// const { getCurrentUser } = useUserStore();
+	const currentGuildId = router.query.guildId as string;
 
 	const guildSettings = rawGuildSettings[currentGuildId ?? ""] ?? { memberBarHidden: false };
 	const foundGuild = getGuild(currentGuildId ?? "")!;

@@ -1,4 +1,4 @@
-import { useAPIStore, useClientStore, useCurrentStore, useIsReady, useTokenStore } from "@/wrapper/Stores.ts";
+import { useAPIStore, useClientStore, useIsReady, useTokenStore } from "@/wrapper/Stores.ts";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 import Loading from "./Loading.tsx";
@@ -13,14 +13,6 @@ const Init = ({
     const { api } = useAPIStore();
     const router = useRouter();
     const { setIsReady, isReady } = useIsReady();
-    const { setCurrentGuildId, setCurrentChannelId } = useCurrentStore()
-
-    useEffect(() => {
-        const { guildId, channelId } = router.query as { guildId: string, channelId: string };
-
-        setCurrentGuildId(guildId);
-        setCurrentChannelId(channelId);
-    }, [router])
 
     useEffect(() => {
         api.token = token;

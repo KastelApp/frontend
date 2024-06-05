@@ -45,5 +45,17 @@ export const useGuildStore = create<GuildStore>((set, get) => ({
         })
     },
     removeGuild: (id) => set({ guilds: get().guilds.filter(guild => guild.id !== id) }),
-    getGuild: (id) => get().guilds.find(guild => guild.id === id),
+    getGuild: (id) => get().guilds.find(guild => guild.id === id) ?? {
+        name: "Unknown",
+        description: null,
+        features: [],
+        id: id,
+        icon: null,
+        ownerId: null,
+        coOwners: [],
+        maxMembers: 0,
+        flags: 0,
+        unavailable: true,
+        channelProperties: [],
+    },
 }));

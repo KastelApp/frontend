@@ -3,7 +3,7 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { createTrackedSelector } from "react-tracked";
 import Translation from "@/utils/Translation.ts";
-import { APIStore, ClientStore, CurrentStore, GuildSettings, GuildSettingsStore, IsReadyStore, SelectedTabStore, SettingsStore, TokenStore, TranslationStore } from "./Stores.types.ts";
+import { APIStore, ClientStore, GuildSettings, GuildSettingsStore, IsReadyStore, SelectedTabStore, SettingsStore, TokenStore, TranslationStore } from "./Stores.types.ts";
 import API from "./API.ts";
 import Client from "./Client.ts";
 
@@ -29,15 +29,6 @@ export const useSettingsStore = createTrackedSelector(
 		setPrivacy: (privacy: number) => set({ privacy }),
 		setTheme: (theme: Theme) => set({ theme }),
 		setIsSideBarOpen: (isSideBarOpen: boolean) => set({ isSideBarOpen }),
-	})),
-);
-
-export const useCurrentStore = createTrackedSelector(
-	create<CurrentStore>((set) => ({
-		currentChannelId: null,
-		currentGuildId: null,
-		setCurrentChannelId: (currentChannelId: string | null) => set({ currentChannelId }),
-		setCurrentGuildId: (currentGuildId: string | null) => set({ currentGuildId }),
 	})),
 );
 

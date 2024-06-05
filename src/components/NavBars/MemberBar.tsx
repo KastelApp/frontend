@@ -1,4 +1,4 @@
-import { useCurrentStore, useGuildSettingsStore } from "@/wrapper/Stores.ts";
+import { useGuildSettingsStore } from "@/wrapper/Stores.ts";
 import {
 	Avatar,
 	Badge,
@@ -13,6 +13,7 @@ import { useEffect, useState } from "react";
 import { twMerge } from "tailwind-merge";
 import UserPopover from "../Popovers/UserPopover.tsx";
 import UserModal from "../Modals/UserModal.tsx";
+import { useRouter } from "next/router";
 
 interface Role {
 	name: string;
@@ -139,9 +140,11 @@ const Member = ({ member, color }: { member: Member; color: string | null }) => 
 };
 
 const MemberBar = () => {
+	const router = useRouter();
+
 	const { guildSettings: rawGuildSettings } = useGuildSettingsStore();
 
-	const { currentGuildId } = useCurrentStore();
+	const currentGuildId = router.query.guildId as string;
 
 	const guildSettings = rawGuildSettings[currentGuildId ?? ""] ?? { memberBarHidden: false }
 
