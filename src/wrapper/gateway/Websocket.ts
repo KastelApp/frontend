@@ -1,4 +1,5 @@
 import Logger from "@/utils/Logger.ts";
+import handleMessage from "./handleMessage.ts";
 
 class Websocket {
     #token: string;
@@ -10,6 +11,16 @@ class Websocket {
     public ENCODING = "json";
 
     private ws: WebSocket | null = null;
+
+    public heartbeatInterval = 0;
+
+    public lastHeartbeat = 0;
+
+    public lastHeartbeatAck = 0;
+
+    public sessionId: string | null = null;
+
+    public sessionWorker: Worker = new Worker("/workers/interval.worker.js");
 
     public constructor(token: string) {
         this.#token = token;
@@ -41,25 +52,40 @@ class Websocket {
             return;
         }
 
-        this.ws = new WebSocket(`${this.GATEWAY_URL}/?version=v${this.VERSION}&encoding=${this.ENCODING}&token=${this.#token}`);
+        this.ws = new WebSocket(`${this.GATEWAY_URL}/?version=v${this.VERSION}&encoding=${this.ENCODING}`);
 
         this.ws.onopen = () => {
             Logger.info("Connected to the gateway", "Wrapper | WebSocket");
         };
 
         this.ws.onmessage = (event) => {
-            const data = JSON.parse(event.data);
-
-            Logger.info("Received data from the gateway", "Wrapper | WebSocket");
-
-            console.log(data);
+            handleMessage(this, event.data);
         };
 
         this.ws.onclose = () => {
             Logger.warn("Connection to the gateway was closed", "Wrapper | WebSocket");
 
             this.ws = null;
+
+            this.reconnect();
         };
+    }
+
+    public async reconnect() {
+        if (this.ws) {
+            this.ws.close();
+
+            this.ws = null;
+
+            Logger.warn("Killed existing socket due to reconnecting to the gateway", "Wrapper | WebSocket");
+        }
+
+        Logger.info("Reconnecting to the gateway", "Wrapper | WebSocket");
+
+        // ? The timeout is in-case we get into an infinite loop of reconnecting, we don't want to flood tons of requests
+        await new Promise((resolve) => setTimeout(resolve, 1500));
+
+        this.connect();
     }
 
     /**

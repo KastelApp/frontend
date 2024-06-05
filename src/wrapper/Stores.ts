@@ -7,6 +7,7 @@ import { APIStore, ClientStore, GuildSettings, GuildSettingsStore, IsReadyStore,
 import API from "./API.ts";
 import Client from "./Client.ts";
 
+// todo: migrate this to @wrapper/Stores
 export const useSettingsStore = createTrackedSelector(
 	create<SettingsStore>((set) => ({
 		emojiPack: EmojiPack.Twemoji,

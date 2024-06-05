@@ -19,6 +19,6 @@
 			"@/*": ["./src/*"]
 		}
 	},
-	"include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "tailwind.config.js", "postcss.config.js", "next.config.js", "e.js"],
+	"include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "tailwind.config.js", "postcss.config.js", "next.config.js", "./public/workers/interval.worker.js"],
 	"exclude": ["node_modules"]
 }

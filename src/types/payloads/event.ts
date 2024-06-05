@@ -1,6 +1,6 @@
 export interface EventPayload {
 	op: number;
-	event:
+	event?:
 		| "Typing"
 		| "MessageCreate"
 		| "PresencesUpdate"
@@ -10,5 +10,5 @@ export interface EventPayload {
 		| "GuildMemberChunk"
 		| "GuildMemberRemove";
 	data: unknown;
-	seq: number;
+	seq?: number;
 }
