@@ -1,5 +1,6 @@
 import Logger from "@/utils/Logger.ts";
 import handleMessage from "./handleMessage.ts";
+import { opCodes } from "@/utils/Constants.ts";
 
 class Websocket {
     #token: string;
@@ -22,8 +23,34 @@ class Websocket {
 
     public sessionWorker: Worker = new Worker("/workers/interval.worker.js");
 
+    public sequence: number = 0;
+
     public constructor(token: string) {
         this.#token = token;
+
+        this.sessionWorker.onmessage = (event) => {
+            const { op, session } = event.data;
+
+            if (session !== this.sessionId) return; // ? not our session to worry about
+
+            if (op === 3) {
+                this.send({
+                    op: opCodes.heartbeat,
+                    data: {
+                        seq: this.sequence,
+                    },
+                });
+
+                this.lastHeartbeat = Date.now();
+
+                this.sessionWorker.postMessage({
+                    op: 4,
+                    data: {
+                        session: this.sessionId,
+                    },
+                });
+            }
+        };
     }
 
     public get token() {
@@ -96,6 +123,33 @@ class Websocket {
     public decompress(data: unknown): string {
         // t! At some point we are going to use zstd for compression, for now we just return the data since its a string
         return data as string;
+    }
+
+    /**
+     * Send some data to the gateway
+     * @param data The data to send
+     */
+    public send(data: unknown) {
+        if (!this.ws) {
+            Logger.warn("No connection to the gateway", "Wrapper | WebSocket");
+
+            return;
+        }
+
+        if (typeof data === "string" || data instanceof ArrayBuffer || data instanceof Blob) {
+            this.ws.send(data);
+
+            return;
+        }
+
+        this.ws.send(JSON.stringify(data));
+    }
+
+    /**
+     * Get the current ping of the connection, this is not 100% accurate since it goes based off how long it took for the server to respond to a heartbeat
+     */
+    public get ping() {
+        return Math.abs(this.lastHeartbeat - this.lastHeartbeatAck);
     }
 }
 
