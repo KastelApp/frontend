@@ -9,6 +9,8 @@ import { ReadyPayload } from "@/types/payloads/ready.ts";
 import { useUserStore } from "../Stores/UserStore.ts";
 import { useGuildStore } from "../Stores/GuildStore.ts";
 import { useChannelStore } from "../Stores/ChannelStore.ts";
+import { useMemberStore } from "../Stores/Members.ts";
+import { useRoleStore } from "../Stores/RoleStore.ts";
 
 const handleMessage = async (ws: Websocket, data: unknown) => {
     const decompressed = safeParse<EventPayload>(ws.decompress(data));
@@ -88,6 +90,33 @@ const handleMessage = async (ws: Websocket, data: unknown) => {
                     useChannelStore.getState().addChannel({
                         ...channel,
                         guildId: guild.id
+                    })
+                }
+
+                for (const member of guild.members) {
+                    useMemberStore.getState().addMember({
+                        ...member,
+                        guildId: guild.id,
+                        joinedAt: new Date(member.joinedAt),
+                        userId: member.user.id,
+                        nickname: member.nickname || null,
+                    })
+
+                    useUserStore.getState().addUser({
+                        username: member.user.username,
+                        id: member.user.id,
+                        flags: member.user.flags,
+                        publicFlags: member.user.publicFlags,
+                        avatar: member.user.avatar,
+                        tag: member.user.tag,
+                    })
+                }
+
+                for (const role of guild.roles) {
+                    useRoleStore.getState().addRole({
+                        ...role,
+                        guildId: guild.id,
+                        hoisted: role.hoist,
                     })
                 }
             }

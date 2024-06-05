@@ -13,20 +13,9 @@ import {
 } from "@nextui-org/react";
 import { EllipsisVertical } from "lucide-react";
 import BaseContextMenu from "../Dropdowns/BaseContextMenu.tsx";
+import { User, useUserStore } from "@/wrapper/Stores/UserStore.ts";
 
-const UserModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) => {
-	const member = {
-		avatar: "https://development.kastelapp.com/icon-1.png",
-		customStatus: "This is a custom status",
-		discriminator: "0001",
-		id: "1",
-		isOwner: false,
-		roles: ["admin"],
-		status: "online",
-		tag: null,
-		username: "DarkerInk",
-	};
-
+const UserModal = ({ isOpen, onClose, user }: { isOpen: boolean; onClose: () => void; user: User }) => {
 	return (
 		<>
 			<Modal
@@ -47,20 +36,23 @@ const UserModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }
 											content={""}
 											placement="bottom-right"
 											className="mb-2 mr-2 h-6 w-6"
-											color={
-												member.status === "online"
-													? "success"
-													: member.status === "idle"
-														? "warning"
-														: member.status === "dnd"
-															? "danger"
-															: "default"
-											}
+											// color={
+											// 	member.status === "online"
+											// 		? "success"
+											// 		: member.status === "idle"
+											// 			? "warning"
+											// 			: member.status === "dnd"
+											// 				? "danger"
+											// 				: "default"
+											// }
+											color="success"
 										>
-											<Avatar src={member.avatar ?? undefined} alt="User Avatar" className="h-24 w-24 mt-4" />
+											<Avatar src={user.avatar ?? useUserStore.getState().getDefaultAvatar(user.id)} alt="User Avatar" className="h-24 w-24 mt-4" imgProps={{
+												className: "transition-none",
+											}} />
 										</Badge>
 										<div className="bg-charcoal-600 rounded-md p-1 ml-2">
-											<AllBadges privateFlags="0" publicFlags="999999999999" size={20} />
+											<AllBadges privateFlags={user.flags} publicFlags={user.publicFlags} size={20} />
 										</div>
 									</div>
 									<div className="flex items-start justify-start">
@@ -94,11 +86,11 @@ const UserModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }
 									<Card className="mt-2 mb-2" isBlurred>
 										<CardBody className="overflow-y-auto max-h-[85vh]">
 											<div>
-												<p className="text-white text-xl font-semibold">{member.username}</p>
+												<p className="text-white text-xl font-semibold">{user.username}</p>
 												<p className="text-gray-300 text-sm">
-													{member.username}#{member.discriminator}
+													{user.username}#{user.tag}
 												</p>
-												{member.customStatus && <p className="text-gray-200 text-md mt-2">{member.customStatus}</p>}
+												{/* {member.customStatus && <p className="text-gray-200 text-md mt-2">{member.customStatus}</p>} */}
 											</div>
 											<Divider className="mt-2" />
 											<div className="mt-2">
@@ -121,10 +113,12 @@ const ControlledUserModal = ({
 	children,
 	onClick,
 	className,
+	user
 }: {
 	children: React.ReactNode;
 	onClick?: () => void;
 	className?: string;
+	user: User;
 }) => {
 	const { isOpen, onOpen, onClose } = useDisclosure();
 
@@ -142,7 +136,7 @@ const ControlledUserModal = ({
 			>
 				{children}
 			</div>
-			<UserModal isOpen={isOpen} onClose={onClose} />
+			<UserModal isOpen={isOpen} onClose={onClose} user={user} />
 		</>
 	);
 };

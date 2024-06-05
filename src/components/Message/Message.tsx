@@ -46,7 +46,11 @@ const Message = ({
 
 		return (
 			<>
-				<UserModal isOpen={isModalOpen} onClose={onClose} />
+				<UserModal isOpen={isModalOpen} onClose={onClose} user={{
+					avatar: null,
+					id: "",
+					username: "",
+				}} />
 				<Popover
 					placement="right"
 					isOpen={isOpen}

@@ -98,6 +98,7 @@ export interface MemberUser {
 	flags: string;
 	publicFlags: string;
 	avatar: string | null;
+	tag: string;
 }
 
 export interface Settings {

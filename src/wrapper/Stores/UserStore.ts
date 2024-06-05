@@ -16,14 +16,17 @@ export interface User {
     mfaVerified: boolean;
     bio: string | null;
     isClient: boolean;
+    isSystem: boolean;
+    isBot: boolean;
 }
 
 export interface UserStore {
     users: User[];
-    addUser(user: User): void;
+    addUser(user: Partial<User>): void;
     removeUser(id: string): void;
-    getUser(id: string): Promise<User | undefined>;
+    getUser(id: string, forceRecache?: boolean): Promise<User | undefined>;
     getCurrentUser(): User | undefined;
+    getDefaultAvatar(id: string): string;
 }
 
 export const useUserStore = create<UserStore>((set, get) => ({
@@ -37,6 +40,24 @@ export const useUserStore = create<UserStore>((set, get) => ({
             users: [
                 ...currentUsers,
                 {
+                    ...{
+                        avatar: null,
+                        bio: null,
+                        email: null,
+                        emailVerified: false,
+                        flags: "0",
+                        globalNickname: null,
+                        id: "",
+                        isClient: false,
+                        mfaEnabled: false,
+                        mfaVerified: false,
+                        phoneNumber: null,
+                        publicFlags: "0",
+                        tag: "0000",
+                        username: "Unknown User",
+                        isBot: false,
+                        isSystem: false
+                    },
                     ...foundUser,
                     ...user
                 }
@@ -44,10 +65,10 @@ export const useUserStore = create<UserStore>((set, get) => ({
         })
     },
     getCurrentUser: () => get().users.find((user) => user.isClient),
-    getUser: async (id) => {
+    getUser: async (id, forceRecache) => {
         const foundUser = get().users.find((user) => user.id === id);
 
-        if (foundUser) return foundUser;
+        if (foundUser && !forceRecache) return foundUser;
 
         const api = useAPIStore.getState().api;
 
@@ -56,4 +77,5 @@ export const useUserStore = create<UserStore>((set, get) => ({
         console.log("FETCH", api)
     },
     removeUser: (id) => set((state) => ({ users: state.users.filter((user) => user.id !== id) })),
+    getDefaultAvatar: (id) => `/icon-${BigInt(id) % 5n}.png`
 }));

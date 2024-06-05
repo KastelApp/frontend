@@ -9,42 +9,33 @@ import {
 	Spinner,
 	useDisclosure,
 } from "@nextui-org/react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { twMerge } from "tailwind-merge";
 import UserPopover from "../Popovers/UserPopover.tsx";
 import UserModal from "../Modals/UserModal.tsx";
 import { useRouter } from "next/router";
+import { useRoleStore } from "@/wrapper/Stores/RoleStore.ts";
+import { Member, useMemberStore } from "@/wrapper/Stores/Members.ts";
+import { User, useUserStore } from "@/wrapper/Stores/UserStore.ts";
+import deepEqual from "fast-deep-equal";
 
-interface Role {
-	name: string;
-	position: number;
-	color: string | null;
-	hoisted: boolean;
-	id: string;
-}
-
-interface Member {
-	id: string;
-	username: string;
-	discriminator: string;
-	avatar: string | null;
-	roles: string[];
-	isOwner: boolean;
-	tag: "Bot" | "System" | null;
-	status: "online" | "idle" | "dnd" | "offline";
-	customStatus?: string;
-}
 
 interface Section {
 	name: string; // ? two defaults, "offline" and "online"
 	members: {
-		member: Member;
+		member: {
+			member: Member;
+			user: User;
+		};
 		color: string | null;
 	}[];
 	position: number;
 }
 
-const Member = ({ member, color }: { member: Member; color: string | null }) => {
+const MemberItem = ({ member, color }: { member: {
+	member: Member;
+	user: User;
+}; color: string | null; }) => {
 	const [loading, setLoading] = useState(false);
 	const [isOpen, setIsOpen] = useState(false);
 
@@ -52,11 +43,11 @@ const Member = ({ member, color }: { member: Member; color: string | null }) => 
 
 	return (
 		<>
-			<UserModal isOpen={isModalOpen} onClose={onClose} />
+			<UserModal isOpen={isModalOpen} onClose={onClose} user={member.user} />
 			<Popover
 				showArrow
 				placement="left"
-				key={member.id}
+				key={member.user.id}
 				isOpen={isOpen}
 				onOpenChange={setIsOpen}
 				shouldCloseOnInteractOutside={() => {
@@ -82,38 +73,39 @@ const Member = ({ member, color }: { member: Member; color: string | null }) => 
 							<Badge
 								content={""}
 								placement="bottom-right"
-								color={
-									member.status === "online"
-										? "success"
-										: member.status === "idle"
-											? "warning"
-											: member.status === "dnd"
-												? "danger"
-												: "default"
-								}
+								// color={
+								// 	member.status === "online"
+								// 		? "success"
+								// 		: member.status === "idle"
+								// 			? "warning"
+								// 			: member.status === "dnd"
+								// 				? "danger"
+								// 				: "default"
+								// }
+								color="success"
 								className="mb-1"
 							>
-								<Avatar src={member.avatar ?? undefined} size="sm" className="" />
+								<Avatar src={member.user.avatar ?? useUserStore.getState().getDefaultAvatar(member.user.id)} size="sm" imgProps={{ className: "transition-none" }} />
 							</Badge>
 							<div className="flex flex-col ml-1">
 								<div className={twMerge("flex items-center")}>
-									<div className={twMerge("flex flex-col ml-2", member.tag ? "max-w-[6.75rem]" : "max-w-36")}>
+									<div className={twMerge("flex flex-col ml-2", member.user.tag ? "max-w-[6.75rem]" : "max-w-36")}>
 										<p
 											className={twMerge("truncate text-sm", color ? "" : "text-white")}
 											style={color !== null ? { color } : {}}
 										>
-											{member.username}
+											{member.user.username}
 										</p>
-										{member.customStatus && <p className="text-xs text-gray-500 truncate">{member.customStatus}</p>}
+										{/* {member.customStatus && <p className="text-xs text-gray-500 truncate">{member.customStatus}</p>} */}
 									</div>
-									{member.tag && (
+									{(member.user.isBot || member.user.isSystem) && (
 										<Chip
 											color="success"
 											variant="flat"
 											className="ml-1 w-1 p-0 h-4 text-[10px] rounded-sm"
 											radius="none"
 										>
-											{member.tag}
+											{member.user.isBot ? "Bot" : "System"}
 										</Chip>
 									)}
 								</div>
@@ -146,106 +138,61 @@ const MemberBar = () => {
 
 	const currentGuildId = router.query.guildId as string;
 
-	const guildSettings = rawGuildSettings[currentGuildId ?? ""] ?? { memberBarHidden: false }
+	const guildSettings = rawGuildSettings[currentGuildId ?? ""] ?? { memberBarHidden: false };
 
-	const roles: Role[] = [
-		{
-			name: "everyone",
-			id: "everyone",
-			color: null,
-			hoisted: false,
-			position: 0, // ? 0 = bottom
-		},
-		{
-			name: "Admin",
-			id: "admin",
-			color: "#FFA500",
-			hoisted: true,
-			position: 2, // ? 2 = top
-		},
-		{
-			name: "Test",
-			id: "test",
-			color: "green",
-			hoisted: false,
-			position: 3, // ? 3 = top
-		},
-		{
-			name: "Moderator",
-			id: "moderator",
-			color: "#0088ff",
-			hoisted: false,
-			position: 1, // ? 1 = middle
-		},
-	];
+	const roleRef = useRef(useRoleStore.getState().getRoles(currentGuildId));
+	const memberRef = useRef(useMemberStore.getState().getMembers(currentGuildId));
 
-	const members: Member[] = [
-		{
-			id: "1",
-			username: "DarkerInk",
-			discriminator: "0001",
-			avatar: "https://development.kastelapp.com/icon-1.png",
-			roles: ["everyone", "admin", "test", "Team", "Developers", "user", "announcements", "backend", "polls"],
-			isOwner: true,
-			status: "online",
-			tag: null,
-			customStatus: "Cats r cool",
-		},
-		{
-			id: "2",
-			username: "Cats",
-			discriminator: "0002",
-			avatar: null,
-			roles: ["everyone", "moderator"],
-			isOwner: false,
-			status: "idle",
-			tag: null,
-		},
-		{
-			id: "3",
-			username: "Waffles",
-			discriminator: "0003",
-			avatar: null,
-			roles: ["everyone"],
-			isOwner: false,
-			status: "dnd",
-			tag: null,
-		},
-		{
-			id: "4",
-			username: "Dogo",
-			discriminator: "0004",
-			avatar: null,
-			roles: ["everyone", "moderator"],
-			isOwner: false,
-			status: "offline",
-			tag: null,
-		},
-		{
-			id: "5",
-			username: "Bot",
-			discriminator: "0004",
-			avatar: null,
-			roles: ["everyone"],
-			isOwner: false,
-			status: "online",
-			tag: "Bot",
-		},
-		{
-			id: "6",
-			username: "System",
-			discriminator: "0006",
-			avatar: null,
-			roles: ["everyone"],
-			isOwner: false,
-			status: "idle",
-			tag: "System", // ? NOTE: THIS WILL **NEVER** happen in production, if it does, then we should panic (i.e console log it)
-		},
-	];
+	const roles = roleRef.current;
+	const members = memberRef.current;
+
+
+	useEffect(() => {
+		const roleSubscribe = useRoleStore.subscribe((s) => {
+			const roles = s.getRoles(currentGuildId);
+
+			if (deepEqual(roles, roleRef.current)) return;
+
+			roleRef.current = roles;
+		});
+
+		const memberSubscribe = useMemberStore.subscribe((s) => {
+			const members = s.getMembers(currentGuildId);
+
+			if (deepEqual(members, memberRef.current)) return;
+
+			memberRef.current = members;
+		});
+
+		return () => {
+			roleSubscribe();
+			memberSubscribe();
+		};
+	}, []);
+
+	useEffect(() => {
+		const roles = useRoleStore.getState().getRoles(currentGuildId);
+		const members = useMemberStore.getState().getMembers(currentGuildId);
+
+		console.log(currentGuildId, deepEqual(roles, roleRef.current));
+		console.log(currentGuildId, deepEqual(members, memberRef.current));
+
+		if (!deepEqual(roles, roleRef.current)) {
+			roleRef.current = roles;
+		}
+
+		if (!deepEqual(members, memberRef.current)) {
+			memberRef.current = members;
+		}
+	}, [currentGuildId]);
+
+
+
+	const { getUser } = useUserStore();
 
 	const [sections, setSections] = useState<Section[]>();
 
-	useEffect(() => {
+	const sort = async () => {
 		const defaultSections: Section[] = [
 			{
 				name: "Offline",
@@ -263,6 +210,7 @@ const MemberBar = () => {
 			// ? defaultSections[0] = offline
 			// ? defaultSections[1] = online
 			// ? defaultSections[number] = role
+			const foundUser = await getUser(member.userId);
 
 			const topColorRole = member.roles
 				.map((roleId) => roles.find((role) => role.id === roleId))
@@ -270,10 +218,15 @@ const MemberBar = () => {
 				.sort((a, b) => a!.position - b!.position)
 				.reverse()[0]?.color;
 
+			member.status = "online";
+
 			if (member.status === "offline") {
 				defaultSections[0].members.push({
-					color: topColorRole ?? null,
-					member,
+					color: topColorRole ? topColorRole.toString(16) : null,
+					member: {
+						member,
+						user: foundUser!,
+					},
 				});
 
 				continue;
@@ -282,8 +235,11 @@ const MemberBar = () => {
 			// ? if their only role is the everyone role push to online
 			if (member.roles.length === 1 && member.roles[0] === "everyone") {
 				defaultSections[1].members.push({
-					color: topColorRole ?? null,
-					member,
+					color: topColorRole ? topColorRole.toString(16) : null,
+					member: {
+						member,
+						user: foundUser!,
+					},
 				});
 
 				continue;
@@ -299,8 +255,11 @@ const MemberBar = () => {
 
 			if (!topRole) {
 				defaultSections[1].members.push({
-					color: topColorRole ?? null,
-					member,
+					color: topColorRole ? topColorRole.toString(16) : null,
+					member: {
+						member,
+						user: foundUser!,
+					},
 				});
 
 				continue;
@@ -314,8 +273,11 @@ const MemberBar = () => {
 						name: topRole.name,
 						members: [
 							{
-								color: topColorRole ?? null,
-								member,
+								color: topColorRole ? topColorRole.toString(16) : null,
+								member: {
+									member,
+									user: foundUser!,
+								},
 							},
 						],
 						position: topRole.position,
@@ -325,8 +287,11 @@ const MemberBar = () => {
 				}
 
 				section.members.push({
-					color: topColorRole ?? null,
-					member,
+					color: topColorRole ? topColorRole.toString(16) : null,
+					member: {
+						member,
+						user: foundUser!,
+					},
 				});
 
 				continue;
@@ -344,8 +309,11 @@ const MemberBar = () => {
 				if (!section) continue;
 
 				section.members.push({
-					color: topColorRole ?? null,
-					member,
+					color: topColorRole ? topColorRole.toString(16) : null,
+					member: {
+						member,
+						user: foundUser!,
+					},
 				});
 
 				found = true;
@@ -355,16 +323,23 @@ const MemberBar = () => {
 
 			if (!found) {
 				defaultSections[1].members.push({
-					color: topColorRole ?? null,
-					member,
+					color: topColorRole ? topColorRole.toString(16) : null,
+					member: {
+						member,
+						user: foundUser!,
+					},
 				});
 			}
 		}
 
 		defaultSections.sort((a, b) => a.position - b.position).reverse();
 
-		setSections(defaultSections);
-	}, []);
+		setSections(defaultSections.filter((section) => section.members.length > 0));
+	};
+
+	useEffect(() => {
+		sort();
+	}, [roles, members]);
 
 	return (
 		<div
@@ -381,7 +356,7 @@ const MemberBar = () => {
 								{section.name} — {section.members.length}
 							</p>
 							{section.members.map((member, index) => (
-								<Member key={index} member={member.member} color={member.color} />
+								<MemberItem key={index} member={member.member} color={member.color} />
 							))}
 						</div>
 					))}
