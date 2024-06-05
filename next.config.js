@@ -27,12 +27,6 @@ const nextConfig = {
 				destination: "/404",
 				permanent: true,
 			});
-
-			redirects.push({
-				source: "/temp",
-				destination: "/404",
-				permanent: true,
-			});
 		}
 
 		return redirects;

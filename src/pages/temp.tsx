@@ -1,21 +1,12 @@
-import { useRouter } from "next/router";
-import { useEffect } from "react";
+import { Link } from "@nextui-org/react";
+import NextLink from "next/link";
 
 const Temp = () => {
-	const router = useRouter();
-
-	useEffect(() => {
-		if (process.env.NODE_ENV === "production") {
-			router.push("/404");
-
-			return;
-		}
-		throw new Error("This is a test error");
-	}, []);
-
 	return (
 		<div>
-			<p>You should not be seeing this page</p>
+			<Link href="/" color="primary" className="whitespace-pre-wrap">Link without <code>as={"{NextLink}"}</code></Link>
+			<br />
+			<Link href="/" color="primary" as={NextLink} className="whitespace-pre-wrap">Link with <code>as={"{NextLink}"}</code></Link>
 		</div>
 	);
 };

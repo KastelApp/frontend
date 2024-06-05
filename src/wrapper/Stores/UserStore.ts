@@ -1,5 +1,4 @@
 import { create } from "zustand";
-import { createTrackedSelector } from "react-tracked";
 import { useAPIStore } from "../Stores.ts";
 
 export interface User {
@@ -27,7 +26,7 @@ export interface UserStore {
     getCurrentUser(): User | undefined;
 }
 
-export const useUserStore = createTrackedSelector(create<UserStore>((set, get) => ({
+export const useUserStore = create<UserStore>((set, get) => ({
     users: [],
     addUser: (user) => set((state) => ({ users: [...state.users, user] })),
     getCurrentUser: () => get().users.find((user) => user.isClient),
@@ -43,4 +42,4 @@ export const useUserStore = createTrackedSelector(create<UserStore>((set, get) =
         console.log("FETCH", api)
     },
     removeUser: (id) => set((state) => ({ users: state.users.filter((user) => user.id !== id) })),
-})));
+}));
