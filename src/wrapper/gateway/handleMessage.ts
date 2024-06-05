@@ -92,7 +92,7 @@ const handleMessage = async (ws: Websocket, data: unknown) => {
                 }
             }
 
-            ws.emit("ready");
+            setTimeout(() => ws.emit("ready"), 500);
 
             break;
         }
