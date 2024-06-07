@@ -13,8 +13,8 @@ export interface Member {
 export interface MemberStore {
     members: Member[];
     addMember(member: Member): void;
-    removeMember(userId: string, guildId: string): void;
-    getMember(userId: string, guildId: string): Member | undefined;
+    removeMember(guildId: string, userId: string): void;
+    getMember(guildId: string, userId: string): Member | undefined;
     getMembers(guildId: string): Member[];
 }
 
@@ -35,7 +35,7 @@ export const useMemberStore = create<MemberStore>((set, get) => ({
             ]
         })
     },
-    removeMember: (userId, guildId) => set({ members: get().members.filter(member => member.userId !== userId && member.guildId !== guildId) }),
-    getMember: (userId, guildId) => get().members.find(member => member.userId === userId && member.guildId === guildId),
+    removeMember: (guildId, userId) => set({ members: get().members.filter(member => member.userId !== userId && member.guildId !== guildId) }),
+    getMember: (guildId, userId) => get().members.find(member => member.userId === userId && member.guildId === guildId),
     getMembers: (guildId) => get().members.filter(member => member.guildId === guildId)
 }));

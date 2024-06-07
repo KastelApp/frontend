@@ -30,7 +30,7 @@ const FileComponent = ({ fileName, imageUrl }: { fileName?: string; imageUrl?: s
 	);
 };
 
-const MessageContainer = ({ placeholder, children }: { placeholder: string; children?: React.ReactNode }) => {
+const MessageContainer = ({ placeholder, children, isReadOnly }: { placeholder: string; children?: React.ReactNode; isReadOnly?: boolean }) => {
 	const [files, setFiles] = useState<{ name: string; url: string }[]>([]);
 	const [replying, setReplying] = useState<boolean>(true);
 
@@ -64,14 +64,16 @@ const MessageContainer = ({ placeholder, children }: { placeholder: string; chil
 									<Divider className="mt-2" />
 								</div>
 							)}
-							<div className="flex">
+							<div className={twMerge("flex", isReadOnly ? "opacity-45 cursor-not-allowed" : "")}>
 								<div className="mr-4">
 									{/*// todo: File select */}
 									<CirclePlus
 										size={22}
 										color="#acaebf"
-										className="cursor-pointer"
+										className={twMerge(isReadOnly ? "" : "cursor-pointer")}
 										onClick={() => {
+											if (isReadOnly) return;
+
 											setFiles((old) => [
 												...old,
 												{
@@ -83,11 +85,11 @@ const MessageContainer = ({ placeholder, children }: { placeholder: string; chil
 									/>
 								</div>
 								<div className="w-full">
-									<SlateEditor placeholder={placeholder} />
+									<SlateEditor placeholder={placeholder} isReadOnly={isReadOnly} readOnlyMessage="You do not have permission to send messages in this channel" />
 								</div>
 								<div className="flex items-center ml-4 gap-2">
-									<SmilePlus size={22} color="#acaebf" className="cursor-pointer" />
-									<SendHorizontal size={22} color="#acaebf" className="cursor-pointer" />
+									<SmilePlus size={22} color="#acaebf" className={twMerge(isReadOnly ? "" : "cursor-pointer")} />
+									<SendHorizontal size={22} color="#acaebf" className={twMerge(isReadOnly ? "" : "cursor-pointer")} />
 								</div>
 							</div>
 						</div>

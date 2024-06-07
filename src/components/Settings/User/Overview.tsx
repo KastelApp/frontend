@@ -82,7 +82,7 @@ const OverView = () => {
 										</div>
 									</Badge>
 								</Tooltip>
-								<div className="rounded-md p-1 ml-2">
+								<div>
 									<AllBadges privateFlags="0" publicFlags="999999999999" size={20} />
 								</div>
 							</div>

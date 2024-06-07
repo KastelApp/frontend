@@ -21,7 +21,7 @@ import {
 	UsersRound,
 	X,
 } from "lucide-react";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { twMerge } from "tailwind-merge";
 import TopNavBar from "./TopNavBar.tsx";
 import { motion } from "framer-motion";
@@ -39,6 +39,7 @@ import { channelTypes } from "@/utils/Constants.ts";
 import ChannelIcon from "../ChannelIcon.tsx";
 import GuildIcon from "../GuildIcon.tsx";
 import { useRouter } from "next/router";
+import Link from "next/link";
 
 const Channel = ({
 	startContent,
@@ -47,7 +48,9 @@ const Channel = ({
 	endContent,
 	divider,
 	shouldHideHover,
-	hasUnreadMessages
+	hasUnreadMessages,
+	isActive,
+	link,
 }: {
 	text: string;
 	startContent?: React.ReactElement | React.ReactElement[];
@@ -56,23 +59,32 @@ const Channel = ({
 	divider?: boolean;
 	shouldHideHover?: boolean;
 	hasUnreadMessages?: boolean;
+	isActive?: boolean;
+	link?: string;
 }) => {
+	const LinkMaybe = ({ children }: { children: React.ReactElement; }) => link ? <Link href={link} passHref>{children}</Link> : <>{children}</>;
+
 	return (
 		<div className="first:mt-2">
-			<div
-				className={twMerge(
-					"flex items-center gap-1 p-1 cursor-pointer group rounded-md w-48 mb-1 text-white transition-all duration-75 ease-in-out",
-					!shouldHideHover ? "hover:bg-slate-500" : "hover:text-slate-400",
-				)}
-			>
-				{hasUnreadMessages && <div className="w-1 h-2 bg-white absolute left-1 rounded-r-lg" />}
-				{startContent}
-				<p className={twMerge("text-sm truncate", hasUnreadMessages ? "font-bold" : "")}>{text}</p>
-				{endContent && (
-					<div className={twMerge("ml-auto", onlyShowOnHover ? "scale-0 group-hover:scale-100" : "")}>{endContent}</div>
-				)}
-			</div>
-			{divider && <Divider />}
+			<LinkMaybe>
+				<>
+					<div
+						className={twMerge(
+							"flex items-center gap-1 p-1 cursor-pointer group rounded-md w-48 mb-1 text-white transition-all duration-75 ease-in-out",
+							!shouldHideHover ? "hover:bg-slate-500/25" : "hover:text-slate-400",
+							isActive ? "!bg-slate-500/50" : ""
+						)}
+					>
+						{hasUnreadMessages && <div className="w-1 h-2 bg-white absolute left-1 rounded-r-lg" />}
+						{startContent}
+						<p className={twMerge("text-sm truncate", hasUnreadMessages ? "font-bold" : "")}>{text}</p>
+						{endContent && (
+							<div className={twMerge("ml-auto", onlyShowOnHover ? "scale-0 group-hover:scale-100" : "")}>{endContent}</div>
+						)}
+					</div>
+					{divider && <Divider />}
+				</>
+			</LinkMaybe>
 		</div>
 	);
 };
@@ -83,9 +95,11 @@ interface Channel {
 	description?: string | null;
 	channels?: Channel[];
 	hasUnread?: boolean;
+	id: string;
+	link?: string;
 }
 
-const HandleChannels = ({ channel, onClick }: { channel: Channel, onClick?: () => void; }) => {
+const HandleChannels = ({ channel, onClick, currentChannelId }: { channel: Channel, onClick?: (e: React.MouseEvent) => void; currentChannelId: string }) => {
 	return (
 		<div>
 			<Channel
@@ -95,11 +109,22 @@ const HandleChannels = ({ channel, onClick }: { channel: Channel, onClick?: () =
 				shouldHideHover={Boolean(channel.channels)}
 				onlyShowOnHover={!channel.channels}
 				hasUnreadMessages={channel.hasUnread}
+				isActive={channel.id === currentChannelId}
+				link={channel.link}
 			/>
 			{channel.channels && (
 				<div className="ml-1">
 					{channel.channels?.map((subChannel, index) => (
-						<Channel key={index} text={subChannel.name} startContent={subChannel.icon} endContent={<Settings size={16} onClick={onClick} />} onlyShowOnHover hasUnreadMessages={subChannel.hasUnread} />
+						<Channel
+							key={index}
+							text={subChannel.name}
+							startContent={subChannel.icon}
+							endContent={<Settings size={16} onClick={onClick} />}
+							onlyShowOnHover
+							hasUnreadMessages={subChannel.hasUnread}
+							isActive={subChannel.id === currentChannelId}
+							link={subChannel.link}
+						/>
 					))}
 				</div>
 			)}
@@ -107,7 +132,11 @@ const HandleChannels = ({ channel, onClick }: { channel: Channel, onClick?: () =
 	);
 };
 
-const ChannelNavBar = ({ children }: { children?: React.ReactElement | React.ReactElement[]; }) => {
+const ChannelNavBar = ({ children, isChannelHeaderHidden, isMemberBarHidden }: {
+	children?: React.ReactElement | React.ReactElement[];
+	isMemberBarHidden?: boolean;
+	isChannelHeaderHidden?: boolean;
+}) => {
 	const router = useRouter();
 
 	const { navBarLocation, isSideBarOpen, setIsSideBarOpen } = useSettingsStore();
@@ -130,9 +159,9 @@ const ChannelNavBar = ({ children }: { children?: React.ReactElement | React.Rea
 	} = useDisclosure();
 
 	const { getGuild } = useGuildStore();
-	const { getChannels } = useChannelStore();
-	// const { getCurrentUser } = useUserStore();
+	const { getSortedChannels } = useChannelStore();
 	const currentGuildId = router.query.guildId as string;
+	const currentChannelId = router.query.channelId as string;
 
 	const guildSettings = rawGuildSettings[currentGuildId ?? ""] ?? { memberBarHidden: false };
 	const foundGuild = getGuild(currentGuildId ?? "")!;
@@ -205,37 +234,50 @@ const ChannelNavBar = ({ children }: { children?: React.ReactElement | React.Rea
 	const [normalChannels, setNormalChannels] = useState<Channel[]>([]);
 
 	useEffect(() => {
-		const dos = async () => {
-			const gotChannels = await getChannels(currentGuildId ?? "");
+		const handledChannels: Channel[] = [];
+		const gotChannels = getSortedChannels(currentGuildId ?? "", true);
 
-			const handledChannels: Channel[] = [];
+		for (const channel of gotChannels) {
+			switch (channel.type) {
+				case channelTypes.GuildCategory: {
+					handledChannels.push({
+						name: channel.name,
+						id: channel.id,
+						channels: channel.channels.map((child) => {
+							return {
+								name: child.name,
+								id: child.id,
+								link: `/app/guilds/${currentGuildId}/channels/${child.id}`,
+								icon: <ChannelIcon type={child.type} />,
+								description: child.description,
+								hasUnread: foundGuild.channelProperties.find((p) => p.channelId === child.id)?.lastMessageAckId !== child.lastMessageId
+							};
+						}),
+					});
 
-			for (const channel of gotChannels) {
-				switch (channel.type) {
-					case channelTypes.GuildCategory: {
-						const children = gotChannels.filter((c) => c.parentId === channel.id);
+					break;
+				}
 
-						console.log(foundGuild.channelProperties, children);
+				case channelTypes.GuildText:
+				case channelTypes.GuildMarkdown:
+				case channelTypes.GuildNewMember:
+				case channelTypes.GuildNews:
+				case channelTypes.GuildRules: {
+					if (handledChannels.find((c) => c.id === channel.parentId || c.id === channel.id)) break;
 
-						handledChannels.push({
-							name: channel.name,
-							channels: children.map((child) => {
-								return {
-									name: child.name,
-									icon: <ChannelIcon type={child.type} />,
-									description: child.description,
-									hasUnread: foundGuild.channelProperties.find((p) => p.channelId === child.id)?.lastMessageAckId !== child.lastMessageId,
-								};
-							}),
-						});
-					}
+					handledChannels.push({
+						name: channel.name,
+						id: channel.id,
+						link: `/app/guilds/${currentGuildId}/channels/${channel.id}`,
+						icon: <ChannelIcon type={channel.type} />,
+						description: channel.description,
+						hasUnread: foundGuild.channelProperties.find((p) => p.channelId === channel.id)?.lastMessageAckId !== channel.lastMessageId
+					});
 				}
 			}
+		}
 
-			setNormalChannels(handledChannels);
-		};
-
-		dos();
+		setNormalChannels(handledChannels);
 	}, [currentGuildId]);
 
 	const [isOpen, setIsOpen] = useState(false);
@@ -445,41 +487,45 @@ const ChannelNavBar = ({ children }: { children?: React.ReactElement | React.Rea
 							/>
 						))}
 						{normalChannels.map((channel, index) => (
-							<HandleChannels key={index} channel={channel} onClick={() => {
+							<HandleChannels key={index} channel={channel} onClick={(e) => {
+								e.stopPropagation();
+								e.nativeEvent.preventDefault();
+							 
 								onOpenChangeChannelSettings();
-							}} />
+							}} currentChannelId={currentChannelId} />
 						))}
 					</div>
 				</div>
 				<div className={twMerge("w-full overflow-hidden", isSideBarOpen ? "ml-[17rem]" : "")}>
-					<TopNavBar
-						startContent={
-							<div className="flex items-center gap-1 select-none">
-								<Hash size={20} color="#acaebf" />
-								<p className="text-gray-300 font-semibold">Test</p>
-								<Divider orientation="vertical" className="h-6 ml-2 mr-2 w-[3px]" />
-								<p className="text-gray-400 text-sm cursor-pointer truncate w-96">Welcome</p>
-							</div>
-						}
-						isOpen={isSideBarOpen}
-						setIsOpen={setIsSideBarOpen}
-						icons={[
-							{
-								icon: <UsersRound size={22} color="#acaebf" />,
-								tooltip: guildSettings.memberBarHidden ? "Show Members" : "Hide Members",
-								onClick: () => {
-									setGuildSettings(currentGuildId ?? "", {
-										memberBarHidden: !guildSettings.memberBarHidden,
-									});
+					{!isChannelHeaderHidden &&
+						<TopNavBar
+							startContent={
+								<div className="flex items-center gap-1 select-none">
+									<Hash size={20} color="#acaebf" />
+									<p className="text-gray-300 font-semibold">Test</p>
+									<Divider orientation="vertical" className="h-6 ml-2 mr-2 w-[3px]" />
+									<p className="text-gray-400 text-sm cursor-pointer truncate w-96">Welcome</p>
+								</div>
+							}
+							isOpen={isSideBarOpen}
+							setIsOpen={setIsSideBarOpen}
+							icons={[
+								{
+									icon: <UsersRound size={22} color="#acaebf" />,
+									tooltip: guildSettings.memberBarHidden ? "Show Members" : "Hide Members",
+									onClick: () => {
+										setGuildSettings(currentGuildId ?? "", {
+											memberBarHidden: !guildSettings.memberBarHidden,
+										});
+									},
 								},
-							},
-						]}
-					/>
+							]}
+						/>}
 					<div className="flex flex-row overflow-y-auto w-full">
 						<div className="flex-grow overflow-y-auto">{children}</div>
-						<div className={twMerge(guildSettings.memberBarHidden ? "ml-1" : "ml-[13.2rem]")}>
+						{!isMemberBarHidden && <div className={twMerge(guildSettings.memberBarHidden ? "ml-1" : "ml-[13.2rem]")}>
 							<MemberBar />
-						</div>
+						</div>}
 					</div>
 				</div>
 			</div>

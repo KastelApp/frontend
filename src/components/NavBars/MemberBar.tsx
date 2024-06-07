@@ -19,7 +19,6 @@ import { Member, useMemberStore } from "@/wrapper/Stores/Members.ts";
 import { User, useUserStore } from "@/wrapper/Stores/UserStore.ts";
 import deepEqual from "fast-deep-equal";
 
-
 interface Section {
 	name: string; // ? two defaults, "offline" and "online"
 	members: {
@@ -107,7 +106,7 @@ const MemberItem = ({ member, color }: { member: {
 											className="ml-1 w-1 p-0 h-4 text-[10px] rounded-sm"
 											radius="none"
 										>
-											{member.user.isBot ? t("tags.bot") : t("")}
+											{member.user.isBot ? t("tags.bot") : t("tags.system")}
 										</Chip>
 									)}
 								</div>
@@ -148,7 +147,6 @@ const MemberBar = () => {
 	const roles = roleRef.current;
 	const members = memberRef.current;
 
-
 	useEffect(() => {
 		const roleSubscribe = useRoleStore.subscribe((s) => {
 			const roles = s.getRoles(currentGuildId);
@@ -175,9 +173,6 @@ const MemberBar = () => {
 	useEffect(() => {
 		const roles = useRoleStore.getState().getRoles(currentGuildId);
 		const members = useMemberStore.getState().getMembers(currentGuildId);
-
-		console.log(currentGuildId, deepEqual(roles, roleRef.current));
-		console.log(currentGuildId, deepEqual(members, memberRef.current));
 
 		if (!deepEqual(roles, roleRef.current)) {
 			roleRef.current = roles;

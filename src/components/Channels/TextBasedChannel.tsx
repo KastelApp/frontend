@@ -6,7 +6,7 @@ import MessageContainer from "@/components/MessageContainer/MessageContainer.tsx
  */
 const TextBasedChannel = () => {
 	return (
-		<MessageContainer placeholder="Message #general">
+		<MessageContainer placeholder="Message #general" isReadOnly>
 			<div className="flex flex-col-reverse overflow-x-hidden w-full">
 				{Array.from({ length: 20 }, (_, i) => (
 					<Message

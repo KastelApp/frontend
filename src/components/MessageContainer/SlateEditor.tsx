@@ -11,7 +11,7 @@ import withMentions from "./plugins/withMentions.tsx";
 import { getLength } from "./SlateUtils.ts";
 import Element from "./renderers/Element.tsx";
 
-const SlateEditor = ({ placeholder }: { placeholder: string; }) => {
+const SlateEditor = ({ placeholder, isReadOnly, readOnlyMessage }: { placeholder: string; readOnlyMessage?: string; isReadOnly?: boolean }) => {
 	const renderLeaf = useCallback((props: LeafProps) => {
 		return <Leaf {...props} />;
 	}, []);
@@ -106,9 +106,10 @@ const SlateEditor = ({ placeholder }: { placeholder: string; }) => {
 				renderLeaf={renderLeaf}
 				// @ts-expect-error -- Unsure how to fix these types
 				renderElement={renderElement}
-				placeholder={placeholder}
+				placeholder={isReadOnly ? readOnlyMessage : placeholder}
 				className="outline-none overflow-y-auto"
 				id="slate-editor"
+				readOnly={isReadOnly}
 			/>
 		</Slate>
 	);

@@ -124,30 +124,7 @@ const DmNavBar = ({
 	];
 
 	const dms = [
-		{
-			username: "DarkerInkDarkerInkDarkerInkDarkerInkDarkerInkDarkerInkDarkerInkDarkerInk",
-			avatar: "https://development.kastelapp.com/icon-1.png",
-			status: "Online",
-			customStatus: "Testing",
-		},
-		{
-			username: "Cats",
-			avatar: null,
-			status: "Idle",
-			customStatus: "Testing",
-		},
-		{
-			username: "Waffles",
-			avatar: null,
-			status: "DND",
-			customStatus: null,
-		},
-		{
-			username: "Dogo",
-			avatar: null,
-			status: "Invisible",
-			customStatus: null,
-		},
+		
 	];
 
 	const [selectedChannel, setSelectedChannel] = useState<string | null>(null);
@@ -200,6 +177,9 @@ const DmNavBar = ({
 				</div>
 				<div className="flex flex-col">
 					<p className="text-white text-xs ml-2 mt-2">Direct Messages</p>
+					{dms.length === 0 && (
+						<p className="text-gray-500 text-sm ml-2 mt-4">Its pretty lonely here... why not dm someone?</p>
+					)}
 					{dms.map((dm, index) => (
 						<DmNavBarItem
 							key={index}

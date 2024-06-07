@@ -1,8 +1,11 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Tabs, Tab, Button, Input, Switch, Chip, Divider, Popover, PopoverTrigger, PopoverContent, Tooltip } from "@nextui-org/react";
 import { useColor, ColorPicker as CustomColorPicker, ColorService } from "react-color-palette";
 import { Trash } from "lucide-react";
 import PermissionsDescriptions from "@/utils/PermissionsDescriptions.ts";
+import { useRouter } from "next/router";
+import { Role, useRoleStore } from "@/wrapper/Stores/RoleStore.ts";
+import deepEqual from "fast-deep-equal";
 
 const generateRgbAndHsv = (color: string) => {
 	return {
@@ -13,11 +16,7 @@ const generateRgbAndHsv = (color: string) => {
 };
 
 const ColorPicker = ({ selectedRole }: {
-	selectedRole: {
-		name: string;
-		color: string;
-		position: number;
-	};
+	selectedRole: Role;
 }) => {
 	const colors = [
 		"#FF5733", // Reddish-orange
@@ -44,7 +43,7 @@ const ColorPicker = ({ selectedRole }: {
 
 	const defaultColor = "#c1c1c1";
 
-	const [color, setColor] = useColor(selectedRole.color);
+	const [color, setColor] = useColor(`#${selectedRole.color === 0 ? "c1c1c1" : selectedRole.color.toString(16).padStart(6, "0")}`);
 	const [delayOpen, setDelayOpen] = useState(false);
 
 	return (
@@ -54,7 +53,7 @@ const ColorPicker = ({ selectedRole }: {
 					backgroundColor: defaultColor
 				}} onClick={() => {
 					setColor(generateRgbAndHsv(defaultColor));
-					selectedRole.color = defaultColor;
+					// selectedRole.color = defaultColor;
 				}} />
 			</Tooltip>
 
@@ -68,7 +67,9 @@ const ColorPicker = ({ selectedRole }: {
 				<PopoverTrigger>
 					<div>
 						<Tooltip content="Custom Color">
-							<div className="cursor-pointer w-11 h-11 rounded-md mr-2" style={{ backgroundColor: selectedRole?.color }} />
+							<div className="cursor-pointer w-11 h-11 rounded-md mr-2" style={{
+								backgroundColor: `#${selectedRole.color === 0 ? "c1c1c1" : selectedRole.color.toString(16).padStart(6, "0")}`
+							}} />
 						</Tooltip>
 					</div>
 				</PopoverTrigger>
@@ -77,7 +78,7 @@ const ColorPicker = ({ selectedRole }: {
 						color={color}
 						onChange={(color) => {
 							setColor(color);
-							selectedRole.color = color.hex;
+							// selectedRole.color = color.hex;
 						}}
 						hideAlpha
 						hideInput={["hsv", "rgb"]}
@@ -95,7 +96,7 @@ const ColorPicker = ({ selectedRole }: {
 							style={{ backgroundColor: color }}
 							onClick={() => {
 								setColor(generateRgbAndHsv(color));
-								selectedRole.color = color;
+								// selectedRole.color = color;
 							}}
 						></div>
 					))}
@@ -108,7 +109,7 @@ const ColorPicker = ({ selectedRole }: {
 							style={{ backgroundColor: color }}
 							onClick={() => {
 								setColor(generateRgbAndHsv(color));
-								selectedRole.color = color;
+								// selectedRole.color = color;
 							}}
 						></div>
 					))}
@@ -119,35 +120,28 @@ const ColorPicker = ({ selectedRole }: {
 };
 
 const Roles = () => {
-	const roles = [
-		{
-			name: "Admin",
-			color: "#FFA500",
-			position: 1
-		},
-		{
-			name: "Moderator",
-			color: "#FF0000",
-			position: 2
-		},
-		{
-			name: "Member",
-			color: "#00FF00",
-			position: 3
-		},
-		{
-			name: "Guest",
-			color: "#0000FF",
-			position: 4
-		}
-	];
 
-	roles.push(...roles);
-	roles.push(...roles);
-	roles.push(...roles);
-	roles.push(...roles);
-	roles.push(...roles);
-	roles.push(...roles);
+	const router = useRouter();
+
+	const currentGuildId = router.query.guildId as string;
+
+	const roleRef = useRef(useRoleStore.getState().getRoles(currentGuildId).sort((a, b) => a.position - b.position).reverse());
+
+	useEffect(() => {
+		const roleSubscribe = useRoleStore.subscribe((s) => {
+			const roles = s.getRoles(currentGuildId).sort((a, b) => a.position - b.position).reverse();
+
+			if (deepEqual(roles, roleRef.current)) return;
+
+			roleRef.current = roles;
+		});
+
+		return () => {
+			roleSubscribe();
+		};
+	}, []);
+
+	const roles = roleRef.current;
 
 	const [selectedRole, setSelectedRole] = useState(roles[0]);
 	const [advancedMode, setAdvancedMode] = useState(false);
@@ -170,7 +164,7 @@ const Roles = () => {
 									<div className="flex group select-none">
 										<span className="flex items-center space-x-2 text-white">
 											<div className={"w-4 h-4 rounded-full mr-1"} style={{
-												backgroundColor: role.color
+												backgroundColor: `#${role.color === 0 ? "c1c1c1" : role.color.toString(16).padStart(6, "0")}`
 											}} />
 											{role.name}
 										</span>

@@ -9,7 +9,7 @@ import Client from "./Client.ts";
 
 // todo: migrate this to @wrapper/Stores
 export const useSettingsStore = createTrackedSelector(
-	create<SettingsStore>((set) => ({
+	create<SettingsStore>((set, get) => ({
 		emojiPack: EmojiPack.Twemoji,
 		language: "en-US",
 		navBarLocation: NavBarLocation.Left,
@@ -29,6 +29,8 @@ export const useSettingsStore = createTrackedSelector(
 		setPrivacy: (privacy: number) => set({ privacy }),
 		setTheme: (theme: Theme) => set({ theme }),
 		setIsSideBarOpen: (isSideBarOpen: boolean) => set({ isSideBarOpen }),
+		getThemeColor: (darkColor: string, lightColor: string) =>
+			get().theme === Theme.Dark ? darkColor : lightColor,
 	})),
 );
 

@@ -13,7 +13,6 @@ import { useSettingsStore } from "@/wrapper/Stores.ts";
 import { BaseContextMenuProps } from "../Dropdowns/BaseContextMenu.tsx";
 import { useGuildStore } from "@/wrapper/Stores/GuildStore.ts";
 import { useChannelStore } from "@/wrapper/Stores/ChannelStore.ts";
-
 const Modal = () => {
 	const { isOpen, onOpenChange, onClose } = useDisclosure();
 
@@ -34,7 +33,7 @@ const Modal = () => {
 const LeftNavbar = memo(() => {
 	const { isSideBarOpen } = useSettingsStore();
 	const { guilds } = useGuildStore();
-	const { getChannels } = useChannelStore()
+	const { getChannelsWithValidPermissions, getTopChannel } = useChannelStore();
 
 	return (
 		<>
@@ -61,19 +60,21 @@ const LeftNavbar = memo(() => {
 					{guilds.map((guild, index) => {
 						let hasUnread = false;
 
-						const gotChannels = getChannels(guild.id);
+						const gotChannels = getChannelsWithValidPermissions(guild.id);
 
 						for (const channel of gotChannels) {
 							if (guild.channelProperties.find((channelProperty) => channelProperty.channelId === channel.id)?.lastMessageAckId !== channel.lastMessageId) {
 								hasUnread = true;
-								
+
 								break;
 							}
 						}
+						
+						const topChannel = getTopChannel(guild.id);
 
 						return (
 							<LeftNavBarIcon
-								href={`/app/guilds/${guild.id}`}
+								href={`/app/guilds/${guild.id}${topChannel ? `/channels/${topChannel.id}` : ""}`}
 								badgePosition="bottom-right"
 								badgeColor="danger"
 								// badgeContent={guild.mentionCount === "0" ? undefined : guild.mentionCount}
@@ -97,7 +98,7 @@ const LeftNavbar = memo(() => {
 								}}
 								hasUnReadMessages={hasUnread}
 							/>
-						)
+						);
 					})}
 					<Modal />
 					<LeftNavBarIcon
