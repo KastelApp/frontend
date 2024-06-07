@@ -6,6 +6,7 @@ import BugHunterLevel2 from "./BugHunter2.tsx";
 import BugHunterLevel3 from "./BugHunter3.tsx";
 import { publicFlags as pubFlags } from "@/utils/Constants.ts";
 import Sponsor from "./Sponsor.tsx";
+import { twMerge } from "tailwind-merge";
 
 /**
  * Just a small helper component to display all badges a user has.
@@ -26,7 +27,7 @@ const AllBadges = ({
 		.map(([key]) => key) as (keyof typeof pubFlags)[];
 
 	return (
-		<div className="flex flex-wrap items-center justify-center gap-2">
+		<div className={twMerge("rounded-md p-1 ml-2 bg-charcoal-600 flex-wrap items-center justify-center gap-2", badges.length > 0 ? "flex" : "hidden")}>
 			{badges.map((flag) => {
 				switch (flag) {
 					case "StaffBadge": {

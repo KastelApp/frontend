@@ -51,7 +51,7 @@ const UserModal = ({ isOpen, onClose, user }: { isOpen: boolean; onClose: () => 
 												className: "transition-none",
 											}} />
 										</Badge>
-										<div className="bg-charcoal-600 rounded-md p-1 ml-2">
+										<div>
 											<AllBadges privateFlags={user.flags} publicFlags={user.publicFlags} size={20} />
 										</div>
 									</div>
