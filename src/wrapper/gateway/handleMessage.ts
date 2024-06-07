@@ -56,6 +56,8 @@ const handleMessage = async (ws: Websocket, data: unknown) => {
         }
 
         case opCodes.ready: {
+            Logger.info("Received Ready Payload", "Gateway | HandleMessage");
+
             const data = decompressed.data as ReadyPayload;
 
             ws.sessionWorker.postMessage({

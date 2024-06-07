@@ -22,7 +22,20 @@ const Init = ({
         /^\/app(\/.*)?/,
     ];
 
+    const blacklistedTokenPaths: (string | RegExp)[] = [
+        "/login",
+        "/register",
+    ]
+
     useEffect(() => {
+        if (blacklistedTokenPaths.some((path) => router.pathname.match(path) || path === router.pathname) && token) {
+            router.push("/app");
+
+            setIsReady(false);
+
+            return;
+        }
+
         if (!whitelistedPaths.some((path) => router.pathname.match(path) || path === router.pathname)) {
             setIsReady(true);
 
@@ -37,7 +50,7 @@ const Init = ({
 
         if (isReady) return; // ? This is to prevent an infinite loop
 
-        client.login(token);
+        client.connect(token);
 
         client.on("ready", () => {
             setIsReady(true);

@@ -1,4 +1,4 @@
-import { useGuildSettingsStore } from "@/wrapper/Stores.ts";
+import { useGuildSettingsStore, useTranslationStore } from "@/wrapper/Stores.ts";
 import {
 	Avatar,
 	Badge,
@@ -40,6 +40,8 @@ const MemberItem = ({ member, color }: { member: {
 	const [isOpen, setIsOpen] = useState(false);
 
 	const { isOpen: isModalOpen, onOpen, onClose } = useDisclosure();
+
+	const { t } = useTranslationStore();
 
 	return (
 		<>
@@ -105,7 +107,7 @@ const MemberItem = ({ member, color }: { member: {
 											className="ml-1 w-1 p-0 h-4 text-[10px] rounded-sm"
 											radius="none"
 										>
-											{member.user.isBot ? "Bot" : "System"}
+											{member.user.isBot ? t("tags.bot") : t("")}
 										</Chip>
 									)}
 								</div>

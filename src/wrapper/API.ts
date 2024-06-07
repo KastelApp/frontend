@@ -98,51 +98,63 @@ class API {
     async #makeRequest<Request = RequestData, ResponseOpt = ResponseData>(method: string, options: MethodOptions<Request>): Promise<Response<ResponseOpt>> {
         if (!("window" in globalThis) || !("fetch" in globalThis)) return null as unknown as Response<ResponseOpt>;
 
-        const fixedOptions = {
-            url: typeof options === "string" ? options : options.url,
-            data: typeof options === "string" ? undefined : options.data,
-            headers: typeof options === "string" ? {} : options.headers,
-            noAuth: typeof options === "string" ? false : options.noAuth,
-            noVersion: typeof options === "string" ? false : options.noVersion,
-        };
+        try {
 
-        const fullUrl = this.URL_CHECK_REGEX.test(fixedOptions.url)
-            ? fixedOptions.url
-            : `${this.API_URL}${!fixedOptions.noVersion ? `/v${this.VERSION}` : ""}/${fixedOptions.url}`;
-
-        const determinedType = this.determineContentType(fixedOptions.data);
-
-        const endingHeaders = this.URL_CHECK_REGEX.test(fixedOptions.url) ? {}
-            : {
-                ...(determinedType ? { "Content-Type": determinedType } : {}),
-                ...((fixedOptions.noAuth || !this.#token) ? {} : {
-                    "Authorization": this.#token
-                }),
-                ...this.defaultHeaders,
-                ...fixedOptions.headers,
+            const fixedOptions = {
+                url: typeof options === "string" ? options : options.url,
+                data: typeof options === "string" ? undefined : options.data,
+                headers: typeof options === "string" ? {} : options.headers,
+                noAuth: typeof options === "string" ? false : options.noAuth,
+                noVersion: typeof options === "string" ? false : options.noVersion,
             };
 
-        const fixedBody = determinedType === "application/json" ? JSON.stringify(fixedOptions.data) : fixedOptions.data;
+            const fullUrl = this.URL_CHECK_REGEX.test(fixedOptions.url)
+                ? fixedOptions.url
+                : `${this.API_URL}${!fixedOptions.noVersion ? `/v${this.VERSION}` : ""}${fixedOptions.url.startsWith("/") ? fixedOptions.url : `/${fixedOptions.url}`}`;
 
-        const fetched = await fetch(fullUrl.replace(/\/+$/, "/"), {
-            method,
-            headers: endingHeaders,
-            // note: we are assuming the person making the request handles the body correctly if not boo hoo if it error's out, handle it better
-            body: fixedBody as string,
-        });
+            const determinedType = this.determineContentType(fixedOptions.data);
 
-        const [text] = await safePromise(fetched.clone().text());
-        const [body] = await safePromise(fetched.clone().json());
-        const [blob] = await safePromise(fetched.clone().blob());
+            const endingHeaders = this.URL_CHECK_REGEX.test(fixedOptions.url) ? {}
+                : {
+                    ...(determinedType ? { "Content-Type": determinedType } : {}),
+                    ...((fixedOptions.noAuth || !this.#token) ? {} : {
+                        "Authorization": this.#token
+                    }),
+                    ...this.defaultHeaders,
+                    ...fixedOptions.headers,
+                };
 
-        return {
-            status: fetched.status,
-            body,
-            text,
-            headers: Object.fromEntries(fetched.headers.entries()),
-            blob,
-            ok: fetched.ok,
-        };
+            const fixedBody = determinedType === "application/json" ? JSON.stringify(fixedOptions.data) : fixedOptions.data;
+
+            const fetched = await fetch(fullUrl.replace(/\/+$/, "/"), {
+                method,
+                headers: endingHeaders,
+                // note: we are assuming the person making the request handles the body correctly if not boo hoo if it error's out, handle it better
+                body: fixedBody as string,
+            });
+
+            const [text] = await safePromise(fetched.clone().text());
+            const [body] = await safePromise(fetched.clone().json());
+            const [blob] = await safePromise(fetched.clone().blob());
+
+            return {
+                status: fetched.status,
+                body,
+                text,
+                headers: Object.fromEntries(fetched.headers.entries()),
+                blob,
+                ok: fetched.status < 500,
+            };
+        } catch {
+            return {
+                status: 500,
+                body: null as unknown as ResponseOpt,
+                text: null,
+                headers: {},
+                blob: null,
+                ok: false,
+            };
+        }
     }
 
     /**

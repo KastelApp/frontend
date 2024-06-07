@@ -8,14 +8,15 @@ import {
 	ModalContent,
 	ModalHeader,
 	ModalBody,
-	ModalFooter,
 	Button,
 } from "@nextui-org/react";
-import { useState } from "react";
-import { EyeIcon, EyeOffIcon } from "lucide-react";
+import { useEffect, useState } from "react";
+import { EyeIcon, EyeOffIcon, LoaderCircle } from "lucide-react";
 import confetti from "canvas-confetti";
 import SEO from "@/components/SEO.tsx";
-import NextLink from "next/link"
+import NextLink from "next/link";
+import { useClientStore, useTokenStore, useTranslationStore } from "@/wrapper/Stores.ts";
+import { useRouter } from "next/router";
 
 const Register = () => {
 	const [isVisible, setIsVisible] = useState(false);
@@ -23,8 +24,14 @@ const Register = () => {
 	const toggleVisibility = () => setIsVisible(!isVisible);
 	const toggleConfirmVisibility = () => setIsConfirmVisible(!isConfirmVisible);
 
+	const { client } = useClientStore();
+	const { t } = useTranslationStore();
+	const { setToken } = useTokenStore();
+	const router = useRouter()
+
 	// ? General state
-	const [error, setError] = useState(""); // ? rarely used
+	const [error, setError] = useState("");
+	const [loading, setLoading] = useState(false);
 
 	// ? Base form state
 	const [username, setUsername] = useState("");
@@ -37,7 +44,33 @@ const Register = () => {
 	const [passwordConfirmError, setPasswordConfirmError] = useState("");
 
 	// ? Captcha Model specific state
-	const { onClose: onCloseCaptcha, isOpen: isOpenCaptcha, onOpenChange: onOpenChangeCaptcha } = useDisclosure();
+	const { isOpen: isOpenCaptcha, onOpenChange: onOpenChangeCaptcha } = useDisclosure();
+
+	useEffect(() => {
+		if (username.length > 1 && (!username || username.length < 3)) {
+			setUsernameError(t("register.username.error"));
+		} else {
+			setUsernameError("");
+		}
+
+		if (email.length > 1 && (!email || !email.includes("@") || !email.includes("."))) {
+			setEmailError(t("register.email.error"));
+		} else {
+			setEmailError("");
+		}
+
+		if (password.length > 1 && (!password || password.length < 4)) {
+			setPasswordError(t("register.password.error"));
+		} else {
+			setPasswordError("");
+		}
+
+		if (passwordConfirm.length > 1 && (!passwordConfirm || passwordConfirm !== password)) {
+			setPasswordConfirmError(t("register.password.confirm.error"));
+		} else {
+			setPasswordConfirmError("");
+		}
+	}, [ username, email, password, passwordConfirm]);
 
 	return (
 		<>
@@ -47,43 +80,49 @@ const Register = () => {
 					<Card className="flex items-center justify-center mt-32 w-full max-w-md p-8 bg-accent">
 						<div className="w-full max-w-md">
 							<div className="text-center">
-								<h1 className="text-3xl font-bold">Welcome To Kastel!</h1>
-								<p className="text-medium mt-4">Create an account to continue.</p>
+								<h1 className="text-3xl font-bold">{t("register.title")}</h1>
+								<p className="text-medium mt-4">{t("register.subtitle")}</p>
 							</div>
-							<form className="mt-8">
+							<div className="pl-4 pt-3 pb-0 text-danger text-error-500 text-sm text-center">
+								{error || "\u00A0"}
+							</div>
+							<form className="mt-4">
 								<div className="flex flex-col space-y-4 items-center">
 									<Input
 										isClearable
 										type="text"
-										label="Username"
+										label={t("register.username.label")}
 										variant="bordered"
-										placeholder="DarkerInk"
+										placeholder={t("register.username.placeholder")}
 										onClear={() => setUsername("")}
 										className="max-w-xs"
-										description="The username you want to use on Kastel"
+										description={t("register.username.description")}
 										onValueChange={setUsername}
 										value={username}
 										isRequired
-										errorMessage={usernameError || "Please enter a valid username"}
+										errorMessage={usernameError || t("register.username.error")}
+										isInvalid={!!usernameError}
+										minLength={3}
 									/>
 									<Input
 										isClearable
 										type="email"
-										label="Email"
+										label={t("register.email.label")}
 										variant="bordered"
-										placeholder="kiki@kastelapp.com"
+										placeholder={t("register.email.placeholder")}
 										onClear={() => setEmail("")}
 										className="max-w-xs"
-										description="The email address you used to sign up"
+										description={t("register.email.description")}
 										onValueChange={setEmail}
 										value={email}
 										isRequired
-										errorMessage={emailError || "Please enter a valid email address"}
+										errorMessage={emailError || t("register.email.error")}
+										isInvalid={!!emailError}
 									/>
 									<Input
-										label="Password"
+										label={t("register.password.label")}
 										variant="bordered"
-										placeholder="Enter your password"
+										placeholder={t("register.password.placeholder")}
 										endContent={
 											<button className="focus:outline-none" type="button" onClick={toggleVisibility}>
 												{isVisible ? (
@@ -95,18 +134,19 @@ const Register = () => {
 										}
 										type={isVisible ? "text" : "password"}
 										className="max-w-xs"
-										description="The password to your account"
+										description={t("register.password.description")}
 										onValueChange={setPassword}
 										value={password}
 										isRequired
-										errorMessage={passwordError || "Please enter a valid password"}
+										errorMessage={passwordError || t("register.password.error")}
 										minLength={4}
 										maxLength={72}
+										isInvalid={!!passwordError}
 									/>
 									<Input
-										label="Confirm Password"
+										label={t("register.password.confirm.label")}
 										variant="bordered"
-										placeholder="Confirm your password"
+										placeholder={t("register.password.confirm.placeholder")}
 										endContent={
 											<button className="focus:outline-none" type="button" onClick={toggleConfirmVisibility}>
 												{isConfirmVisible ? (
@@ -118,19 +158,101 @@ const Register = () => {
 										}
 										type={isConfirmVisible ? "text" : "password"}
 										className="max-w-xs"
-										description="Confirm the password to your account"
+										description={t("register.password.confirm.description")}
 										onValueChange={setPasswordConfirm}
 										value={passwordConfirm}
 										isRequired
-										errorMessage={passwordConfirmError || "The passwords do not match"}
+										errorMessage={passwordConfirmError || t("register.password.confirm.error")}
 										minLength={4}
 										maxLength={72}
+										isInvalid={!!passwordConfirmError}
 									/>
 								</div>
 								<div className="mt-8">
 									<Button
-										onClick={(e) => {
-											e.preventDefault();
+										onClick={async (e) => {
+											if (loading) return;
+
+											let hasError = false;
+
+											// ? Validate username
+											if (!username || username.length < 3) {
+												setUsernameError(t("register.username.error"));
+
+												hasError = true;
+											} else {
+												setUsernameError("");
+											}
+
+											// ? Validate email
+											if (!email || !email.includes("@") || !email.includes(".")) {
+												setEmailError(t("register.email.error"));
+
+												hasError = true;
+											} else {
+												setEmailError("");
+											}
+
+											// ? Validate password & confirm password
+											if (!password || password.length < 4) {
+												setPasswordError(t("register.password.error"));
+
+												hasError = true;
+											} else {
+												setPasswordError("");
+											}
+
+											if (!passwordConfirm || passwordConfirm !== password) {
+												setPasswordConfirmError(t("register.password.confirm.error"));
+
+												hasError = true;
+											} else {
+												setPasswordConfirmError("");
+											}
+
+											if (usernameError || emailError || passwordError || passwordConfirmError || hasError) return;
+
+											setLoading(true);
+
+											const attemptRegister = await client.register({
+												email,
+												password,
+												username,
+												resetClient: true,
+											});
+
+
+											if (!attemptRegister.success) {
+												if (attemptRegister.errors.captchaRequired) {
+													onOpenChangeCaptcha();
+												}
+
+												if (attemptRegister.errors.email) {
+													setEmailError(t("register.email.error"));
+												}
+
+												if (attemptRegister.errors.password) {
+													setPasswordError(t("register.password.error"));
+												}
+
+												if (attemptRegister.errors.username) {
+													setUsernameError(t("register.username.error"));
+												}
+
+												setLoading(false);
+
+												if (attemptRegister.errors.internalError) {
+													setError(t("error.internalServerError"));
+													return;
+												}
+
+												if (Object.keys(attemptRegister.errors).length > 0) {
+													setError(Object.values(attemptRegister.errors.unknown)[0].message);
+												}
+
+												return;
+											}
+
 											const x = e.clientX / window.innerWidth;
 											const y = e.clientY / window.innerHeight;
 
@@ -141,18 +263,24 @@ const Register = () => {
 												},
 												particleCount: 75,
 											});
+
+											setToken(attemptRegister.token);
+
+											setTimeout(() => {
+												router.push("/app");
+											}, 1000);
 										}}
 										size="md"
 										color="primary"
 										variant="flat"
 										className="w-full"
 									>
-										Register
+										{loading ? <LoaderCircle className="animate-spin" size={24} /> : t("register.button")}
 									</Button>
 								</div>
 								<div className="mt-4 flex justify-between">
 									<Link href="/login" color="primary" className="text-sm" as={NextLink}>
-										Got an account? Login
+										{t("register.login")}
 									</Link>
 								</div>
 							</form>

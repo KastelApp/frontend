@@ -3,6 +3,25 @@ import type Translation from "@/utils/Translation.ts";
 import type { MetaData } from "@/utils/Translation.ts";
 import API from "./API.ts";
 import Client from "./Client.ts";
+import type enTranslations from "@/../public/locales/en.json";
+
+type ExcludeKeys<T, K extends keyof T> = {
+	[P in keyof T as P extends K ? never : P]: T[P];
+};
+
+type DataWithoutMetaAndDebug = ExcludeKeys<typeof enTranslations, "_meta" | "_debug">;
+
+type NestedPaths<T, P extends string = ""> = T extends object
+	? {
+		[K in keyof T]: T[K] extends object
+		// @ts-expect-error -- We do not care, its valid
+		? NestedPaths<T[K], `${P}${K}.`>
+		// @ts-expect-error -- We do not care, its valid
+		: `${P}${K}`;
+	}[keyof T]
+	: P;
+
+export type TranslationKeys = NestedPaths<DataWithoutMetaAndDebug>;
 
 export interface SettingsStore {
 	language: string;
@@ -46,7 +65,7 @@ export interface SelectedTabStore {
 export interface TranslationStore {
 	rawTranslation: Translation;
 	setLanguage: (language: string) => void;
-	t: (key: string, ...anything: never[]) => string;
+	t: (key: TranslationKeys, ...anything: never[]) => string;
 	fetchLanguages: () => MetaData["languages"];
 	currentLanguage: string;
 	_hasHydrated: boolean;

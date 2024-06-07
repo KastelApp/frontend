@@ -3,7 +3,7 @@ import handleMessage from "./handleMessage.ts";
 import { opCodes } from "@/utils/Constants.ts";
 
 class Websocket {
-    #token: string;
+    #token: string | null;
 
     public GATEWAY_URL = process.env.API_WS_URL || "ws://localhost:62240";
 
@@ -80,7 +80,7 @@ class Websocket {
         return this.#token;
     }
 
-    public set token(token: string) {
+    public set token(token: string | null) {
         this.#token = token;
 
         if (this.ws) {
@@ -102,6 +102,12 @@ class Websocket {
             return;
         }
 
+        if (!this.token) {
+            Logger.warn("No token provided, cannot connect to the gateway", "Wrapper | WebSocket");
+
+            return;
+        }
+
         this.ws = new WebSocket(`${this.GATEWAY_URL}/?version=v${this.VERSION}&encoding=${this.ENCODING}`);
 
         this.ws.onopen = () => {
@@ -114,8 +120,8 @@ class Websocket {
             handleMessage(this, event.data);
         };
 
-        this.ws.onclose = () => {
-            Logger.warn("Connection to the gateway was closed", "Wrapper | WebSocket");
+        this.ws.onclose = (close) => {
+            Logger.warn(`Connection to the gateway was closed - ${close.reason} (${close.code})`, "Wrapper | WebSocket");
 
             this.ws = null;
 

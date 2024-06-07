@@ -8,21 +8,26 @@ import {
 	ModalContent,
 	ModalHeader,
 	ModalBody,
-	ModalFooter,
 	Button,
 } from "@nextui-org/react";
-import { useState } from "react";
-import { EyeIcon, EyeOffIcon } from "lucide-react";
-import { useTranslationStore } from "@/wrapper/Stores.ts";
+import { useEffect, useState } from "react";
+import { EyeIcon, EyeOffIcon, LoaderCircle } from "lucide-react";
+import { useClientStore, useTokenStore, useTranslationStore } from "@/wrapper/Stores.ts";
 import SEO from "@/components/SEO.tsx";
-import NextLink from "next/link"
+import NextLink from "next/link";
+import { useRouter } from "next/router";
 
 const Login = () => {
 	const [isVisible, setIsVisible] = useState(false);
 	const toggleVisibility = () => setIsVisible(!isVisible);
+	const router = useRouter();
+
+	const { client } = useClientStore();
+	const { setToken } = useTokenStore();
 
 	// ? General state
-	const [error, setError] = useState(""); // ? rarely used
+	const [error, setError] = useState("");
+	const [loading, setLoading] = useState(false);
 
 	// ? Base form state
 	const [email, setEmail] = useState("");
@@ -31,15 +36,30 @@ const Login = () => {
 	const [passwordError, setPasswordError] = useState("");
 
 	// ? Model specific state (e.g. 2FA code)
-	const [twoFaCode, setTwoFaCode] = useState("");
-	const [requiresTwoFa, setRequiresTwoFa] = useState(false);
-	const [twoFaError, setTwoFaError] = useState("");
-	const { onClose, isOpen, onOpenChange } = useDisclosure();
+	// t! 2FA stuff
+	// const [twoFaCode, setTwoFaCode] = useState("");
+	// const [requiresTwoFa, setRequiresTwoFa] = useState(false);
+	// const [twoFaError, setTwoFaError] = useState("");
+	// const { onClose, isOpen, onOpenChange } = useDisclosure();
 
 	// ? Captcha Model specific state
-	const { onClose: onCloseCaptcha, isOpen: isOpenCaptcha, onOpenChange: onOpenChangeCaptcha } = useDisclosure();
+	const { isOpen: isOpenCaptcha, onOpenChange: onOpenChangeCaptcha } = useDisclosure();
 
 	const { t } = useTranslationStore();
+
+	useEffect(() => {
+		if (email.length > 1 && (!email || !email.includes("@") || !email.includes("."))) {
+			setEmailError(t("login.email.error"));
+		} else {
+			setEmailError("");
+		}
+
+		if (password.length > 1 && (!password || password.length < 3)) {
+			setPasswordError(t("login.password.error"));
+		} else {
+			setPasswordError("");
+		}
+	}, [email, password]);
 
 	return (
 		<>
@@ -53,14 +73,17 @@ const Login = () => {
 								<h1 className="text-3xl font-bold">{t("login.title")}</h1>
 								<p className="text-medium mt-4">{t("login.subtitle")}</p>
 							</div>
-							<form className="mt-8">
+							<div className="pl-4 pt-3 pb-0 text-danger text-error-500 text-sm text-center">
+								{error || "\u00A0"}
+							</div>
+							<form className="mt-4">
 								<div className="flex flex-col space-y-4 items-center">
 									<Input
 										isClearable
 										type="email"
 										label={t("login.email.label")}
 										variant="bordered"
-										placeholder="kiki@kastelapp.com"
+										placeholder={t("login.email.placeholder")}
 										onClear={() => setEmail("")}
 										className="max-w-xs"
 										description={t("login.email.description")}
@@ -68,6 +91,7 @@ const Login = () => {
 										value={email}
 										isRequired
 										errorMessage={emailError || t("login.email.error")}
+										isInvalid={!!emailError}
 									/>
 									<Input
 										label={t("login.password.label")}
@@ -91,42 +115,91 @@ const Login = () => {
 										errorMessage={passwordError || t("login.password.error")}
 										minLength={4}
 										maxLength={72}
+										isInvalid={!!passwordError}
 									/>
 								</div>
 								<div className="mt-8">
 									<Button
-										onClick={() => {
+										onClick={async () => {
+											if (loading) return;
+
+											let hasError = false;
+
 											// ? Validate email
-											if (!email) {
-												setEmailError("Please enter a valid email address");
+											if (!email || !email.includes("@") || !email.includes(".")) {
+												setEmailError(t("login.email.error"));
+
+												hasError = true;
 											} else {
 												setEmailError("");
 											}
 
 											// ? Validate password
-											if (!password) {
-												setPasswordError("Please enter a valid password");
+											if (!password || password.length < 3) {
+												setPasswordError(t("login.password.error"));
+
+												hasError = true;
 											} else {
 												setPasswordError("");
 											}
 
-											// ? If there are no errors, continue
-											if (!emailError && !passwordError) {
-												// ? Show 2FA model
-												if (requiresTwoFa) {
-													onOpenChange();
-												} else {
-													// ? Show captcha model
+											if (emailError || passwordError || hasError) return;
+
+											setLoading(true);
+
+											const attemptLogin = await client.login({
+												email,
+												password,
+												resetClient: true
+											});
+
+											if (!attemptLogin.success) {
+												if (attemptLogin.errors.captchaRequired) {
+													// todo: users should not be able to access this yet
 													onOpenChangeCaptcha();
 												}
+
+												if (attemptLogin.errors.email) {
+													setEmailError(t("login.email.error"));
+												}
+
+												if (attemptLogin.errors.password) {
+													setPasswordError(t("login.password.error"));
+												}
+
+												setLoading(false);
+
+												if (attemptLogin.errors.internalError) {
+													setError(t("error.internalServerError"));
+
+													return;
+												}
+
+												if (Object.keys(attemptLogin.errors.unknown).length > 0) {
+													// ? If for some reason there's an unknown error message, we just show the first one
+													// ? Which is why we return for the internal error above (since it would override this one)
+													setError(Object.values(attemptLogin.errors.unknown)[0].message);
+												}
+
+												return;
 											}
+
+											setError("");
+											setEmailError("");
+											setPasswordError("");
+
+											// ? If we get here, the login was successful so now we can set the token in storage and redirect
+
+											setToken(attemptLogin.token);
+
+											router.push("/app");
 										}}
 										size="md"
 										color="primary"
 										variant="flat"
 										className="w-full"
 									>
-										{t("login.button")}
+										{loading ? <LoaderCircle className="text-white animate-spin" /> : t("login.button")}
 									</Button>
 								</div>
 								<div className="mt-4 flex justify-between">

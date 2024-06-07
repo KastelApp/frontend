@@ -21,7 +21,8 @@
 				"home": "Go Home",
 				"back": "Go Back"
 			}
-		}
+		},
+		"internalServerError": "You caught a rare error, please try again later."
 	},
 	"home": {
 		"title": "Ditch those platforms who just don't care!",
@@ -55,18 +56,54 @@
 		"title": "Welcome Back!",
 		"subtitle": "Login to your account to continue.",
 		"email": {
+			"placeholder": "kiki@kastelapp.com",
 			"label": "Email",
 			"description": "The email address you used to sign up",
-			"error": "Please enter a valid email address"
+			"error": "Please enter a valid email address."
 		},
 		"password": {
 			"placeholder": "Enter your password",
 			"label": "Password",
 			"description": "The password to your account",
-			"error": "Please enter a valid password"
+			"error": "Please enter a valid password."
 		},
 		"register": "Don't have an account? Register",
 		"forgot": "Forgot password?",
 		"button": "Login"
+	},
+	"register": {
+		"title": "Welcome To Kastel",
+		"subtitle": "Create an account to get started.",
+		"username": {
+			"placeholder": "KiKi",
+			"label": "Username",
+			"description": "The username you want to use",
+			"error": "Please enter a valid username."
+		},
+		"email": {
+			"placeholder": "kiki@kastelapp.com",
+			"label": "Email",
+			"description": "The email address you want to use",
+			"error": "Please enter a valid email address."
+		},
+		"password": {
+			"placeholder": "Enter your password",
+			"label": "Password",
+			"description": "The password you want to use",
+			"error": "Please enter a valid password.",
+			"confirm": {
+				"placeholder": "Confirm your password",
+				"label": "Confirm Password",
+				"description": "Please confirm your password",
+				"error": "Passwords do not match."
+			}
+		},
+		"button": "Register",
+		"login": "Got an account? Login"
+	},
+	"tags": {
+		"system": "System",
+		"bot": "Bot",
+		"server": "Server"
 	}
 }

@@ -2,11 +2,12 @@ import { Input, Select, SelectItem } from "@nextui-org/react";
 import { useTranslationStore } from "@/wrapper/Stores.ts";
 import { useEffect, useState } from "react";
 import { MetaData } from "@/utils/Translation.ts";
+import { TranslationKeys } from "@/wrapper/Stores.types.ts";
 
 const Translate = () => {
 	const { t, setLanguage, fetchLanguages, currentLanguage } = useTranslationStore();
 
-	const [key, setKey] = useState<string>("");
+	const [key, setKey] = useState<TranslationKeys>("login.title");
 	const [data, setData] = useState<string>("");
 	const [output, setOutput] = useState<string>("");
 	const [langs, setLangs] = useState<MetaData["languages"]>([]);
@@ -17,7 +18,7 @@ const Translate = () => {
 		} catch (e) {
 			setOutput("Error: " + (e as Error).message);
 		}
-	}, [key, data]);
+	}, [key, data, currentLanguage]);
 
 	useEffect(() => {
 		setLangs(fetchLanguages());
@@ -28,8 +29,8 @@ const Translate = () => {
 		<>
 			<div className="flex flex-col items-center justify-center w-full h-full">
 				<p className="mt-8 text-center text-2xl font-bold">Translate</p>
-				<p className="mt-2 text-center text-2xl font-bold">{t("_debug.title")}</p>
-				<p className="mt-2 text-center text-2xl font-bold">{t("_debug.test")}</p>
+				<p className="mt-2 text-center text-2xl font-bold">{t("" as TranslationKeys)}</p>
+				<p className="mt-2 text-center text-2xl font-bold">{t("_debug.test" as TranslationKeys)}</p>
 
 				<Select
 					color="danger"
@@ -50,7 +51,7 @@ const Translate = () => {
 				<Input
 					placeholder="Enter key"
 					value={key}
-					onChange={(e) => setKey(e.target.value)}
+					onChange={(e) => setKey(e.target.value as TranslationKeys)}
 					className="max-w-[25vw] mt-4"
 				/>
 				<Input

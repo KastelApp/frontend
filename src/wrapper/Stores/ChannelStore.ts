@@ -40,11 +40,11 @@ export const useChannelStore = create<ChannelStore>((set, get) => ({
     addChannel: (channel) => {
         const currentChannels = get().channels;
 
-        const foundChannel = currentChannels.find((currentChannel) => currentChannel.id === channel.id) ?? {}
+        const foundChannel = currentChannels.find((currentChannel) => currentChannel.id === channel.id) ?? { id: null }
 
         set({
             channels: [
-                ...currentChannels,
+                ...currentChannels.filter(channel => channel.id !== foundChannel?.id),
                 {
                     ...foundChannel,
                     ...channel

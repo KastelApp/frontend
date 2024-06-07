@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { useAPIStore } from "../Stores.ts";
 
 // ? We do not provide channels, roles or members as they got their own stores
 export interface Guild {
@@ -25,6 +26,7 @@ export interface GuildStore {
     removeGuild(id: string): void;
     // ? This isn't a promise due to the fact that we have no reason to fetch a guild via the api
     getGuild(id: string): Guild | undefined;
+    updateReadState(guildId: string, channelId: string, lastMessageAckId: string): void;
 }
 
 export const useGuildStore = create<GuildStore>((set, get) => ({
@@ -58,4 +60,37 @@ export const useGuildStore = create<GuildStore>((set, get) => ({
         unavailable: true,
         channelProperties: [],
     },
+    updateReadState: async (guildId, channelId, lastMessageAckId) => {
+        const guild = get().getGuild(guildId);
+
+        if (!guild) return;
+
+        const channel = guild.channelProperties.find(channel => channel.channelId === channelId);
+
+        if (!channel) return;
+
+        useAPIStore.getState().api.post(`/channels/${channelId}/ack`).catch(console.error);
+
+        set({
+            guilds: get().guilds.map((currentGuild) => {
+                if (currentGuild.id === guildId) {
+                    return {
+                        ...currentGuild,
+                        channelProperties: currentGuild.channelProperties.map((currentChannel) => {
+                            if (currentChannel.channelId === channelId) {
+                                return {
+                                    ...currentChannel,
+                                    lastMessageAckId
+                                }
+                            }
+
+                            return currentChannel;
+                        })
+                    }
+                }
+
+                return currentGuild;
+            })
+        })
+    }
 }));
