@@ -1,6 +1,6 @@
 import { Avatar, Chip, Popover, PopoverContent, PopoverTrigger, Tooltip, useDisclosure } from "@nextui-org/react";
 import UserPopover from "../Popovers/UserPopover.tsx";
-import { useState } from "react";
+import { memo, useState } from "react";
 import { Pen, Reply, Trash2, Ellipsis } from "lucide-react";
 import { twMerge } from "tailwind-merge";
 import UserModal from "../Modals/UserModal.tsx";
@@ -8,7 +8,7 @@ import RichEmbed, { Embed } from "./Embeds/RichEmbed.tsx";
 import IFrameEmbed from "./Embeds/IFrameEmbed.tsx";
 import InviteEmbed from "./Embeds/InviteEmbed.tsx";
 
-const Message = ({
+const Message = memo(({
 	content,
 	replying,
 	mention,
@@ -92,6 +92,7 @@ const Message = ({
 				className,
 				mention ? "bg-mention hover:bg-mention-hover" : "",
 			)}
+			tabIndex={0}
 		>
 			{replying && (
 				<div className="flex items-center ml-4 mb-1">
@@ -174,6 +175,6 @@ const Message = ({
 			)}
 		</div>
 	);
-};
+});
 
 export default Message;

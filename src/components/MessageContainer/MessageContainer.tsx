@@ -30,14 +30,14 @@ const FileComponent = ({ fileName, imageUrl }: { fileName?: string; imageUrl?: s
 	);
 };
 
-const MessageContainer = ({ placeholder, children, isReadOnly }: { placeholder: string; children?: React.ReactNode; isReadOnly?: boolean }) => {
+const MessageContainer = ({ placeholder, children, isReadOnly, sendMessage }: { placeholder: string; children?: React.ReactNode; isReadOnly?: boolean; sendMessage: (content: string) => void }) => {
 	const [files, setFiles] = useState<{ name: string; url: string }[]>([]);
 	const [replying, setReplying] = useState<boolean>(true);
 
 	return (
 		<>
 			<div className="flex flex-col h-screen overflow-x-hidden">
-				<div className="flex-grow overflow-auto pr-2">{children}</div>
+				<div className="flex-grow pr-2 overflow-y-auto">{children}</div>
 				<div className="mb-12 w-[98%] ml-2">
 					<div className="ml-1 w-full bg-accent rounded-md rounded-b-none flex">
 						<div className="p-2">
@@ -84,10 +84,8 @@ const MessageContainer = ({ placeholder, children, isReadOnly }: { placeholder: 
 										}}
 									/>
 								</div>
-								<div className="w-full">
-									<SlateEditor placeholder={placeholder} isReadOnly={isReadOnly} readOnlyMessage="You do not have permission to send messages in this channel" />
-								</div>
-								<div className="flex items-center ml-4 gap-2">
+									<SlateEditor sendMessage={sendMessage} placeholder={placeholder} isReadOnly={isReadOnly} readOnlyMessage="You do not have permission to send messages in this channel" />
+								<div className="flex ml-4 gap-2">
 									<SmilePlus size={22} color="#acaebf" className={twMerge(isReadOnly ? "" : "cursor-pointer")} />
 									<SendHorizontal size={22} color="#acaebf" className={twMerge(isReadOnly ? "" : "cursor-pointer")} />
 								</div>

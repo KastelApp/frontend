@@ -78,6 +78,18 @@ export interface PerChannel {
      * The date the last typing event was sent
      */
     lastTypingSent: number;
+    /**
+     * If there's more messages before (i.e on the top)
+     */
+    hasMoreBefore: boolean;
+    /**
+     * If there's more messages after (i.e on the bottom)
+     */
+    hasMoreAfter: boolean;
+    /**
+     * If something went wrong fetching the messages
+     */
+    fetchingError: boolean;
 }
 
 export interface PerChannelStore {
@@ -228,7 +240,19 @@ export const usePerChannelStore = create(
 
                 return found;
             },
-            addChannel: (channelId) => set({ channels: { ...get().channels, [channelId]: { previousMessageContent: null, currentState: "default", stateId: null, scrollPosition: 0, lastTyped: 0, lastTypingSent: 0 } } }),
+            addChannel: (channelId) => set({ channels: { ...get().channels, [channelId]:
+                {
+                    previousMessageContent: null,
+                    currentState: "default",
+                    stateId: null,
+                    scrollPosition: 0,
+                    lastTyped: 0,
+                    lastTypingSent: 0,
+                    fetchingError: false,
+                    hasMoreAfter: true,
+                    hasMoreBefore: true
+                } } 
+            }),
             removeChannel: (channelId) => {
                 const channels = get().channels;
 

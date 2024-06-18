@@ -364,3 +364,9 @@ const MemberBar = () => {
 };
 
 export default MemberBar;
+
+export {
+	MemberBar,
+	MemberItem,
+	type Section
+}

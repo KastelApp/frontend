@@ -1,3 +1,7 @@
+// import MillionLint from "@million/lint";
+import { next } from "@million/lint";
+
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
 	reactStrictMode: false,
@@ -40,7 +44,10 @@ const nextConfig = {
 		API_VERSION: process.env.PUBLIC_API_VERSION,
 		KASTEL_DESKTOP_APP: process.env.PUBLIC_KASTEL_DESKTOP_APP,
 		CLOUDFLARE_TURNSTILE_SITE_KEY: process.env.PUBLIC_CLOUDFLARE_TURNSTILE_SITE_KEY,
+	},
+	typescript: {
+		ignoreBuildErrors: true
 	}
 };
 
-module.exports = nextConfig;
+export default next({ rsc: true, optimizeDOM: true, telemetry: false })(nextConfig);

@@ -1,11 +1,11 @@
 import { LeafProps } from "../SlateTypes.ts";
 
 const shouldBeBold = (text: string): boolean => {
-	return text?.startsWith("**") && text?.endsWith("**");
+    return text?.startsWith("**") && text?.endsWith("**");
 };
 
 const shouldBeUnderlined = (text: string): boolean => {
-	return text?.startsWith("__") && text?.endsWith("__");
+    return text?.startsWith("__") && text?.endsWith("__");
 };
 
 const Leaf = ({ attributes, children, leaf }: LeafProps) => {
@@ -27,12 +27,11 @@ const Leaf = ({ attributes, children, leaf }: LeafProps) => {
     if (italic) {
         tailwindStyles += "italic ";
     }
+
     if (list) {
         tailwindStyles += "list-disc ";
     }
-    if (blockquote) {
-        tailwindStyles += "border-l-4 border-gray-400 pl-2 ";
-    }
+
     if (code) {
         tailwindStyles += "bg-gray-200 px-1 ";
     }
@@ -47,7 +46,7 @@ const Leaf = ({ attributes, children, leaf }: LeafProps) => {
 export default Leaf;
 
 export {
-	// ? I don't think we ever use these functions outside of this file, but I'll export them just in case
-	shouldBeBold,
-	shouldBeUnderlined,
-}
+    // ? I don't think we ever use these functions outside of this file, but I'll export them just in case
+    shouldBeBold,
+    shouldBeUnderlined,
+};

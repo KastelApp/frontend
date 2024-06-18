@@ -3,15 +3,17 @@ import Prism from "prismjs";
 import "prismjs/components/prism-markdown";
 import { useCallback, useRef } from "react";
 import { Slate, Editable, withReact, ReactEditor } from "slate-react";
-import { Text, createEditor } from "slate";
+import { Editor, Node, Range, Text, Transforms, createEditor } from "slate";
 import { withHistory } from "slate-history";
 import Leaf from "./renderers/Leaf.tsx";
 import { LeafProps, MainProps } from "./SlateTypes.ts";
 import withMentions from "./plugins/withMentions.tsx";
-import { getLength } from "./SlateUtils.ts";
+import { getLength, toggleTextWithMarkdown } from "./SlateUtils.ts";
 import Element from "./renderers/Element.tsx";
+import withCustomDelete, { TypeNode } from "./plugins/withCustomDelete.tsx";
+import Constants from "@/utils/Constants.ts";
 
-const SlateEditor = ({ placeholder, isReadOnly, readOnlyMessage }: { placeholder: string; readOnlyMessage?: string; isReadOnly?: boolean }) => {
+const SlateEditor = ({ placeholder, isReadOnly, readOnlyMessage, sendMessage }: { placeholder: string; readOnlyMessage?: string; isReadOnly?: boolean; sendMessage?: (message: string) => void; }) => {
 	const renderLeaf = useCallback((props: LeafProps) => {
 		return <Leaf {...props} />;
 	}, []);
@@ -22,7 +24,7 @@ const SlateEditor = ({ placeholder, isReadOnly, readOnlyMessage }: { placeholder
 	const editorRef = useRef<ReactEditor | null>(null);
 
 	if (!editorRef.current) {
-		editorRef.current = withMentions(withReact(withHistory(createEditor())));
+		editorRef.current = withCustomDelete(withMentions(withReact(withHistory(createEditor()))));
 	}
 
 	const editor = editorRef.current;
@@ -98,6 +100,9 @@ const SlateEditor = ({ placeholder, isReadOnly, readOnlyMessage }: { placeholder
 					children: [{ text: "" }], // ? we are requred to have an empty text node
 				},
 			]}
+			onValueChange={(e) => {
+				console.log(e);
+			}}
 		>
 			<Editable
 				// @ts-expect-error -- Unsure how to fix these types
@@ -107,9 +112,85 @@ const SlateEditor = ({ placeholder, isReadOnly, readOnlyMessage }: { placeholder
 				// @ts-expect-error -- Unsure how to fix these types
 				renderElement={renderElement}
 				placeholder={isReadOnly ? readOnlyMessage : placeholder}
-				className="outline-none overflow-y-auto"
+				className="outline-none overflow-y-auto w-full overflow-x-hidden"
 				id="slate-editor"
 				readOnly={isReadOnly}
+				onKeyDown={(event) => {
+					// ? Bold
+					if (event.ctrlKey && event.key === "b") {
+						event.preventDefault();
+
+						toggleTextWithMarkdown(editor, "**");
+					}
+			
+					// ? Italic
+					if (event.ctrlKey && event.key === "i") {
+						event.preventDefault();
+						toggleTextWithMarkdown(editor, "*");
+					}
+			
+					// ? Underline
+					if (event.ctrlKey && event.key === "u") {
+						event.preventDefault();
+						toggleTextWithMarkdown(editor, "__");
+					}
+			
+					if (event.key === " " && editor.selection && Range.isCollapsed(editor.selection)) {
+						const { selection } = editor;
+						const [start] = Range.edges(selection);
+						
+						const beforeText = Editor.string(editor, {
+							anchor: { path: start.path, offset: 0 },
+							focus: start,
+						});
+			
+						if (beforeText.startsWith(">")) {
+							event.preventDefault();
+							Transforms.setNodes<TypeNode>(editor, { type: "blockquote" }, { match: (n) => "type" in n && n.type === "paragraph" });
+							Transforms.move(editor, { distance: 1, unit: "line" });
+							Transforms.delete(editor, { at: { path: start.path, offset: 0 }, distance: 1 });
+						}
+					}
+
+
+					if (sendMessage && event.key === "Enter" && !isReadOnly && !event.shiftKey) {
+						event.preventDefault();
+
+						const text = editor.children.map((node) => {
+							const str = Node.string(node);
+			
+							return ("type" in node && node.type === "blockquote") ? `> ${str}` : str;
+						}).join("\n");
+						sendMessage(text);
+
+						editor.children.map(() => {
+							Transforms.delete(editor, { at: [0] });
+						});
+
+						editor.children = [{
+							// @ts-expect-error -- Unsure how to fix these types
+							type: "paragraph",
+							children: [{ text: "" }]
+						}];
+
+						// ? refocus
+						// note: Editor.focus(editor) does not seem to work, unsure why, this is a hack / workaround which works
+						Transforms.select(editor, { offset: 0, path: [0, 0] });
+					}
+				}}
+				onDOMBeforeInput={(event) => {
+					console.log(event.inputType)
+					if (!["insertFromPaste", "insertText"].includes(event.inputType)) {
+						return;
+                    }
+					
+                    const textLength = Editor.string(editor, []).length;
+                    const text = (event.data as string) ?? event.dataTransfer?.getData("text/plain");
+
+                    if (textLength >= Constants.settings.maxMessageSize + 2000 || textLength + text.length >= Constants.settings.maxMessageSize + 2000) {
+						event.preventDefault()
+                    }
+                }}
 			/>
 		</Slate>
 	);
