@@ -5,7 +5,7 @@ import TypingDots from "./TypingDats.tsx";
 import { useState } from "react";
 import { twMerge } from "tailwind-merge";
 
-const FileComponent = ({ fileName, imageUrl }: { fileName?: string; imageUrl?: string }) => {
+const FileComponent = ({ fileName, imageUrl }: { fileName?: string; imageUrl?: string; }) => {
 	return (
 		<div className="w-44 h-44 bg-accent mt-2 rounded-md flex flex-col justify-center relative">
 			<div className="relative w-[90%] ml-2.5 max-h-[75%] flex flex-col justify-center items-center bg-gray-500 mb-4">
@@ -30,8 +30,8 @@ const FileComponent = ({ fileName, imageUrl }: { fileName?: string; imageUrl?: s
 	);
 };
 
-const MessageContainer = ({ placeholder, children, isReadOnly, sendMessage }: { placeholder: string; children?: React.ReactNode; isReadOnly?: boolean; sendMessage: (content: string) => void }) => {
-	const [files, setFiles] = useState<{ name: string; url: string }[]>([]);
+const MessageContainer = ({ placeholder, children, isReadOnly, sendMessage }: { placeholder: string; children?: React.ReactNode; isReadOnly?: boolean; sendMessage: (content: string) => void; }) => {
+	const [files, setFiles] = useState<{ name: string; url: string; }[]>([]);
 	const [replying, setReplying] = useState<boolean>(true);
 
 	return (
@@ -84,7 +84,7 @@ const MessageContainer = ({ placeholder, children, isReadOnly, sendMessage }: { 
 										}}
 									/>
 								</div>
-									<SlateEditor sendMessage={sendMessage} placeholder={placeholder} isReadOnly={isReadOnly} readOnlyMessage="You do not have permission to send messages in this channel" />
+								<SlateEditor sendMessage={sendMessage} placeholder={placeholder} isReadOnly={isReadOnly} readOnlyMessage="You do not have permission to send messages in this channel" />
 								<div className="flex ml-4 gap-2">
 									<SmilePlus size={22} color="#acaebf" className={twMerge(isReadOnly ? "" : "cursor-pointer")} />
 									<SendHorizontal size={22} color="#acaebf" className={twMerge(isReadOnly ? "" : "cursor-pointer")} />

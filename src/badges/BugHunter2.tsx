@@ -1,4 +1,4 @@
-const BugHunterLevel2 = ({ size = 20 }: { size?: number }) => {
+const BugHunterLevel2 = ({ size = 20 }: { size?: number; }) => {
 	return (
 		<svg
 			xmlns="http://www.w3.org/2000/svg"

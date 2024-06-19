@@ -31,10 +31,12 @@ interface Section {
 	position: number;
 }
 
-const MemberItem = ({ member, color }: { member: {
-	member: Member;
-	user: User;
-}; color: string | null; }) => {
+const MemberItem = ({ member, color }: {
+	member: {
+		member: Member;
+		user: User;
+	}; color: string | null;
+}) => {
 	const [loading, setLoading] = useState(false);
 	const [isOpen, setIsOpen] = useState(false);
 
@@ -58,6 +60,8 @@ const MemberItem = ({ member, color }: { member: {
 				style={{
 					zIndex: "15",
 				}}
+				radius="sm"
+				className="rounded-lg"
 			>
 				<PopoverTrigger>
 					<div
@@ -369,4 +373,4 @@ export {
 	MemberBar,
 	MemberItem,
 	type Section
-}
+};

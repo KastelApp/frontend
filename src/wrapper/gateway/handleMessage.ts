@@ -2,7 +2,7 @@ import safeParse from "@/utils/safeParse.ts";
 import Websocket from "./Websocket.ts";
 import { EventPayload } from "@/types/payloads/event.ts";
 import Logger from "@/utils/Logger.ts";
-import { opCodes } from "@/utils/Constants.ts";
+import Constants, { opCodes } from "@/utils/Constants.ts";
 import { HelloPayload } from "@/types/payloads/hello.ts";
 import event from "./Events/Event.ts";
 import { ReadyPayload } from "@/types/payloads/ready.ts";
@@ -71,7 +71,16 @@ const handleMessage = async (ws: Websocket, data: unknown) => {
             useUserStore.getState().addUser({
                 ...data.user,
                 isClient: true,
-            })
+            });
+
+            useUserStore.getState().addUser({
+                username: "Kiki",
+                defaultAvatar: "/icon.png",
+                isSystem: true,
+                tag: "0000",
+                publicFlags: String(Constants.publicFlags.StaffBadge),
+                flags: String(Constants.privateFlags.System)
+            });
 
             for (const guild of data.guilds) {
                 useGuildStore.getState().addGuild({
@@ -92,7 +101,7 @@ const handleMessage = async (ws: Websocket, data: unknown) => {
                     useChannelStore.getState().addChannel({
                         ...channel,
                         guildId: guild.id
-                    })
+                    });
                 }
 
                 for (const member of guild.members) {
@@ -102,7 +111,7 @@ const handleMessage = async (ws: Websocket, data: unknown) => {
                         joinedAt: new Date(member.joinedAt),
                         userId: member.user.id,
                         nickname: member.nickname || null,
-                    })
+                    });
 
                     useUserStore.getState().addUser({
                         username: member.user.username,
@@ -111,7 +120,7 @@ const handleMessage = async (ws: Websocket, data: unknown) => {
                         publicFlags: member.user.publicFlags,
                         avatar: member.user.avatar,
                         tag: member.user.tag,
-                    })
+                    });
                 }
 
                 for (const role of guild.roles) {
@@ -119,7 +128,7 @@ const handleMessage = async (ws: Websocket, data: unknown) => {
                         ...role,
                         guildId: guild.id,
                         hoisted: role.hoist,
-                    })
+                    });
                 }
             }
 

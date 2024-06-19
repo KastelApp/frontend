@@ -1,7 +1,7 @@
 import { Editor, Node, Range, Transforms } from "slate";
 import { ReactEditor } from "slate-react";
 
-type TypeNode = Node & { type: string };
+type TypeNode = Node & { type: string; };
 
 const withCustomDelete = (editor: ReactEditor): ReactEditor => {
     const { deleteBackward } = editor;

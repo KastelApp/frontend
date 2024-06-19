@@ -36,7 +36,7 @@ export const useUserStore = create<UserStore>((set, get) => ({
     addUser: (user) => {
         const currentUsers = get().users;
 
-        const foundUser = currentUsers.find((currentUser) => currentUser.id === user.id) ?? {}
+        const foundUser = currentUsers.find((currentUser) => currentUser.id === user.id) ?? {};
 
         set({
             users: [
@@ -65,14 +65,14 @@ export const useUserStore = create<UserStore>((set, get) => ({
                     ...user
                 }
             ]
-        })
+        });
     },
     getCurrentUser: () => {
         const foundCurrentUser = get().users.find((user) => user.isClient);
 
         if (!foundCurrentUser) {
-            Logger.error("No current user found, dumping users", "UserStore | getCurrentUser()")
-            console.log(get().users)
+            Logger.error("No current user found, dumping users", "UserStore | getCurrentUser()");
+            console.log(get().users);
 
             return null;
         }
@@ -88,7 +88,7 @@ export const useUserStore = create<UserStore>((set, get) => ({
 
         if (!api) return null;
 
-        console.log("FETCH", api)
+        console.log("FETCH", api);
 
         return null;
     },

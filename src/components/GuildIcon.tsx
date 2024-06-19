@@ -6,18 +6,18 @@ import { BadgeCheck } from "lucide-react";
 const GetGuildText = ({ features }: { features: string[]; }) => {
     let texts = [];
 
-    if (features.includes(GuildFeatures.Verified)) texts.push(GuildFeatures.Verified)
+    if (features.includes(GuildFeatures.Verified)) texts.push(GuildFeatures.Verified);
 
-    if (features.includes(GuildFeatures.Partnered)) texts.push(GuildFeatures.Partnered)
-    
+    if (features.includes(GuildFeatures.Partnered)) texts.push(GuildFeatures.Partnered);
+
     if (features.includes(GuildFeatures.Official)) {
         texts = [];
 
-        texts.push(GuildFeatures.Official)
+        texts.push(GuildFeatures.Official);
     }
 
-    return texts.join(" & ")
-}
+    return texts.join(" & ");
+};
 
 const GuildIcon = ({ features }: { features: string[]; }) => {
     const text = GetGuildText({ features });
@@ -27,7 +27,7 @@ const GuildIcon = ({ features }: { features: string[]; }) => {
             <Tooltip content={text} showArrow>
                 <div><StaffBadge size={18} /></div>
             </Tooltip>
-        )
+        );
     }
 
     if (features.includes(GuildFeatures.Verified)) {
@@ -35,7 +35,7 @@ const GuildIcon = ({ features }: { features: string[]; }) => {
             <Tooltip content={text} showArrow>
                 <div><BadgeCheck size={18} color="#17c964" strokeWidth={3} /></div>
             </Tooltip>
-        )
+        );
     }
 };
 

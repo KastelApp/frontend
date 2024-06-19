@@ -8,10 +8,10 @@ const safePromise = async <T>(promise: Promise<T>): Promise<[
     Error | null
 ]> => {
     try {
-        return [await promise, null]
+        return [await promise, null];
     } catch (e) {
-        return [null, e as Error]
+        return [null, e as Error];
     }
-}
+};
 
 export default safePromise;

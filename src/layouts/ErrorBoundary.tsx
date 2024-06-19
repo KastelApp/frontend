@@ -10,9 +10,9 @@ class ErrorBoundary extends Component {
 		} | null;
 	};
 
-	declare props: { children: React.ReactNode };
+	declare props: { children: React.ReactNode; };
 
-	public constructor(props: { children: React.ReactNode }) {
+	public constructor(props: { children: React.ReactNode; }) {
 		super(props);
 
 		this.state = { hasError: false, error: null };
@@ -31,8 +31,8 @@ class ErrorBoundary extends Component {
 	public render() {
 		if (this.state.hasError) {
 
-			Logger.error("An error occurred and we caught it", "ErrorBoundary")
-			console.log(this.state.error?.error.stack)
+			Logger.error("An error occurred and we caught it", "ErrorBoundary");
+			console.log(this.state.error?.error.stack);
 
 			return (
 				<div className="bg-cover text-white py-32 flex items-center justify-center ">

@@ -24,7 +24,7 @@ export const useRoleStore = create<RoleStore>((set, get) => ({
     addRole: (role) => {
         const currentRoles = get().roles;
 
-        const foundRole = currentRoles.find((currentRole) => currentRole.id === role.id) ?? {}
+        const foundRole = currentRoles.find((currentRole) => currentRole.id === role.id) ?? {};
 
         set({
             roles: [
@@ -34,7 +34,7 @@ export const useRoleStore = create<RoleStore>((set, get) => ({
                     ...role
                 }
             ]
-        })
+        });
     },
     removeRole: (id) => set({ roles: get().roles.filter(role => role.id !== id) }),
     getRole: (id) => get().roles.find(role => role.id === id),

@@ -15,7 +15,7 @@ import { EllipsisVertical } from "lucide-react";
 import BaseContextMenu from "../Dropdowns/BaseContextMenu.tsx";
 import { User, useUserStore } from "@/wrapper/Stores/UserStore.ts";
 
-const UserModal = ({ isOpen, onClose, user }: { isOpen: boolean; onClose: () => void; user: User }) => {
+const UserModal = ({ isOpen, onClose, user }: { isOpen: boolean; onClose: () => void; user: User; }) => {
 	return (
 		<>
 			<Modal

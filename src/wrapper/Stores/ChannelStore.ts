@@ -240,18 +240,21 @@ export const usePerChannelStore = create(
 
                 return found;
             },
-            addChannel: (channelId) => set({ channels: { ...get().channels, [channelId]:
-                {
-                    previousMessageContent: null,
-                    currentState: "default",
-                    stateId: null,
-                    scrollPosition: 0,
-                    lastTyped: 0,
-                    lastTypingSent: 0,
-                    fetchingError: false,
-                    hasMoreAfter: true,
-                    hasMoreBefore: true
-                } } 
+            addChannel: (channelId) => set({
+                channels: {
+                    ...get().channels, [channelId]:
+                    {
+                        previousMessageContent: null,
+                        currentState: "default",
+                        stateId: null,
+                        scrollPosition: 0,
+                        lastTyped: 0,
+                        lastTypingSent: 0,
+                        fetchingError: false,
+                        hasMoreAfter: true,
+                        hasMoreBefore: true
+                    }
+                }
             }),
             removeChannel: (channelId) => {
                 const channels = get().channels;

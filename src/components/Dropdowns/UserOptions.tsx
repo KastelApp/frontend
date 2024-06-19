@@ -10,7 +10,7 @@ import { Section } from "@/types/settings.ts";
 import { useRouter } from "next/router";
 import { useTokenStore } from "@/wrapper/Stores.ts";
 
-const UserOptions = ({ children }: { children: React.ReactElement | React.ReactElement[] }) => {
+const UserOptions = ({ children }: { children: React.ReactElement | React.ReactElement[]; }) => {
 	const router = useRouter();
 	const { setToken } = useTokenStore();
 	const [statusOpen, setStatusOpen] = useState(false);

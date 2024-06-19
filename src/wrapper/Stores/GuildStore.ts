@@ -17,7 +17,7 @@ export interface Guild {
         channelId: string;
         lastMessageAckId: string | null;
         timedoutUntil: string | null;
-    }[]
+    }[];
 }
 
 export interface GuildStore {
@@ -44,7 +44,7 @@ export const useGuildStore = create<GuildStore>((set, get) => ({
                     ...guild
                 }
             ]
-        })
+        });
     },
     removeGuild: (id) => set({ guilds: get().guilds.filter(guild => guild.id !== id) }),
     getGuild: (id) => get().guilds.find(guild => guild.id === id) ?? {
@@ -81,16 +81,16 @@ export const useGuildStore = create<GuildStore>((set, get) => ({
                                 return {
                                     ...currentChannel,
                                     lastMessageAckId
-                                }
+                                };
                             }
 
                             return currentChannel;
                         })
-                    }
+                    };
                 }
 
                 return currentGuild;
             })
-        })
+        });
     }
 }));

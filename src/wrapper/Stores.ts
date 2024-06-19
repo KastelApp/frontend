@@ -111,7 +111,7 @@ export const useTokenStore = create(
 			name: "token",
 		},
 	),
-)
+);
 
 export const useIsReady = create<IsReadyStore>((set) => ({
 	isReady: false,

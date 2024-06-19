@@ -11,7 +11,7 @@ import {
 	Button,
 } from "@nextui-org/react";
 import { useTranslationStore } from "@/wrapper/Stores.ts";
-import NextLink from "next/link"
+import NextLink from "next/link";
 
 const TopHeader = () => {
 	const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -22,27 +22,27 @@ const TopHeader = () => {
 		href: string;
 		newTab: boolean;
 	}[] = [
-		{
-			title: t("home.navbar.docs"),
-			href: "/docs",
-			newTab: false,
-		},
-		{
-			title: "Github",
-			href: "https://github.com/KastelApp",
-			newTab: true,
-		},
-		{
-			title: t("home.navbar.blog"),
-			href: "/blog",
-			newTab: false,
-		},
-		{
-			title: t("home.navbar.support"),
-			href: "#",
-			newTab: false,
-		},
-	];
+			{
+				title: t("home.navbar.docs"),
+				href: "/docs",
+				newTab: false,
+			},
+			{
+				title: "Github",
+				href: "https://github.com/KastelApp",
+				newTab: true,
+			},
+			{
+				title: t("home.navbar.blog"),
+				href: "/blog",
+				newTab: false,
+			},
+			{
+				title: t("home.navbar.support"),
+				href: "#",
+				newTab: false,
+			},
+		];
 
 	return (
 		<Navbar onMenuOpenChange={setIsMenuOpen}>

@@ -115,7 +115,7 @@ const BaseContextMenu = ({
 				}}
 			>
 				{values.map((value, index) => {
-					const PossiblyDropdown = ({ children }: { children: React.ReactElement | React.ReactElement[] }) => {
+					const PossiblyDropdown = ({ children }: { children: React.ReactElement | React.ReactElement[]; }) => {
 						if (!value.subValues) return children as React.ReactElement;
 
 						return (

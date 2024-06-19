@@ -27,7 +27,7 @@ const Init = ({
     const blacklistedTokenPaths: (string | RegExp)[] = [
         "/login",
         "/register",
-    ]
+    ];
 
     useEffect(() => {
         if (blacklistedTokenPaths.some((path) => router.pathname.match(path) || path === router.pathname) && token) {
@@ -56,11 +56,11 @@ const Init = ({
 
         client.on("ready", () => {
             setIsReady(true);
-        })
+        });
 
         client.on("close", () => {
             setIsReady(false);
-        })
+        });
     }, [router.pathname]);
 
     return (

@@ -7,7 +7,7 @@ import { Pencil, TriangleAlert, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
 const OverView = () => {
-	const [user, setUser] = useState<User | undefined>(undefined);
+	const [user, setUser] = useState<User | null>(null);
 
 	const { getCurrentUser } = useUserStore();
 
@@ -19,7 +19,6 @@ const OverView = () => {
 		setUser(gotUser);
 
 		setAvatarUrl(gotUser?.avatar ?? null);
-
 
 		useUserStore.subscribe((stat) => {
 			const newGotUser = stat.getCurrentUser();
@@ -111,9 +110,9 @@ const OverView = () => {
 							<div className="w-full bg-warning/25 border-1 border-warning rounded-md">
 								<div className="flex">
 									<div className="p-2 flex">
-									<TriangleAlert className="text-warning" size={24} />
-									<p className="text-warning text-sm mt-0.5 ml-2">Your email is not verified, please check your email to verify it.</p>
-										</div>
+										<TriangleAlert className="text-warning" size={24} />
+										<p className="text-warning text-sm mt-0.5 ml-2">Your email is not verified, please check your email to verify it.</p>
+									</div>
 									<Button color="primary" variant="flat" className="ml-auto text-sm h-6 mt-2 w-32 mr-2 rounded-md" radius="none">
 										Resend
 									</Button>

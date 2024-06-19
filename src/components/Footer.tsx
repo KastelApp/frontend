@@ -1,5 +1,5 @@
 import { Link } from "@nextui-org/react";
-import NextLink from "next/link"
+import NextLink from "next/link";
 
 const Footer = () => {
 	const year = new Date().getFullYear();

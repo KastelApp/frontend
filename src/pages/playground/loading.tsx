@@ -3,9 +3,9 @@ import Loading from "@/components/Loading.tsx";
 const LoadingScreen = () => {
     return (
         <>
-        <Loading />
+            <Loading />
         </>
-    )
-}
+    );
+};
 
 export default LoadingScreen;

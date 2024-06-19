@@ -1,9 +1,9 @@
 const Invite = () => {
     return (
         <>
-        Coming Soon
+            Coming Soon
         </>
-    )
-}
+    );
+};
 
-export default Invite
+export default Invite;

@@ -23,13 +23,13 @@ const Channel = () => {
     //     // updateReadState(guildId, channelId, "62262959266730817")
     // }, [channelId])
 
-	return (
-		<AppLayout>
-			<ChannelNavBar>
-				<TextBasedChannel />
-			</ChannelNavBar>
-		</AppLayout>
-	);
+    return (
+        <AppLayout>
+            <ChannelNavBar>
+                <TextBasedChannel />
+            </ChannelNavBar>
+        </AppLayout>
+    );
 };
 
 export default Channel;

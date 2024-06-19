@@ -9,6 +9,6 @@ const safeParse = <T = unknown>(data: string): T | null => {
     } catch {
         return null;
     }
-}
+};
 
 export default safeParse;

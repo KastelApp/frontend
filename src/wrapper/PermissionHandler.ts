@@ -104,7 +104,7 @@ class PermissionHandler {
     const channel = this.channels.find((Channel) => Channel.id === channelId);
 
     if (!channel) {
-      Logger.error(`Channel not found (ID: ${channelId})`, "Wrapper | PermissionHandler")
+      Logger.error(`Channel not found (ID: ${channelId})`, "Wrapper | PermissionHandler");
 
       return false;
     }

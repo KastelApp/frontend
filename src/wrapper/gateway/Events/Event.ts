@@ -71,7 +71,7 @@ const event = (ws: Websocket, data: unknown) => {
         }
 
         default: {
-            Logger.warn(`Unknown Event ${data.event}`, "Wrapper | WebSocket")
+            Logger.warn(`Unknown Event ${data.event}`, "Wrapper | WebSocket");
 
             break;
         }

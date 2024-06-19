@@ -68,7 +68,7 @@ const LeftNavbar = memo(() => {
 								break;
 							}
 						}
-						
+
 						const topChannel = getTopChannel(guild.id);
 
 						return (

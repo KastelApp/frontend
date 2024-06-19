@@ -2,29 +2,29 @@ import { twMerge } from "tailwind-merge";
 import { Skeleton } from "@nextui-org/react";
 import { memo, useEffect, useState } from "react";
 
-const MessageToSkelton = memo(({ msg, getLength }: { msg: string, getLength(word: string): number }) => {
+const MessageToSkelton = memo(({ msg, getLength }: { msg: string, getLength(word: string): number; }) => {
     const words = msg.split(" ");
 
     return (
         <div className="flex gap-1 flex-wrap">
-           {words.map((word, index) => {
-        const messageWidth = getLength(word);
+            {words.map((word, index) => {
+                const messageWidth = getLength(word);
 
-        return (
-            <Skeleton
-                key={index}
-                className="rounded-lg mt-1 max-h-5 min-h-5"
-                style={{
-                    minWidth: messageWidth,
-                    maxWidth: messageWidth,
-                }}
-                disableAnimation
-            />
-        );
-    })}
+                return (
+                    <Skeleton
+                        key={index}
+                        className="rounded-lg mt-1 max-h-5 min-h-5"
+                        style={{
+                            minWidth: messageWidth,
+                            maxWidth: messageWidth,
+                        }}
+                        disableAnimation
+                    />
+                );
+            })}
         </div>
     );
-})
+});
 
 const randomData = {
     names: ["DarkerInk", "TeaCup", "Otters", "Cats", "Waffles", "Developer", "John", "Rock", "Wick", "vegetable", "funky", "stitch"],
@@ -35,7 +35,7 @@ const randomData = {
         "Sot know >>>:33333",
         "Very cool msg"
     ]
-}
+};
 
 const SkellyMessage = memo(() => {
     const canvas = document.createElement("canvas");
@@ -46,7 +46,7 @@ const SkellyMessage = memo(() => {
     const getLength = (word: string) => {
         const length = context.measureText(word).width;
         return length < 20 ? length + length : length;
-    }
+    };
 
     const [name, setName] = useState("");
     const [content, setContent] = useState("");
@@ -57,7 +57,7 @@ const SkellyMessage = memo(() => {
 
         setName(randomName);
         setContent(randomContent);
-    }, [])
+    }, []);
 
     return (
         <div

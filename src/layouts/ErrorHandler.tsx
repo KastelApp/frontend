@@ -18,7 +18,7 @@ const ErrorHandler = ({
 
 		return () => {
 			window.onerror = null;
-			window.removeEventListener("unhandledrejection", () => {});
+			window.removeEventListener("unhandledrejection", () => { });
 		};
 	}, []);
 

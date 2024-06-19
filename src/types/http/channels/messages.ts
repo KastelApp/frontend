@@ -19,9 +19,9 @@ export type MessageReply =
 	| Message
 	| null
 	| {
-			messageId: string;
-			channelId: string;
-	  };
+		messageId: string;
+		channelId: string;
+	};
 
 export interface Author {
 	id: string;

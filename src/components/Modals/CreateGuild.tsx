@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
 
-const JoinGuild = ({ setSection }: { setSection: (section: "join" | "create" | "home") => void }) => {
+const JoinGuild = ({ setSection }: { setSection: (section: "join" | "create" | "home") => void; }) => {
 	return (
 		<>
 			<ModalHeader className="flex flex-col gap-1 text-center">
@@ -37,7 +37,7 @@ const JoinGuild = ({ setSection }: { setSection: (section: "join" | "create" | "
 	);
 };
 
-const HomeGuild = ({ setSection }: { setSection: (section: "join" | "create" | "home") => void }) => {
+const HomeGuild = ({ setSection }: { setSection: (section: "join" | "create" | "home") => void; }) => {
 	return (
 		<>
 			<ModalHeader className="flex flex-col gap-1 text-center">
@@ -76,7 +76,7 @@ const HomeGuild = ({ setSection }: { setSection: (section: "join" | "create" | "
 	);
 };
 
-const CreateGuild = ({ setSection }: { setSection: (section: "join" | "create" | "home") => void }) => {
+const CreateGuild = ({ setSection }: { setSection: (section: "join" | "create" | "home") => void; }) => {
 	return (
 		<>
 			<ModalHeader className="flex flex-col gap-1 text-center">
@@ -114,7 +114,7 @@ const CreateGuild = ({ setSection }: { setSection: (section: "join" | "create" |
 		</>
 	);
 };
-const GuildModal = ({ isOpen, onOpenChange }: { isOpen: boolean; onOpenChange: () => void; onClose: () => void }) => {
+const GuildModal = ({ isOpen, onOpenChange }: { isOpen: boolean; onOpenChange: () => void; onClose: () => void; }) => {
 	const [section, setSection] = useState<"join" | "create" | "home">("home");
 
 	const [animationDirection, setAnimationDirection] = useState<"left" | "right">("left");

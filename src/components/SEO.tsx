@@ -2,7 +2,7 @@ import { NextSeo } from "next-seo";
 import React from "react";
 import siteConfig from "../../next-seo.config.mjs";
 
-const SEO = ({ title, description }: { title: string; description?: string }) => (
+const SEO = ({ title, description }: { title: string; description?: string; }) => (
 	<NextSeo
 		title={title}
 		description={description}

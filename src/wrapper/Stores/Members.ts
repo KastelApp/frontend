@@ -7,7 +7,7 @@ export interface Member {
     owner: boolean;
     roles: string[];
     userId: string;
-    presence: unknown[]
+    presence: unknown[];
 }
 
 export interface MemberStore {
@@ -23,7 +23,7 @@ export const useMemberStore = create<MemberStore>((set, get) => ({
     addMember: (member) => {
         const currentMembers = get().members;
 
-        const foundMember = currentMembers.find((currentMember) => currentMember.userId === member.userId && currentMember.guildId === member.guildId) ?? {}
+        const foundMember = currentMembers.find((currentMember) => currentMember.userId === member.userId && currentMember.guildId === member.guildId) ?? {};
 
         set({
             members: [
@@ -33,7 +33,7 @@ export const useMemberStore = create<MemberStore>((set, get) => ({
                     ...member
                 }
             ]
-        })
+        });
     },
     removeMember: (guildId, userId) => set({ members: get().members.filter(member => member.userId !== userId && member.guildId !== guildId) }),
     getMember: (guildId, userId) => get().members.find(member => member.userId === userId && member.guildId === guildId),

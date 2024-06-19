@@ -20,7 +20,7 @@ export interface Message {
     };
     pinned: boolean;
     deletable: boolean;
-    invites: string[]
+    invites: string[];
     channelId: string;
 }
 
@@ -110,7 +110,7 @@ export const useMessageStore = create<MessageStore>((set, get) => ({
 
         if (!message) return;
 
-       console.log("Editing message", message, options);
+        console.log("Editing message", message, options);
     },
     replyToMessage: (channelId, messageId, options) => {
         const message = get().messages.find((message) => message.id === messageId);
@@ -122,4 +122,4 @@ export const useMessageStore = create<MessageStore>((set, get) => ({
     fetchMessages: async (channelId, options) => {
         console.log("Fetching messages", channelId, options);
     }
-}))
+}));

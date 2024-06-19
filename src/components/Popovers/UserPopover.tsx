@@ -1,16 +1,18 @@
 import AllBadges from "@/badges/AllBadges.tsx";
 import { Member } from "@/wrapper/Stores/Members.ts";
 import { User, useUserStore } from "@/wrapper/Stores/UserStore.ts";
-import { Avatar, Badge, Card, CardBody, Divider } from "@nextui-org/react";
+import { Avatar, Badge, Card, CardBody, Divider, Input } from "@nextui-org/react";
 import { X } from "lucide-react";
 
-const UserPopover = ({ member, onClick }: { member: {
-	member: Member;
-	user: User;
-}; onClick?: () => void; }) => {
+const UserPopover = ({ member, onClick }: {
+	member: {
+		member: Member;
+		user: User;
+	}; onClick?: () => void;
+}) => {
 	return (
 		<div>
-			<div className="rounded-lg p-0 w-[18.70rem]">
+			<div className="rounded-sm p-0 w-[18.70rem]">
 				<div>
 					<div className="flex items-end justify-between p-2">
 						<Badge
@@ -50,24 +52,26 @@ const UserPopover = ({ member, onClick }: { member: {
 				</div>
 
 				<div>
-					<Card className="mt-2 mb-2" isBlurred>
-						<CardBody className="overflow-y-auto max-h-[85vh]">
-							<div>
-								<p className="text-white text-lg font-semibold">{member.user.username}</p>
-								<p className="text-gray-300 text-sm">
-									{member.user.username}#{member.user.tag}
-								</p>
-								{/* {member.customStatus && <p className="text-gray-200 text-md mt-2">{member.customStatus}</p>} */}
-							</div>
-							<Divider className="mt-2" />
-							<div className="mt-2">
-								<span className="text-white font-bold">About Me</span>
-								<p className="text-gray-300 mt-2">{"Hey"}</p>
-							</div>
-							<div className="mt-2">
-								<span className="text-white font-bold">Roles</span>
-								<div className="flex flex-wrap select-none">
-									{/* {member.roles.map((role) => (
+					<Card className="mt-2 mb-2 rounded-sm" isBlurred radius="none">
+						<CardBody className="p-0">
+							<div className="overflow-y-auto p-3 max-h-[85vh]">
+								<div>
+									<p className="text-white text-lg font-semibold">{member.user.username}</p>
+									<p className="text-gray-300 text-sm">
+										{member.user.username}#{member.user.tag}
+									</p>
+									{/* {member.customStatus && <p className="text-gray-200 text-md mt-2">{member.customStatus}</p>} */}
+								</div>
+								<Divider className="mt-2" />
+								<div className="mt-2">
+									<span className="text-white font-bold">About Me</span>
+									<p className="text-gray-300 mt-2">{"Hey"}</p>
+								</div>
+								{member.member.roles.length > 1 && (
+									<div className="mt-2">
+										<span className="text-white font-bold">Roles</span>
+										<div className="flex flex-wrap select-none">
+											{/* {member.roles.map((role) => (
 										<div
 											className="flex flex-wrap bg-accent border-gray-400 border rounded-md px-2 py-0 mt-2 mr-1 group"
 											key={role}
@@ -80,8 +84,20 @@ const UserPopover = ({ member, onClick }: { member: {
 											<span className="text-white text-xs">{role}</span>
 										</div>
 									))} */}
-								</div>
+										</div>
+									</div>
+								)}
 							</div>
+							{!member.user.isClient && (
+								<Input
+									placeholder={`Message @${member.user.username}`}
+									className="mt-2 p-1.5"
+									// value={message}
+									// onChange={(e) => setMessage(e.target.value)}
+									// onKeyDown={handleKeyDown}
+									radius="sm"
+								/>
+							)}
 						</CardBody>
 					</Card>
 				</div>

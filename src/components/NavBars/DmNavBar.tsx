@@ -34,7 +34,7 @@ const DmNavBarItem = ({
 	className?: string;
 	href?: string;
 }) => {
-	const LinkMaybe = ({ children }: { children: React.ReactNode }) =>
+	const LinkMaybe = ({ children }: { children: React.ReactNode; }) =>
 		href ? (
 			<Link href={href} passHref>
 				{children}
@@ -124,7 +124,7 @@ const DmNavBar = ({
 	];
 
 	const dms = [
-		
+
 	];
 
 	const [selectedChannel, setSelectedChannel] = useState<string | null>(null);

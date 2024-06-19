@@ -3,8 +3,8 @@ import { useEffect } from "react";
 const ErrorPage = () => {
 
     useEffect(() => {
-        throw new Error("Testing Error")
-    }, [])
+        throw new Error("Testing Error");
+    }, []);
 
     return (
         <div className="">

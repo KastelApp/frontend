@@ -22,7 +22,7 @@ const IndexPage = () => {
 			const langs = fetchLanguages();
 
 			console.log("pick a lang (use the code i.e en, fr, de then do setLanguage('langCode')\n\n", langs.map((lang) => (`${lang.code} [${lang.status}] - ${lang.notes.join(", ") || "No Notes"}`)).join("\n\n"));
-		}
+		};
 	}, []);
 
 	return (

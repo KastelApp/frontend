@@ -4,11 +4,11 @@
  */
 
 const Rnd = () => {
-    return (
-        <div className="">
-          Nothing Currently
-        </div>
-    );
+  return (
+    <div className="">
+      Nothing Currently
+    </div>
+  );
 };
 
 export default Rnd;

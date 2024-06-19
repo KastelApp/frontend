@@ -99,7 +99,7 @@ interface Channel {
 	link?: string;
 }
 
-const HandleChannels = ({ channel, onClick, currentChannelId }: { channel: Channel, onClick?: (e: React.MouseEvent) => void; currentChannelId: string }) => {
+const HandleChannels = ({ channel, onClick, currentChannelId }: { channel: Channel, onClick?: (e: React.MouseEvent) => void; currentChannelId: string; }) => {
 	return (
 		<div>
 			<Channel
@@ -490,7 +490,7 @@ const ChannelNavBar = ({ children, isChannelHeaderHidden, isMemberBarHidden }: {
 							<HandleChannels key={index} channel={channel} onClick={(e) => {
 								e.stopPropagation();
 								e.nativeEvent.preventDefault();
-							 
+
 								onOpenChangeChannelSettings();
 							}} currentChannelId={currentChannelId} />
 						))}

@@ -122,28 +122,28 @@ const SlateEditor = ({ placeholder, isReadOnly, readOnlyMessage, sendMessage }: 
 
 						toggleTextWithMarkdown(editor, "**");
 					}
-			
+
 					// ? Italic
 					if (event.ctrlKey && event.key === "i") {
 						event.preventDefault();
 						toggleTextWithMarkdown(editor, "*");
 					}
-			
+
 					// ? Underline
 					if (event.ctrlKey && event.key === "u") {
 						event.preventDefault();
 						toggleTextWithMarkdown(editor, "__");
 					}
-			
+
 					if (event.key === " " && editor.selection && Range.isCollapsed(editor.selection)) {
 						const { selection } = editor;
 						const [start] = Range.edges(selection);
-						
+
 						const beforeText = Editor.string(editor, {
 							anchor: { path: start.path, offset: 0 },
 							focus: start,
 						});
-			
+
 						if (beforeText.startsWith(">")) {
 							event.preventDefault();
 							Transforms.setNodes<TypeNode>(editor, { type: "blockquote" }, { match: (n) => "type" in n && n.type === "paragraph" });
@@ -158,7 +158,7 @@ const SlateEditor = ({ placeholder, isReadOnly, readOnlyMessage, sendMessage }: 
 
 						const text = editor.children.map((node) => {
 							const str = Node.string(node);
-			
+
 							return ("type" in node && node.type === "blockquote") ? `> ${str}` : str;
 						}).join("\n");
 						sendMessage(text);
@@ -179,18 +179,18 @@ const SlateEditor = ({ placeholder, isReadOnly, readOnlyMessage, sendMessage }: 
 					}
 				}}
 				onDOMBeforeInput={(event) => {
-					console.log(event.inputType)
+					console.log(event.inputType);
 					if (!["insertFromPaste", "insertText"].includes(event.inputType)) {
 						return;
-                    }
-					
-                    const textLength = Editor.string(editor, []).length;
-                    const text = (event.data as string) ?? event.dataTransfer?.getData("text/plain");
+					}
 
-                    if (textLength >= Constants.settings.maxMessageSize + 2000 || textLength + text.length >= Constants.settings.maxMessageSize + 2000) {
-						event.preventDefault()
-                    }
-                }}
+					const textLength = Editor.string(editor, []).length;
+					const text = (event.data as string) ?? event.dataTransfer?.getData("text/plain");
+
+					if (textLength >= Constants.settings.maxMessageSize + 2000 || textLength + text.length >= Constants.settings.maxMessageSize + 2000) {
+						event.preventDefault();
+					}
+				}}
 			/>
 		</Slate>
 	);

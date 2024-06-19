@@ -27,7 +27,7 @@ const Register = () => {
 	const { client } = useClientStore();
 	const { t } = useTranslationStore();
 	const { setToken } = useTokenStore();
-	const router = useRouter()
+	const router = useRouter();
 
 	// ? General state
 	const [error, setError] = useState("");
@@ -70,7 +70,7 @@ const Register = () => {
 		} else {
 			setPasswordConfirmError("");
 		}
-	}, [ username, email, password, passwordConfirm]);
+	}, [username, email, password, passwordConfirm]);
 
 	return (
 		<>

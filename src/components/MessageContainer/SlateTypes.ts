@@ -9,7 +9,7 @@ export interface MainProps {
 	children: React.ReactNode;
 	element: {
 		id: string;
-		children: { bold: boolean; italic: boolean }[];
+		children: { bold: boolean; italic: boolean; }[];
 		type: string;
 		mentionType: "channel" | "role" | "member";
 	};
@@ -17,7 +17,7 @@ export interface MainProps {
 
 export interface LeafProps {
 	attributes: React.HTMLAttributes<HTMLSpanElement>;
-	children: React.ReactNode & { props: { leaf: { text: string } } };
+	children: React.ReactNode & { props: { leaf: { text: string; }; }; };
 	leaf: {
 		bold: boolean;
 		italic: boolean;
@@ -30,4 +30,4 @@ export interface LeafProps {
 	};
 }
 
-export type Token = string | { type: string; content: Token[] | string };
+export type Token = string | { type: string; content: Token[] | string; };

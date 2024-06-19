@@ -136,9 +136,9 @@ const BiDirectionalInfiniteScroller = <T,>({
 
             setTimeout(() => {
                 setCanFetchAgain(true);
-            }, 2000)
+            }, 2000);
         }
-    }, [loading])
+    }, [loading]);
 
     useEffect(() => {
         hasMoreTopRef.current = hasMoreTop;
@@ -203,7 +203,7 @@ const BiDirectionalInfiniteScroller = <T,>({
     const addTop = async () => {
         if (!hasMoreTopRef.current || isFastScrollingRef.current || loadingRef.current || !canFetchAgainRef.current) return;
 
-        console.log("Triggered Top")
+        console.log("Triggered Top");
 
         fixPositioning();
 
@@ -227,19 +227,19 @@ const BiDirectionalInfiniteScroller = <T,>({
     const addBottom = async () => {
         if (!hasMoreBottomRef.current || isFastScrollingRef.current || loadingRef.current || !canFetchAgainRef.current) return;
 
-        console.log("Triggered Bottom")
+        console.log("Triggered Bottom");
 
         fixPositioning();
 
         await onBottomReached();
     };
 
-    const thorttledFix = throttle(fixPositioning, 25)
+    const thorttledFix = throttle(fixPositioning, 25);
 
     const skellyEndEvent = (event: React.UIEvent<HTMLElement> | null, skipCheck?: boolean) => {
 
         if (isFastScrollingRef.current && !skipCheck) return;
-        
+
         thorttledFix();
     };
 
@@ -279,7 +279,7 @@ const BiDirectionalInfiniteScroller = <T,>({
             wrapper.addEventListener("scroll", skellyEndEvent);
             wrapper.addEventListener("mousedown", onMouseDownEvent);
             wrapper.addEventListener("mouseup", onMouseUpEvent);
-            
+
             return () => {
                 // @ts-expect-error For whatever reason the event it returns just "Event"?
                 wrapper.removeEventListener("scroll", skellyEndEvent);
