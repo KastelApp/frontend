@@ -9,9 +9,8 @@
     "format": "prettier --write ."
   },
   "dependencies": {
-    "@emotion/css": "^11.11.2",
     "@million/lint": "^1.0.0-rc.26",
-    "@nextui-org/react": "^2.4.1",
+    "@nextui-org/react": "^2.4.2",
     "@types/node": "20.14.1",
     "@types/react": "18.3.3",
     "@types/react-dom": "18.3.0",

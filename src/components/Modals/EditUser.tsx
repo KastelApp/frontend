@@ -1,5 +1,7 @@
-import { Button, Input, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Textarea } from "@nextui-org/react";
+import { User, useUserStore } from "@/wrapper/Stores/UserStore.ts";
+import { Button, Input, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Textarea, Tooltip } from "@nextui-org/react";
 import { Check, X } from "lucide-react";
+import { useEffect, useState } from "react";
 
 const EditUser = ({
 	isOpen,
@@ -10,6 +12,17 @@ const EditUser = ({
 	onOpenChange: () => void;
 	onClose: () => void;
 }) => {
+
+	const [user, setUser] = useState<User | undefined>(undefined);
+
+	const { getCurrentUser } = useUserStore();
+
+	useEffect(() => {
+		setUser(getCurrentUser());
+
+		useUserStore.subscribe((stat) => setUser(stat.getCurrentUser()));
+	}, []);
+
 	return (
 		<Modal isOpen={isOpen} onOpenChange={onOpenChange} placement="top-center">
 			<ModalContent>
@@ -26,17 +39,17 @@ const EditUser = ({
 						/>
 						<div className="flex items-center">
 							<Input
-								placeholder="Username"
+								placeholder={user?.username ?? "Unknown User"}
 								maxLength={32}
 								radius="sm"
-								className="flex-grow "
+								className="flex-grow"
 								variant="bordered"
-								description="The Users Username"
 								label="Username"
 								color="primary"
+								description="This is your username"
 							/>
 							<Input
-								placeholder="Tag"
+								placeholder={user?.tag ?? "0000"}
 								maxLength={4}
 								type="text"
 								pattern="[1-9][0-9]{3}"
@@ -44,9 +57,9 @@ const EditUser = ({
 								variant="bordered"
 								radius="sm"
 								label="Tag"
-								description="The Users Tag"
 								errorMessage="Invalid Tag"
 								color="primary"
+								description="This is your tag"
 							/>
 						</div>
 						<Input
@@ -55,9 +68,13 @@ const EditUser = ({
 							className="mt-2"
 							variant="bordered"
 							color="primary"
-							endContent={<Check className="text-success" size={32} />}
+							endContent={
+								<Tooltip content={user?.emailVerified ? "Your email is verified" : "Your email is not verified, please check your email to verify it."}>
+									{user?.emailVerified ? <Check className="text-success" size={32} /> : <X className="text-danger" size={32} />}
+								</Tooltip>
+							}
 							isReadOnly
-							value={"darkerink@kastelapp.com"}
+							value={user?.email ?? "unknown@example.com"}
 						/>
 						<Input
 							label="Phone Number"
@@ -71,14 +88,15 @@ const EditUser = ({
 						/>
 					</div>
 					<div>
-						<p className="text-lg font-semibold mt-2 mb-2">Misc (change name later)</p>
+						<p className="text-lg font-semibold mt-2 mb-2">Profile</p>
 						<Textarea
 							label="About Me"
-							placeholder="Testing"
+							placeholder={"Tell us about yourself..."}
 							className="mb-4"
 							variant="bordered"
 							color="primary"
 							maxRows={3}
+							defaultValue={user?.bio ?? ""}
 						/>
 					</div>
 				</ModalBody>

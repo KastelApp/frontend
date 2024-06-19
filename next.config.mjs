@@ -44,10 +44,15 @@ const nextConfig = {
 		API_VERSION: process.env.PUBLIC_API_VERSION,
 		KASTEL_DESKTOP_APP: process.env.PUBLIC_KASTEL_DESKTOP_APP,
 		CLOUDFLARE_TURNSTILE_SITE_KEY: process.env.PUBLIC_CLOUDFLARE_TURNSTILE_SITE_KEY,
+		ICON_CDN: process.env.PUBLIC_ICON_CDN,
 	},
 	typescript: {
 		ignoreBuildErrors: true
 	}
 };
 
-export default next({ rsc: true, optimizeDOM: true, telemetry: false })(nextConfig);
+// ? Million lint disabled for now due to internal issues with nextui, tho I have a arg you can provide to enable it again (since it only affects the dropdown)
+// export default next({ rsc: true, optimizeDOM: true, telemetry: false })(nextConfig);
+// export default nextConfig;
+
+export default process.env.MILLION === "true" ? next({ rsc: true, optimizeDOM: true, telemetry: false })(nextConfig) : nextConfig;

@@ -18,6 +18,7 @@ export interface User {
     isClient: boolean;
     isSystem: boolean;
     isBot: boolean;
+    defaultAvatar: string;
 }
 
 export interface UserStore {
@@ -56,7 +57,8 @@ export const useUserStore = create<UserStore>((set, get) => ({
                         tag: "0000",
                         username: "Unknown User",
                         isBot: false,
-                        isSystem: false
+                        isSystem: false,
+                        defaultAvatar: get().getDefaultAvatar(user.id ?? "0")
                     },
                     ...foundUser,
                     ...user

@@ -1,38 +1,36 @@
 import AllBadges from "@/badges/AllBadges.tsx";
 import Message from "@/components/Message/Message.tsx";
 import EditUser from "@/components/Modals/EditUser.tsx";
+import { User, useUserStore } from "@/wrapper/Stores/UserStore.ts";
 import { Avatar, Badge, Button, Card, CardBody, Divider, Tooltip, useDisclosure } from "@nextui-org/react";
-import { Pencil, X } from "lucide-react";
-import { useRef, useState } from "react";
-
-interface Member {
-	id: string;
-	username: string;
-	discriminator: string;
-	avatar: string | null;
-	roles: string[];
-	isOwner: boolean;
-	tag: "Bot" | "System" | null;
-	status: "online" | "idle" | "dnd" | "offline";
-	customStatus?: string;
-}
+import { Pencil, TriangleAlert, X } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 
 const OverView = () => {
-	const member: Member = {
-		id: "1",
-		username: "DarkerInk",
-		discriminator: "0001",
-		avatar: "https://development.kastelapp.com/icon-1.png",
-		roles: ["admin"],
-		isOwner: false,
-		tag: null,
-		status: "online",
-		customStatus: "Hey",
-	};
+	const [user, setUser] = useState<User | undefined>(undefined);
+
+	const { getCurrentUser } = useUserStore();
+
+	const [avatarUrl, setAvatarUrl] = useState<string | null>(user?.avatar ?? null);
+
+	useEffect(() => {
+		const gotUser = getCurrentUser();
+
+		setUser(gotUser);
+
+		setAvatarUrl(gotUser?.avatar ?? null);
+
+
+		useUserStore.subscribe((stat) => {
+			const newGotUser = stat.getCurrentUser();
+
+			setUser(newGotUser);
+
+			setAvatarUrl(newGotUser?.avatar ?? null);
+		});
+	}, []);
 
 	const ref = useRef<HTMLInputElement>(null);
-
-	const [avatarUrl, setAvatarUrl] = useState<string | null>(member.avatar ?? null);
 
 	const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const file = e.target.files?.[0];
@@ -66,7 +64,7 @@ const OverView = () => {
 										}}
 									>
 										<div className="relative transition-opacity duration-300 ease-in-out group">
-											<Avatar src={avatarUrl!} alt="User Avatar" className="h-24 w-24 bg-transparent" />
+											<Avatar src={avatarUrl ?? user?.defaultAvatar} alt="User Avatar" className="h-24 w-24 bg-transparent" />
 											<p className="hidden group-hover:block text-white font-bold text-xs absolute inset-0 ml-1 mt-10 w-full min-w-full items-center justify-center !z-20">
 												Change Avatar
 											</p>
@@ -83,7 +81,7 @@ const OverView = () => {
 									</Badge>
 								</Tooltip>
 								<div>
-									<AllBadges privateFlags="0" publicFlags="999999999999" size={20} />
+									<AllBadges privateFlags={user?.flags ?? "9"} publicFlags={user?.publicFlags ?? "0"} size={20} />
 								</div>
 							</div>
 							<div className="flex items-start justify-start gap-1">
@@ -109,21 +107,34 @@ const OverView = () => {
 							</div>
 						</div>
 						<Divider className="mt-2" />
+						{!user?.emailVerified && (
+							<div className="w-full bg-warning/25 border-1 border-warning rounded-md">
+								<div className="flex">
+									<div className="p-2 flex">
+									<TriangleAlert className="text-warning" size={24} />
+									<p className="text-warning text-sm mt-0.5 ml-2">Your email is not verified, please check your email to verify it.</p>
+										</div>
+									<Button color="primary" variant="flat" className="ml-auto text-sm h-6 mt-2 w-32 mr-2 rounded-md" radius="none">
+										Resend
+									</Button>
+								</div>
+							</div>
+						)}
 						<div>
 							<Card className="mt-2 mb-2" isBlurred>
 								<CardBody className="flex flex-col overflow-y-auto max-h-[85vh]">
 									<div className="flex justify-between items-center mb-4">
 										<div>
 											<p className="text-lg font-semibold">Global Nickname</p>
-											<p className="text-md">DarkerInk</p>
+											<p className="text-md">{user?.globalNickname}</p>
 										</div>
 									</div>
 									<div className="flex justify-between items-center mb-4">
 										<div>
 											<p className="text-lg font-semibold">Username</p>
 											<span className="flex">
-												<p className="text-md">DarkerInk</p>
-												<p className="ml-0.5 text-md text-gray-400">#1750</p>
+												<p className="text-md">{user?.username}</p>
+												<p className="ml-0.5 text-md text-gray-400">#{user?.tag}</p>
 											</span>
 										</div>
 									</div>
@@ -131,20 +142,20 @@ const OverView = () => {
 										<div>
 											<p className="text-lg font-semibold">Email</p>
 											<p className="text-md blur-sm hover:blur-0 transition-all duration-300">
-												darkerink@kastelapp.com
+												{user?.email}
 											</p>
 										</div>
 									</div>
 									<div className="flex justify-between items-center mb-4">
 										<div>
 											<p className="text-lg font-semibold">Phone Number</p>
-											<p className="text-md">N/A</p>
+											<p className="text-md">{user?.phoneNumber ?? "N/A"}</p>
 										</div>
 									</div>
 									<div className="flex justify-between items-center mb-4">
 										<div>
 											<p className="text-lg font-semibold">About Me</p>
-											<p className="text-md">Testing</p>
+											<p className="text-md">{user?.bio}</p>
 										</div>
 									</div>
 								</CardBody>

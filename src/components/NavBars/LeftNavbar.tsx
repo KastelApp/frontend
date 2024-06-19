@@ -1,6 +1,5 @@
 // ? The left navbar is inspired by discord due to a ton of users wanting it since they are familiar with it.
 // ? Though the bottom bar is the one we will care about the most, the left navbar is still a good option for those who want it.
-
 import { memo } from "react";
 import { Compass, Plus } from "lucide-react";
 import { twMerge } from "tailwind-merge";
