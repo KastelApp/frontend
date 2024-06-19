@@ -80,6 +80,9 @@ const BaseSettings = ({
 				className="w-screen h-screen"
 				isDismissable={false}
 				isKeyboardDismissDisabled={true}
+				classNames={{
+					closeButton: "z-20"
+				}}
 			>
 				<ModalContent>
 					<div className="flex w-full m-0 overflow-x-hidden h-full">

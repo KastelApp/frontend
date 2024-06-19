@@ -16,6 +16,8 @@ const Init = ({
 
     useEffect(() => {
         api.token = token;
+
+        setIsReady(false);
     }, [token]);
 
     const whitelistedPaths: (string | RegExp)[] = [

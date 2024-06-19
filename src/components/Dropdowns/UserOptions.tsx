@@ -7,8 +7,12 @@ import CustomStatus from "../Modals/CustomStatus.tsx";
 import OverView from "../Settings/User/Overview.tsx";
 import BaseSettings from "../Modals/BaseSettings.tsx";
 import { Section } from "@/types/settings.ts";
+import { useRouter } from "next/router";
+import { useTokenStore } from "@/wrapper/Stores.ts";
 
 const UserOptions = ({ children }: { children: React.ReactElement | React.ReactElement[] }) => {
+	const router = useRouter();
+	const { setToken } = useTokenStore();
 	const [statusOpen, setStatusOpen] = useState(false);
 	const [status, setStatus] = useState<"Online" | "Invisible" | "DND" | "Idle">("Invisible");
 
@@ -41,6 +45,16 @@ const UserOptions = ({ children }: { children: React.ReactElement | React.ReactE
 			case "settings": {
 				onSettingsOpenChange();
 				setDropdownOpen(false);
+
+				break;
+			}
+
+			case "logout": {
+				setToken(null);
+
+				router.push("/login");
+
+				// todo: handle better cleanup
 
 				break;
 			}
@@ -193,7 +207,7 @@ const UserOptions = ({ children }: { children: React.ReactElement | React.ReactE
 							Settings
 						</DropdownItem>
 						<DropdownItem
-							key="delete"
+							key="logout"
 							variant="flat"
 							className="text-danger"
 							color="danger"

@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { useAPIStore } from "../Stores.ts";
+import Logger from "@/utils/Logger.ts";
 
 export interface User {
     id: string;
@@ -25,8 +26,8 @@ export interface UserStore {
     users: User[];
     addUser(user: Partial<User>): void;
     removeUser(id: string): void;
-    getUser(id: string, forceRecache?: boolean): Promise<User | undefined>;
-    getCurrentUser(): User | undefined;
+    getUser(id: string, forceRecache?: boolean): Promise<User | null>;
+    getCurrentUser(): User | null;
     getDefaultAvatar(id: string): string;
 }
 
@@ -66,7 +67,18 @@ export const useUserStore = create<UserStore>((set, get) => ({
             ]
         })
     },
-    getCurrentUser: () => get().users.find((user) => user.isClient),
+    getCurrentUser: () => {
+        const foundCurrentUser = get().users.find((user) => user.isClient);
+
+        if (!foundCurrentUser) {
+            Logger.error("No current user found, dumping users", "UserStore | getCurrentUser()")
+            console.log(get().users)
+
+            return null;
+        }
+
+        return foundCurrentUser;
+    },
     getUser: async (id, forceRecache) => {
         const foundUser = get().users.find((user) => user.id === id);
 
@@ -74,9 +86,11 @@ export const useUserStore = create<UserStore>((set, get) => ({
 
         const api = useAPIStore.getState().api;
 
-        if (!api) return;
+        if (!api) return null;
 
         console.log("FETCH", api)
+
+        return null;
     },
     removeUser: (id) => set((state) => ({ users: state.users.filter((user) => user.id !== id) })),
     getDefaultAvatar: (id) => `/icon-${BigInt(id) % 5n}.png`

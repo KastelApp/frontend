@@ -75,6 +75,7 @@ const EditUser = ({
 							}
 							isReadOnly
 							value={user?.email ?? "unknown@example.com"}
+							description={"Kastel staff will never ask you to change your email to one we \"own\"."}
 						/>
 						<Input
 							label="Phone Number"
