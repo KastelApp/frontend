@@ -98,7 +98,7 @@ const TextBasedChannel = () => {
 
 			const newMessages = getMessages(channelId);
 
-			setRenderedMessages(newMessages);
+			setRenderedMessages(newMessages.toReversed());
 
 			setFetching(false);
 
@@ -116,7 +116,7 @@ const TextBasedChannel = () => {
 			return;
 		}
 
-		setRenderedMessages(messageCache);
+		setRenderedMessages(messageCache.toReversed());
 	};
 
 	useEffect(() => {
@@ -180,6 +180,7 @@ const TextBasedChannel = () => {
 					renderItem={(message) => (
 						<Message
 							message={message}
+							key={message.id}
 						/>
 					)}
 					onBottomReached={async () => {
