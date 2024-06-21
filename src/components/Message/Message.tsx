@@ -13,7 +13,7 @@ import fastDeepEqual from "fast-deep-equal"
 import { Member, useMemberStore } from "@/wrapper/Stores/Members.ts";
 import { useChannelStore } from "@/wrapper/Stores/ChannelStore.ts";
 
-const Message = memo(({
+const Message = ({
 	className,
 	disableButtons,
 	message
@@ -248,6 +248,6 @@ const Message = memo(({
 			)}
 		</div>
 	);
-});
+};
 
 export default Message;
