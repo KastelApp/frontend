@@ -111,7 +111,7 @@ const TextBasedChannel = () => {
 		setInitialFetch(true);
 
 		if (messageCache.length > 250) {
-			setRenderedMessages(messageCache.slice(0, 250));
+			setRenderedMessages(messageCache.slice(0, 250).toReversed());
 
 			return;
 		}

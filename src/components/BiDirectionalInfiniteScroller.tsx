@@ -119,7 +119,7 @@ const BiDirectionalInfiniteScroller = <T,>({
     const theBottomHiddenOne = useRef<HTMLDivElement>(null);
     const topSkeletonRef = useRef<HTMLDivElement>(null);
     const bottomSkeletonRef = useRef<HTMLDivElement>(null);
-    const [virtualData, setVirtualData] = useState<T[]>(data);
+    const [, setVirtualData] = useState<T[]>(data);
 
     const [isFastScrolling, setIsFastScrolling] = useState(false);
     const [canFetchAgain, setCanFetchAgain] = useState(true);
@@ -344,7 +344,7 @@ const BiDirectionalInfiniteScroller = <T,>({
                         {hasMoreTop && <div className="inset-0 mt-4 w-full -z-20 absolute" style={{
                             height: turnThresholdIntoVh(topThreshold)
                         }} ref={theTopHiddenOne} />}
-                        {virtualData.map((item, index) => (
+                        {data.map((item, index) => (
                             <li key={index}>
                                 {renderItem(item, index, data)}
                             </li>
