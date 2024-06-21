@@ -1,5 +1,8 @@
 // import MillionLint from "@million/lint";
 import { next } from "@million/lint";
+import setupDocs from "./src/setupDocs.mjs";
+
+setupDocs();
 
 
 /** @type {import('next').NextConfig} */

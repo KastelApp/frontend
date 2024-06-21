@@ -16,6 +16,8 @@ import BaseContextMenu from "../Dropdowns/BaseContextMenu.tsx";
 import { User, useUserStore } from "@/wrapper/Stores/UserStore.ts";
 
 const UserModal = ({ isOpen, onClose, user }: { isOpen: boolean; onClose: () => void; user: User; }) => {
+	if (!user) return null;
+
 	return (
 		<>
 			<Modal

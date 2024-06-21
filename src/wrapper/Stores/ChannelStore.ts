@@ -48,6 +48,7 @@ export interface ChannelStore {
     getTopChannel(guildId: string): Channel | undefined;
     getSortedChannels(guildId: string, permissionCheck?: boolean): CustomChannel[];
     sendTyping(guildId: string, channelId: string): void;
+    getGuildId(channelId: string): string | undefined;
 }
 
 export interface PerChannel {
@@ -221,6 +222,11 @@ export const useChannelStore = create<ChannelStore>((set, get) => ({
         useAPIStore.getState().api.post(`/channels/${channelId}/typing`).catch(console.error);
 
         usePerChannelStore.getState().updateChannel(channelId, { lastTypingSent: Date.now() });
+    },
+    getGuildId: (channelId) => {
+        const channel = get().channels.find(channel => channel.id === channelId);
+
+        return channel?.guildId;
     }
 }));
 
@@ -229,33 +235,36 @@ export const usePerChannelStore = create(
         (set, get) => ({
             channels: {},
             getChannel: (channelId) => {
-                const found = get().channels[channelId] ?? {
+                return get().channels[channelId] ?? {
                     currentState: "default",
                     lastTyped: 0,
                     lastTypingSent: 0,
                     previousMessageContent: null,
                     scrollPosition: 0,
-                    stateId: null
+                    stateId: null,
+                    fetchingError: false,
+                    hasMoreAfter: true,
+                    hasMoreBefore: true
                 };
-
-                return found;
             },
-            addChannel: (channelId) => set({
-                channels: {
-                    ...get().channels, [channelId]:
-                    {
-                        previousMessageContent: null,
-                        currentState: "default",
-                        stateId: null,
-                        scrollPosition: 0,
-                        lastTyped: 0,
-                        lastTypingSent: 0,
-                        fetchingError: false,
-                        hasMoreAfter: true,
-                        hasMoreBefore: true
+            addChannel: (channelId) => {
+                set({
+                    channels: {
+                        ...get().channels,
+                        [channelId]: {
+                            previousMessageContent: null,
+                            currentState: "default",
+                            stateId: null,
+                            scrollPosition: 0,
+                            lastTyped: 0,
+                            lastTypingSent: 0,
+                            fetchingError: false,
+                            hasMoreAfter: true,
+                            hasMoreBefore: true
+                        }
                     }
-                }
-            }),
+                })
+            },
             removeChannel: (channelId) => {
                 const channels = get().channels;
 
@@ -264,16 +273,30 @@ export const usePerChannelStore = create(
                 set({ channels });
             },
             updateChannel: (channelId, data) => {
-                const channel = get().channels[channelId] ?? {
+                const base = {
                     currentState: "default",
                     lastTyped: 0,
                     lastTypingSent: 0,
                     previousMessageContent: null,
                     scrollPosition: 0,
-                    stateId: null
-                };
+                    stateId: null,
+                    fetchingError: false,
+                    hasMoreAfter: true,
+                    hasMoreBefore: true
+                }
 
-                set({ channels: { ...get().channels, [channelId]: { ...channel, ...data } } });
+                const channel = get().getChannel(channelId) ?? base;
+
+                set({
+                    channels: {
+                        ...get().channels,
+                        [channelId]: {
+                            ...base,
+                            ...channel,
+                            ...data,
+                        }
+                    }
+                });
             }
         }),
         {
@@ -284,6 +307,27 @@ export const usePerChannelStore = create(
                         Object.entries(state.channels).map(([key, value]) => [key, { previousMessageContent: value.previousMessageContent }])
                     )
                 } as unknown as PerChannelStore;
+            },
+            onRehydrateStorage: () => {
+                // ? add the default values to the state
+                return (state) => {
+                    return {
+                        ...state,
+                        channels: Object.fromEntries(
+                            Object.entries(state!.channels).map(([key, value]) => [key, {
+                                ...value,
+                                currentState: "default",
+                                lastTyped: 0,
+                                lastTypingSent: 0,
+                                scrollPosition: 0,
+                                stateId: null,
+                                fetchingError: false,
+                                hasMoreAfter: true,
+                                hasMoreBefore: true
+                            }])
+                        )
+                    } as unknown as PerChannelStore;
+                }
             },
         }
     )

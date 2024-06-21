@@ -1,42 +1,125 @@
 import { Avatar, Chip, Popover, PopoverContent, PopoverTrigger, Tooltip, useDisclosure } from "@nextui-org/react";
-import UserPopover from "../Popovers/UserPopover.tsx";
-import { memo, useState } from "react";
+import UserPopover from "@/components/Popovers/UserPopover.tsx";
+import { memo, useEffect, useState } from "react";
 import { Pen, Reply, Trash2, Ellipsis } from "lucide-react";
 import { twMerge } from "tailwind-merge";
-import UserModal from "../Modals/UserModal.tsx";
+import UserModal from "@/components/Modals/UserModal.tsx";
 import RichEmbed, { Embed } from "./Embeds/RichEmbed.tsx";
 import IFrameEmbed from "./Embeds/IFrameEmbed.tsx";
 import InviteEmbed from "./Embeds/InviteEmbed.tsx";
+import { Message as MessageType, useMessageStore } from "@/wrapper/Stores/MessageStore.ts";
+import { User, useUserStore } from "@/wrapper/Stores/UserStore.ts";
+import fastDeepEqual from "fast-deep-equal"
+import { Member, useMemberStore } from "@/wrapper/Stores/Members.ts";
+import { useChannelStore } from "@/wrapper/Stores/ChannelStore.ts";
 
 const Message = memo(({
-	content,
-	replying,
-	mention,
 	className,
 	disableButtons,
-	tag,
-	embeds,
-	invites
+	message
 }: {
-	content: string;
-	replying: boolean;
-	mention: boolean;
+	message: MessageType;
 	className?: string;
 	disableButtons?: boolean;
-	tag?: "System" | "Bot";
-	embeds?: Embed[];
-	invites?: {
-		code: string;
-		guild: {
-			name: string;
-			icon: string | null;
-			members: {
-				online: number;
-				total: number;
-			};
-		};
-	}[];
 }) => {
+	const guildId = useChannelStore.getState().getGuildId(message.channelId);
+
+	const [author, setAuthor] = useState<{
+		user: User | null;
+		member: Member | null;
+	}>({
+		member: guildId ? useMemberStore.getState().getMember(guildId, message.authorId) ?? null : null,
+		user: useUserStore.getState().getUser(message.authorId)
+	});
+	const [replyingMessage, setReplyingMessage] = useState<MessageType | null>(null);
+	const [replyingAuthor, setReplyingAuthor] = useState<{
+		user: User | null;
+		member: Member | null;
+	}>({
+		user: null,
+		member: null
+	});
+
+
+	useEffect(() => {
+		const messageSubscribed = useMessageStore.subscribe(async (state) => {
+			if (!message.replyingTo) return;
+
+			const msg = state.messages.find((msg) => msg.id === message.replyingTo);
+
+			if (!msg) return;
+
+			// ? only update if they are different
+
+			if (fastDeepEqual(msg, replyingMessage)) return;
+
+			setReplyingMessage(msg);
+
+			if (!replyingAuthor) {
+				const fetchedAuthor = useUserStore.getState().getUser(msg.authorId);
+				const fetchedMember = guildId ? useMemberStore.getState().getMember(guildId, msg.authorId) ?? null : null;
+	
+				setReplyingAuthor({
+					user: fetchedAuthor,
+					member: fetchedMember
+				});
+			}
+		});
+
+		const authorsSubscribed = useUserStore.subscribe(async (state) => {
+			const originalAuthor = state.getUser(message.authorId);
+
+			if (!fastDeepEqual(originalAuthor, author)) {
+				setAuthor((prev) => ({
+					...prev,
+					user: originalAuthor
+				}));
+			}
+
+			if (!message.replyingTo || !replyingMessage) return;
+
+			const replyingToAuthor = state.getUser(replyingMessage.authorId);
+
+			if (!fastDeepEqual(replyingToAuthor, replyingAuthor)) {
+				setReplyingAuthor((prev) => ({
+					...prev,
+					user: replyingToAuthor
+				}));
+			}
+		})
+
+		const membersSubscribed = useMemberStore.subscribe(async (state) => {
+			if (!guildId) return;
+
+			const member = state.getMember(guildId, message.authorId)!;
+
+			if (!fastDeepEqual(member, author.member)) {
+				setAuthor((prev) => ({
+					...prev,
+					member
+				}));
+			}
+
+			if (!message.replyingTo || !replyingMessage) return;
+
+			const replyingToMember = state.getMember(guildId, replyingMessage.authorId)!;
+			
+			if (!fastDeepEqual(replyingToMember, replyingAuthor?.member)) {
+				setReplyingAuthor((prev) => ({
+					...prev,
+					member: replyingToMember
+				}));
+			}
+		})
+
+
+		return () => {
+			messageSubscribed();
+			authorsSubscribed();
+			membersSubscribed();
+		};
+	}, []);
+
 	const PopOverData = ({ children }: { children: React.ReactElement | React.ReactElement[]; }) => {
 		const [isOpen, setIsOpen] = useState(false);
 
@@ -46,11 +129,7 @@ const Message = memo(({
 
 		return (
 			<>
-				<UserModal isOpen={isModalOpen} onClose={onClose} user={{
-					avatar: null,
-					id: "",
-					username: "",
-				}} />
+				<UserModal isOpen={isModalOpen} onClose={onClose} user={author.user!} />
 				<Popover
 					placement="right"
 					isOpen={isOpen}
@@ -64,15 +143,8 @@ const Message = memo(({
 					<PopoverContent>
 						<UserPopover
 							member={{
-								avatar: "https://development.kastelapp.com/icon-1.png",
-								customStatus: "Hey",
-								discriminator: "0001",
-								id: "1",
-								isOwner: false,
-								roles: ["admin"],
-								status: "online",
-								tag: null,
-								username: "DarkerInk",
+								user: author.user!,
+								member: author.member
 							}}
 							onClick={() => {
 								onOpen();
@@ -85,16 +157,17 @@ const Message = memo(({
 		);
 	};
 
+
 	return (
 		<div
 			className={twMerge(
 				"group w-full hover:bg-msg-hover mb-2 relative",
 				className,
-				mention ? "bg-mention hover:bg-mention-hover" : "",
+				// mention ? "bg-mention hover:bg-mention-hover" : "",
 			)}
 			tabIndex={0}
 		>
-			{replying && (
+			{replyingMessage && (
 				<div className="flex items-center ml-4 mb-1">
 					<Reply
 						size={22}
@@ -111,10 +184,10 @@ const Message = memo(({
 								className="ml-2 cursor-pointer w-4 h-4"
 								imgProps={{ className: "transition-none" }}
 							/>
-							<p className="text-orange-500 text-xs ml-1">{mention ? "@" : ""}DarkerInk</p>
+							<p className="text-orange-500 text-xs ml-1">{message.mentions.users.includes(replyingMessage.authorId) ? "@" : ""}{replyingAuthor.user?.globalNickname ?? replyingAuthor?.user?.username}</p>
 						</div>
 					</PopOverData>
-					<p className="text-gray-300 text-2xs ml-2">{Number(content.slice(0, 2)) + 1}</p>
+					<p className="text-gray-300 text-2xs ml-2">{replyingMessage.content}</p>
 				</div>
 			)}
 			<div className="flex">
@@ -129,21 +202,21 @@ const Message = memo(({
 					<div className="flex flex-col ml-2">
 						<span>
 							<PopOverData>
-								<span className="inline cursor-pointer text-orange-500">DarkerInk</span>
+								<span className="inline cursor-pointer text-orange-500">{author.user?.globalNickname ?? author.user?.username}</span>
 							</PopOverData>
-							{tag && (
+							{/* {tag && (
 								<Chip color="success" variant="flat" className="ml-1 w-1 p-0 h-4 text-[10px] rounded-sm" radius="none">
 									{tag}
 								</Chip>
-							)}
+							)} */}
 							<Tooltip content="Saturday, May 11. 2024 12:00 PM" placement="top">
-								<span className="text-gray-400 text-2xs mt-1 ml-1">Today at 12:00 PM</span>
+								<span className="text-gray-400 text-2xs mt-1 ml-1">{new Date(message.creationDate).toLocaleString()}</span>
 							</Tooltip>
 						</span>
 						<div className="text-white whitespace-pre-line overflow-hidden break-all">
-							<p>{content}</p>
+							<p>{message.content}</p>
 						</div>
-						{invites && invites.map((invite, index) => (
+						{/* {invites && invites.map((invite, index) => (
 							<div key={index} className="mt-2 inline-block max-w-full overflow-hidden">
 								<InviteEmbed invite={invite} />
 							</div>
@@ -153,7 +226,7 @@ const Message = memo(({
 								{embed.type === "Rich" ?
 									<RichEmbed embed={embed} /> : embed.type === "Iframe" ? <IFrameEmbed embed={embed} /> : null}
 							</div>
-						))}
+						))} */}
 					</div>
 				</div>
 			</div>

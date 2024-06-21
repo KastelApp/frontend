@@ -6,7 +6,7 @@ import { X } from "lucide-react";
 
 const UserPopover = ({ member, onClick }: {
 	member: {
-		member: Member;
+		member: Member | null;
 		user: User;
 	}; onClick?: () => void;
 }) => {
@@ -67,7 +67,7 @@ const UserPopover = ({ member, onClick }: {
 									<span className="text-white font-bold">About Me</span>
 									<p className="text-gray-300 mt-2">{"Hey"}</p>
 								</div>
-								{member.member.roles.length > 1 && (
+								{member.member && member.member.roles.length > 1 && (
 									<div className="mt-2">
 										<span className="text-white font-bold">Roles</span>
 										<div className="flex flex-wrap select-none">

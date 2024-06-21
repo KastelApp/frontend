@@ -34,9 +34,9 @@ export interface Author {
 }
 
 export interface Mentions {
-	channels: unknown[];
-	roles: unknown[];
-	users: unknown[];
+	channels: string[];
+	roles: string[];
+	users: string[];
 }
 
 export interface CreateMessageOptions {

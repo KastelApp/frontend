@@ -26,9 +26,10 @@ export interface UserStore {
     users: User[];
     addUser(user: Partial<User>): void;
     removeUser(id: string): void;
-    getUser(id: string, forceRecache?: boolean): Promise<User | null>;
+    getUser(id: string): User | null;
     getCurrentUser(): User | null;
     getDefaultAvatar(id: string): string;
+    fetchUser(id: string): Promise<User | null>;
 }
 
 export const useUserStore = create<UserStore>((set, get) => ({
@@ -79,18 +80,15 @@ export const useUserStore = create<UserStore>((set, get) => ({
 
         return foundCurrentUser;
     },
-    getUser: async (id, forceRecache) => {
+    getUser: (id) => {
         const foundUser = get().users.find((user) => user.id === id);
 
-        if (foundUser && !forceRecache) return foundUser;
-
-        const api = useAPIStore.getState().api;
-
-        if (!api) return null;
-
-        console.log("FETCH", api);
+        if (foundUser) return foundUser;
 
         return null;
+    },
+    fetchUser: async () => {
+       return null;
     },
     removeUser: (id) => set((state) => ({ users: state.users.filter((user) => user.id !== id) })),
     getDefaultAvatar: (id) => `/icon-${BigInt(id) % 5n}.png`

@@ -1,7 +1,7 @@
 import Message from "@/components/Message/Message.tsx";
 import MessageContainer from "@/components/MessageContainer/MessageContainer.tsx";
 import BiDirectionalInfiniteScroller from "../BiDirectionalInfiniteScroller.tsx";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/router";
 import { useUserStore } from "@/wrapper/Stores/UserStore.ts";
 import { useMemberStore } from "@/wrapper/Stores/Members.ts";
@@ -30,23 +30,92 @@ const TextBasedChannel = () => {
 	const { getRoles } = useRoleStore();
 	const { getChannels } = useChannelStore();
 	const { fetchMessages, createMessage, getMessages } = useMessageStore();
-	const { getChannel } = usePerChannelStore();
+	const { getChannel, updateChannel } = usePerChannelStore();
 
 	const [renderedMessages, setRenderedMessages] = useState<MessageType[]>([]);
+	const [hadError, setHadError] = useState(false);
+	const [fetching, setFetching] = useState(false);
+	const fetchingRef = useRef(false);
+
+	useEffect(() => {
+		fetchingRef.current = fetching;
+	}, [fetching]);
 
 	useEffect(() => {
 		const memberSubscription = useMemberStore.subscribe(() => setChangeSignal((prev) => prev + 1));
 		const roleSubscription = useRoleStore.subscribe(() => setChangeSignal((prev) => prev + 1));
 		const channelSubscription = useChannelStore.subscribe(() => setChangeSignal((prev) => prev + 1));
+		const messageSubscription = useMessageStore.subscribe((state) => {
+			setRenderedMessages((prev) => {
+				const newMessages = prev.map((message) => {
+					const found = state.messages.find((msg) => msg.id === message.id);
+
+					if (!found) {
+						return message;
+					}
+
+					return found;
+				});
+
+				return newMessages;
+			});
+		});
 
 		return () => {
 			memberSubscription();
 			roleSubscription();
 			channelSubscription();
+			messageSubscription();
 		};
 	}, []);
 
+	const setMessages = async (guildId: string, channelId: string) => {
+		if (fetchingRef.current) return;
+
+		setFetching(true);
+
+		const messageCache = getMessages(channelId);
+		const perChannel = getChannel(channelId);
+
+		if (messageCache.length < 50 && (perChannel.hasMoreAfter || perChannel.hasMoreAfter)) {
+			const fetched = await fetchMessages(channelId, {
+				limit: 50,
+			});
+
+			if (!fetched) {
+				setHadError(true);
+
+				updateChannel(channelId, {
+					fetchingError: true
+				});
+
+				return;
+			}
+
+			const newMessages = getMessages(channelId);
+
+			setRenderedMessages(newMessages);
+
+			setFetching(false);
+
+			return;
+		}
+
+		setFetching(false);
+
+		if (messageCache.length > 250) {
+			setRenderedMessages(messageCache.slice(0, 250));
+
+			return;
+		}
+
+		setRenderedMessages(messageCache);
+	};
+
 	useEffect(() => {
+		setHadError(false);
+		setRenderedMessages([]);
+
 		const clientUser = getCurrentUser();
 
 		if (!clientUser) {
@@ -79,6 +148,17 @@ const TextBasedChannel = () => {
 		}
 
 		setReadOnly(!permissionHandler.hasChannelPermission(channelId, ["SendMessages"]));
+
+		const perChannel = getChannel(channelId);
+
+		if (perChannel.fetchingError) {
+			console.log("had error :/");
+			setHadError(true);
+
+			return;
+		}
+
+		setMessages(guildId, channelId);
 	}, [channelId, guildId, changeSignal]);
 
 	return (
@@ -87,7 +167,7 @@ const TextBasedChannel = () => {
 		}}>
 			<div className="flex flex-col-reverse overflow-x-hidden w-full">
 				{/* <BiDirectionalInfiniteScroller> */}
-				{Array.from({ length: 20 }, (_, i) => (
+				{/* {Array.from({ length: 20 }, (_, i) => (
 					<Message
 						key={i}
 						content={`${i}${i % 10 === 0 ? `${i}`.repeat(500) : ""}`}
@@ -209,6 +289,9 @@ const TextBasedChannel = () => {
 							}
 						}] : undefined}
 					/>
+				))} */}
+				{renderedMessages.map((message) => (
+					<Message message={message} />
 				))}
 				{/* </BiDirectionalInfiniteScroller> */}
 			</div>

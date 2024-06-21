@@ -1,5 +1,16 @@
 import type { Embed } from "@/components/Message/Embeds/RichEmbed.tsx";
 import { create } from "zustand";
+import { useAPIStore } from "../Stores.ts";
+import Logger from "../../utils/Logger.ts";
+import { Message as MessageData } from "@/types/http/channels/messages.ts"
+import { usePerChannelStore } from "./ChannelStore.ts";
+
+export enum MessageStates {
+    Sent = "SENT",
+    Sending = "SENDING",
+    Failed = "FAILED",
+    Unknown = "UNKNOWN" // ? treat this as failed 
+}
 
 export interface Message {
     id: string;
@@ -22,6 +33,7 @@ export interface Message {
     deletable: boolean;
     invites: string[];
     channelId: string;
+    state: MessageStates;
 }
 
 export interface MessageStore {
@@ -42,7 +54,7 @@ export interface MessageStore {
         before?: string;
         after?: string;
         around?: string;
-    }): void;
+    }): Promise<boolean>;
 }
 
 export const useMessageStore = create<MessageStore>((set, get) => ({
@@ -95,15 +107,11 @@ export const useMessageStore = create<MessageStore>((set, get) => ({
             deletable: true,
             invites: [],
             channelId,
-            ...options
+            ...options,
+            state: MessageStates.Sending
         };
 
-        set({
-            messages: [
-                ...get().messages,
-                message
-            ]
-        });
+        get().addMessage(message);
     },
     editMessage: (messageId, options) => {
         const message = get().messages.find((message) => message.id === messageId);
@@ -120,6 +128,66 @@ export const useMessageStore = create<MessageStore>((set, get) => ({
         console.log("Replying to message", message, options);
     },
     fetchMessages: async (channelId, options) => {
-        console.log("Fetching messages", channelId, options);
+        const api = useAPIStore.getState().api;
+
+        if (!api) {
+            Logger.warn("API not ready", "MessageStore");
+
+            return false;
+        }
+
+        const messages = await api.get<unknown, MessageData[]>({
+            url: `/channels/${channelId}/messages?limit=${options?.limit ?? 50}`,
+        });
+
+        if (!messages.ok || messages.status !== 200) {
+            Logger.warn("Failed to fetch messages", "MessageStore");
+
+            return false;
+        }
+
+        for (const message of messages.body) {
+            // ? invites are like this: https://kastelapp.com/invite/inviteCode or https://kastel.dev/invitecode (or they may not have https:// so just kastel.dev/invitecode)
+            // ? we need to get all the codes
+            const invites = message.content.match(/(https?:\/\/)?(kastelapp\.com|kastel\.dev)\/invite\/([a-zA-Z0-9]+)/g);
+
+            get().addMessage({
+                id: message.id,
+                authorId: message.author.id,
+                // embeds: message.embeds,
+                embeds: [],
+                content: message.content,
+                creationDate: new Date(message.creationDate),
+                editedDate: message.editedDate ? new Date(message.editedDate) : null,
+                nonce: message.nonce,
+                replyingTo: message.replyingTo ? "messageId" in message.replyingTo ? message.replyingTo.messageId : "id" in message.replyingTo ? message.replyingTo.id : null : null,
+                attachments: message.attachments,
+                flags: message.flags,
+                allowedMentions: message.allowedMentions,
+                mentions: message.mentions,
+                channelId,
+                deletable: message.deletable,
+                invites: invites ? invites.map((invite) => invite.split("/").pop()!) : [],
+                pinned: message.pinned,
+                state: MessageStates.Sent
+            })
+        }
+
+        if (messages.body.length === 0) {
+            usePerChannelStore.getState().updateChannel(channelId, {
+                ...(options?.after ? { hasMoreAfter: false } : {}),
+                ...(options?.before ? { hasMoreBefore: false } : {})
+            })
+        }
+
+        if (messages.body.length < (options?.limit ?? 50)) {
+            usePerChannelStore.getState().updateChannel(channelId, {
+                ...(options?.after ? { hasMoreAfter: false } : {}),
+                ...(options?.before ? { hasMoreBefore: false } : {}),
+                ...(!options?.after && !options?.before ? { hasMoreAfter: false, hasMoreBefore: false } : {})
+            })
+        }
+
+        return true;
     }
 }));
