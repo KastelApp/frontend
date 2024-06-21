@@ -42,6 +42,25 @@ const Message = ({
 
 
 	useEffect(() => {
+		if (message.replyingTo) {
+			const foundReply = useMessageStore.getState().getMessage(message.replyingTo);
+
+
+			if (foundReply) {
+				setReplyingMessage(foundReply);
+
+				if (!replyingAuthor.user) {
+					const fetchedAuthor = useUserStore.getState().getUser(foundReply.authorId);
+					const fetchedMember = guildId ? useMemberStore.getState().getMember(guildId, foundReply.authorId) ?? null : null;
+
+					setReplyingAuthor({
+						user: fetchedAuthor,
+						member: fetchedMember
+					});
+				}
+			}
+		}
+
 		const messageSubscribed = useMessageStore.subscribe(async (state) => {
 			if (!message.replyingTo) return;
 
