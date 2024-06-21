@@ -12,6 +12,8 @@ import PermissionHandler from "@/wrapper/PermissionHandler.ts";
 import { type Message as MessageType, useMessageStore } from "@/wrapper/Stores/MessageStore.ts";
 import SkellyMessage from "../Message/SkellyMessage.tsx";
 import diff from "@/utils/diff.ts";
+import ChannelIcon from "../ChannelIcon.tsx";
+import { channelTypes } from "@/utils/Constants.ts";
 
 const skelliedMessages = Array.from({ length: 50 }, (_, i) => <SkellyMessage key={i} />);
 
@@ -43,6 +45,8 @@ const TextBasedChannel = () => {
 	const [channelName, setChannelName] = useState("");
 	const fetchingRef = useRef(false);
 	const [isInViewOfBottom] = useState(true);
+
+	const perChannel = getChannel(channelId);
 
 	useEffect(() => {
 		fetchingRef.current = fetching;
@@ -134,7 +138,7 @@ const TextBasedChannel = () => {
 				behavior: "instant",
 				block: "nearest",
 				inline: "start"
-			}), 50)
+			}), 50);
 
 			return;
 		}
@@ -223,30 +227,41 @@ const TextBasedChannel = () => {
 				inline: "start"
 			}), 50);
 		}}>
-			<div className="flex-grow pr-2 overflow-y-auto flex-col-reverse">
+			<div className="mt-auto overflow-y-auto">
 				{!initialFetch && skelliedMessages}
-				<div>
-					<BiDirectionalInfiniteScroller
-						data={renderedMessages}
-						renderItem={(message) => (
-							<Message
-								message={message}
-								key={message.id}
-							/>
-						)}
-						onBottomReached={async () => {
-							console.log("bottom reached");
-						}}
-						onTopReached={async () => {
-							console.log("top reached");
-						}}
-						topSkeleton={<>{skelliedMessages}</>}
-						bottomSkeleton={<>{skelliedMessages}</>}
-						initialScrollTop={-1}
-						loading={fetching}
-						topContent={<>You've reached the top</>}
-					/>
-				</div>
+				<BiDirectionalInfiniteScroller
+					data={renderedMessages}
+					renderItem={(message) => (
+						<Message
+							message={message}
+							key={message.id}
+						/>
+					)}
+					onBottomReached={async () => {
+						console.log("bottom reached");
+					}}
+					onTopReached={async () => {
+						console.log("top reached");
+					}}
+					topSkeleton={<>{skelliedMessages}</>}
+					bottomSkeleton={<>{skelliedMessages}</>}
+					initialScrollTop={-1}
+					loading={fetching}
+					topContent={
+						!perChannel.hasMoreBefore &&
+						<div className="mb-4 mr-16 ml-2 flex border-b-1 border-gray-800 select-none">
+							<div className="flex mb-2">
+								<div className="bg-slate-700 p-2 rounded-full flex items-center">
+									<ChannelIcon type={channelTypes.GuildText} size={48} />
+								</div>
+								<div className="ml-2 mt-2">
+									<h1 className="font-bold text-xl">Welcome to the #{channelName} channel</h1>
+									<h2 className="text-gray-400">This is the beginning of the channel</h2>
+								</div>
+							</div>
+						</div>
+					}
+				/>
 				<div ref={bottomRef} />
 			</div>
 		</MessageContainer>
