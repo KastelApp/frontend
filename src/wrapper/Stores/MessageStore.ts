@@ -1,9 +1,11 @@
 import type { Embed } from "@/components/Message/Embeds/RichEmbed.tsx";
 import { create } from "zustand";
 import { useAPIStore } from "../Stores.ts";
-import Logger from "../../utils/Logger.ts";
+import Logger from "@/utils/Logger.ts";
 import { Message as MessageData } from "@/types/http/channels/messages.ts"
 import { usePerChannelStore } from "./ChannelStore.ts";
+import getInviteCodes from "@/utils/getInviteCodes.ts";
+import { useUserStore } from "./UserStore.ts";
 
 export enum MessageStates {
     Sent = "SENT",
@@ -88,7 +90,7 @@ export const useMessageStore = create<MessageStore>((set, get) => ({
     createMessage: (channelId, options) => {
         const message: Message = {
             id: "",
-            authorId: "",
+            authorId: useUserStore.getState().getCurrentUser()?.id ?? "",
             embeds: [],
             content: "",
             creationDate: new Date(),
@@ -149,7 +151,7 @@ export const useMessageStore = create<MessageStore>((set, get) => ({
         for (const message of messages.body) {
             // ? invites are like this: https://kastelapp.com/invite/inviteCode or https://kastel.dev/invitecode (or they may not have https:// so just kastel.dev/invitecode)
             // ? we need to get all the codes
-            const invites = message.content.match(/(https?:\/\/)?(kastelapp\.com|kastel\.dev)\/invite\/([a-zA-Z0-9]+)/g);
+            const invites = getInviteCodes(message.content)
 
             get().addMessage({
                 id: message.id,
@@ -167,7 +169,7 @@ export const useMessageStore = create<MessageStore>((set, get) => ({
                 mentions: message.mentions,
                 channelId,
                 deletable: message.deletable,
-                invites: invites ? invites.map((invite) => invite.split("/").pop()!) : [],
+                invites,
                 pinned: message.pinned,
                 state: MessageStates.Sent
             })

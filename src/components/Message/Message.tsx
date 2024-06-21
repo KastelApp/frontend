@@ -7,13 +7,13 @@ import UserModal from "@/components/Modals/UserModal.tsx";
 import RichEmbed, { Embed } from "./Embeds/RichEmbed.tsx";
 import IFrameEmbed from "./Embeds/IFrameEmbed.tsx";
 import InviteEmbed from "./Embeds/InviteEmbed.tsx";
-import { Message as MessageType, useMessageStore } from "@/wrapper/Stores/MessageStore.ts";
+import { MessageStates, Message as MessageType, useMessageStore } from "@/wrapper/Stores/MessageStore.ts";
 import { User, useUserStore } from "@/wrapper/Stores/UserStore.ts";
-import fastDeepEqual from "fast-deep-equal"
+import fastDeepEqual from "fast-deep-equal";
 import { Member, useMemberStore } from "@/wrapper/Stores/Members.ts";
 import { useChannelStore } from "@/wrapper/Stores/ChannelStore.ts";
 
-const Message = ({
+const Message = memo(({
 	className,
 	disableButtons,
 	message
@@ -44,7 +44,6 @@ const Message = ({
 	useEffect(() => {
 		if (message.replyingTo) {
 			const foundReply = useMessageStore.getState().getMessage(message.replyingTo);
-
 
 			if (foundReply) {
 				setReplyingMessage(foundReply);
@@ -77,7 +76,7 @@ const Message = ({
 			if (!replyingAuthor) {
 				const fetchedAuthor = useUserStore.getState().getUser(msg.authorId);
 				const fetchedMember = guildId ? useMemberStore.getState().getMember(guildId, msg.authorId) ?? null : null;
-	
+
 				setReplyingAuthor({
 					user: fetchedAuthor,
 					member: fetchedMember
@@ -105,7 +104,7 @@ const Message = ({
 					user: replyingToAuthor
 				}));
 			}
-		})
+		});
 
 		const membersSubscribed = useMemberStore.subscribe(async (state) => {
 			if (!guildId) return;
@@ -122,14 +121,14 @@ const Message = ({
 			if (!message.replyingTo || !replyingMessage) return;
 
 			const replyingToMember = state.getMember(guildId, replyingMessage.authorId)!;
-			
+
 			if (!fastDeepEqual(replyingToMember, replyingAuthor?.member)) {
 				setReplyingAuthor((prev) => ({
 					...prev,
 					member: replyingToMember
 				}));
 			}
-		})
+		});
 
 
 		return () => {
@@ -176,13 +175,14 @@ const Message = ({
 		);
 	};
 
-
 	return (
 		<div
 			className={twMerge(
 				"group w-full hover:bg-msg-hover mb-2 relative",
 				className,
 				// mention ? "bg-mention hover:bg-mention-hover" : "",
+				message.mentions.users.includes(useUserStore.getState().getCurrentUser()?.id ?? "") ? "bg-mention hover:bg-mention-hover" : "",
+				// todo: role check
 			)}
 			tabIndex={0}
 		>
@@ -232,7 +232,15 @@ const Message = ({
 								<span className="text-gray-400 text-2xs mt-1 ml-1">{new Date(message.creationDate).toLocaleString()}</span>
 							</Tooltip>
 						</span>
-						<div className="text-white whitespace-pre-line overflow-hidden break-all">
+						<div
+							className={
+								twMerge("text-white whitespace-pre-line overflow-hidden break-all",
+									message.state === MessageStates.Failed
+									|| message.state === MessageStates.Unknown ? "text-red-500" : "",
+									message.state === MessageStates.Sending ? "text-gray-400" : "",
+								)
+							}
+						>
 							<p>{message.content}</p>
 						</div>
 						{/* {invites && invites.map((invite, index) => (
@@ -267,6 +275,6 @@ const Message = ({
 			)}
 		</div>
 	);
-};
+});
 
 export default Message;

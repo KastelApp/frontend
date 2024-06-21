@@ -100,9 +100,6 @@ const SlateEditor = ({ placeholder, isReadOnly, readOnlyMessage, sendMessage }: 
 					children: [{ text: "" }], // ? we are requred to have an empty text node
 				},
 			]}
-			onValueChange={(e) => {
-				console.log(e);
-			}}
 		>
 			<Editable
 				// @ts-expect-error -- Unsure how to fix these types
@@ -179,7 +176,6 @@ const SlateEditor = ({ placeholder, isReadOnly, readOnlyMessage, sendMessage }: 
 					}
 				}}
 				onDOMBeforeInput={(event) => {
-					console.log(event.inputType);
 					if (!["insertFromPaste", "insertText"].includes(event.inputType)) {
 						return;
 					}

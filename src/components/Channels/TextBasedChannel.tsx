@@ -1,7 +1,7 @@
 import Message from "@/components/Message/Message.tsx";
 import MessageContainer from "@/components/MessageContainer/MessageContainer.tsx";
 import BiDirectionalInfiniteScroller from "../BiDirectionalInfiniteScroller.tsx";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/router";
 import { useUserStore } from "@/wrapper/Stores/UserStore.ts";
 import { useMemberStore } from "@/wrapper/Stores/Members.ts";
@@ -11,6 +11,7 @@ import Logger from "@/utils/Logger.ts";
 import PermissionHandler from "@/wrapper/PermissionHandler.ts";
 import { type Message as MessageType, useMessageStore } from "@/wrapper/Stores/MessageStore.ts";
 import SkellyMessage from "../Message/SkellyMessage.tsx";
+import diff from "@/utils/diff.ts";
 
 const skelliedMessages = Array.from({ length: 50 }, (_, i) => <SkellyMessage key={i} />);
 
@@ -19,14 +20,14 @@ const skelliedMessages = Array.from({ length: 50 }, (_, i) => <SkellyMessage key
  */
 const TextBasedChannel = () => {
 	const router = useRouter();
-	// ? This is just so we know if the user can send messages or not (we prevent any changes / letting them type if so)
-	const [readOnly, setReadOnly] = useState(true);
-	// ? This is for when message history is disabled, true = can view messages, false = cannot view messages
-	const [canViewMessages, setCanViewMessages] = useState(false);
-	// ? every time we want a re-render, we increment this value
-	const [changeSignal, setChangeSignal] = useState(0);
+	const [readOnly, setReadOnly] = useState(true); // ? This is just so we know if the user can send messages or not (we prevent any changes / letting them type if so)
+	const [canViewMessages, setCanViewMessages] = useState(false); // ? This is for when message history is disabled, true = can view messages, false = cannot view messages
+	const [changeSignal, setChangeSignal] = useState(0); // ? every time we want a re-render, we increment this value
 
 	const { channelId, guildId } = router.query as { guildId: string; channelId: string; };
+
+	const bottomRef = useRef<HTMLDivElement>(null);
+	const channelIdRef = useRef(channelId);
 
 	const { getCurrentUser } = useUserStore();
 	const { getMember } = useMemberStore();
@@ -39,7 +40,9 @@ const TextBasedChannel = () => {
 	const [hadError, setHadError] = useState(false);
 	const [fetching, setFetching] = useState(false);
 	const [initialFetch, setInitialFetch] = useState(false);
+	const [channelName, setChannelName] = useState("");
 	const fetchingRef = useRef(false);
+	const [isInViewOfBottom] = useState(true);
 
 	useEffect(() => {
 		fetchingRef.current = fetching;
@@ -49,19 +52,41 @@ const TextBasedChannel = () => {
 		const memberSubscription = useMemberStore.subscribe(() => setChangeSignal((prev) => prev + 1));
 		const roleSubscription = useRoleStore.subscribe(() => setChangeSignal((prev) => prev + 1));
 		const channelSubscription = useChannelStore.subscribe(() => setChangeSignal((prev) => prev + 1));
-		const messageSubscription = useMessageStore.subscribe((state) => {
+		const messageSubscription = useMessageStore.subscribe((state, prevState) => {
+			const oldMessages = prevState.messages.filter((msg) => msg.channelId === channelIdRef.current);
+			const newMessages = state.messages.filter((msg) => msg.channelId === channelIdRef.current);
+
+			const diffed = diff(oldMessages, newMessages);
+
+			// ? If there's an addition and we are inView of the bottom then add the new message to the bottom
+			// ? If there's a removal and its in rendered messages then remove it (since it probably got deleted)
+			// ? If there's an edit and its in rendered messages then update it
+			console.log(diffed, channelId);
+
 			setRenderedMessages((prev) => {
-				const newMessages = prev.map((message) => {
-					const found = state.messages.find((msg) => msg.id === message.id);
+				let updatedMessages = prev;
 
-					if (!found) {
-						return message;
-					}
+				if (diffed.removed.length > 0) {
+					updatedMessages = updatedMessages.filter((msg) => !diffed.removed.some((removed) => removed.id === msg.id));
+				}
 
-					return found;
-				});
+				if (diffed.added.length > 0 && isInViewOfBottom) {
+					updatedMessages = [...updatedMessages, ...diffed.added];
+				}
 
-				return newMessages;
+				if (diffed.changed.length > 0) {
+					updatedMessages = updatedMessages.map((msg) => {
+						const found = diffed.changed.find((edited) => edited.id === msg.id);
+
+						if (!found) {
+							return msg;
+						}
+
+						return found;
+					});
+				}
+
+				return updatedMessages;
 			});
 		});
 
@@ -81,6 +106,8 @@ const TextBasedChannel = () => {
 		const messageCache = getMessages(channelId);
 		const perChannel = getChannel(channelId);
 
+		console.log(messageCache);
+
 		if (messageCache.length < 50 && (perChannel.hasMoreAfter || perChannel.hasMoreAfter)) {
 			const fetched = await fetchMessages(channelId, {
 				limit: 50,
@@ -98,11 +125,16 @@ const TextBasedChannel = () => {
 
 			const newMessages = getMessages(channelId);
 
-			setRenderedMessages(newMessages.toReversed());
-
+			setRenderedMessages(newMessages);
 			setFetching(false);
-
 			setInitialFetch(true);
+
+			//?  we assume this is the first load so we scroll to the bottom
+			setTimeout(() => bottomRef.current?.scrollIntoView({
+				behavior: "instant",
+				block: "nearest",
+				inline: "start"
+			}), 50)
 
 			return;
 		}
@@ -111,18 +143,20 @@ const TextBasedChannel = () => {
 		setInitialFetch(true);
 
 		if (messageCache.length > 250) {
-			setRenderedMessages(messageCache.slice(0, 250).toReversed());
+			setRenderedMessages(messageCache.slice(0, 250));
 
 			return;
 		}
 
-		setRenderedMessages(messageCache.toReversed());
+		setRenderedMessages(messageCache);
 	};
 
 	useEffect(() => {
 		setHadError(false);
 		setInitialFetch(false);
 		setRenderedMessages([]);
+
+		channelIdRef.current = channelId;
 
 		const clientUser = getCurrentUser();
 
@@ -135,6 +169,12 @@ const TextBasedChannel = () => {
 		const guildMember = getMember(guildId, clientUser.id);
 		const roles = getRoles(guildId);
 		const channels = getChannels(guildId);
+
+		const foundChannel = channels.find((channel) => channel.id === channelId);
+
+		if (foundChannel) {
+			setChannelName(foundChannel.name);
+		}
 
 		if (!guildMember) {
 			Logger.warn("No guild member found", "TextBasedChannel");
@@ -170,31 +210,44 @@ const TextBasedChannel = () => {
 	}, [channelId, guildId, changeSignal]);
 
 	return (
-		<MessageContainer placeholder="Message #general" isReadOnly={readOnly} sendMessage={(content) => {
+		<MessageContainer placeholder={`Message #${channelName}`} isReadOnly={readOnly} sendMessage={(content) => {
 			console.log(content);
+
+			createMessage(channelId, {
+				content
+			});
+
+			setTimeout(() => bottomRef.current?.scrollIntoView({
+				behavior: "instant",
+				block: "nearest",
+				inline: "start"
+			}), 50);
 		}}>
-			<div className="flex-grow pr-2 overflow-y-auto">
+			<div className="flex-grow pr-2 overflow-y-auto flex-col-reverse">
 				{!initialFetch && skelliedMessages}
-				<BiDirectionalInfiniteScroller
-					data={renderedMessages}
-					renderItem={(message) => (
-						<Message
-							message={message}
-							key={message.id}
-						/>
-					)}
-					onBottomReached={async () => {
-						console.log("bottom reached");
-					}}
-					onTopReached={async () => {
-						console.log("top reached");
-					}}
-					topSkeleton={<>{skelliedMessages}</>}
-					bottomSkeleton={<>{skelliedMessages}</>}
-					initialScrollTop={-1}
-					loading={fetching}
-					topContent={<>You've reached the top</>}
-				/>
+				<div>
+					<BiDirectionalInfiniteScroller
+						data={renderedMessages}
+						renderItem={(message) => (
+							<Message
+								message={message}
+								key={message.id}
+							/>
+						)}
+						onBottomReached={async () => {
+							console.log("bottom reached");
+						}}
+						onTopReached={async () => {
+							console.log("top reached");
+						}}
+						topSkeleton={<>{skelliedMessages}</>}
+						bottomSkeleton={<>{skelliedMessages}</>}
+						initialScrollTop={-1}
+						loading={fetching}
+						topContent={<>You've reached the top</>}
+					/>
+				</div>
+				<div ref={bottomRef} />
 			</div>
 		</MessageContainer>
 	);
