@@ -203,8 +203,6 @@ const BiDirectionalInfiniteScroller = <T,>({
     const addTop = async () => {
         if (!hasMoreTopRef.current || isFastScrollingRef.current || loadingRef.current || !canFetchAgainRef.current) return;
 
-        console.log("Triggered Top");
-
         fixPositioning();
 
         const messageWrapper = scrollWrapperRef.current;
@@ -226,8 +224,6 @@ const BiDirectionalInfiniteScroller = <T,>({
 
     const addBottom = async () => {
         if (!hasMoreBottomRef.current || isFastScrollingRef.current || loadingRef.current || !canFetchAgainRef.current) return;
-
-        console.log("Triggered Bottom");
 
         fixPositioning();
 
@@ -337,7 +333,7 @@ const BiDirectionalInfiniteScroller = <T,>({
 
     return (
         <div className={className} style={style}>
-            <div ref={scrollWrapperRef} className={twMerge("overflow-y-auto h-full border-3 border-black shadow-lg", classNames?.scrollWrapper)} style={styles?.scrollWrapper}>
+            <div ref={scrollWrapperRef} className={twMerge("overflow-y-auto h-full", classNames?.scrollWrapper)} style={styles?.scrollWrapper}>
                 <div tabIndex={-1} role="group" className={classNames?.dataDiv} style={styles?.dataDiv}>
                     {hasMoreTop && topSkeleton &&
                         <div ref={topSkeletonRef} className={classNames?.topSkeleton} style={styles?.topSkeleton}>

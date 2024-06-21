@@ -37,7 +37,8 @@ const MessageContainer = ({ placeholder, children, isReadOnly, sendMessage }: { 
 	return (
 		<>
 			<div className="flex flex-col h-screen overflow-x-hidden">
-				<div className="flex-grow pr-2 overflow-y-auto">{children}</div>
+				{/* <div className="flex-grow pr-2 overflow-y-auto">{children}</div> */}
+				{children}
 				<div className="mb-12 w-[98%] ml-2">
 					<div className="ml-1 w-full bg-accent rounded-md rounded-b-none flex">
 						<div className="p-2">

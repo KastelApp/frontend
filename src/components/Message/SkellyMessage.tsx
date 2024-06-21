@@ -44,6 +44,10 @@ const SkellyMessage = memo(() => {
     context.font = "20px Roboto";
 
     const getLength = (word: string) => {
+
+        // ? temp
+        return 60;
+
         const length = context.measureText(word).width;
         return length < 20 ? length + length : length;
     };

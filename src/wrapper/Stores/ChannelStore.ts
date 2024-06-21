@@ -235,16 +235,19 @@ export const usePerChannelStore = create(
         (set, get) => ({
             channels: {},
             getChannel: (channelId) => {
-                return get().channels[channelId] ?? {
-                    currentState: "default",
-                    lastTyped: 0,
-                    lastTypingSent: 0,
-                    previousMessageContent: null,
-                    scrollPosition: 0,
-                    stateId: null,
-                    fetchingError: false,
-                    hasMoreAfter: true,
-                    hasMoreBefore: true
+                return {
+                    ...{
+                        currentState: "default",
+                        lastTyped: 0,
+                        lastTypingSent: 0,
+                        previousMessageContent: null,
+                        scrollPosition: 0,
+                        stateId: null,
+                        fetchingError: false,
+                        hasMoreAfter: true,
+                        hasMoreBefore: true
+                    },
+                    ...get().channels[channelId]
                 };
             },
             addChannel: (channelId) => {
