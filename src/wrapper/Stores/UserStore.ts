@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { useAPIStore } from "../Stores.ts";
 import Logger from "@/utils/Logger.ts";
+import FlagFields from "@/utils/FlagFields.ts";
 
 export interface User {
     id: string;
@@ -30,6 +31,7 @@ export interface UserStore {
     getCurrentUser(): User | null;
     getDefaultAvatar(id: string): string;
     fetchUser(id: string): Promise<User | null>;
+    isStaff(id: string): boolean;
 }
 
 export const useUserStore = create<UserStore>((set, get) => ({
@@ -91,5 +93,14 @@ export const useUserStore = create<UserStore>((set, get) => ({
        return null;
     },
     removeUser: (id) => set((state) => ({ users: state.users.filter((user) => user.id !== id) })),
-    getDefaultAvatar: (id) => `/icon-${BigInt(id) % 5n}.png`
+    getDefaultAvatar: (id) => `/icon-${BigInt(id) % 5n}.png`,
+    isStaff: (id) => {
+        const user = get().getUser(id);
+
+        if (!user) return false;
+
+        const flags = new FlagFields(user.flags, user.publicFlags);
+
+        return flags.has("StaffBadge") || flags.has("Staff");
+    }
 }));

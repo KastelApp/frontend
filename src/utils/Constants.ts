@@ -100,6 +100,7 @@ const publicFlags = {
 const privateFlags = {
 	Ghost: 1n << 0n,
 	System: 1n << 1n,
+	Staff: 1n << 2n,
 	Bot: 1n << 4n,
 	VerifiedBot: 1n << 5n,
 	Spammer: 1n << 6n,

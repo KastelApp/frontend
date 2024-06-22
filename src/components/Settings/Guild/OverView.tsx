@@ -12,6 +12,10 @@ import {
 	Tooltip,
 } from "@nextui-org/react";
 import { X } from "lucide-react";
+import { User, useUserStore } from "@/wrapper/Stores/UserStore.ts";
+import { useGuildStore } from "@/wrapper/Stores/GuildStore.ts";
+import { useChannelStore } from "@/wrapper/Stores/ChannelStore.ts";
+import SaveChanges from "@/components/SaveChanges.tsx";
 
 const Overview = () => {
 	const [maintenanceMode, setMaintenanceMode] = useState<boolean>(false);
@@ -23,6 +27,12 @@ const Overview = () => {
 	const [changelogChannel, setChangelogChannel] = useState<string>("");
 	const [sendUserChangelog, setSendUserChangelog] = useState<boolean>(false);
 	const [sendGuildChangelog, setSendGuildChangelog] = useState<boolean>(false);
+
+	const { isStaff, getCurrentUser } = useUserStore();
+	const { } = useGuildStore();
+	const [user, setUser] = useState<User | null>(getCurrentUser());
+	const {} = useChannelStore()
+
 	return (
 		<div className="mr-2 bg-accent rounded-lg">
 			<div className="flex flex-col p-4">
@@ -93,13 +103,15 @@ const Overview = () => {
 						</div>
 						<Switch checked={invitesDisabled} onValueChange={setInvitesDisabled} />
 					</div>
-					<div className="flex justify-between items-center mt-1">
-						<div className="flex flex-col">
-							<p>Internal Staff Guild (Staff Only)</p>
-							<p className="text-sm text-gray-400">Only staff members (with the staff flag) can access the guild.</p>
+					{isStaff(user?.id ?? "") && (
+						<div className="flex justify-between items-center mt-1">
+							<div className="flex flex-col">
+								<p>Internal Staff Guild (Staff Only)</p>
+								<p className="text-sm text-gray-400">Only staff members (with the staff flag) can access the guild.</p>
+							</div>
+							<Switch checked={staffOnly} onValueChange={setStaffOnly} />
 						</div>
-						<Switch checked={staffOnly} onValueChange={setStaffOnly} />
-					</div>
+					)}
 				</div>
 				<Divider className="mb-8 mt-8" />
 				<h2 className="text-xl font-semibold">System Messages</h2>
@@ -159,6 +171,7 @@ const Overview = () => {
 					</div>
 				</div>
 			</div>
+			<SaveChanges onCancel={() => console.log("Cancel")} onSave={() => console.log("Save")} isShowing />
 		</div>
 	);
 };
