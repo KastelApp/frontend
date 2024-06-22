@@ -3,12 +3,13 @@ import { Button } from "@nextui-org/react";
 const SaveChanges = ({
     onCancel,
     onSave,
-    isShowing
+    isShowing,
 }: {
     onSave: () => void;
     onCancel: () => void;
     isShowing: boolean;
 }) => {
+
     return (
         <div className="pb-20 select-none">
             {isShowing && (

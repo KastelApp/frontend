@@ -16,6 +16,7 @@ import { User, useUserStore } from "@/wrapper/Stores/UserStore.ts";
 import { useGuildStore } from "@/wrapper/Stores/GuildStore.ts";
 import { useChannelStore } from "@/wrapper/Stores/ChannelStore.ts";
 import SaveChanges from "@/components/SaveChanges.tsx";
+import useStateHistory from "@/hooks/useStateHistory.ts";
 
 const SwitchOption = ({ title, description, value, setValue }: { title: string; description?: string; value: boolean; setValue: (value: boolean) => void; }) => {
 	return (
@@ -30,19 +31,19 @@ const SwitchOption = ({ title, description, value, setValue }: { title: string; 
 };
 
 const Overview = () => {
-	const [maintenanceMode, setMaintenanceMode] = useState<boolean>(false);
-	const [invitesDisabled, setInvitesDisabled] = useState<boolean>(false);
-	const [staffOnly, setStaffOnly] = useState<boolean>(false);
-	const [joinMessageChannel, setJoinMessageChannel] = useState<string>("");
-	const [sendWelcomeMessage, setSendWelcomeMessage] = useState<boolean>(false);
-	const [sendLeaveMessage, setSendLeaveMessage] = useState<boolean>(false);
-	const [changelogChannel, setChangelogChannel] = useState<string>("");
-	const [sendUserChangelog, setSendUserChangelog] = useState<boolean>(false);
-	const [sendGuildChangelog, setSendGuildChangelog] = useState<boolean>(false);
+	const [maintenanceMode, setMaintenanceMode] = useStateHistory<boolean>(false);
+	const [invitesDisabled, setInvitesDisabled] = useStateHistory<boolean>(false);
+	const [staffOnly, setStaffOnly] = useStateHistory<boolean>(false);
+	const [joinMessageChannel, setJoinMessageChannel] = useStateHistory<string>("");
+	const [sendWelcomeMessage, setSendWelcomeMessage] = useStateHistory<boolean>(false);
+	const [sendLeaveMessage, setSendLeaveMessage] = useStateHistory<boolean>(false);
+	const [changelogChannel, setChangelogChannel] = useStateHistory<string>("");
+	const [sendUserChangelog, setSendUserChangelog] = useStateHistory<boolean>(false);
+	const [sendGuildChangelog, setSendGuildChangelog] = useStateHistory<boolean>(false);
 
 	const { isStaff, getCurrentUser } = useUserStore();
 	const { } = useGuildStore();
-	const [user, setUser] = useState<User | null>(getCurrentUser());
+	const [user, setUser] = useStateHistory<User | null>(getCurrentUser());
 	const { } = useChannelStore();
 
 	return (

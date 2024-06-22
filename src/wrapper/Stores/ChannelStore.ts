@@ -62,11 +62,15 @@ export interface PerChannel {
      * replying - The user is replying to a message
      * jumped - The user has jumped to a message (after a few seconds this defaults to default)
      */
-    currentState: "default" | "editing" | "replying" | "jumped";
+    currentStates: ("editing" | "replying" | "jumped")[];
     /**
      * The message id of the message you are replying to or editing
      */
-    stateId: string | null;
+    editingStateId: string | null;
+    /**
+     * The message id of the message you are replying to or editing
+     */
+    replyingStateId: string | null;
     /**
      * The position of the scroll bar, used for switching channels and staying at the same position
      */
@@ -237,15 +241,16 @@ export const usePerChannelStore = create(
             getChannel: (channelId) => {
                 return {
                     ...{
-                        currentState: "default",
+                        currentStates: [],
                         lastTyped: 0,
                         lastTypingSent: 0,
                         previousMessageContent: null,
                         scrollPosition: 0,
-                        stateId: null,
                         fetchingError: false,
                         hasMoreAfter: true,
-                        hasMoreBefore: true
+                        hasMoreBefore: true,
+                        editingStateId: null,
+                        replyingStateId: null
                     },
                     ...get().channels[channelId]
                 };
@@ -256,14 +261,15 @@ export const usePerChannelStore = create(
                         ...get().channels,
                         [channelId]: {
                             previousMessageContent: null,
-                            currentState: "default",
-                            stateId: null,
+                            currentStates: [],
                             scrollPosition: 0,
                             lastTyped: 0,
                             lastTypingSent: 0,
                             fetchingError: false,
                             hasMoreAfter: true,
-                            hasMoreBefore: true
+                            hasMoreBefore: true,
+                            editingStateId: null,
+                            replyingStateId: null
                         }
                     }
                 })
@@ -276,19 +282,23 @@ export const usePerChannelStore = create(
                 set({ channels });
             },
             updateChannel: (channelId, data) => {
-                const base = {
-                    currentState: "default",
+                const base: PerChannel = {
+                    currentStates: [],
                     lastTyped: 0,
                     lastTypingSent: 0,
                     previousMessageContent: null,
                     scrollPosition: 0,
-                    stateId: null,
                     fetchingError: false,
                     hasMoreAfter: true,
-                    hasMoreBefore: true
+                    hasMoreBefore: true,
+                    editingStateId: null,
+                    replyingStateId: null
                 }
 
                 const channel = get().getChannel(channelId) ?? base;
+
+                // ? de-dupe the states (because im lazy)
+                const currentStates = Array.from(new Set([...channel.currentStates, ...(data.currentStates ?? [])]));
 
                 set({
                     channels: {
@@ -297,6 +307,7 @@ export const usePerChannelStore = create(
                             ...base,
                             ...channel,
                             ...data,
+                            currentStates
                         }
                     }
                 });
@@ -310,28 +321,7 @@ export const usePerChannelStore = create(
                         Object.entries(state.channels).map(([key, value]) => [key, { previousMessageContent: value.previousMessageContent }])
                     )
                 } as unknown as PerChannelStore;
-            },
-            onRehydrateStorage: () => {
-                // ? add the default values to the state
-                return (state) => {
-                    return {
-                        ...state,
-                        channels: Object.fromEntries(
-                            Object.entries(state!.channels).map(([key, value]) => [key, {
-                                ...value,
-                                currentState: "default",
-                                lastTyped: 0,
-                                lastTypingSent: 0,
-                                scrollPosition: 0,
-                                stateId: null,
-                                fetchingError: false,
-                                hasMoreAfter: true,
-                                hasMoreBefore: true
-                            }])
-                        )
-                    } as unknown as PerChannelStore;
-                }
-            },
+            }
         }
     )
 );

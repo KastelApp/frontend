@@ -11,7 +11,7 @@ import { MessageStates, Message as MessageType, useMessageStore } from "@/wrappe
 import { User, useUserStore } from "@/wrapper/Stores/UserStore.ts";
 import fastDeepEqual from "fast-deep-equal";
 import { Member, useMemberStore } from "@/wrapper/Stores/Members.ts";
-import { useChannelStore } from "@/wrapper/Stores/ChannelStore.ts";
+import { useChannelStore, usePerChannelStore } from "@/wrapper/Stores/ChannelStore.ts";
 import { useRoleStore } from "@/wrapper/Stores/RoleStore.ts";
 
 const Message = memo(({
@@ -340,7 +340,12 @@ const Message = memo(({
 			{!disableButtons && (
 				<div className="z-10 items-center gap-2 bg-gray-800 absolute top-[-1rem] right-0 hidden group-hover:flex hover:flex p-1 rounded-md mr-2">
 					<Tooltip content="Reply">
-						<Reply size={18} color="#acaebf" className="cursor-pointer" />
+						<Reply size={18} color="#acaebf" className="cursor-pointer" onClick={() => {
+							usePerChannelStore.getState().updateChannel(message.channelId, {
+								currentStates: [...usePerChannelStore.getState().getChannel(message.channelId).currentStates, "replying"],
+								replyingStateId: message.id
+							});
+						}} />
 					</Tooltip>
 					<Tooltip content="Edit">
 						<Pen size={18} color="#acaebf" className="cursor-pointer" />

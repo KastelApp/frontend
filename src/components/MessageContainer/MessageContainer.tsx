@@ -2,8 +2,14 @@ import { X, Pen, CirclePlus, SendHorizontal, SmilePlus } from "lucide-react";
 import SlateEditor from "./SlateEditor.tsx";
 import { Divider, Image, Tooltip } from "@nextui-org/react";
 import TypingDots from "./TypingDats.tsx";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { twMerge } from "tailwind-merge";
+import { PerChannel, usePerChannelStore } from "@/wrapper/Stores/ChannelStore.ts";
+import { User, useUserStore } from "@/wrapper/Stores/UserStore.ts";
+import { Member, useMemberStore } from "@/wrapper/Stores/Members.ts";
+import { useMessageStore } from "@/wrapper/Stores/MessageStore.ts";
+import { useRoleStore } from "@/wrapper/Stores/RoleStore.ts";
+import fastDeepEqual from "fast-deep-equal";
 
 const FileComponent = ({ fileName, imageUrl }: { fileName?: string; imageUrl?: string; }) => {
 	return (
@@ -30,25 +36,122 @@ const FileComponent = ({ fileName, imageUrl }: { fileName?: string; imageUrl?: s
 	);
 };
 
-const MessageContainer = ({ placeholder, children, isReadOnly, sendMessage }: { placeholder: string; children?: React.ReactNode; isReadOnly?: boolean; sendMessage: (content: string) => void; }) => {
+const MessageContainer = ({ placeholder, children, isReadOnly, sendMessage, channelId, guildId }: {
+	placeholder: string;
+	children?: React.ReactNode;
+	isReadOnly?: boolean;
+	sendMessage: (content: string) => void;
+	channelId: string;
+	guildId: string | null;
+}) => {
 	const [files, setFiles] = useState<{ name: string; url: string; }[]>([]);
-	const [replying, setReplying] = useState<boolean>(true);
+	const [replying, setReplying] = useState<boolean>(false);
+
+	const { getChannel } = usePerChannelStore();
+	const { getMessage } = useMessageStore();
+
+	// const perChannel = getChannel(channelId);
+	const [perChannel, setPerChannel] = useState<PerChannel | null>(null);
+
+	const [replyingAuthor, setReplyingAuthor] = useState<{
+		user: User | null;
+		member: Member | null;
+		roleColor: { color: string | null; id: string; } | null;
+	}>({
+		member: null,
+		user: null,
+		roleColor: null
+	});
+
+	const [signal, setSignal] = useState<number>(0);
+
+	useEffect(() => {
+		const subscribed = usePerChannelStore.subscribe((state, prevState) => {
+			const oldChannel = prevState.channels[channelId];
+			const newChannel = state.channels[channelId];
+
+			if (!fastDeepEqual(oldChannel, newChannel)) {
+				setSignal((old) => old + 1);
+			}
+		});
+
+		return () => subscribed();
+	}, []);
+
+	useEffect(() => {
+		const channel = getChannel(channelId);
+
+		setPerChannel(channel);
+
+		if (channel.currentStates.includes("replying")) {
+			setReplying(true);
+
+			const foundReply = getMessage(channel.replyingStateId ?? "");
+
+			if (foundReply) {
+				const fetchedAuthor = useUserStore.getState().getUser(foundReply.authorId);
+				const fetchedMember = guildId ? useMemberStore.getState().getMember(guildId, foundReply.authorId) ?? null : null;
+
+				let roleData: { color: string; id: string; } | null = null;
+
+				if (fetchedMember) {
+					const roles = useRoleStore.getState().getRoles(guildId ?? "");
+					const topColorRole = fetchedMember.roles
+						.map((roleId) => roles.find((role) => role.id === roleId))
+						.filter((role) => role !== undefined)
+						.sort((a, b) => a!.position - b!.position)
+						.reverse()[0];
+
+					roleData = {
+						color: topColorRole ? topColorRole.color.toString(16) : "",
+						id: topColorRole ? topColorRole.id : ""
+					};
+				}
+
+				setReplyingAuthor({
+					user: fetchedAuthor,
+					member: fetchedMember,
+					roleColor: roleData
+				});
+			}
+		}
+	}, [channelId, guildId, signal]);
 
 	return (
 		<>
 			<div className="flex flex-col h-screen overflow-x-hidden">
-					{children}
+				{children}
 				<div className="mb-12 w-[98%] ml-2">
-					<div className="ml-1 w-full bg-accent rounded-md rounded-b-none flex">
-						<div className="p-2">
-							Replying to <span className="text-orange-600 font-semibold">Testing</span>
+					{replying && (
+						<div className="ml-1 w-full bg-accent rounded-md rounded-b-none flex select-none">
+							<div className="p-2">
+								Replying to <span className="font-semibold text-white" style={{
+									color: guildId ?
+										replyingAuthor.member ?
+											replyingAuthor.roleColor?.color ? `#${replyingAuthor.roleColor.color}` : "#CFDBFF"
+											: "#ACAEBF"
+										: "#CFDBFF"
+								}}>{replyingAuthor.member ? replyingAuthor.member.nickname ?? replyingAuthor.user?.globalNickname ?? replyingAuthor.user?.username : replyingAuthor.user?.globalNickname ?? replyingAuthor.user?.username}</span>
+							</div>
+							<div className="flex items-center gap-2 ml-auto mr-2">
+								<Tooltip content="Close Reply">
+									<X size={22} color="#acaebf" className="cursor-pointer" onClick={() => {
+										setReplying(false);
+										setReplyingAuthor({
+											member: null,
+											user: null,
+											roleColor: null
+										});
+
+										usePerChannelStore.getState().updateChannel(channelId, {
+											currentStates: perChannel?.currentStates.filter((state) => state !== "replying") ?? [],
+											editingStateId: null,
+										});
+									}} />
+								</Tooltip>
+							</div>
 						</div>
-						<div className="flex items-center gap-2 ml-auto mr-2">
-							<Tooltip content="Close Reply">
-								<X size={22} color="#acaebf" className="cursor-pointer" onClick={() => setReplying(false)} />
-							</Tooltip>
-						</div>
-					</div>
+					)}
 					<div
 						className={twMerge(
 							"w-full ml-1 py-1 px-4 bg-gray-800 rounded-lg max-h-96 overflow-y-auto overflow-x-hidden",

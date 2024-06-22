@@ -233,7 +233,10 @@ const TextBasedChannel = () => {
 					content: "I wuv cats"
 				})
 			}, 2000)
-		}}>
+		}}
+		channelId={channelId}
+		guildId={guildId}
+		>
 			<div className="mt-auto overflow-y-auto">
 				{!initialFetch && skelliedMessages}
 				<BiDirectionalInfiniteScroller

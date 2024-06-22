@@ -7,7 +7,7 @@ interface UseStateHistoryOptions {
 const useStateHistory = <T = unknown>(
 	initialState: T,
 	options?: UseStateHistoryOptions,
-): [T, (newState: T) => void, T, () => void, () => void] => {
+): [T, (newState: T) => void, T, () => void, () => void, () => void] => {
 	const [state, setState] = useState<T>(initialState);
 	const [prevState, setPrevState] = useState<T>(initialState);
 	const history = useRef<T[]>([initialState]);
@@ -42,7 +42,12 @@ const useStateHistory = <T = unknown>(
 		}
 	};
 
-	return [state, set, prevState, undo, redo];
+	const clearHistory = () => {
+		history.current = [state];
+		historyIndex.current = 0;
+	}
+
+	return [state, set, prevState, undo, redo, clearHistory];
 };
 
 export default useStateHistory;
