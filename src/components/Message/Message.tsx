@@ -309,12 +309,12 @@ const Message = memo(({
 								</Chip>
 							)} */}
 							<Tooltip content="Saturday, May 11. 2024 12:00 PM" placement="top">
-								<span className="text-gray-400 text-2xs mt-1 ml-1">{new Date(message.creationDate).toLocaleString()}</span>
+								<span className="text-gray-400 text-2xs mt-1 ml-1 select-none">{new Date(message.creationDate).toLocaleString()}</span>
 							</Tooltip>
 						</span>
 						<div
 							className={
-								twMerge("text-white whitespace-pre-line overflow-hidden break-all",
+								twMerge("text-white whitespace-pre-line overflow-hidden break-words",
 									message.state === MessageStates.Failed
 										|| message.state === MessageStates.Unknown ? "text-red-500" : "",
 									message.state === MessageStates.Sending ? "text-gray-400" : "",

@@ -66,7 +66,7 @@ const UserPopover = ({ member, onClick }: {
 								{member.user.bio && (
 									<div className="mt-2">
 										<span className="text-white font-bold">About Me</span>
-										<p className="text-gray-300 mt-2">{member.user.bio}</p>
+										<p className="text-gray-300 mt-2 whitespace-pre-line overflow-hidden break-words">{member.user.bio}</p>
 									</div>
 								)}
 								{member.member && member.member.roles.length > 1 && (

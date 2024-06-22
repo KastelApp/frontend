@@ -98,7 +98,7 @@ const IFrameEmbed = ({
                     </CardHeader>
                 )}
                 <CardBody className="p-0 pl-3 mr-3">
-                    {embed.description && <p className="text-sm text-white max-w-lg whitespace-pre-line overflow-hidden break-all">{embed.description}</p>}
+                    {embed.description && <p className="text-sm text-white max-w-lg whitespace-pre-line overflow-hidden break-words">{embed.description}</p>}
                     <div className="mt-2">
                         {/*//t! Allow disabling of iframes for those more safety focused people(?) */}
                         <PreIframe>

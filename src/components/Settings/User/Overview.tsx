@@ -1,6 +1,8 @@
 import AllBadges from "@/badges/AllBadges.tsx";
 import Message from "@/components/Message/Message.tsx";
 import EditUser from "@/components/Modals/EditUser.tsx";
+import Constants from "@/utils/Constants.ts";
+import { MessageStates } from "@/wrapper/Stores/MessageStore.ts";
 import { User, useUserStore } from "@/wrapper/Stores/UserStore.ts";
 import { Avatar, Badge, Button, Card, CardBody, Divider, Tooltip, useDisclosure } from "@nextui-org/react";
 import { Pencil, TriangleAlert, X } from "lucide-react";
@@ -154,7 +156,7 @@ const OverView = () => {
 									<div className="flex justify-between items-center mb-4">
 										<div>
 											<p className="text-lg font-semibold">About Me</p>
-											<p className="text-md">{user?.bio}</p>
+											<p className="text-md whitespace-pre-line overflow-hidden break-words">{user?.bio}</p>
 										</div>
 									</div>
 								</CardBody>
@@ -190,13 +192,57 @@ const OverView = () => {
 							<p className="mb-2 mt-2 text-lg">Before:</p>
 							<div className="flex items-center bg-charcoal-700 rounded-lg">
 								<div className="mt-2 w-full">
-									<Message content="I'm a very cool person" mention={false} replying={false} disableButtons />
+									<Message message={{
+										content: "I'm a super cool person!",
+										authorId: getCurrentUser()!.id,
+										state: MessageStates.Sent,
+										mentions: {
+											channels: [],
+											roles: [],
+											users: []
+										},
+										creationDate: new Date(),
+										allowedMentions: 0,
+										attachments: [],
+										channelId: "",
+										deletable: false,
+										editedDate: null,
+										embeds: [],
+										flags: 0,
+										id: "",
+										invites: [],
+										pinned: false,
+										nonce: null,
+										replyingTo: null
+									}}  disableButtons />
 								</div>
 							</div>
 							<p className="mb-2 mt-2 text-lg">After:</p>
 							<div className="flex items-center bg-charcoal-700 rounded-lg">
 								<div className="mt-2 w-full">
-									<Message content="[Removed by Account Deletion]" mention={false} replying={false} disableButtons />
+									<Message message={{
+										content: "[Removed by Account Deletion]",
+										authorId: Constants.fakeUserIds.ghost,
+										state: MessageStates.Sent,
+										mentions: {
+											channels: [],
+											roles: [],
+											users: []
+										},
+										creationDate: new Date(),
+										allowedMentions: 0,
+										attachments: [],
+										channelId: "",
+										deletable: false,
+										editedDate: null,
+										embeds: [],
+										flags: 0,
+										id: "",
+										invites: [],
+										pinned: false,
+										nonce: null,
+										replyingTo: null
+									}} disableButtons />
 								</div>
 							</div>
 						</CardBody>

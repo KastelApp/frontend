@@ -79,7 +79,18 @@ const handleMessage = async (ws: Websocket, data: unknown) => {
                 isSystem: true,
                 tag: "0000",
                 publicFlags: String(Constants.publicFlags.StaffBadge),
-                flags: String(Constants.privateFlags.System)
+                flags: String(Constants.privateFlags.System),
+                id: Constants.fakeUserIds.kiki,
+            });
+
+            useUserStore.getState().addUser({
+                username: "Ghost",
+                defaultAvatar: "/icon.png",
+                isSystem: true,
+                tag: "0000",
+                publicFlags: String(Constants.publicFlags.GhostBadge),
+                flags: String(Constants.privateFlags.Ghost),
+                id: Constants.fakeUserIds.ghost,
             });
 
             for (const guild of data.guilds) {

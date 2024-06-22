@@ -99,7 +99,7 @@ const UserModal = ({ isOpen, onClose, user }: { isOpen: boolean; onClose: () => 
 													<Divider className="mt-2" />
 													<div className="mt-2">
 														<span className="text-white font-bold">About Me</span>
-														<p className="text-gray-300">{user.bio}</p>
+														<p className="text-gray-300 whitespace-pre-line overflow-hidden break-words">{user.bio}</p>
 													</div>
 												</>
 											)}

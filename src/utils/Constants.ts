@@ -272,6 +272,11 @@ const userSendCodes = [
 	opCodes.resume,
 ];
 
+const fakeUserIds = {
+	kiki: "102652169335591636",
+	ghost: "122652169335591636"
+}
+
 export default {
 	allowedMentions,
 	channelTypes,
@@ -290,6 +295,7 @@ export default {
 	userSendCodes,
 	snowflake,
 	settings,
+	fakeUserIds
 };
 
 export {
@@ -310,4 +316,5 @@ export {
 	userSendCodes,
 	snowflake,
 	settings,
+	fakeUserIds
 };
