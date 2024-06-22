@@ -17,6 +17,18 @@ import { useGuildStore } from "@/wrapper/Stores/GuildStore.ts";
 import { useChannelStore } from "@/wrapper/Stores/ChannelStore.ts";
 import SaveChanges from "@/components/SaveChanges.tsx";
 
+const SwitchOption = ({ title, description, value, setValue }: { title: string; description?: string; value: boolean; setValue: (value: boolean) => void; }) => {
+	return (
+		<div className="flex justify-between items-center cursor-pointer select-none first:mt-0 mt-2" onClick={() => setValue(!value)}>
+			<div className="flex flex-col">
+				<p>{title}</p>
+				{description && <p className="text-sm text-gray-400">{description}</p>}
+			</div>
+			<Switch isSelected={value} onValueChange={setValue} />
+		</div>
+	);
+};
+
 const Overview = () => {
 	const [maintenanceMode, setMaintenanceMode] = useState<boolean>(false);
 	const [invitesDisabled, setInvitesDisabled] = useState<boolean>(false);
@@ -31,7 +43,7 @@ const Overview = () => {
 	const { isStaff, getCurrentUser } = useUserStore();
 	const { } = useGuildStore();
 	const [user, setUser] = useState<User | null>(getCurrentUser());
-	const {} = useChannelStore()
+	const { } = useChannelStore();
 
 	return (
 		<div className="mr-2 bg-accent rounded-lg">
@@ -43,7 +55,7 @@ const Overview = () => {
 							<Badge
 								content={<X />}
 								placement="top-right"
-								className="mb-2 mr-1 h-8 w-8 hover:scale-95 active:scale-85 cursor-pointer hover:opacity-95 z-50"
+								className="mb-2 mr-1 h-8 w-8 hover:scale-95 active:scale-85 cursor-pointer hover:opacity-95 z-20"
 								color={"danger"}
 								onClick={() => {
 									console.log("Remove Icon");
@@ -89,29 +101,9 @@ const Overview = () => {
 				<Divider className="mb-8 mt-8" />
 				<h2 className="text-xl font-semibold">Guild Features</h2>
 				<div className="flex flex-col mt-4">
-					<div className="flex justify-between items-center">
-						<div className="flex flex-col">
-							<p>Maintenance Mode</p>
-							<p className="text-sm text-gray-400">Stop's all non-staff members from accessing the guild.</p>
-						</div>
-						<Switch checked={maintenanceMode} onValueChange={setMaintenanceMode} />
-					</div>
-					<div className="flex justify-between items-center mt-1">
-						<div className="flex flex-col">
-							<p>Invites Disabled</p>
-							<p className="text-sm text-gray-400">Prevents new members from joining the guild.</p>
-						</div>
-						<Switch checked={invitesDisabled} onValueChange={setInvitesDisabled} />
-					</div>
-					{isStaff(user?.id ?? "") && (
-						<div className="flex justify-between items-center mt-1">
-							<div className="flex flex-col">
-								<p>Internal Staff Guild (Staff Only)</p>
-								<p className="text-sm text-gray-400">Only staff members (with the staff flag) can access the guild.</p>
-							</div>
-							<Switch checked={staffOnly} onValueChange={setStaffOnly} />
-						</div>
-					)}
+					<SwitchOption title="Maintenance Mode" description="Stop's all non-staff members from accessing the guild." value={maintenanceMode} setValue={setMaintenanceMode} />
+					<SwitchOption title="Invites Disabled" description="Prevents new members from joining the guild." value={invitesDisabled} setValue={setInvitesDisabled} />
+					{isStaff(user?.id ?? "") && <SwitchOption title="Internal Staff Guild (Staff Only)" description="Only staff members (with the staff flag) can access the guild." value={staffOnly} setValue={setStaffOnly} />}
 				</div>
 				<Divider className="mb-8 mt-8" />
 				<h2 className="text-xl font-semibold">System Messages</h2>
@@ -134,14 +126,9 @@ const Overview = () => {
 							</SelectSection>
 						</Select>
 					</div>
-
-					<div className="flex justify-between items-center">
-						<p>Send Welcome Message</p>
-						<Switch checked={sendWelcomeMessage} onValueChange={setSendWelcomeMessage} />
-					</div>
-					<div className="flex justify-between items-center mt-1 mb-1">
-						<p>Send Leave Message</p>
-						<Switch checked={sendLeaveMessage} onValueChange={setSendLeaveMessage} />
+					<div className="flex flex-col mb-2">
+						<SwitchOption title="Send Welcome Message" description="Send a welcome message when someone joins the guild." value={sendWelcomeMessage} setValue={setSendWelcomeMessage} />
+						<SwitchOption title="Send Leave Message" description="Send a leave message when someone leaves the guild." value={sendLeaveMessage} setValue={setSendLeaveMessage} />
 					</div>
 					<h3 className="text-lg font-semibold">Changelog</h3>
 					<div className="flex flex-col items-start mb-4 mt-2">
@@ -161,13 +148,9 @@ const Overview = () => {
 							</SelectSection>
 						</Select>
 					</div>
-					<div className="flex justify-between items-center">
-						<p>Send User Changelog</p>
-						<Switch checked={sendUserChangelog} onValueChange={setSendUserChangelog} />
-					</div>
-					<div className="flex justify-between items-center mt-1 mb-1">
-						<p>Send Guild Changelog</p>
-						<Switch checked={sendGuildChangelog} onValueChange={setSendGuildChangelog} />
+					<div className="flex flex-col">
+						<SwitchOption title="Send User Changelog" value={sendUserChangelog} setValue={setSendUserChangelog} />
+						<SwitchOption title="Send Guild Changelog" value={sendGuildChangelog} setValue={setSendGuildChangelog} />
 					</div>
 				</div>
 			</div>

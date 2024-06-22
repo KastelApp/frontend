@@ -87,7 +87,7 @@ const BaseSettings = ({
 				<ModalContent>
 					<div className="flex w-full m-0 overflow-x-hidden h-full">
 						<div className="flex w-full h-full">
-							<div className={twMerge("bg-accent overflow-y-auto h-screen xl:min-w-96 min-w-64 sm:flex justify-end", !open ? "hidden" : "absolute z-20 w-[100vw]")}>
+							<div className={twMerge("!z-[100] bg-accent overflow-y-auto h-screen xl:min-w-96 min-w-64 sm:flex justify-end", !open ? "hidden" : "absolute z-20 w-[100vw]")}>
 								<div className="justify-end mr-2">
 									<Menu
 										color="#acaebf"
