@@ -1,12 +1,11 @@
 import DmNavBar from "@/components/NavBars/DmNavBar.tsx";
-import AppLayout from "@/layouts/AppLayout.tsx";
 
 const App = () => {
 	return (
-		<AppLayout>
 			<DmNavBar />
-		</AppLayout>
 	);
 };
+
+App.shouldHaveLayout = true;
 
 export default App;

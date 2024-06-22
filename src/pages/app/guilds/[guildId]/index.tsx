@@ -1,5 +1,4 @@
 import ChannelNavBar from "@/components/NavBars/ChannelNavBar.tsx";
-import AppLayout from "@/layouts/AppLayout.tsx";
 import { useChannelStore } from "@/wrapper/Stores/ChannelStore.ts";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
@@ -28,7 +27,6 @@ const Guild = () => {
 	}, [guildId]);
 
 	return (
-		<AppLayout>
 			<ChannelNavBar isChannelHeaderHidden isMemberBarHidden>
 				<>
 					{ready && <div className="flex justify-center items-center h-screen">
@@ -39,8 +37,9 @@ const Guild = () => {
 					</div>}
 				</>
 			</ChannelNavBar>
-		</AppLayout>
 	);
 };
+
+Guild.shouldHaveLayout = true;
 
 export default Guild;

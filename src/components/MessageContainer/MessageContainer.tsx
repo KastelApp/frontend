@@ -2,9 +2,9 @@ import { X, Pen, CirclePlus, SendHorizontal, SmilePlus } from "lucide-react";
 import SlateEditor from "./SlateEditor.tsx";
 import { Divider, Image, Tooltip } from "@nextui-org/react";
 import TypingDots from "./TypingDats.tsx";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { twMerge } from "tailwind-merge";
-import { PerChannel, usePerChannelStore } from "@/wrapper/Stores/ChannelStore.ts";
+import { usePerChannelStore } from "@/wrapper/Stores/ChannelStore.ts";
 import { User, useUserStore } from "@/wrapper/Stores/UserStore.ts";
 import { Member, useMemberStore } from "@/wrapper/Stores/Members.ts";
 import { useMessageStore } from "@/wrapper/Stores/MessageStore.ts";
@@ -50,8 +50,7 @@ const MessageContainer = ({ placeholder, children, isReadOnly, sendMessage, chan
 	const { getChannel } = usePerChannelStore();
 	const { getMessage } = useMessageStore();
 
-	// const perChannel = getChannel(channelId);
-	const [perChannel, setPerChannel] = useState<PerChannel | null>(null);
+	const channelIdRef = useRef<string>(channelId);
 
 	const [replyingAuthor, setReplyingAuthor] = useState<{
 		user: User | null;
@@ -67,8 +66,8 @@ const MessageContainer = ({ placeholder, children, isReadOnly, sendMessage, chan
 
 	useEffect(() => {
 		const subscribed = usePerChannelStore.subscribe((state, prevState) => {
-			const oldChannel = prevState.channels[channelId];
-			const newChannel = state.channels[channelId];
+			const oldChannel = prevState.channels[channelIdRef.current];
+			const newChannel = state.channels[channelIdRef.current];
 
 			if (!fastDeepEqual(oldChannel, newChannel)) {
 				setSignal((old) => old + 1);
@@ -79,9 +78,9 @@ const MessageContainer = ({ placeholder, children, isReadOnly, sendMessage, chan
 	}, []);
 
 	useEffect(() => {
-		const channel = getChannel(channelId);
+		channelIdRef.current = channelId;
 
-		setPerChannel(channel);
+		const channel = getChannel(channelId);
 
 		if (!channel.currentStates.includes("replying")) {
 			setReplying(false);
@@ -147,8 +146,10 @@ const MessageContainer = ({ placeholder, children, isReadOnly, sendMessage, chan
 											roleColor: null
 										});
 
-										usePerChannelStore.getState().updateChannel(channelId, {
-											currentStates: perChannel?.currentStates.filter((state) => state !== "replying") ?? [],
+										const channel = getChannel(channelIdRef.current);
+
+										usePerChannelStore.getState().updateChannel(channelIdRef.current, {
+											currentStates: channel.currentStates.filter((state) => state !== "replying") ?? [],
 											editingStateId: null,
 										});
 									}} />

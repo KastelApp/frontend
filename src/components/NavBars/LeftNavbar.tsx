@@ -1,6 +1,6 @@
 // ? The left navbar is inspired by discord due to a ton of users wanting it since they are familiar with it.
 // ? Though the bottom bar is the one we will care about the most, the left navbar is still a good option for those who want it.
-import { memo } from "react";
+import { memo, useCallback } from "react";
 import { Compass, Plus } from "lucide-react";
 import { twMerge } from "tailwind-merge";
 import { Avatar, Badge, Tooltip, useDisclosure } from "@nextui-org/react";
@@ -12,7 +12,9 @@ import { useSettingsStore } from "@/wrapper/Stores.ts";
 import { BaseContextMenuProps } from "../Dropdowns/BaseContextMenu.tsx";
 import { useGuildStore } from "@/wrapper/Stores/GuildStore.ts";
 import { useChannelStore } from "@/wrapper/Stores/ChannelStore.ts";
-const Modal = () => {
+import { useRouter } from "next/router";
+
+const Modal = memo(() => {
 	const { isOpen, onOpenChange, onClose } = useDisclosure();
 
 	return (
@@ -27,12 +29,62 @@ const Modal = () => {
 			/>
 		</>
 	);
-};
+});
 
-const LeftNavbar = memo(() => {
+const LeftNavbar = () => {
 	const { isSideBarOpen } = useSettingsStore();
 	const { guilds } = useGuildStore();
 	const { getChannelsWithValidPermissions, getTopChannel } = useChannelStore();
+	const router = useRouter();
+
+	const { guildId } = router.query as { guildId: string; };
+
+	const mappedGuilds = useCallback(() => {
+		return guilds.map((guild, index) => {
+			let hasUnread = false;
+
+			const gotChannels = getChannelsWithValidPermissions(guild.id);
+
+			for (const channel of gotChannels) {
+				if (guild.channelProperties.find((channelProperty) => channelProperty.channelId === channel.id)?.lastMessageAckId !== channel.lastMessageId) {
+					hasUnread = true;
+
+					break;
+				}
+			}
+
+			const topChannel = getTopChannel(guild.id);
+
+			return (
+				<LeftNavBarIcon
+					href={`/app/guilds/${guild.id}${topChannel ? `/channels/${topChannel.id}` : ""}`}
+					badgePosition="bottom-right"
+					badgeColor="danger"
+					// badgeContent={guild.mentionCount === "0" ? undefined : guild.mentionCount}
+					key={index}
+					icon={
+						<Avatar
+							name={guild.name}
+							src={guild.icon ?? undefined}
+							className="mt-1.5 w-10 h-10 rounded-3xl transition-all group-hover:rounded-xl duration-300 ease-in-out transform"
+							imgProps={{ className: "transition-none" }}
+						/>
+					}
+					description={guild.name}
+					contextMenuItemsProps={{
+						values: [
+							{
+								label: "Test",
+							},
+						],
+						placement: "right",
+					}}
+					hasUnReadMessages={hasUnread}
+					isActive={guild.id === guildId} 
+				/>
+			);
+		});
+	}, [guilds, guildId]);
 
 	return (
 		<>
@@ -40,11 +92,13 @@ const LeftNavbar = memo(() => {
 				<div className="fixed left-0 top-0 h-full w-16 flex flex-col shadow-lg z-10 overflow-y-auto overflow-x-hidden scrollbar-hide">
 					<LeftNavBarIcon
 						icon={
-							<Avatar
-								src="https://development.kastelapp.com/icon-1.png"
-								className="w-9 h-9 hover:scale-95 transition-all duration-300 ease-in-out transform"
-								imgProps={{ className: "transition-none" }}
-							/>
+							<div className="min-w-9 min-h-9 max-h-9 max-w-9">
+								<Avatar
+									src="https://development.kastelapp.com/icon-1.png"
+									className="min-w-9 min-h-9 max-h-9 max-w-9 hover:scale-95 transition-all duration-300 ease-in-out transform"
+									imgProps={{ className: "transition-none" }}
+								/>
+							</div>
 						}
 						isBackgroundDisabled
 						badgeContent="9+"
@@ -56,49 +110,7 @@ const LeftNavbar = memo(() => {
 						delay={1000}
 					/>
 					<Divider size={"[2px]"} />
-					{guilds.map((guild, index) => {
-						let hasUnread = false;
-
-						const gotChannels = getChannelsWithValidPermissions(guild.id);
-
-						for (const channel of gotChannels) {
-							if (guild.channelProperties.find((channelProperty) => channelProperty.channelId === channel.id)?.lastMessageAckId !== channel.lastMessageId) {
-								hasUnread = true;
-
-								break;
-							}
-						}
-
-						const topChannel = getTopChannel(guild.id);
-
-						return (
-							<LeftNavBarIcon
-								href={`/app/guilds/${guild.id}${topChannel ? `/channels/${topChannel.id}` : ""}`}
-								badgePosition="bottom-right"
-								badgeColor="danger"
-								// badgeContent={guild.mentionCount === "0" ? undefined : guild.mentionCount}
-								key={index}
-								icon={
-									<Avatar
-										name={guild.name}
-										src={guild.icon ?? undefined}
-										className="mt-1.5 w-10 h-10 rounded-3xl transition-all group-hover:rounded-xl duration-300 ease-in-out transform"
-										imgProps={{ className: "transition-none" }}
-									/>
-								}
-								description={guild.name}
-								contextMenuItemsProps={{
-									values: [
-										{
-											label: "Test",
-										},
-									],
-									placement: "right",
-								}}
-								hasUnReadMessages={hasUnread}
-							/>
-						);
-					})}
+					{mappedGuilds()}
 					<Modal />
 					<LeftNavBarIcon
 						icon={<Compass className="mt-1.5" color="#acaebf" absoluteStrokeWidth />}
@@ -109,9 +121,9 @@ const LeftNavbar = memo(() => {
 			</div>
 		</>
 	);
-});
+};
 
-const LeftNavBarIcon = ({
+const LeftNavBarIcon = memo(({
 	icon,
 	description,
 	isDisabled,
@@ -124,7 +136,8 @@ const LeftNavBarIcon = ({
 	InContent,
 	onClick,
 	delay,
-	hasUnReadMessages
+	hasUnReadMessages,
+	isActive
 	// contextMenuItemsProps
 }: {
 	icon: React.ReactElement | React.ReactElement[];
@@ -141,6 +154,7 @@ const LeftNavBarIcon = ({
 	delay?: number;
 	contextMenuItemsProps?: BaseContextMenuProps;
 	hasUnReadMessages?: boolean;
+	isActive?: boolean;
 }) => {
 	const width = `w-${size}`;
 	const height = `h-${size}`;
@@ -207,7 +221,14 @@ const LeftNavBarIcon = ({
 				)}
 			>
 
-				{hasUnReadMessages && <div className="w-1 h-2 bg-white absolute -left-2 rounded-r-lg z-10 group-hover:h-4 transition-all ease-in-out duration-300" />}
+				<div className={
+					twMerge(
+						"w-1 h-0 bg-white absolute -left-2 rounded-r-lg z-10 group-hover:h-4",
+						hasUnReadMessages ? "h-2" : "",
+						isActive ? "!h-6" : "",
+						"transition-all ease-in-out duration-300"
+					)
+				} />
 				<RightClickMenuOrNot>
 					<div onClick={onClick}>
 						<InContentWrapper>
@@ -229,6 +250,6 @@ const LeftNavBarIcon = ({
 			</div>
 		</TooltipOrNot>
 	);
-};
+});
 
 export default LeftNavbar;

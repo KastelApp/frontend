@@ -15,7 +15,7 @@ import diff from "@/utils/diff.ts";
 import ChannelIcon from "../ChannelIcon.tsx";
 import { channelTypes } from "@/utils/Constants.ts";
 
-const skelliedMessages = Array.from({ length: 50 }, (_, i) => <SkellyMessage key={i} />);
+const skelliedMessages = Array.from({ length: 30 }, (_, i) => <SkellyMessage key={i} />);
 
 /**
  * This is for TextBased Channel's, i.e DM's, Guild Text Channels, etc.
@@ -62,11 +62,6 @@ const TextBasedChannel = () => {
 
 			const diffed = diff(oldMessages, newMessages);
 
-			// ? If there's an addition and we are inView of the bottom then add the new message to the bottom
-			// ? If there's a removal and its in rendered messages then remove it (since it probably got deleted)
-			// ? If there's an edit and its in rendered messages then update it
-			console.log(diffed, channelId);
-
 			setRenderedMessages((prev) => {
 				let updatedMessages = prev;
 
@@ -109,8 +104,6 @@ const TextBasedChannel = () => {
 
 		const messageCache = getMessages(channelId);
 		const perChannel = getChannel(channelId);
-
-		console.log(messageCache);
 
 		if (messageCache.length < 50 && (perChannel.hasMoreAfter || perChannel.hasMoreAfter)) {
 			const fetched = await fetchMessages(channelId, {
@@ -215,8 +208,6 @@ const TextBasedChannel = () => {
 
 	return (
 		<MessageContainer placeholder={`Message #${channelName}`} isReadOnly={readOnly} sendMessage={(content) => {
-			console.log(content);
-
 			createMessage(channelId, {
 				content,
 				id: "cats"

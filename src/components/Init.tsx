@@ -2,11 +2,14 @@ import { useAPIStore, useClientStore, useIsReady, useTokenStore } from "@/wrappe
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 import Loading from "./Loading.tsx";
+import AppLayout from "@/layouts/AppLayout.tsx";
 
 const Init = ({
-    children
+    children,
+    shouldHaveLayout = false,
 }: {
     children?: React.ReactElement | React.ReactElement[];
+    shouldHaveLayout?: boolean;
 }) => {
     const { token } = useTokenStore();
     const { client } = useClientStore();
@@ -65,7 +68,11 @@ const Init = ({
 
     return (
         <>
-            {!isReady ? <Loading /> : children}
+            {!isReady ? <Loading /> :
+                <>
+                    {shouldHaveLayout ? <AppLayout>{children}</AppLayout> : children}
+                </>
+            }
         </>
     );
 };

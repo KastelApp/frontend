@@ -298,7 +298,7 @@ export const usePerChannelStore = create(
                 const channel = get().getChannel(channelId) ?? base;
 
                 // ? de-dupe the states (because im lazy)
-                const currentStates = Array.from(new Set([...channel.currentStates, ...(data.currentStates ?? [])]));
+                const currentStates = data.currentStates ? Array.from(new Set([...data.currentStates])) : Array.from(new Set([...channel.currentStates]));
 
                 set({
                     channels: {

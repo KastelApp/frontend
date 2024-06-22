@@ -13,13 +13,26 @@ import SEO from "@/components/SEO.tsx";
 import { DefaultSeo } from "next-seo";
 import Init from "@/components/Init.tsx";
 
-const App = ({ Component, pageProps }: AppProps) => {
+import { NextPage } from "next";
+
+type NextPageWithLayout = NextPage & {
+  shouldHaveLayout?: boolean;
+};
+
+type AppPropsWithLayout = AppProps & {
+  Component: NextPageWithLayout;
+};
+
+
+const App = ({ Component, pageProps }: AppPropsWithLayout) => {
 	const router = useRouter();
 
 	// eslint-disable-next-line @typescript-eslint/naming-convention
 	const { _hasHydrated } = useTranslationStore();
 
 	if (!_hasHydrated) return null;
+
+	const shouldHaveLayout = Component.shouldHaveLayout || false;
 
 	return (
 		<>
@@ -28,7 +41,7 @@ const App = ({ Component, pageProps }: AppProps) => {
 				<ErrorHandler>
 					<NextUIProvider navigate={router.push}>
 						<NextThemesProvider>
-							<Init>
+							<Init shouldHaveLayout={shouldHaveLayout}>
 								<Component {...pageProps} />
 							</Init>
 						</NextThemesProvider>
