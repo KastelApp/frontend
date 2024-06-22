@@ -9,7 +9,7 @@ import {
 	Spinner,
 	useDisclosure,
 } from "@nextui-org/react";
-import { useEffect, useRef, useState } from "react";
+import { memo, useEffect, useRef, useState } from "react";
 import { twMerge } from "tailwind-merge";
 import UserPopover from "../Popovers/UserPopover.tsx";
 import UserModal from "../Modals/UserModal.tsx";
@@ -31,7 +31,7 @@ interface Section {
 	position: number;
 }
 
-const MemberItem = ({ member, color }: {
+const MemberItem = memo(({ member, color }: {
 	member: {
 		member: Member;
 		user: User;
@@ -134,7 +134,7 @@ const MemberItem = ({ member, color }: {
 			</Popover>
 		</>
 	);
-};
+});
 
 const MemberBar = () => {
 	const router = useRouter();
@@ -211,7 +211,7 @@ const MemberBar = () => {
 			// ? defaultSections[0] = offline
 			// ? defaultSections[1] = online
 			// ? defaultSections[number] = role
-			const foundUser = await getUser(member.userId);
+			const foundUser = getUser(member.userId);
 
 			const topColorRole = member.roles
 				.map((roleId) => roles.find((role) => role.id === roleId))

@@ -12,6 +12,7 @@ import { User, useUserStore } from "@/wrapper/Stores/UserStore.ts";
 import fastDeepEqual from "fast-deep-equal";
 import { Member, useMemberStore } from "@/wrapper/Stores/Members.ts";
 import { useChannelStore } from "@/wrapper/Stores/ChannelStore.ts";
+import { useRoleStore } from "@/wrapper/Stores/RoleStore.ts";
 
 const Message = memo(({
 	className,
@@ -27,17 +28,21 @@ const Message = memo(({
 	const [author, setAuthor] = useState<{
 		user: User | null;
 		member: Member | null;
+		roleColor: { color: string | null; id: string; } | null;
 	}>({
 		member: guildId ? useMemberStore.getState().getMember(guildId, message.authorId) ?? null : null,
-		user: useUserStore.getState().getUser(message.authorId)
+		user: useUserStore.getState().getUser(message.authorId),
+		roleColor: null
 	});
 	const [replyingMessage, setReplyingMessage] = useState<MessageType | null>(null);
 	const [replyingAuthor, setReplyingAuthor] = useState<{
 		user: User | null;
 		member: Member | null;
+		roleColor: { color: string | null; id: string; } | null;
 	}>({
 		user: null,
-		member: null
+		member: null,
+		roleColor: null
 	});
 
 
@@ -52,9 +57,26 @@ const Message = memo(({
 					const fetchedAuthor = useUserStore.getState().getUser(foundReply.authorId);
 					const fetchedMember = guildId ? useMemberStore.getState().getMember(guildId, foundReply.authorId) ?? null : null;
 
+					let roleData: { color: string; id: string; } | null = null;
+
+					if (fetchedMember) {
+						const roles = useRoleStore.getState().getRoles(guildId ?? "");
+						const topColorRole = fetchedMember.roles
+							.map((roleId) => roles.find((role) => role.id === roleId))
+							.filter((role) => role !== undefined)
+							.sort((a, b) => a!.position - b!.position)
+							.reverse()[0];
+
+						roleData = {
+							color: topColorRole ? topColorRole.color.toString(16) : "",
+							id: topColorRole ? topColorRole.id : ""
+						};
+					}
+
 					setReplyingAuthor({
 						user: fetchedAuthor,
-						member: fetchedMember
+						member: fetchedMember,
+						roleColor: roleData
 					});
 				}
 			}
@@ -77,9 +99,26 @@ const Message = memo(({
 				const fetchedAuthor = useUserStore.getState().getUser(msg.authorId);
 				const fetchedMember = guildId ? useMemberStore.getState().getMember(guildId, msg.authorId) ?? null : null;
 
+				let roleData: { color: string; id: string; } | null = null;
+
+				if (fetchedMember) {
+					const roles = useRoleStore.getState().getRoles(guildId ?? "");
+					const topColorRole = fetchedMember.roles
+						.map((roleId) => roles.find((role) => role.id === roleId))
+						.filter((role) => role !== undefined)
+						.sort((a, b) => a!.position - b!.position)
+						.reverse()[0];
+
+					roleData = {
+						color: topColorRole ? topColorRole.color.toString(16) : "",
+						id: topColorRole ? topColorRole.id : ""
+					};
+				}
+
 				setReplyingAuthor({
 					user: fetchedAuthor,
-					member: fetchedMember
+					member: fetchedMember,
+					roleColor: roleData
 				});
 			}
 		});
@@ -112,9 +151,21 @@ const Message = memo(({
 			const member = state.getMember(guildId, message.authorId)!;
 
 			if (!fastDeepEqual(member, author.member)) {
+				const roles = useRoleStore.getState().getRoles(guildId);
+
+				const topColorRole = member.roles
+					.map((roleId) => roles.find((role) => role.id === roleId))
+					.filter((role) => role !== undefined)
+					.sort((a, b) => a!.position - b!.position)
+					.reverse()[0];
+
 				setAuthor((prev) => ({
 					...prev,
-					member
+					member,
+					roleColor: {
+						color: topColorRole ? topColorRole.color.toString(16) : "",
+						id: topColorRole ? topColorRole.id : ""
+					}
 				}));
 			}
 
@@ -123,9 +174,21 @@ const Message = memo(({
 			const replyingToMember = state.getMember(guildId, replyingMessage.authorId)!;
 
 			if (!fastDeepEqual(replyingToMember, replyingAuthor?.member)) {
+				const roles = useRoleStore.getState().getRoles(guildId);
+
+				const topColorRole = replyingToMember.roles
+					.map((roleId) => roles.find((role) => role.id === roleId))
+					.filter((role) => role !== undefined)
+					.sort((a, b) => a!.position - b!.position)
+					.reverse()[0];
+
 				setReplyingAuthor((prev) => ({
 					...prev,
-					member: replyingToMember
+					member: replyingToMember,
+					roleColor: {
+						color: topColorRole ? topColorRole.color.toString(16) : "",
+						id: topColorRole ? topColorRole.id : ""
+					}
 				}));
 			}
 		});
@@ -203,7 +266,17 @@ const Message = memo(({
 								className="ml-2 cursor-pointer w-4 h-4"
 								imgProps={{ className: "transition-none" }}
 							/>
-							<p className="text-orange-500 text-xs ml-1">{message.mentions.users.includes(replyingMessage.authorId) ? "@" : ""}{replyingAuthor.user?.globalNickname ?? replyingAuthor?.user?.username}</p>
+							<span className="text-xs ml-1 text-white" style={{
+								// ? If the user is in the server but has no role color, the color should be white
+								// ? If the user is not in the server anymore then the color should be gray
+								// ? BUT if we are not in a server at all, then the color should be white
+								// ? white = CFDBFF
+								color: guildId ?
+									replyingAuthor.member ?
+										replyingAuthor.roleColor?.color ? `#${replyingAuthor.roleColor.color}` : "#CFDBFF"
+										: "#ACAEBF"
+									: "#CFDBFF"
+							}}>{message.mentions.users.includes(replyingMessage.authorId) ? "@" : ""}{replyingAuthor.user?.globalNickname ?? replyingAuthor?.user?.username}</span>
 						</div>
 					</PopOverData>
 					<p className="text-gray-300 text-2xs ml-2">{replyingMessage.content}</p>
@@ -221,7 +294,14 @@ const Message = memo(({
 					<div className="flex flex-col ml-2">
 						<span>
 							<PopOverData>
-								<span className="inline cursor-pointer text-orange-500">{author.user?.globalNickname ?? author.user?.username}</span>
+								<span className="inline cursor-pointer text-white" style={{
+									// ? same as above
+									color: guildId ?
+										author.member ?
+											author.roleColor?.color ? `#${author.roleColor.color}` : "#CFDBFF"
+											: "#ACAEBF"
+										: "#CFDBFF"
+								}}>{author.user?.globalNickname ?? author.user?.username}</span>
 							</PopOverData>
 							{/* {tag && (
 								<Chip color="success" variant="flat" className="ml-1 w-1 p-0 h-4 text-[10px] rounded-sm" radius="none">
@@ -236,7 +316,7 @@ const Message = memo(({
 							className={
 								twMerge("text-white whitespace-pre-line overflow-hidden break-all",
 									message.state === MessageStates.Failed
-									|| message.state === MessageStates.Unknown ? "text-red-500" : "",
+										|| message.state === MessageStates.Unknown ? "text-red-500" : "",
 									message.state === MessageStates.Sending ? "text-gray-400" : "",
 								)
 							}

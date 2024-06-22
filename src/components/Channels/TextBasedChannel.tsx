@@ -35,7 +35,7 @@ const TextBasedChannel = () => {
 	const { getMember } = useMemberStore();
 	const { getRoles } = useRoleStore();
 	const { getChannels } = useChannelStore();
-	const { fetchMessages, createMessage, getMessages } = useMessageStore();
+	const { fetchMessages, createMessage, getMessages, editMessage } = useMessageStore();
 	const { getChannel, updateChannel } = usePerChannelStore();
 
 	const [renderedMessages, setRenderedMessages] = useState<MessageType[]>([]);
@@ -218,7 +218,8 @@ const TextBasedChannel = () => {
 			console.log(content);
 
 			createMessage(channelId, {
-				content
+				content,
+				id: "cats"
 			});
 
 			setTimeout(() => bottomRef.current?.scrollIntoView({
@@ -226,6 +227,12 @@ const TextBasedChannel = () => {
 				block: "nearest",
 				inline: "start"
 			}), 50);
+
+			setTimeout(() => {
+				editMessage("cats", {
+					content: "I wuv cats"
+				})
+			}, 2000)
 		}}>
 			<div className="mt-auto overflow-y-auto">
 				{!initialFetch && skelliedMessages}
@@ -261,6 +268,7 @@ const TextBasedChannel = () => {
 							</div>
 						</div>
 					}
+					hasMoreTop
 				/>
 				<div ref={bottomRef} />
 			</div>

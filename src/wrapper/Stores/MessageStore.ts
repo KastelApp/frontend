@@ -6,6 +6,7 @@ import { Message as MessageData } from "@/types/http/channels/messages.ts"
 import { usePerChannelStore } from "./ChannelStore.ts";
 import getInviteCodes from "@/utils/getInviteCodes.ts";
 import { useUserStore } from "./UserStore.ts";
+import fastDeepEqual from "fast-deep-equal";
 
 export enum MessageStates {
     Sent = "SENT",
@@ -62,12 +63,16 @@ export interface MessageStore {
 export const useMessageStore = create<MessageStore>((set, get) => ({
     messages: [],
     addMessage: (message) => {
-        set({
-            messages: [
-                ...get().messages,
-                message
-            ]
-        });
+        const foundMessage = get().messages.find((msg) => msg.id === message.id);
+
+        if (!fastDeepEqual(foundMessage, message)) { // ? prevents useless re-renders
+            set({
+                messages: [
+                    ...get().messages.filter((msg) => msg.id !== message.id),
+                    message
+                ]
+            })
+        }
     },
     removeMessage: (id) => {
         set({
@@ -121,6 +126,10 @@ export const useMessageStore = create<MessageStore>((set, get) => ({
         if (!message) return;
 
         console.log("Editing message", message, options);
+
+        set({
+            messages: get().messages.map((message) => message.id === messageId ? { ...message, ...options } : message)
+        });
     },
     replyToMessage: (channelId, messageId, options) => {
         const message = get().messages.find((message) => message.id === messageId);
