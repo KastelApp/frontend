@@ -83,37 +83,41 @@ const MessageContainer = ({ placeholder, children, isReadOnly, sendMessage, chan
 
 		setPerChannel(channel);
 
-		if (channel.currentStates.includes("replying")) {
-			setReplying(true);
+		if (!channel.currentStates.includes("replying")) {
+			setReplying(false);
 
-			const foundReply = getMessage(channel.replyingStateId ?? "");
+			return;
+		}
 
-			if (foundReply) {
-				const fetchedAuthor = useUserStore.getState().getUser(foundReply.authorId);
-				const fetchedMember = guildId ? useMemberStore.getState().getMember(guildId, foundReply.authorId) ?? null : null;
+		setReplying(true);
 
-				let roleData: { color: string; id: string; } | null = null;
+		const foundReply = getMessage(channel.replyingStateId ?? "");
 
-				if (fetchedMember) {
-					const roles = useRoleStore.getState().getRoles(guildId ?? "");
-					const topColorRole = fetchedMember.roles
-						.map((roleId) => roles.find((role) => role.id === roleId))
-						.filter((role) => role !== undefined)
-						.sort((a, b) => a!.position - b!.position)
-						.reverse()[0];
+		if (foundReply) {
+			const fetchedAuthor = useUserStore.getState().getUser(foundReply.authorId);
+			const fetchedMember = guildId ? useMemberStore.getState().getMember(guildId, foundReply.authorId) ?? null : null;
 
-					roleData = {
-						color: topColorRole ? topColorRole.color.toString(16) : "",
-						id: topColorRole ? topColorRole.id : ""
-					};
-				}
+			let roleData: { color: string; id: string; } | null = null;
 
-				setReplyingAuthor({
-					user: fetchedAuthor,
-					member: fetchedMember,
-					roleColor: roleData
-				});
+			if (fetchedMember) {
+				const roles = useRoleStore.getState().getRoles(guildId ?? "");
+				const topColorRole = fetchedMember.roles
+					.map((roleId) => roles.find((role) => role.id === roleId))
+					.filter((role) => role !== undefined)
+					.sort((a, b) => a!.position - b!.position)
+					.reverse()[0];
+
+				roleData = {
+					color: topColorRole ? topColorRole.color.toString(16) : "",
+					id: topColorRole ? topColorRole.id : ""
+				};
 			}
+
+			setReplyingAuthor({
+				user: fetchedAuthor,
+				member: fetchedMember,
+				roleColor: roleData
+			});
 		}
 	}, [channelId, guildId, signal]);
 
