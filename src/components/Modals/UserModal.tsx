@@ -94,11 +94,15 @@ const UserModal = ({ isOpen, onClose, user }: { isOpen: boolean; onClose: () => 
 												</p>
 												{/* {member.customStatus && <p className="text-gray-200 text-md mt-2">{member.customStatus}</p>} */}
 											</div>
-											<Divider className="mt-2" />
-											<div className="mt-2">
-												<span className="text-white font-bold">About Me</span>
-												<p className="text-gray-300">{"This is an about me"}</p>
-											</div>
+											{user.bio && (
+												<>
+													<Divider className="mt-2" />
+													<div className="mt-2">
+														<span className="text-white font-bold">About Me</span>
+														<p className="text-gray-300">{user.bio}</p>
+													</div>
+												</>
+											)}
 										</CardBody>
 									</Card>
 								</div>

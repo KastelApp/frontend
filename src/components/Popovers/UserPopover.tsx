@@ -62,11 +62,13 @@ const UserPopover = ({ member, onClick }: {
 									</p>
 									{/* {member.customStatus && <p className="text-gray-200 text-md mt-2">{member.customStatus}</p>} */}
 								</div>
-								<Divider className="mt-2" />
-								<div className="mt-2">
-									<span className="text-white font-bold">About Me</span>
-									<p className="text-gray-300 mt-2">{"Hey"}</p>
-								</div>
+								{(member.user.bio || member.member && member.member.roles.length > 1) && <Divider className="mt-2" />}
+								{member.user.bio && (
+									<div className="mt-2">
+										<span className="text-white font-bold">About Me</span>
+										<p className="text-gray-300 mt-2">{member.user.bio}</p>
+									</div>
+								)}
 								{member.member && member.member.roles.length > 1 && (
 									<div className="mt-2">
 										<span className="text-white font-bold">Roles</span>

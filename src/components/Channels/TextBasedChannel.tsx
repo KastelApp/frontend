@@ -268,7 +268,7 @@ const TextBasedChannel = () => {
 							</div>
 						</div>
 					}
-					hasMoreTop
+					hasMoreTop={perChannel.hasMoreBefore}
 				/>
 				<div ref={bottomRef} />
 			</div>
