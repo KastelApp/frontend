@@ -24,7 +24,7 @@
 	background: #ffffff;
 	border-radius: 50%;
 	opacity: 0;
-	animation: loadingFade 1s infinite;
+	animation: loadingFade 1.2s infinite;
 }
 
 .typingDot:nth-child(1) {
@@ -41,12 +41,12 @@
 
 @keyframes loadingFade {
 	0% {
-		opacity: 0;
+		opacity: 0.3;
 	}
 	50% {
 		opacity: 0.8;
 	}
 	100% {
-		opacity: 0;
+		opacity: 0.3;
 	}
 }

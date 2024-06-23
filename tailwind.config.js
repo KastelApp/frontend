@@ -20,7 +20,7 @@ export default {
 				accent: "#101319",
 				mention: "hsl(40, 86%, 57%, 0.1)",
 				"mention-hover": "hsl(40, 86%, 57%, 0.06)",
-				jumped: "hsl(270, 86%, 57%, 0.1)",
+				"msg-jumped": "hsl(270, 86%, 57%, 0.1)",
 				"msg-hover": "rgba(0, 0, 0, 0.1)",
 				charcoal: {
 					50: "#f9f9f9",
