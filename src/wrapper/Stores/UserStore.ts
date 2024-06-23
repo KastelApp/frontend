@@ -43,7 +43,7 @@ export const useUserStore = create<UserStore>((set, get) => ({
 
         set({
             users: [
-                ...currentUsers,
+                ...currentUsers.filter((currentUser) => currentUser.id !== user.id),
                 {
                     ...{
                         avatar: null,

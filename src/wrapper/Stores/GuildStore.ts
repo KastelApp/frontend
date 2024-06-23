@@ -38,7 +38,7 @@ export const useGuildStore = create<GuildStore>((set, get) => ({
 
         set({
             guilds: [
-                ...currentGuilds,
+                ...currentGuilds.filter((currentGuild) => currentGuild.id !== guild.id),
                 {
                     ...foundGuild,
                     ...guild

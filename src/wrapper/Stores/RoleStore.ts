@@ -28,7 +28,7 @@ export const useRoleStore = create<RoleStore>((set, get) => ({
 
         set({
             roles: [
-                ...currentRoles,
+                ...currentRoles.filter((currentRole) => currentRole.id !== role.id),
                 {
                     ...foundRole,
                     ...role
