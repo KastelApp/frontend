@@ -256,7 +256,8 @@ export const usePerChannelStore = create(
                         hasMoreBefore: true,
                         editingStateId: null,
                         replyingStateId: null,
-                        typingUserIds: []
+                        typingUserIds: [],
+                        jumpingStateId: null
                     },
                     ...get().channels[channelId]
                 };
@@ -276,7 +277,8 @@ export const usePerChannelStore = create(
                             hasMoreBefore: true,
                             editingStateId: null,
                             replyingStateId: null,
-                            typingUserIds: []
+                            typingUserIds: [],
+                            jumpingStateId: null
                         }
                     }
                 })
@@ -300,7 +302,8 @@ export const usePerChannelStore = create(
                     hasMoreBefore: true,
                     editingStateId: null,
                     replyingStateId: null,
-                    typingUserIds: []
+                    typingUserIds: [],
+                    jumpingStateId: null
                 }
 
                 const channel = get().getChannel(channelId) ?? base;

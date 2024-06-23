@@ -45,6 +45,7 @@ const Message = memo(({
 		roleColor: null
 	});
 
+	const [highlighted, setHighlighted] = useState(false);
 
 	useEffect(() => {
 		if (message.replyingTo) {
@@ -193,11 +194,24 @@ const Message = memo(({
 			}
 		});
 
+		const perChannelSubscribed = usePerChannelStore.subscribe((state) => {
+			const currentChannel = state.getChannel(message.channelId);
+
+			if (!currentChannel.currentStates.includes("jumped") || currentChannel.jumpingStateId !== message.id) {
+				setHighlighted(false);
+
+				return;
+			}
+			
+			setHighlighted(true);
+		})
+
 
 		return () => {
 			messageSubscribed();
 			authorsSubscribed();
 			membersSubscribed();
+			perChannelSubscribed();
 		};
 	}, []);
 
@@ -238,16 +252,19 @@ const Message = memo(({
 		);
 	};
 
+
 	return (
 		<div
 			className={twMerge(
-				"group w-full hover:bg-msg-hover mb-2 relative",
+				"group w-full hover:bg-msg-hover mb-2 relative transition-all duration-300 ease-in",
 				className,
 				// mention ? "bg-mention hover:bg-mention-hover" : "",
 				message.mentions.users.includes(useUserStore.getState().getCurrentUser()?.id ?? "") ? "bg-mention hover:bg-mention-hover" : "",
+				highlighted ? "bg-msg-jumped" : "",
 				// todo: role check
 			)}
 			tabIndex={0}
+			id={`chatmessage-${message.channelId}-${message.id}`}
 		>
 			{replyingMessage && (
 				<div className="flex items-center ml-4 mb-1">
@@ -279,7 +296,32 @@ const Message = memo(({
 							}}>{message.mentions.users.includes(replyingMessage.authorId) ? "@" : ""}{replyingAuthor.user?.globalNickname ?? replyingAuthor?.user?.username}</span>
 						</div>
 					</PopOverData>
-					<p className="text-gray-300 text-2xs ml-2">{replyingMessage.content}</p>
+					<p className="text-gray-300 text-2xs ml-2 select-none cursor-pointer" onClick={() => {
+						usePerChannelStore.getState().updateChannel(message.channelId, {
+							currentStates: [...usePerChannelStore.getState().getChannel(message.channelId).currentStates, "jumped"],
+							jumpingStateId: replyingMessage.id
+						});
+
+						const foundMessage = document.getElementById(`chatmessage-${message.channelId}-${replyingMessage.id}`);
+
+						if (foundMessage) {
+							foundMessage.scrollIntoView({
+								behavior: "smooth",
+								block: "nearest",
+								inline: "start"
+							});
+						}
+
+						setTimeout(() => {
+							usePerChannelStore.getState().updateChannel(message.channelId, {
+								currentStates: usePerChannelStore.getState().getChannel(message.channelId).currentStates.filter((state) => state !== "jumped") ?? [],
+								jumpingStateId: null
+							});
+
+							console.log("timeout")
+						}, 1000);
+
+					}}>{replyingMessage.content}</p>
 				</div>
 			)}
 			<div className="flex">

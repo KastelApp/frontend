@@ -63,6 +63,8 @@ const MessageContainer = ({ placeholder, children, isReadOnly, sendMessage, chan
 	});
 
 	const [signal, setSignal] = useState<number>(0);
+	// ? the users usernames / nickname
+	const [typingUsers, setTypingUsers] = useState<string[]>([]);
 
 	useEffect(() => {
 		const subscribed = usePerChannelStore.subscribe((state, prevState) => {
@@ -81,6 +83,17 @@ const MessageContainer = ({ placeholder, children, isReadOnly, sendMessage, chan
 		channelIdRef.current = channelId;
 
 		const channel = getChannel(channelId);
+
+		if (channel.typingUserIds.length > 0) {
+			const typingUsers = channel.typingUserIds.map((userId) => {
+				const user = useUserStore.getState().getUser(userId);
+				const member = guildId ? useMemberStore.getState().getMember(guildId, userId) : null;
+
+				return member ? member.nickname ?? user?.globalNickname ?? user?.username : user?.globalNickname ?? user?.username;
+			}).filter((username) => typeof username === "string");
+
+			setTypingUsers(typingUsers);
+		}
 
 		if (!channel.currentStates.includes("replying")) {
 			setReplying(false);
@@ -200,9 +213,18 @@ const MessageContainer = ({ placeholder, children, isReadOnly, sendMessage, chan
 							</div>
 						</div>
 					</div>
-					<div className="flex items-center gap-1 mt-1 ml-2">
-						<TypingDots />
-						<span className="text-xs font-semibold text-gray-300">Testing is typing</span>
+					<div className="flex items-center gap-1 mt-1 ml-2 min-h-4 max-h-4">
+						{typingUsers.length > 0 && (
+							<>
+								<TypingDots />
+								{/* <span className="text-xs font-semibold text-gray-300">Testing is typing</span> */}
+								{/*//? we show "is typing" when one person is typing, and then "User and User are typing" when its two */}
+								{/*//? else we just show "User, User, User are typing" */}
+								<span className="text-xs font-semibold text-gray-300">
+									{typingUsers.length === 1 ? `${typingUsers[0]} is typing` : typingUsers.length === 2 ? `${typingUsers[0]} and ${typingUsers[1]} are typing` : `${typingUsers.slice(0, 2).join(", ")} and ${typingUsers.length - 2} others are typing`}
+								</span>
+							</>
+						)}
 					</div>
 				</div>
 			</div>

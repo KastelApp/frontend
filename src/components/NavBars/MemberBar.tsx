@@ -18,6 +18,7 @@ import { useRoleStore } from "@/wrapper/Stores/RoleStore.ts";
 import { Member, useMemberStore } from "@/wrapper/Stores/Members.ts";
 import { User, useUserStore } from "@/wrapper/Stores/UserStore.ts";
 import deepEqual from "fast-deep-equal";
+import TypingDots from "../MessageContainer/TypingDats.tsx";
 
 interface Section {
 	name: string; // ? two defaults, "offline" and "online"
@@ -43,6 +44,16 @@ const MemberItem = memo(({ member, color }: {
 	const { isOpen: isModalOpen, onOpen, onClose } = useDisclosure();
 
 	const { t } = useTranslationStore();
+
+	const [typing, setTyping] = useState(false);
+
+	useEffect(() => {
+		const int = setInterval(() => {
+			setTyping((prev) => !prev)
+		}, 2500)
+
+		return () => clearInterval(int);
+	}, [])
 
 	return (
 		<>
@@ -76,7 +87,7 @@ const MemberItem = memo(({ member, color }: {
 					>
 						<div className="flex items-center">
 							<Badge
-								content={""}
+								content={typing ? <TypingDots className="-rotate-90 mt-2.5 gap-0.5 w-1 flex flex-col" /> : ""}
 								placement="bottom-right"
 								// color={
 								// 	member.status === "online"
@@ -88,7 +99,7 @@ const MemberItem = memo(({ member, color }: {
 								// 				: "default"
 								// }
 								color="success"
-								className="mb-1"
+								className={twMerge("mb-1 transition-all duration-300 ease-out", typing ? "h-4 w-8 mr-1" : "")}
 							>
 								<Avatar src={member.user.avatar ?? useUserStore.getState().getDefaultAvatar(member.user.id)} size="sm" imgProps={{ className: "transition-none" }} />
 							</Badge>
