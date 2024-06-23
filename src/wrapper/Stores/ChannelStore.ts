@@ -71,6 +71,7 @@ export interface PerChannel {
      * The message id of the message you are replying to or editing
      */
     replyingStateId: string | null;
+    jumpingStateId: string | null;
     /**
      * The position of the scroll bar, used for switching channels and staying at the same position
      */
@@ -95,6 +96,10 @@ export interface PerChannel {
      * If something went wrong fetching the messages
      */
     fetchingError: boolean;
+    /**
+     * The user's who are currently typing
+     */
+    typingUserIds: string[];
 }
 
 export interface PerChannelStore {
@@ -250,7 +255,8 @@ export const usePerChannelStore = create(
                         hasMoreAfter: true,
                         hasMoreBefore: true,
                         editingStateId: null,
-                        replyingStateId: null
+                        replyingStateId: null,
+                        typingUserIds: []
                     },
                     ...get().channels[channelId]
                 };
@@ -269,7 +275,8 @@ export const usePerChannelStore = create(
                             hasMoreAfter: true,
                             hasMoreBefore: true,
                             editingStateId: null,
-                            replyingStateId: null
+                            replyingStateId: null,
+                            typingUserIds: []
                         }
                     }
                 })
@@ -292,7 +299,8 @@ export const usePerChannelStore = create(
                     hasMoreAfter: true,
                     hasMoreBefore: true,
                     editingStateId: null,
-                    replyingStateId: null
+                    replyingStateId: null,
+                    typingUserIds: []
                 }
 
                 const channel = get().getChannel(channelId) ?? base;
