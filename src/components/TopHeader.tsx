@@ -10,12 +10,13 @@ import {
 	Link,
 	Button,
 } from "@nextui-org/react";
-import { useTranslationStore } from "@/wrapper/Stores.ts";
+import { useTokenStore, useTranslationStore } from "@/wrapper/Stores.ts";
 import NextLink from "next/link";
 
 const TopHeader = () => {
 	const [isMenuOpen, setIsMenuOpen] = useState(false);
 	const { t } = useTranslationStore();
+	const { token } = useTokenStore();
 
 	const menuItems: {
 		title: string;
@@ -78,14 +79,22 @@ const TopHeader = () => {
 				</NavbarItem>
 			</NavbarContent>
 			<NavbarContent justify="end">
-				<NavbarItem>
-					<Link href="/login" as={NextLink}>{t("home.navbar.login")}</Link>
-				</NavbarItem>
-				<NavbarItem className="hidden lg:flex">
-					<Button as={NextLink} color="primary" href="/register" variant="flat">
-						{t("home.navbar.signup")}
-					</Button>
-				</NavbarItem>
+				{!token ? <>
+					<NavbarItem>
+						<Link href="/login" as={NextLink}>{t("home.navbar.login")}</Link>
+					</NavbarItem>
+					<NavbarItem className="hidden lg:flex">
+						<Button as={NextLink} color="primary" href="/register" variant="flat">
+							{t("home.navbar.signup")}
+						</Button>
+					</NavbarItem>
+				</> :
+					<NavbarItem>
+						<Button as={NextLink} color="primary" href="/app" variant="flat">
+							{t("home.navbar.app")}
+						</Button>
+					</NavbarItem>
+				}
 			</NavbarContent>
 			<NavbarMenu>
 				{menuItems.map((item, index) => (

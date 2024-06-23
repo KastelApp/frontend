@@ -1,5 +1,5 @@
 import HomeLayout from "@/layouts/HomeLayout.tsx";
-import { useTranslationStore } from "@/wrapper/Stores.ts";
+import { useTokenStore, useTranslationStore } from "@/wrapper/Stores.ts";
 import { Button } from "@nextui-org/react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -7,6 +7,7 @@ import SEO from "@/components/SEO.tsx";
 
 const IndexPage = () => {
 	const { t, setLanguage, fetchLanguages } = useTranslationStore();
+	const { token } = useTokenStore();
 
 	const [device, setDevice] = useState<string>("");
 
@@ -36,8 +37,8 @@ const IndexPage = () => {
 						<p className="text-medium mt-4">{t("home.subtitle")}</p>
 						<p className="text-medium">{t("home.subtitle2")}</p>
 						<div className="mt-8">
-							<Button href="/register" as={Link} size="lg" variant="flat" color="primary">
-								{t("home.getStarted")}
+							<Button href={token ? "/app" : "/register"} as={Link} size="lg" variant="flat" color="primary">
+								{token ? t("home.navbar.app") : t("home.getStarted")}
 							</Button>
 							<Button href="/download" as={Link} className="ml-4" size="lg" variant="flat" color="success">
 								{t("home.download")}{" "}
