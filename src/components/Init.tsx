@@ -53,7 +53,9 @@ const Init = ({
             return;
         }
 
-        if (isReady) return; // ? This is to prevent an infinite loop
+        if (client.isConnected) return; // ? This is to prevent an infinite loop
+
+        setIsReady(false);
 
         client.connect(token);
 
@@ -63,6 +65,8 @@ const Init = ({
 
         client.on("close", () => {
             setIsReady(false);
+
+            client.isConnected = false;
         });
     }, [router.pathname]);
 

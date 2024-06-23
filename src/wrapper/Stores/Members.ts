@@ -27,7 +27,7 @@ export const useMemberStore = create<MemberStore>((set, get) => ({
 
         set({
             members: [
-                ...currentMembers.filter((currentMember) => currentMember.userId !== member.userId && currentMember.guildId !== member.guildId),
+                ...currentMembers,
                 {
                     ...foundMember,
                     ...member

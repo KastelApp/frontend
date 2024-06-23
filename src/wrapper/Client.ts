@@ -15,6 +15,8 @@ class Client {
 
     #listeners = new Map<string, ((...args: unknown[]) => void)[]>();
 
+    public isConnected = false;
+
     public constructor() {
         this.api = useAPIStore.getState().api;
 
@@ -204,6 +206,8 @@ class Client {
         this.websocket = new Websocket(token);
 
         this.websocket.connect();
+
+        this.isConnected = true;
 
         this.websocket.on("ready", () => {
             this.emit("ready");
