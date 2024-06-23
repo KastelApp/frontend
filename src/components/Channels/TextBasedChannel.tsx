@@ -122,7 +122,7 @@ const TextBasedChannel = () => {
 
 			const newMessages = getMessages(channelId);
 
-			setRenderedMessages(newMessages);
+			setRenderedMessages(newMessages.toSorted((a, b) => a.creationDate.getTime() - b.creationDate.getTime()));
 			setFetching(false);
 			setInitialFetch(true);
 
@@ -140,12 +140,12 @@ const TextBasedChannel = () => {
 		setInitialFetch(true);
 
 		if (messageCache.length > 250) {
-			setRenderedMessages(messageCache.slice(0, 250));
+			setRenderedMessages(messageCache.slice(0, 250).toSorted((a, b) => a.creationDate.getTime() - b.creationDate.getTime()));
 
 			return;
 		}
 
-		setRenderedMessages(messageCache);
+		setRenderedMessages(messageCache.toSorted((a, b) => a.creationDate.getTime() - b.creationDate.getTime()));
 	};
 
 	useEffect(() => {
