@@ -6,6 +6,8 @@ import PermissionsDescriptions from "@/utils/PermissionsDescriptions.ts";
 import { useRouter } from "next/router";
 import { Role, useRoleStore } from "@/wrapper/Stores/RoleStore.ts";
 import deepEqual from "fast-deep-equal";
+import SaveChanges from "@/components/SaveChanges.tsx";
+import Permissions from "@/wrapper/Permissions.ts";
 
 const generateRgbAndHsv = (color: string) => {
 	return {
@@ -146,6 +148,14 @@ const Roles = () => {
 	const [selectedRole, setSelectedRole] = useState(roles[0]);
 	const [advancedMode, setAdvancedMode] = useState(false);
 
+	const [permissions, setPermissions] = useState<Permissions>(new Permissions([]));
+
+	useEffect(() => {
+		if (!selectedRole) return;
+
+		setPermissions(new Permissions(selectedRole.permissions));
+	}, [selectedRole]);
+
 	return (
 		<div className="mr-2 bg-accent rounded-lg p-4">
 			<h1 className="text-2xl font-semibold mb-4">Roles</h1>
@@ -203,21 +213,21 @@ const Roles = () => {
 									</div>
 									<Divider />
 									<div className="cursor-pointer h-full w-full">
-										<Switch checked={false}>
+										<Switch isSelected={false}>
 											Display role members separately from online members
 										</Switch>
 										<p className="text-gray-500 text-sm select-none">This will display role members in a separate category in the member list</p>
 									</div>
 									<Divider />
 									<div className="cursor-pointer h-full w-full">
-										<Switch checked={false}>
+										<Switch isSelected={false}>
 											Mentionable
 										</Switch>
 										<p className="text-gray-500 text-sm select-none">This will allow anyone to mention this role</p>
 									</div>
 									<Divider />
 									<div className="cursor-pointer h-full w-full">
-										<Switch checked={false}>
+										<Switch isSelected={false}>
 											Allow access to age restricted channels
 										</Switch>
 										<p className="text-gray-500 text-sm select-none">This will allow anyone with this role to access age restricted channels</p>
@@ -229,7 +239,7 @@ const Roles = () => {
 								<div className="flex flex-col space-y-6">
 									<div className="cursor-pointer h-full w-full flex">
 										<p className="text-white select-none font-semibold">Advanced Mode</p>
-										<Switch className="ml-auto" checked={advancedMode} onChange={() => setAdvancedMode(!advancedMode)} size="sm" />
+										<Switch className="ml-auto" isSelected={advancedMode} onChange={() => setAdvancedMode(!advancedMode)} size="sm" />
 									</div>
 									<Input
 										placeholder="Search Permissions"
@@ -244,7 +254,9 @@ const Roles = () => {
 											<div key={index} className="bg-accent rounded-md p-4">
 												<div className="flex">
 													<p className="text-white font-semibold">{permission.label}</p>
-													<Switch className="ml-auto" checked={false} size="sm" />
+													<Switch className="ml-auto" size="sm"
+													isSelected={permissions.has(permission.permissions, true)}
+													/>
 												</div>
 												<p className="text-gray-300 text-sm select-none mt-2">{permission.description}</p>
 											</div>
@@ -259,6 +271,7 @@ const Roles = () => {
 					</div>
 				</div>
 			</div>
+			<SaveChanges onCancel={() => console.log("Cancel")} onSave={() => console.log("Save")} isShowing />
 		</div>
 	);
 };

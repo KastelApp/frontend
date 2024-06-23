@@ -1,3 +1,11 @@
+import { permissions } from "@/utils/Constants.ts";
+
+type PermissionKeys = {
+    [K in keyof typeof permissions]: keyof (typeof permissions)[K]["subPermissions"];
+};
+
+type PermissionKey = PermissionKeys[keyof PermissionKeys] | "Administrator";
+
 // ? thanks kodarru for the permissions descriptions <3
 // todo: translation
 const permissionsDescriptions = {
@@ -5,9 +13,9 @@ const permissionsDescriptions = {
         groups: {
             ManageGuild: {
                 permissions: [
-                    "ChangeServerName",
-                    "ChangeServerDescription",
-                    "ChangeServerIcon",
+                    "ManageGuildName",
+                    "ManageGuildDescription",
+                    "ManageGuildIcon",
                     "ToggleMaintenance",
                     "AddBots",
                     "ViewAuditLog",
@@ -18,10 +26,10 @@ const permissionsDescriptions = {
             },
             ManageRoles: {
                 permissions: [
-                    "RoleName",
-                    "RoleColor",
-                    "RolePosition",
-                    "RolePermissions",
+                    "ManageRoleName",
+                    "ManageRoleColor",
+                    "ManageRolePosition",
+                    "ManageRolePermissions",
                     "CreateRole",
                     "DeleteRole",
                 ],
@@ -30,13 +38,13 @@ const permissionsDescriptions = {
             },
             ManageChannels: {
                 permissions: [
-                    "ChannelName",
-                    "ChannelPosition",
-                    "ChannelTopic",
-                    "ChannelSlowmode",
-                    "ChannelAgeRestriction",
-                    "ChannelInvites",
-                    "ChannelWebhooks",
+                    "ManageChannelName",
+                    "ManageChannelPosition",
+                    "ManageChannelTopic",
+                    "ManageChannelSlowmode",
+                    "ManageChannelAgeRestriction",
+                    "ManageChannelInvites",
+                    "ManageChannelWebhooks",
                     "CreateChannel",
                     "DeleteChannel",
                     "ManageChannelPermissionOverrides",
@@ -91,13 +99,13 @@ const permissionsDescriptions = {
             },
             ManageBasicMembers: {
                 permissions: [
-                    "MemberRoles",
-                    "MemberMute",
+                    "ManageMemberRoles",
+                    "TimeoutMembers",
                     "MemberDeafen",
                     "MemberMove",
                     "MemberVoice",
                     "Nickname",
-                    "ChangeNickname",
+                    "ManageNickname",
                 ],
                 label: "Manage Basic Members",
                 description: "Allows the user to manage basic member settings like roles, mute, and deafen.",
@@ -115,9 +123,9 @@ const permissionsDescriptions = {
             },
             ManageEmojis: {
                 permissions: [
-                    "EmojiName",
-                    "EmojiImage",
-                    "UploadEmoji",
+                    "ManageEmojiName",
+                    "ManageEmojiImage",
+                    "CreateEmoji",
                     "DeleteEmoji",
                 ],
                 label: "Manage Emojis",
@@ -137,19 +145,19 @@ const permissionsDescriptions = {
     advanced: {
         groups: {
             ManageGuildName: {
-                permissions: ["ChangeGuildName"],
+                permissions: ["ManageGuildName"],
                 label: "Change Guild Name",
                 description:
                     "Allows the user to change the guild name.",
             },
             ManageGuildDescription: {
-                permissions: ["ChangeGuildDescription"],
+                permissions: ["ManageGuildDescription"],
                 label: "Change Guild Description",
                 description:
                     "Allows the user to change the guild description.",
             },
             ManageGuildIcon: {
-                permissions: ["ChangeGuildIcon"],
+                permissions: ["ManageGuildIcon"],
                 label: "Change Guild Icon",
                 description:
                     "Allows the user to change the guild icon.",
@@ -179,25 +187,25 @@ const permissionsDescriptions = {
                     "Allows the user to manage the guild's vanity URL.",
             },
             RoleName: {
-                permissions: ["RoleName"],
+                permissions: ["ManageRoleName"],
                 label: "Change Role Name",
                 description:
                     "Allows the user to change the name of a role.",
             },
             RoleColor: {
-                permissions: ["RoleColor"],
+                permissions: ["ManageRoleColor"],
                 label: "Change Role Color",
                 description:
                     "Allows the user to change the color of a role.",
             },
             RolePosition: {
-                permissions: ["RolePosition"],
+                permissions: ["ManageRolePosition"],
                 label: "Change Role Position",
                 description:
                     "Allows the user to change the position of a role.",
             },
             RolePermissions: {
-                permissions: ["RolePermissions"],
+                permissions: ["ManageRolePermissions"],
                 label: "Change Role Permissions",
                 description:
                     "Allows the user to change the permissions of a role.",
@@ -215,43 +223,43 @@ const permissionsDescriptions = {
                     "Allows the user to delete roles.",
             },
             ChannelName: {
-                permissions: ["ChannelName"],
+                permissions: ["ManageChannelName"],
                 label: "Change Channel Name",
                 description:
                     "Allows the user to change the name of a channel.",
             },
             ChannelPosition: {
-                permissions: ["ChannelPosition"],
+                permissions: ["ManageChannelPosition"],
                 label: "Change Channel Position",
                 description:
                     "Allows the user to change the position of a channel.",
             },
             ChannelTopic: {
-                permissions: ["ChannelTopic"],
+                permissions: ["ManageChannelTopic"],
                 label: "Change Channel Topic",
                 description:
                     "Allows the user to change the topic of a channel.",
             },
             ChannelSlowmode: {
-                permissions: ["ChannelSlowmode"],
+                permissions: ["ManageChannelSlowmode"],
                 label: "Change Channel Slowmode",
                 description:
                     "Allows the user to change the slowmode of a channel.",
             },
             ChannelAgeRestriction: {
-                permissions: ["ChannelAgeRestriction"],
+                permissions: ["ManageChannelAgeRestriction"],
                 label: "Change Channel Age Restriction",
                 description:
                     "Allows the user to change the age restriction of a channel.",
             },
             ChannelInvites: {
-                permissions: ["ChannelInvites"],
+                permissions: ["ManageChannelInvites"],
                 label: "Change Channel Invites",
                 description:
                     "Allows the user to change the invites of a channel.",
             },
             ChannelWebhooks: {
-                permissions: ["ChannelWebhooks"],
+                permissions: ["ManageChannelWebhooks"],
                 label: "Change Channel Webhooks",
                 description:
                     "Allows the user to change the webhooks of a channel.",
@@ -335,13 +343,13 @@ const permissionsDescriptions = {
                     "Allows the user to bypass slowmode.",
             },
             MemberRoles: {
-                permissions: ["MemberRoles"],
+                permissions: ["ManageMemberRoles"],
                 label: "Change Member Roles",
                 description:
                     "Allows the user to change the roles of a member.",
             },
             MemberMute: {
-                permissions: ["MemberMute"],
+                permissions: ["TimeoutMembers"],
                 label: "Mute Member",
                 description:
                     "Allows the user to mute a member.",
@@ -365,19 +373,19 @@ const permissionsDescriptions = {
                     "Allows the user to change the voice of a member.",
             },
             EmojiName: {
-                permissions: ["EmojiName"],
+                permissions: ["ManageEmojiName"],
                 label: "Change Emoji Name",
                 description:
                     "Allows the user to change the name of an emoji.",
             },
             EmojiImage: {
-                permissions: ["EmojiImage"],
+                permissions: ["ManageEmojiImage"],
                 label: "Change Emoji Image",
                 description:
                     "Allows the user to change the image of an emoji.",
             },
             UploadEmoji: {
-                permissions: ["UploadEmoji"],
+                permissions: ["CreateEmoji"],
                 label: "Upload Emoji",
                 description:
                     "Allows the user to upload emojis.",
@@ -425,7 +433,7 @@ const permissionsDescriptions = {
                     "Allows the user to change their own nickname.",
             },
             ChangeNickname: {
-                permissions: ["ChangeNickname"],
+                permissions: ["ManageNickname"],
                 label: "Change Other Member's Nickname",
                 description:
                     "Allows the user to change other members' nicknames.",
@@ -450,6 +458,25 @@ const permissionsDescriptions = {
             },
         },
     },
-};
+} satisfies {
+    simple: {
+        groups: {
+            [key: string]: {
+                permissions: PermissionKey[];
+                label: string;
+                description: string;
+            };
+        }
+    },
+    advanced: {
+        groups: {
+            [key: string]: {
+                permissions: PermissionKey[];
+                label: string;
+                description: string;
+            };
+        }
+    }
+}
 
 export default permissionsDescriptions;
