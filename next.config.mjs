@@ -28,13 +28,13 @@ const nextConfig = {
 		 */
 		const redirects = [];
 
-		// if (process.env.NODE_ENV === "production") {
-		// 	redirects.push({
-		// 		source: "/playground/:slug*",
-		// 		destination: "/404",
-		// 		permanent: true,
-		// 	});
-		// }
+		if (process.env.NODE_ENV === "production") {
+			redirects.push({
+				source: "/playground/:slug*",
+				destination: "/404",
+				permanent: true,
+			});
+		}
 
 		return redirects;
 	},
