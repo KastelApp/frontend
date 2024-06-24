@@ -229,7 +229,7 @@ const DmNavBar = ({
 					))}
 				</div>
 			</div>
-			<div className={twMerge("w-full", isSideBarOpen ? "ml-[17rem]" : "")}>
+			<div className={twMerge("w-full", navBarLocation === NavBarLocation.Left ? isSideBarOpen ? "ml-[17rem]" : "" : "ml-[13rem]")}>
 				<TopNavBar
 					startContent={
 						<div className="text-gray-300 font-semibold">

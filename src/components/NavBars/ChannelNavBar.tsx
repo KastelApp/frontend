@@ -435,7 +435,7 @@ const ChannelNavBar = ({ children, isChannelHeaderHidden, isMemberBarHidden }: {
 			<div className="flex flex-row w-full h-screen m-0 overflow-x-auto">
 				<div
 					className={twMerge(
-						"fixed w-52 h-screen m-0  bg-accent overflow-y-auto",
+						"fixed w-52 h-screen m-0 bg-accent overflow-y-auto",
 						isSideBarOpen ? (navBarLocation === NavBarLocation.Left ? "ml-16" : "") : "hidden",
 					)}
 				>

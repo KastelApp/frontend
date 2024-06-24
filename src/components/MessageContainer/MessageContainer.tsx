@@ -10,6 +10,8 @@ import { Member, useMemberStore } from "@/wrapper/Stores/Members.ts";
 import { useMessageStore } from "@/wrapper/Stores/MessageStore.ts";
 import { useRoleStore } from "@/wrapper/Stores/RoleStore.ts";
 import fastDeepEqual from "fast-deep-equal";
+import { useSettingsStore } from "@/wrapper/Stores.ts";
+import { NavBarLocation } from "@/types/payloads/ready.ts";
 
 const FileComponent = ({ fileName, imageUrl }: { fileName?: string; imageUrl?: string; }) => {
 	return (
@@ -44,6 +46,8 @@ const MessageContainer = ({ placeholder, children, isReadOnly, sendMessage, chan
 	channelId: string;
 	guildId: string | null;
 }) => {
+	const { navBarLocation } = useSettingsStore();
+
 	const [files, setFiles] = useState<{ name: string; url: string; }[]>([]);
 	const [replying, setReplying] = useState<boolean>(false);
 
@@ -134,101 +138,101 @@ const MessageContainer = ({ placeholder, children, isReadOnly, sendMessage, chan
 	}, [channelId, guildId, signal]);
 
 	return (
-		<>
-			<div className="flex flex-col h-screen overflow-x-hidden">
-				{children}
-				<div className="mb-12 w-[98%] ml-2">
-					{replying && (
-						<div className="ml-1 w-full bg-accent rounded-md rounded-b-none flex select-none">
-							<div className="p-2">
-								Replying to <span className="font-semibold text-white" style={{
-									color: guildId ?
-										replyingAuthor.member ?
-											replyingAuthor.roleColor?.color ? `#${replyingAuthor.roleColor.color}` : "#CFDBFF"
-											: "#ACAEBF"
-										: "#CFDBFF"
-								}}>{replyingAuthor.member ? replyingAuthor.member.nickname ?? replyingAuthor.user?.globalNickname ?? replyingAuthor.user?.username : replyingAuthor.user?.globalNickname ?? replyingAuthor.user?.username}</span>
-							</div>
-							<div className="flex items-center gap-2 ml-auto mr-2">
-								<Tooltip content="Close Reply">
-									<X size={22} color="#acaebf" className="cursor-pointer" onClick={() => {
-										setReplying(false);
-										setReplyingAuthor({
-											member: null,
-											user: null,
-											roleColor: null
-										});
-
-										const channel = getChannel(channelIdRef.current);
-
-										usePerChannelStore.getState().updateChannel(channelIdRef.current, {
-											currentStates: channel.currentStates.filter((state) => state !== "replying") ?? [],
-											editingStateId: null,
-										});
-									}} />
-								</Tooltip>
-							</div>
+		<div className="flex flex-col h-screen overflow-x-hidden" style={{
+			maxHeight: navBarLocation === NavBarLocation.Bottom ? "calc(100vh - 4rem)" : ""
+		}}>
+			{children}
+			<div className="mb-12 w-[98%] ml-2">
+				{replying && (
+					<div className="ml-1 w-full bg-accent rounded-md rounded-b-none flex select-none">
+						<div className="p-2">
+							Replying to <span className="font-semibold text-white" style={{
+								color: guildId ?
+									replyingAuthor.member ?
+										replyingAuthor.roleColor?.color ? `#${replyingAuthor.roleColor.color}` : "#CFDBFF"
+										: "#ACAEBF"
+									: "#CFDBFF"
+							}}>{replyingAuthor.member ? replyingAuthor.member.nickname ?? replyingAuthor.user?.globalNickname ?? replyingAuthor.user?.username : replyingAuthor.user?.globalNickname ?? replyingAuthor.user?.username}</span>
 						</div>
-					)}
-					<div
-						className={twMerge(
-							"w-full ml-1 py-1 px-4 bg-gray-800 rounded-lg max-h-96 overflow-y-auto overflow-x-hidden",
-							replying ? "rounded-t-none" : "",
-						)}
-					>
-						<div className="mb-3 mt-2">
-							{files.length > 0 && (
-								<div className="flex flex-wrap justify-start mb-4 mt-4 gap-2">
-									{files.map((file, index) => (
-										<FileComponent key={index} fileName={file.name} imageUrl={file.url} />
-									))}
-									<Divider className="mt-2" />
-								</div>
-							)}
-							<div className={twMerge("flex", isReadOnly ? "opacity-45 cursor-not-allowed" : "")}>
-								<div className="mr-4">
-									{/*// todo: File select */}
-									<CirclePlus
-										size={22}
-										color="#acaebf"
-										className={twMerge(isReadOnly ? "" : "cursor-pointer")}
-										onClick={() => {
-											if (isReadOnly) return;
+						<div className="flex items-center gap-2 ml-auto mr-2">
+							<Tooltip content="Close Reply">
+								<X size={22} color="#acaebf" className="cursor-pointer" onClick={() => {
+									setReplying(false);
+									setReplyingAuthor({
+										member: null,
+										user: null,
+										roleColor: null
+									});
 
-											setFiles((old) => [
-												...old,
-												{
-													name: "test.png",
-													url: "https://development.kastelapp.com/icon-1.png",
-												},
-											]);
-										}}
-									/>
-								</div>
-								<SlateEditor sendMessage={sendMessage} placeholder={placeholder} isReadOnly={isReadOnly} readOnlyMessage="You do not have permission to send messages in this channel" />
-								<div className="flex ml-4 gap-2">
-									<SmilePlus size={22} color="#acaebf" className={twMerge(isReadOnly ? "" : "cursor-pointer")} />
-									<SendHorizontal size={22} color="#acaebf" className={twMerge(isReadOnly ? "" : "cursor-pointer")} />
-								</div>
-							</div>
+									const channel = getChannel(channelIdRef.current);
+
+									usePerChannelStore.getState().updateChannel(channelIdRef.current, {
+										currentStates: channel.currentStates.filter((state) => state !== "replying") ?? [],
+										editingStateId: null,
+									});
+								}} />
+							</Tooltip>
 						</div>
 					</div>
-					<div className="flex items-center gap-1 mt-1 ml-2 min-h-4 max-h-4">
-						{typingUsers.length > 0 && (
-							<>
-								<TypingDots />
-								{/* <span className="text-xs font-semibold text-gray-300">Testing is typing</span> */}
-								{/*//? we show "is typing" when one person is typing, and then "User and User are typing" when its two */}
-								{/*//? else we just show "User, User, User are typing" */}
-								<span className="text-xs font-semibold text-gray-300">
-									{typingUsers.length === 1 ? `${typingUsers[0]} is typing` : typingUsers.length === 2 ? `${typingUsers[0]} and ${typingUsers[1]} are typing` : `${typingUsers.slice(0, 2).join(", ")} and ${typingUsers.length - 2} others are typing`}
-								</span>
-							</>
+				)}
+				<div
+					className={twMerge(
+						"w-full ml-1 py-1 px-4 bg-gray-800 rounded-lg max-h-96 overflow-y-auto overflow-x-hidden",
+						replying ? "rounded-t-none" : "",
+					)}
+				>
+					<div className="mb-3 mt-2">
+						{files.length > 0 && (
+							<div className="flex flex-wrap justify-start mb-4 mt-4 gap-2">
+								{files.map((file, index) => (
+									<FileComponent key={index} fileName={file.name} imageUrl={file.url} />
+								))}
+								<Divider className="mt-2" />
+							</div>
 						)}
+						<div className={twMerge("flex", isReadOnly ? "opacity-45 cursor-not-allowed" : "")}>
+							<div className="mr-4">
+								{/*// todo: File select */}
+								<CirclePlus
+									size={22}
+									color="#acaebf"
+									className={twMerge(isReadOnly ? "" : "cursor-pointer")}
+									onClick={() => {
+										if (isReadOnly) return;
+
+										setFiles((old) => [
+											...old,
+											{
+												name: "test.png",
+												url: "https://development.kastelapp.com/icon-1.png",
+											},
+										]);
+									}}
+								/>
+							</div>
+							<SlateEditor sendMessage={sendMessage} placeholder={placeholder} isReadOnly={isReadOnly} readOnlyMessage="You do not have permission to send messages in this channel" />
+							<div className="flex ml-4 gap-2">
+								<SmilePlus size={22} color="#acaebf" className={twMerge(isReadOnly ? "" : "cursor-pointer")} />
+								<SendHorizontal size={22} color="#acaebf" className={twMerge(isReadOnly ? "" : "cursor-pointer")} />
+							</div>
+						</div>
 					</div>
 				</div>
+				<div className="flex items-center gap-1 mt-1 ml-2 min-h-4 max-h-4">
+					{typingUsers.length > 0 && (
+						<>
+							<TypingDots />
+							{/* <span className="text-xs font-semibold text-gray-300">Testing is typing</span> */}
+							{/*//? we show "is typing" when one person is typing, and then "User and User are typing" when its two */}
+							{/*//? else we just show "User, User, User are typing" */}
+							<span className="text-xs font-semibold text-gray-300">
+								{typingUsers.length === 1 ? `${typingUsers[0]} is typing` : typingUsers.length === 2 ? `${typingUsers[0]} and ${typingUsers[1]} are typing` : `${typingUsers.slice(0, 2).join(", ")} and ${typingUsers.length - 2} others are typing`}
+							</span>
+						</>
+					)}
+				</div>
 			</div>
-		</>
+		</div>
 	);
 };
 
