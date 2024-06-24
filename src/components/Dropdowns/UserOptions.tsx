@@ -10,7 +10,7 @@ import { Section } from "@/types/settings.ts";
 import { useRouter } from "next/router";
 import { useTokenStore } from "@/wrapper/Stores.ts";
 
-const UserOptions = ({ children }: { children: React.ReactElement | React.ReactElement[]; }) => {
+const UserOptions = ({ children, type = "context", orientation = "vertical" }: { children: React.ReactElement | React.ReactElement[]; type?: "normal" | "context", orientation?: "vertical" | "horizontal"; }) => {
 	const router = useRouter();
 	const { setToken } = useTokenStore();
 	const [statusOpen, setStatusOpen] = useState(false);
@@ -62,8 +62,8 @@ const UserOptions = ({ children }: { children: React.ReactElement | React.ReactE
 	};
 
 	const handleStatus = (status: "Online" | "Idle" | "DND" | "Invisible") => {
-		setStatusOpen(true);
 		setStatus(status);
+		setTimeout(() => setStatusOpen(true), 25)
 
 		// todo: handle other logic
 	};
@@ -107,7 +107,10 @@ const UserOptions = ({ children }: { children: React.ReactElement | React.ReactE
 				initialSection={"overview"}
 			/>
 			<div
+			// ? yeah yeah, it add's useless code but I do not care
 				onContextMenu={(e) => {
+					if (type !== "context") return;
+
 					e.preventDefault();
 
 					setDropdownOpen(!dropdownOpen);
@@ -119,9 +122,13 @@ const UserOptions = ({ children }: { children: React.ReactElement | React.ReactE
 			>
 				<CustomStatus isOpen={isOpen} onOpenChange={onOpenChange} onClose={onClose} />
 				<Dropdown
-					placement="right"
+					placement={orientation === "vertical" ? "right" : "top"}
 					closeOnSelect={false}
 					onOpenChange={(isOpen) => {
+						if (type === "normal") {
+							setDropdownOpen(isOpen);
+						}
+
 						if (!isOpen) {
 							setDropdownOpen(false);
 							setStatusOpen(false);
@@ -130,7 +137,7 @@ const UserOptions = ({ children }: { children: React.ReactElement | React.ReactE
 					isOpen={dropdownOpen}
 				>
 					<DropdownTrigger>
-						<button>{children}</button>
+						<button className="outline-none">{children}</button>
 					</DropdownTrigger>
 					<DropdownMenu aria-label="Static Actions" onAction={handleAction}>
 						<DropdownItem
@@ -154,7 +161,8 @@ const UserOptions = ({ children }: { children: React.ReactElement | React.ReactE
 									collapsed: { height: 0, opacity: 0 },
 									expanded: { height: "auto", opacity: 1 },
 								}}
-								transition={{ duration: 0.3 }}
+								transition={{ duration: 0.3, delay: 0.05 }}
+								
 							>
 								<Chip
 									onClick={() => handleStatus("Online")}

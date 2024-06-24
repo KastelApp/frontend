@@ -1,35 +1,18 @@
 // ? The left navbar is inspired by discord due to a ton of users wanting it since they are familiar with it.
 // ? Though the bottom bar is the one we will care about the most, the left navbar is still a good option for those who want it.
-import { memo, useCallback } from "react";
-import { Compass, Plus } from "lucide-react";
+import { useCallback } from "react";
+import { Compass } from "lucide-react";
 import { twMerge } from "tailwind-merge";
-import { Avatar, useDisclosure } from "@nextui-org/react";
+import { Avatar } from "@nextui-org/react";
 import Divider from "../Divider.tsx";
 import UserOptions from "../Dropdowns/UserOptions.tsx";
-import GuildModal from "../Modals/CreateGuild.tsx";
 import { useSettingsStore } from "@/wrapper/Stores.ts";
 import { useGuildStore } from "@/wrapper/Stores/GuildStore.ts";
 import { useChannelStore } from "@/wrapper/Stores/ChannelStore.ts";
 import { useRouter } from "next/router";
 import Draggables from "../DraggableComponent.tsx";
 import { NavBarIcon } from "./NavBarIcon.tsx";
-
-const Modal = memo(() => {
-	const { isOpen, onOpenChange, onClose } = useDisclosure();
-
-	return (
-		<>
-			<GuildModal isOpen={isOpen} onOpenChange={onOpenChange} onClose={onClose} />
-			<NavBarIcon
-				onClick={() => {
-					onOpenChange();
-				}}
-				icon={<Plus className="mt-1.5" color="#acaebf" absoluteStrokeWidth />}
-				description="Add Guild"
-			/>
-		</>
-	);
-});
+import AddGuildButton from "../AddGuildButton.tsx";
 
 const LeftNavBar = () => {
 	const { isSideBarOpen } = useSettingsStore();
@@ -108,14 +91,16 @@ const LeftNavBar = () => {
 						href="/app"
 						description="Right click to open context menu"
 						delay={1000}
+						isNormalIcon
 					/>
 					<Divider size={"[2px]"} />
 					{mappedGuilds()}
-					<Modal />
+					<AddGuildButton />
 					<NavBarIcon
 						icon={<Compass className="mt-1.5" color="#acaebf" absoluteStrokeWidth />}
 						description="Discover a guild"
 						isDisabled
+						isNormalIcon
 					/>
 				</div>
 			</div>

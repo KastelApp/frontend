@@ -3,8 +3,11 @@ import { useGuildStore } from "@/wrapper/Stores/GuildStore.ts";
 import { useRouter } from "next/router";
 import { useCallback, useEffect, useRef } from "react";
 import Draggables from "../DraggableComponent.tsx";
-import { Avatar } from "@nextui-org/react";
+import { Avatar, Divider } from "@nextui-org/react";
 import { NavBarIcon } from "./NavBarIcon.tsx";
+import { Compass, Home } from "lucide-react";
+import AddGuildButton from "../AddGuildButton.tsx";
+import UserOptions from "../Dropdowns/UserOptions.tsx";
 
 const BottomNavBar = () => {
     const { guilds } = useGuildStore();
@@ -33,7 +36,7 @@ const BottomNavBar = () => {
 
     const mappedGuilds = useCallback(() => {
         return <Draggables items={guilds} onDrop={console.log} orientation="horizontal"
-        className="horizontal-scroll-content flex gap-3 w-screen"
+            className="horizontal-scroll-content flex gap-3"
             render={(item, index) => {
                 let hasUnread = false;
 
@@ -84,8 +87,52 @@ const BottomNavBar = () => {
     return (
         <div className="fixed w-full z-20 h-14 items-center bottom-2 px-3">
             <div className="flex bg-charcoal-700 rounded-lg shadow-xl w-full h-full px-5 items-center">
-                <div className="h-full py-2 ml-5 overflow-x-auto overflow-y-hidden horizontal-scroll-container scrollbar-hide" ref={scrollContainerRef}>
+                <div className="flex gap-2">
+                    <NavBarIcon
+                        icon={<Home size={24} className="mt-1.5" color="#acaebf" absoluteStrokeWidth />}
+                        isBackgroundDisabled
+                        isNormalIcon
+                        description="Home"
+                        orientation="horizontal"
+                        href="/app"
+                    />
+                    <NavBarIcon
+                        icon={<Compass className="mt-1.5" color="#acaebf" absoluteStrokeWidth />}
+                        description="Discover a guild"
+                        isDisabled
+                        isNormalIcon
+                        orientation="horizontal"
+                    />
+                </div>
+                <Divider orientation="vertical" className="ml-2 h-10 w-0.5" />
+                <div className="h-full py-2 ml-3 overflow-x-auto overflow-y-hidden horizontal-scroll-container scrollbar-hide gap-3" ref={scrollContainerRef}>
                     {mappedGuilds()}
+                    <div className="horizontal-scroll-content flex">
+                        <AddGuildButton orientation="horizontal" />
+                    </div>
+                </div>
+                <div className="min-w-12" />
+                <div className="flex gap-2 ml-auto">
+                    <NavBarIcon
+                        icon={
+                            <div className="min-w-9 min-h-9 max-h-9 max-w-9">
+                                <Avatar
+                                    src="https://development.kastelapp.com/icon-1.png"
+                                    className="min-w-9 min-h-9 max-h-9 max-w-9 hover:scale-95 transition-all duration-300 ease-in-out transform"
+                                    imgProps={{ className: "transition-none" }}
+                                />
+                            </div>
+                        }
+                        isBackgroundDisabled
+                        badgeContent="9+"
+                        badgePosition="bottom-right"
+                        badgeColor="danger"
+                        InContent={UserOptions}
+                        delay={1000}
+                        isNormalIcon
+                        orientation="horizontal"
+                        type="normal"
+                    />
                 </div>
             </div>
         </div>
