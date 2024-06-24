@@ -9,10 +9,26 @@ import { useUserStore } from "./UserStore.ts";
 import fastDeepEqual from "fast-deep-equal";
 
 export enum MessageStates {
+    /**
+     * The message was sent successfully or received successfully
+     */
     Sent = "SENT",
+    /**
+     * This is a client side only state, its just to signify to the user that the message is being sent
+     */
     Sending = "SENDING",
+    /**
+     * The message failed to send (could be due to rate limits, internal server error's etc)
+     */
     Failed = "FAILED",
-    Unknown = "UNKNOWN" // ? treat this as failed 
+    /**
+     * If the message state is somehow unknown
+     */
+    Unknown = "UNKNOWN",
+    /**
+     * The message is shown as our internal system message and is closable (plus has a cool little bg color :3)
+     */
+    SystemMessage = "SYSTEM_MESSAGE"
 }
 
 export interface Message {
@@ -22,6 +38,9 @@ export interface Message {
     content: string;
     creationDate: Date;
     editedDate: Date | null;
+    /**
+     * Nonce is really only a client side thing (though bots can use it if they wish) it just stops duplicate messages in case of a hiccup
+     */
     nonce: string | null;
     replyingTo: string | null;
     attachments: unknown[];
@@ -35,7 +54,15 @@ export interface Message {
     pinned: boolean;
     deletable: boolean;
     invites: string[];
+    /**
+     * We allow will render Discord invite's as a normal invite, the join button will open a new tab though
+     * This is just so people can easily link two server's together
+     */
+    discordInvites: string[];
     channelId: string;
+    /**
+     * The state of the message
+     */
     state: MessageStates;
 }
 
@@ -113,6 +140,7 @@ export const useMessageStore = create<MessageStore>((set, get) => ({
             pinned: false,
             deletable: true,
             invites: [],
+            discordInvites: [],
             channelId,
             ...options,
             state: MessageStates.Sending
@@ -161,6 +189,7 @@ export const useMessageStore = create<MessageStore>((set, get) => ({
             // ? invites are like this: https://kastelapp.com/invite/inviteCode or https://kastel.dev/invitecode (or they may not have https:// so just kastel.dev/invitecode)
             // ? we need to get all the codes
             const invites = getInviteCodes(message.content)
+            const discordInvites = getInviteCodes(message.content, true);
 
             get().addMessage({
                 id: message.id,
@@ -179,6 +208,7 @@ export const useMessageStore = create<MessageStore>((set, get) => ({
                 channelId,
                 deletable: message.deletable,
                 invites,
+                discordInvites,
                 pinned: message.pinned,
                 state: MessageStates.Sent
             })

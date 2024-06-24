@@ -1,4 +1,10 @@
-const getInviteCodes = (message: string) => {
+/**
+ * Fetch invites from a message
+ * @param message The message to get the invites from
+ * @param discordOnly If we should fetch ONLY discord invites
+ * @returns The array of Invites found in the message
+ */
+const getInviteCodes = (message: string, discordOnly = false) => {
     const inviteCodes: string[] = [];
 
     const currentDomain = window.location.hostname;
@@ -12,7 +18,14 @@ const getInviteCodes = (message: string) => {
         new RegExp(`${currentDomain.replace(".", "\\.")}/invite/([\\w-]+)`, "g")
     ];
 
-    for (const pattern of patterns) {
+    const discordPatterns = [
+        /https:\/\/discord\.gg\/([\w-]+)/g,
+        /discord\.gg\/([\w-]+)/g,
+        /https:\/\/discord\.com\/invite\/([\w-]+)/g,
+        /discord\.com\/invite\/([\w-]+)/g
+    ];
+
+    for (const pattern of (discordOnly ? discordPatterns : patterns)) {
         let match;
 
         while ((match = pattern.exec(message)) !== null) {

@@ -158,6 +158,11 @@ const SlateEditor = ({ placeholder, isReadOnly, readOnlyMessage, sendMessage }: 
 
 							return ("type" in node && node.type === "blockquote") ? `> ${str}` : str;
 						}).join("\n");
+
+						if (!text.trim()) {
+							return;
+						}
+
 						sendMessage(text);
 
 						editor.children.map(() => {
