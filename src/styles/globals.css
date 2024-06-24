@@ -50,3 +50,7 @@
 		opacity: 0.3;
 	}
 }
+
+.item-drag {
+	-webkit-user-drag: none;
+}
