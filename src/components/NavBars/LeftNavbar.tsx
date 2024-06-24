@@ -138,7 +138,8 @@ const LeftNavBarIcon = memo(({
 	onClick,
 	delay,
 	hasUnReadMessages,
-	isActive
+	isActive,
+	orientation = "vertical",
 	// contextMenuItemsProps
 }: {
 	icon: React.ReactElement | React.ReactElement[];
@@ -156,6 +157,10 @@ const LeftNavBarIcon = memo(({
 	contextMenuItemsProps?: BaseContextMenuProps;
 	hasUnReadMessages?: boolean;
 	isActive?: boolean;
+	/**
+	  * Orientation of the draggables i.e vertical or horizontal
+	  */
+	orientation?: "vertical" | "horizontal";
 }) => {
 	const width = `w-${size}`;
 	const height = `h-${size}`;
@@ -183,7 +188,7 @@ const LeftNavBarIcon = memo(({
 
 	const TooltipOrNot = ({ children }: { children: React.ReactElement | React.ReactElement[]; }): React.ReactElement =>
 		description ? (
-			<Tooltip content={description} showArrow className="select-none" placement="right" delay={delay}>
+			<Tooltip content={description} showArrow className="select-none" placement={orientation === "vertical" ? "right" : "top"} delay={delay}>
 				{children}
 			</Tooltip>
 		) : (
@@ -223,10 +228,15 @@ const LeftNavBarIcon = memo(({
 			>
 
 				<div className={
-					twMerge(
+					orientation === "vertical" ? twMerge(
 						"w-1 h-0 bg-white absolute -left-2 rounded-r-lg z-10 group-hover:h-4",
 						hasUnReadMessages ? "h-2" : "",
 						isActive ? "!h-6" : "",
+						"transition-all ease-in-out duration-300"
+					) : twMerge(
+						"w-0 h-1 bg-white absolute -bottom-2 rounded-b-lg z-10 group-hover:w-4",
+						hasUnReadMessages ? "w-2" : "",
+						isActive ? "!w-6" : "",
 						"transition-all ease-in-out duration-300"
 					)
 				} />
@@ -257,4 +267,4 @@ export default LeftNavbar;
 
 export {
 	LeftNavBarIcon,
-}
+};

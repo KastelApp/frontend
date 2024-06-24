@@ -53,18 +53,19 @@
 
 /* custom css */
 
-.item-drag {
+/* .item-drag {
 	-webkit-user-drag: none;
 }
 
 .horizontal-scroll-container {
 	overflow-x: auto;
 	white-space: nowrap;
-	height: 100px; /* Adjust the height as needed */
 	display: flex;
 	align-items: center;
 }
 
 .horizontal-scroll-content {
 	display: inline-flex;
-}
+} */
+
+/* custom tailwind components */

@@ -1,6 +1,7 @@
 /* eslint-disable import/no-anonymous-default-export */
 import { nextui } from "@nextui-org/react";
 import scrollbar from "tailwind-scrollbar";
+import plugin from "tailwindcss/plugin.js"
 
 /** @type {import('tailwindcss').Config} */
 export default {
@@ -61,5 +62,18 @@ export default {
 			},
 		}),
 		scrollbar(),
+		plugin(({ addUtilities }) => {
+			addUtilities({
+				".horizontal-scroll-container": {
+					"@apply overflow-x-auto whitespace-nowrap flex items-center": {}
+				},
+				".horizontal-scroll-item": {
+					"@apply inline-block": {}
+				},
+				".item-drag": {
+					"-webkit-user-drag": "none"
+				}
+			})
+		})
 	],
 };

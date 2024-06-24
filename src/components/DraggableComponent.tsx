@@ -11,16 +11,27 @@ interface DraggableProps<T> {
      * Runs when the items are dropped, returns the new items array
      */
     onDrop: (items: T[]) => void;
+    /**
+     * Orientation of the draggables i.e vertical or horizontal
+     */
+    orientation?: "vertical" | "horizontal";
+    className?: string;
 }
 
 /**
  * Draggable Elements
  */
-const Draggables = <T,>({ items, onDrop, render }: DraggableProps<T>) => {
+const Draggables = <T,>({
+    items,
+    onDrop,
+    render,
+    orientation = "vertical",
+    className
+}: DraggableProps<T>) => {
     const [draggingIndex, setDraggingIndex] = useState<number | null>(null);
     const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
     const [dragItems, setDragItems] = useState(items);
-    const [dragOverPosition, setDragOverPosition] = useState<"above" | "below" | null>(null);
+    const [dragOverPosition, setDragOverPosition] = useState<"above" | "below" | "left" | "right" | null>(null);
 
     useEffect(() => {
         setDragItems(items);
@@ -34,9 +45,12 @@ const Draggables = <T,>({ items, onDrop, render }: DraggableProps<T>) => {
         e.preventDefault();
         if (index !== draggingIndex) {
             const rect = (e.target as HTMLDivElement).getBoundingClientRect();
-            const mouseY = e.clientY;
-            const middleY = (rect.top + rect.bottom) / 2;
-            setDragOverPosition(mouseY < middleY ? "above" : "below");
+            const mousePos = orientation === "vertical" ? e.clientY : e.clientX;
+            const middlePos = orientation === "vertical" ? (rect.top + rect.bottom) / 2 : (rect.left + rect.right) / 2;
+            const position = mousePos < middlePos
+                ? (orientation === "vertical" ? "above" : "left")
+                : (orientation === "vertical" ? "below" : "right");
+            setDragOverPosition(position);
             setDragOverIndex(index);
         }
     };
@@ -45,7 +59,9 @@ const Draggables = <T,>({ items, onDrop, render }: DraggableProps<T>) => {
         if (draggingIndex !== null && dragOverIndex !== null && draggingIndex !== dragOverIndex) {
             const updatedItems = [...dragItems];
             const [removed] = updatedItems.splice(draggingIndex, 1);
-            const dropPosition = dragOverPosition === "above" ? dragOverIndex : dragOverIndex + 1;
+            const dropPosition = (dragOverPosition === "above" || dragOverPosition === "left")
+                ? dragOverIndex
+                : dragOverIndex + 1;
             updatedItems.splice(dropPosition > draggingIndex ? dropPosition - 1 : dropPosition, 0, removed);
             setDragItems(updatedItems);
             onDrop(updatedItems);
@@ -62,7 +78,7 @@ const Draggables = <T,>({ items, onDrop, render }: DraggableProps<T>) => {
     };
 
     return (
-        <div className="flex flex-col">
+        <div className={className}>
             {dragItems.map((item, index) => (
                 <div
                     key={index}
@@ -75,6 +91,8 @@ const Draggables = <T,>({ items, onDrop, render }: DraggableProps<T>) => {
                         "rounded",
                         dragOverIndex === index && dragOverPosition === "above" && draggingIndex !== index ? "border-t-4 border-green-500" : "",
                         dragOverIndex === index && dragOverPosition === "below" && draggingIndex !== index ? "border-b-4 border-green-500" : "",
+                        dragOverIndex === index && dragOverPosition === "left" && draggingIndex !== index ? "border-l-4 border-green-500" : "",
+                        dragOverIndex === index && dragOverPosition === "right" && draggingIndex !== index ? "border-r-4 border-green-500" : "",
                     )}
                 >
                     {render(item, index)}
