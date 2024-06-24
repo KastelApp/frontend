@@ -127,7 +127,7 @@ const OverView = () => {
 									<div className="flex justify-between items-center mb-4">
 										<div>
 											<p className="text-lg font-semibold">Global Nickname</p>
-											<p className="text-md">{user?.globalNickname}</p>
+											<p className="text-md">{user?.globalNickname || "N/A"}</p>
 										</div>
 									</div>
 									<div className="flex justify-between items-center mb-4">
@@ -156,7 +156,7 @@ const OverView = () => {
 									<div className="flex justify-between items-center mb-4">
 										<div>
 											<p className="text-lg font-semibold">About Me</p>
-											<p className="text-md whitespace-pre-line overflow-hidden break-words">{user?.bio}</p>
+											<p className="text-md whitespace-pre-line overflow-hidden break-words">{user?.bio || "N/A"}</p>
 										</div>
 									</div>
 								</CardBody>
@@ -213,7 +213,8 @@ const OverView = () => {
 										invites: [],
 										pinned: false,
 										nonce: null,
-										replyingTo: null
+										replyingTo: null,
+										discordInvites: []
 									}}  disableButtons />
 								</div>
 							</div>
@@ -241,7 +242,8 @@ const OverView = () => {
 										invites: [],
 										pinned: false,
 										nonce: null,
-										replyingTo: null
+										replyingTo: null,
+										discordInvites: []
 									}} disableButtons />
 								</div>
 							</div>

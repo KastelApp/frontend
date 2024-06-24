@@ -2,6 +2,8 @@ import { create } from "zustand";
 import { useAPIStore } from "../Stores.ts";
 import Logger from "@/utils/Logger.ts";
 import FlagFields from "@/utils/FlagFields.ts";
+import safePromise from "@/utils/safePromise.ts";
+import { BaseError, isErrorResponse } from "@/types/http/error.ts";
 
 export interface User {
     id: string;
@@ -23,6 +25,18 @@ export interface User {
     defaultAvatar: string;
 }
 
+export interface UpdateUser {
+    username?: string;
+    avatar?: string | null;
+    bio?: string | null;
+    globalNickname?: string | null;
+    phoneNumber?: string | null;
+    email?: string;
+    tag?: string;
+    password?: string;
+    newPassword?: string;
+}
+
 export interface UserStore {
     users: User[];
     addUser(user: Partial<User>): void;
@@ -32,6 +46,23 @@ export interface UserStore {
     getDefaultAvatar(id: string): string;
     fetchUser(id: string): Promise<User | null>;
     isStaff(id: string): boolean;
+    patchUser(user: UpdateUser): Promise<{
+        success: boolean;
+        errors: {
+            username: boolean;
+            avatar: boolean;
+            bio: boolean;
+            globalNickname: boolean;
+            phoneNumber: boolean;
+            email: boolean;
+            tag: boolean;
+            password: boolean;
+            newPassword: boolean;
+            unknown: {
+                [key: string]: BaseError
+            }
+        }
+    }>;
 }
 
 export const useUserStore = create<UserStore>((set, get) => ({
@@ -90,7 +121,7 @@ export const useUserStore = create<UserStore>((set, get) => ({
         return null;
     },
     fetchUser: async () => {
-       return null;
+        return null;
     },
     removeUser: (id) => set((state) => ({ users: state.users.filter((user) => user.id !== id) })),
     getDefaultAvatar: (id) => `/icon-${BigInt(id) % 5n}.png`,
@@ -102,5 +133,94 @@ export const useUserStore = create<UserStore>((set, get) => ({
         const flags = new FlagFields(user.flags, user.publicFlags);
 
         return flags.has("StaffBadge") || flags.has("Staff");
+    },
+    patchUser: async (user) => {
+        const api = useAPIStore.getState().api;
+
+        if (!api) {
+            throw new Error("Failed to get API");
+        }
+
+        const [request, error] = await safePromise(api.patch({
+            url: "/users/@me",
+            data: user
+        }));
+
+        if (error || !request) {
+            return {
+                success: false,
+                errors: {
+                    avatar: false,
+                    bio: false,
+                    email: false,
+                    globalNickname: false,
+                    newPassword: false,
+                    password: false,
+                    phoneNumber: false,
+                    tag: false,
+                    username: false,
+                    unknown: {}
+                }
+            };
+        }
+
+        if (
+            isErrorResponse<{
+               user: {
+                code: "PasswordRequired" | "InvalidPassword" | "NothingToUpdate"
+                message: string
+               }
+               username: {
+                code: "MaxUsernames"
+                message: string
+               }
+               tag: {
+                code: "TagInUse"
+                message: string
+               }
+               email: {
+                code: "InvalidEmail"
+                message: string
+               }
+               bio: {
+                code: "InvalidType", // ? invalid type = too long of bio or wrong type (i.e boolean instead of string)
+                message: string
+               }
+            }>(request.body)
+        ) {
+            return {
+                success: false,
+                errors: {
+                    avatar: false,
+                    bio: request.body.errors.bio?.code === "InvalidType",
+                    email: request.body.errors.email?.code === "InvalidEmail",
+                    globalNickname: false,
+                    newPassword: false,
+                    password: request.body.errors.user?.code === "InvalidPassword",
+                    phoneNumber: false,
+                    tag: request.body.errors.tag?.code === "TagInUse",
+                    username: request.body.errors.username?.code === "MaxUsernames",
+                    unknown: Object.fromEntries(
+                        Object.entries(request.body.errors).filter(([, error]) => error.code !== "InvalidEmail" && error.code !== "InvalidPassword" && error.code !== "MaxUsernames" && error.code !== "TagInUse" && error.code !== "InvalidType")
+                    )
+                }
+            };
+        }
+
+        return {
+            success: true,
+            errors: {
+                avatar: false,
+                bio: false,
+                email: false,
+                globalNickname: false,
+                newPassword: false,
+                password: false,
+                phoneNumber: false,
+                tag: false,
+                username: false,
+                unknown: {}
+            }
+        }
     }
 }));

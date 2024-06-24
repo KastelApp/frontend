@@ -14,53 +14,179 @@ const EditUser = ({
 }) => {
 
 	const [user, setUser] = useState<User | undefined>(undefined);
+	const [globalNickname, setGlobalNickname] = useState<string>("");
+	const [username, setUsername] = useState<string>("");
+	const [tag, setTag] = useState<string>("");
+	// const [email, setEmail] = useState<string>("");
+	// const [phoneNumber, setPhoneNumber] = useState<string>("");
+	const [bio, setBio] = useState<string>("");
 
-	const { getCurrentUser } = useUserStore();
+	const [bioError, setBioError] = useState<string | null>(null);
+	const [globalNicknameError, setGlobalNicknameError] = useState<string | null>(null);
+	const [usernameError, setUsernameError] = useState<string | null>(null);
+	const [tagError, setTagError] = useState<string | null>(null);
+
+	const [error, setError] = useState<string | null>(null);
+
+	const { getCurrentUser, patchUser } = useUserStore();
 
 	useEffect(() => {
-		setUser(getCurrentUser());
+		const gotUser = getCurrentUser();
 
-		useUserStore.subscribe((stat) => setUser(stat.getCurrentUser()));
+		if (!gotUser) {
+			throw new Error("User not found");
+		}
+
+		setUser(gotUser);
+
+		setBio(gotUser.bio ?? "");
+		setGlobalNickname(gotUser.globalNickname ?? "");
+
+		useUserStore.subscribe((stat) => setUser(stat.getCurrentUser()!));
 	}, []);
 
+	const save = async () => {
+		const correctedBio = bio || null;
+		const correctedGlobalNickname = globalNickname || null;
+		
+		const globalNicknameUpdate = correctedGlobalNickname === user?.globalNickname ? undefined : correctedGlobalNickname;
+		const usernameUpdate = username ? username === user?.username ? null : username : null;
+		const tagUpdate = tag ? tag === user?.tag ? null : tag : null;
+		const bioUpdate = correctedBio === user?.bio ? undefined : correctedBio;
+
+		if (tagUpdate && (tagUpdate.length !== 4 || !/^[0-9]*$/.test(tagUpdate))) {
+			setTagError("Tag must be 4 numbers.");
+
+			return;
+		}
+
+		if (globalNicknameUpdate && (globalNicknameUpdate.length > 32 || globalNicknameUpdate.length < 1)) {
+			setGlobalNicknameError("Global Nickname must be less than 32 characters and more than 1 character.");
+
+			return;
+		}
+
+		if (usernameUpdate && (usernameUpdate.length > 32 || usernameUpdate.length < 3)) {
+			// ? done in two parts instead
+			if (usernameUpdate.length > 32) setUsernameError("Username must be less than 32 characters.");
+			if (usernameUpdate.length < 3) setUsernameError("Username must be more than 3 characters.");
+
+			return;
+		}
+
+		if (bioUpdate && bioUpdate.length > 300) {
+			setBioError("Bio must be less than 300 characters.");
+
+			return;
+		}
+
+		if (!usernameUpdate && !tagUpdate && bioUpdate === undefined && globalNicknameUpdate === undefined) {
+			setError("No changes were made.");
+
+			return;
+		}
+
+		const updated = await patchUser({
+			globalNickname: globalNicknameUpdate,
+			username: usernameUpdate ?? undefined,
+			tag: tagUpdate ?? undefined,
+			bio: bioUpdate,
+		});
+
+		if (updated.success) {
+			onClose();
+
+			// ? remove all errors for the next time
+			setBioError(null);
+			setGlobalNicknameError(null);
+			setUsernameError(null);
+			setTagError(null);
+			setError(null);
+
+			return;
+		}
+
+		if (updated.errors.bio) {
+			setBioError("Invalid Bio");
+		}
+
+		if (updated.errors.globalNickname) {
+			setGlobalNicknameError("Invalid Global Nickname");
+		}
+
+		if (updated.errors.username) {
+			setUsernameError("Invalid Username");
+		}
+
+		if (updated.errors.tag) {
+			setTagError("Invalid Tag");
+		}
+
+		if (updated.errors.globalNickname && updated.errors.username && updated.errors.tag && updated.errors.bio && Object.values(updated.errors.unknown).length < 1) {
+			setError("An unknown error occurred, please try again later.");
+		}
+
+		setError(Object.values(updated.errors.unknown)[0].message);
+	};
+
 	return (
-		<Modal isOpen={isOpen} onOpenChange={onOpenChange} placement="top-center">
+		<Modal isOpen={isOpen} onOpenChange={onOpenChange} placement="top-center" isDismissable={false} isKeyboardDismissDisabled hideCloseButton>
 			<ModalContent>
 				<ModalHeader className="flex flex-col gap-1">Edit User</ModalHeader>
 				<ModalBody>
 					<div>
 						<p className="text-lg font-semibold mb-2">Personal Information</p>
+						{error && <p className="text-danger text-center">{error}</p>}
 						<Input
 							label="Global Nickname"
-							placeholder="DarkerInk"
+							placeholder={user?.globalNickname ?? "Global Nickname"}
 							className="mb-4"
 							variant="bordered"
 							color="primary"
+							defaultValue={globalNickname || (user?.globalNickname ?? "")} // ? only so they can delete it if they wish
+							onChange={(e) => setGlobalNickname(e.target.value)}
+							isInvalid={!!globalNicknameError}
+							errorMessage={globalNicknameError}
+							maxLength={32}
 						/>
-						<div className="flex items-center">
-							<Input
-								placeholder={user?.username ?? "Unknown User"}
-								maxLength={32}
-								radius="sm"
-								className="flex-grow"
-								variant="bordered"
-								label="Username"
-								color="primary"
-								description="This is your username"
-							/>
-							<Input
-								placeholder={user?.tag ?? "0000"}
-								maxLength={4}
-								type="text"
-								pattern="[1-9][0-9]{3}"
-								className="w-32 ml-1"
-								variant="bordered"
-								radius="sm"
-								label="Tag"
-								errorMessage="Invalid Tag"
-								color="primary"
-								description="This is your tag"
-							/>
+						<div className="flex items-center space-x-2">
+							<div className="flex flex-grow">
+								<Input
+									placeholder={user?.username ?? "Unknown User"}
+									maxLength={32}
+									radius="sm"
+									className="flex-grow"
+									variant="bordered"
+									label="Username"
+									color="primary"
+									description="This is your username"
+									value={username}
+									onChange={(e) => setUsername(e.target.value)}
+									isInvalid={!!usernameError}
+									errorMessage={usernameError}
+								/>
+								<Input
+									placeholder={user?.tag ?? "0000"}
+									maxLength={4}
+									type="text"
+									pattern="[1-9][0-9]{3}"
+									className="w-32 ml-1"
+									variant="bordered"
+									radius="sm"
+									label="Tag"
+									errorMessage={tagError}
+									color="primary"
+									description="This is your tag"
+									value={tag}
+									onChange={(e) => {
+										// ? If its not a number we just ignore it
+										if (!/^[0-9]*$/.test(e.target.value)) return;
+
+										setTag(e.target.value);
+									}}
+									isInvalid={!!tagError}
+								/>
+							</div>
 						</div>
 						<Input
 							label="Email"
@@ -97,7 +223,11 @@ const EditUser = ({
 							variant="bordered"
 							color="primary"
 							maxRows={3}
-							defaultValue={user?.bio ?? ""}
+							defaultValue={bio || (user?.bio ?? "")}
+							onChange={(e) => setBio(e.target.value)}
+							maxLength={300}
+							isInvalid={!!bioError}
+							errorMessage={bioError}
 						/>
 					</div>
 				</ModalBody>
@@ -105,7 +235,7 @@ const EditUser = ({
 					<Button color="danger" variant="flat" onPress={onClose}>
 						Cancel
 					</Button>
-					<Button color="success" variant="flat" onPress={onClose}>
+					<Button color="success" variant="flat" onPress={save}>
 						Save
 					</Button>
 				</ModalFooter>
