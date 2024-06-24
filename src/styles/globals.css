@@ -63,8 +63,8 @@
 	height: 100px; /* Adjust the height as needed */
 	display: flex;
 	align-items: center;
-  }
-  
-  .horizontal-scroll-content {
+}
+
+.horizontal-scroll-content {
 	display: inline-flex;
-  }
+}
