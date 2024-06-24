@@ -64,7 +64,7 @@ const MessageContainer = ({ placeholder, children, isReadOnly, sendMessage, chan
 
 	const [signal, setSignal] = useState<number>(0);
 	// ? the users usernames / nickname
-	const [typingUsers, setTypingUsers] = useState<string[]>([]);
+	const [typingUsers, setTypingUsers] = useState<string[]>(["DarkerInk"]);
 
 	useEffect(() => {
 		const subscribed = usePerChannelStore.subscribe((state, prevState) => {

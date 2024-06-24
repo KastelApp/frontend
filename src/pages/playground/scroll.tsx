@@ -1,5 +1,5 @@
 import Draggables from "@/components/DraggableComponent.tsx";
-import { LeftNavBarIcon } from "@/components/NavBars/LeftNavbar.tsx";
+import { NavBarIcon } from "@/components/NavBars/NavBarIcon.tsx";
 import { Avatar } from "@nextui-org/react";
 import React, { useRef, useEffect } from "react";
 
@@ -30,7 +30,7 @@ const HorizontalScroll = () => {
                     className="horizontal-scroll-content flex gap-3 w-screen"
                     items={Array.from({ length: 100 }).map((_, i) => i.toString())}
                     render={(i) => (
-                        <LeftNavBarIcon
+                        <NavBarIcon
                             icon={
                                 <Avatar
                                     name={i.toString()}

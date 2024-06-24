@@ -496,7 +496,7 @@ const ChannelNavBar = ({ children, isChannelHeaderHidden, isMemberBarHidden }: {
 						))}
 					</div>
 				</div>
-				<div className={twMerge("w-full overflow-hidden", isSideBarOpen ? "ml-[17rem]" : "")}>
+				<div className={twMerge("w-full overflow-hidden", navBarLocation === NavBarLocation.Left ? isSideBarOpen ? "ml-[17rem]" : "" : "ml-[13rem]")}>
 					{!isChannelHeaderHidden &&
 						<TopNavBar
 							startContent={

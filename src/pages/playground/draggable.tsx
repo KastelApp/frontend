@@ -1,7 +1,7 @@
-import { LeftNavBarIcon } from "@/components/NavBars/LeftNavbar.tsx";
 import { useState } from "react";
 import Draggables from "@/components/DraggableComponent.tsx";
 import { Avatar } from "@nextui-org/react";
+import { NavBarIcon } from "@/components/NavBars/NavBarIcon.tsx";
 
 const TestDraggable = () => {
     const [items] = useState<{
@@ -27,7 +27,7 @@ const TestDraggable = () => {
                     console.log(items);
                 }}
                 render={(item, index) => {
-                    return <LeftNavBarIcon
+                    return <NavBarIcon
                         icon={
                             <Avatar
                                 name={item.name}

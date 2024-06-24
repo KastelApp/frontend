@@ -12,7 +12,7 @@ export const useSettingsStore = createTrackedSelector(
 	create<SettingsStore>((set, get) => ({
 		emojiPack: EmojiPack.Twemoji,
 		language: "en-US",
-		navBarLocation: NavBarLocation.Left,
+		navBarLocation: NavBarLocation.Bottom,
 		guildOrder: [],
 		privacy: 0,
 		theme: Theme.Dark,
