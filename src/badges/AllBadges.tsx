@@ -1,12 +1,12 @@
 import FlagFields from "@/utils/FlagFields.ts";
 import StaffBadge from "./Staff.tsx";
-import { Tooltip } from "@nextui-org/react";
 import BugHunterLevel1 from "./BugHunter1.tsx";
 import BugHunterLevel2 from "./BugHunter2.tsx";
 import BugHunterLevel3 from "./BugHunter3.tsx";
 import { publicFlags as pubFlags } from "@/utils/Constants.ts";
 import Sponsor from "./Sponsor.tsx";
 import { twMerge } from "tailwind-merge";
+import Tooltip from "@/components/ToolTip.tsx";
 
 /**
  * Just a small helper component to display all badges a user has.

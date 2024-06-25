@@ -1,10 +1,11 @@
 import AllBadges from "@/badges/AllBadges.tsx";
 import Message from "@/components/Message/Message.tsx";
 import EditUser from "@/components/Modals/EditUser.tsx";
+import Tooltip from "@/components/ToolTip.tsx";
 import Constants from "@/utils/Constants.ts";
 import { MessageStates } from "@/wrapper/Stores/MessageStore.ts";
 import { User, useUserStore } from "@/wrapper/Stores/UserStore.ts";
-import { Avatar, Badge, Button, Card, CardBody, Divider, Tooltip, useDisclosure } from "@nextui-org/react";
+import { Avatar, Badge, Button, Card, CardBody, Divider, useDisclosure } from "@nextui-org/react";
 import { Pencil, TriangleAlert, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 

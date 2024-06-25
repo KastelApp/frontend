@@ -35,7 +35,7 @@ export interface Channel {
 }
 
 export interface CustomChannel extends Channel {
-    channels: Channel[];
+    channels?: Channel[];
 }
 
 export interface ChannelStore {
@@ -46,7 +46,7 @@ export interface ChannelStore {
     getChannels(guildId: string): Channel[];
     getChannelsWithValidPermissions(guildId: string): Channel[];
     getTopChannel(guildId: string): Channel | undefined;
-    getSortedChannels(guildId: string, permissionCheck?: boolean): CustomChannel[];
+    getSortedChannels(guildId: string, permissionCheck?: boolean): Channel[];
     sendTyping(guildId: string, channelId: string): void;
     getGuildId(channelId: string): string | undefined;
 }
@@ -212,10 +212,24 @@ export const useChannelStore = create<ChannelStore>((set, get) => ({
 
         const sortedParentlessChannels = rawSortedChannels.filter(channel => !channel.parentId && channel.type !== channelTypes.GuildCategory).sort((a, b) => a.position - b.position);
 
-        return [
-            ...sortedParentlessChannels,
-            ...parentsOnly
+        // ? now we sort it back to a single array. That is: [parentless, parentless, parent, child, child, parent, parent, child, child]
+        // ? the double parent is an example of a case where a parent has no children
+        const sortedChannels = [
+            ...sortedParentlessChannels as Channel[],
         ];
+
+        for (const parent of parentsOnly) {
+            const children = parent.channels;
+
+            delete parent.channels;
+
+            sortedChannels.push(parent);
+
+            sortedChannels.push(...children!);
+        }
+
+        return sortedChannels;
+
     },
     sendTyping: (guildId, channelId) => {
         // ? We use `getChannelsWithValidPermissions` just so we don't have to check permissions our self

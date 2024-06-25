@@ -1,7 +1,8 @@
 import { User, useUserStore } from "@/wrapper/Stores/UserStore.ts";
-import { Button, Input, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Textarea, Tooltip } from "@nextui-org/react";
+import { Button, Input, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Textarea } from "@nextui-org/react";
 import { Check, X } from "lucide-react";
 import { useEffect, useState } from "react";
+import Tooltip from "../ToolTip.tsx";
 
 const EditUser = ({
 	isOpen,

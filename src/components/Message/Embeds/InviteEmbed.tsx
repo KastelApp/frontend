@@ -1,4 +1,5 @@
-import { Avatar, Button, Chip, Tooltip } from "@nextui-org/react";
+import Tooltip from "@/components/ToolTip.tsx";
+import { Avatar, Button, Chip } from "@nextui-org/react";
 import { BadgeCheck } from "lucide-react";
 
 const InviteEmbed = ({

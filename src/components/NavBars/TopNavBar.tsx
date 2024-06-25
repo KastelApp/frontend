@@ -1,6 +1,7 @@
-import { Divider, Tooltip } from "@nextui-org/react";
+import { Divider } from "@nextui-org/react";
 import { CircleHelp, Inbox, Menu, X } from "lucide-react";
 import { motion } from "framer-motion";
+import Tooltip from "../ToolTip.tsx";
 
 interface Icon {
 	icon: React.ReactElement | React.ReactElement[];

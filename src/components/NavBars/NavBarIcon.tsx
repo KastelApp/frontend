@@ -1,8 +1,9 @@
-import { Badge, Tooltip } from "@nextui-org/react";
+import { Badge } from "@nextui-org/react";
 import Link from "next/link";
 import { memo } from "react";
 import { twMerge } from "tailwind-merge";
 import { BaseContextMenuProps } from "../Dropdowns/BaseContextMenu.tsx";
+import Tooltip from "../ToolTip.tsx";
 
 const NavBarIcon = memo(({
     icon,

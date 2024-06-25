@@ -9,7 +9,6 @@ import {
 	SelectItem,
 	Textarea,
 	Divider,
-	Tooltip,
 } from "@nextui-org/react";
 import { X } from "lucide-react";
 import { User, useUserStore } from "@/wrapper/Stores/UserStore.ts";
@@ -17,6 +16,7 @@ import { useGuildStore } from "@/wrapper/Stores/GuildStore.ts";
 import { useChannelStore } from "@/wrapper/Stores/ChannelStore.ts";
 import SaveChanges from "@/components/SaveChanges.tsx";
 import useStateHistory from "@/hooks/useStateHistory.ts";
+import Tooltip from "@/components/ToolTip.tsx";
 
 const SwitchOption = ({ title, description, value, setValue }: { title: string; description?: string; value: boolean; setValue: (value: boolean) => void; }) => {
 	return (

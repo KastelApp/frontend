@@ -10,7 +10,7 @@ interface DraggableProps<T> {
     /**
      * Runs when the items are dropped, returns the new items array
      */
-    onDrop: (items: T[]) => void;
+    onDrop: (items: T[], prev: T[]) => void;
     /**
      * Orientation of the draggables i.e vertical or horizontal
      */
@@ -57,6 +57,7 @@ const Draggables = <T,>({
 
     const handleDrop = () => {
         if (draggingIndex !== null && dragOverIndex !== null && draggingIndex !== dragOverIndex) {
+            const oldDropItems = [...dragItems];
             const updatedItems = [...dragItems];
             const [removed] = updatedItems.splice(draggingIndex, 1);
             const dropPosition = (dragOverPosition === "above" || dragOverPosition === "left")
@@ -64,7 +65,7 @@ const Draggables = <T,>({
                 : dragOverIndex + 1;
             updatedItems.splice(dropPosition > draggingIndex ? dropPosition - 1 : dropPosition, 0, removed);
             setDragItems(updatedItems);
-            onDrop(updatedItems);
+            onDrop(updatedItems, oldDropItems);
         }
         setDraggingIndex(null);
         setDragOverIndex(null);

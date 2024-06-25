@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Tabs, Tab, Button, Input, Switch, Chip, Divider, Popover, PopoverTrigger, PopoverContent, Tooltip } from "@nextui-org/react";
+import { Tabs, Tab, Button, Input, Switch, Chip, Divider, Popover, PopoverTrigger, PopoverContent } from "@nextui-org/react";
 import { useColor, ColorPicker as CustomColorPicker, ColorService } from "react-color-palette";
 import { Trash } from "lucide-react";
 import PermissionsDescriptions from "@/utils/PermissionsDescriptions.ts";
@@ -8,6 +8,7 @@ import { Role, useRoleStore } from "@/wrapper/Stores/RoleStore.ts";
 import deepEqual from "fast-deep-equal";
 import SaveChanges from "@/components/SaveChanges.tsx";
 import Permissions from "@/wrapper/Permissions.ts";
+import Tooltip from "@/components/ToolTip.tsx";
 
 const generateRgbAndHsv = (color: string) => {
 	return {

@@ -1,4 +1,4 @@
-import { Avatar, Chip, Popover, PopoverContent, PopoverTrigger, Tooltip, useDisclosure } from "@nextui-org/react";
+import { Avatar, Chip, Popover, PopoverContent, PopoverTrigger, useDisclosure } from "@nextui-org/react";
 import UserPopover from "@/components/Popovers/UserPopover.tsx";
 import { memo, useEffect, useState } from "react";
 import { Pen, Reply, Trash2, Ellipsis } from "lucide-react";
@@ -13,6 +13,7 @@ import fastDeepEqual from "fast-deep-equal";
 import { Member, useMemberStore } from "@/wrapper/Stores/Members.ts";
 import { useChannelStore, usePerChannelStore } from "@/wrapper/Stores/ChannelStore.ts";
 import { useRoleStore } from "@/wrapper/Stores/RoleStore.ts";
+import Tooltip from "../ToolTip.tsx";
 
 const Message = memo(({
 	className,
@@ -350,7 +351,7 @@ const Message = memo(({
 									{tag}
 								</Chip>
 							)} */}
-							<Tooltip content="Saturday, May 11. 2024 12:00 PM" placement="top">
+							<Tooltip content="Saturday, May 11. 2024 12:00 PM" placement="top" delay={500}>
 								<span className="text-gray-400 text-2xs mt-1 ml-1 select-none">{new Date(message.creationDate).toLocaleString()}</span>
 							</Tooltip>
 						</span>

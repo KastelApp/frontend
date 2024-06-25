@@ -40,6 +40,7 @@ import ChannelIcon from "../ChannelIcon.tsx";
 import GuildIcon from "../GuildIcon.tsx";
 import { useRouter } from "next/router";
 import Link from "next/link";
+import Draggables from "../DraggableComponent.tsx";
 
 const Channel = ({
 	startContent,
@@ -62,7 +63,7 @@ const Channel = ({
 	isActive?: boolean;
 	link?: string;
 }) => {
-	const LinkMaybe = ({ children }: { children: React.ReactElement; }) => link ? <Link href={link} passHref>{children}</Link> : <>{children}</>;
+	const LinkMaybe = ({ children }: { children: React.ReactElement; }) => link ? <Link href={link} passHref className="item-drag">{children}</Link> : <>{children}</>;
 
 	return (
 		<div className="first:mt-2">
@@ -93,41 +94,31 @@ interface Channel {
 	name: string;
 	icon?: React.ReactElement | React.ReactElement[];
 	description?: string | null;
-	channels?: Channel[];
 	hasUnread?: boolean;
 	id: string;
 	link?: string;
+	type?: number;
 }
 
-const HandleChannels = ({ channel, onClick, currentChannelId }: { channel: Channel, onClick?: (e: React.MouseEvent) => void; currentChannelId: string; }) => {
+const HandleChannels = ({ channel, onClick, currentChannelId, onDrop }: {
+	channel: Channel,
+	onClick?: (e: React.MouseEvent) => void;
+	currentChannelId: string;
+	onDrop: (items: Channel[]) => void;
+}) => {
 	return (
 		<div>
 			<Channel
 				text={channel.name}
-				endContent={channel.channels ? <ChevronDown size={20} color="#acaebf" /> : <Settings size={16} onClick={onClick} />}
+				endContent={channel.type === channelTypes.GuildCategory ? <ChevronDown size={20} color="#acaebf" /> : <Settings size={16} onClick={onClick} />}
 				startContent={channel.icon}
-				shouldHideHover={Boolean(channel.channels)}
-				onlyShowOnHover={!channel.channels}
+				shouldHideHover={channel.type === channelTypes.GuildCategory}
+				onlyShowOnHover={channel.type !== channelTypes.GuildCategory}
 				hasUnreadMessages={channel.hasUnread}
 				isActive={channel.id === currentChannelId}
 				link={channel.link}
+				no-drag={channel.type === channelTypes.GuildCategory}
 			/>
-			{channel.channels && (
-				<div className="ml-1">
-					{channel.channels?.map((subChannel, index) => (
-						<Channel
-							key={index}
-							text={subChannel.name}
-							startContent={subChannel.icon}
-							endContent={<Settings size={16} onClick={onClick} />}
-							onlyShowOnHover
-							hasUnreadMessages={subChannel.hasUnread}
-							isActive={subChannel.id === currentChannelId}
-							link={subChannel.link}
-						/>
-					))}
-				</div>
-			)}
 		</div>
 	);
 };
@@ -243,16 +234,17 @@ const ChannelNavBar = ({ children, isChannelHeaderHidden, isMemberBarHidden }: {
 					handledChannels.push({
 						name: channel.name,
 						id: channel.id,
-						channels: channel.channels.map((child) => {
-							return {
-								name: child.name,
-								id: child.id,
-								link: `/app/guilds/${currentGuildId}/channels/${child.id}`,
-								icon: <ChannelIcon type={child.type} />,
-								description: child.description,
-								hasUnread: foundGuild.channelProperties.find((p) => p.channelId === child.id)?.lastMessageAckId !== child.lastMessageId
-							};
-						}),
+						type: channel.type,
+						// channels: channel.channels.map((child) => {
+						// 	return {
+						// 		name: child.name,
+						// 		id: child.id,
+						// 		link: `/app/guilds/${currentGuildId}/channels/${child.id}`,
+						// 		icon: <ChannelIcon type={child.type} />,
+						// 		description: child.description,
+						// 		hasUnread: foundGuild.channelProperties.find((p) => p.channelId === child.id)?.lastMessageAckId !== child.lastMessageId
+						// 	};
+						// }),
 					});
 
 					break;
@@ -263,15 +255,14 @@ const ChannelNavBar = ({ children, isChannelHeaderHidden, isMemberBarHidden }: {
 				case channelTypes.GuildNewMember:
 				case channelTypes.GuildNews:
 				case channelTypes.GuildRules: {
-					if (handledChannels.find((c) => c.id === channel.parentId || c.id === channel.id)) break;
-
 					handledChannels.push({
 						name: channel.name,
 						id: channel.id,
 						link: `/app/guilds/${currentGuildId}/channels/${channel.id}`,
 						icon: <ChannelIcon type={channel.type} />,
 						description: channel.description,
-						hasUnread: foundGuild.channelProperties.find((p) => p.channelId === channel.id)?.lastMessageAckId !== channel.lastMessageId
+						hasUnread: foundGuild.channelProperties.find((p) => p.channelId === channel.id)?.lastMessageAckId !== channel.lastMessageId,
+						type: channel.type,
 					});
 				}
 			}
@@ -486,14 +477,33 @@ const ChannelNavBar = ({ children, isChannelHeaderHidden, isMemberBarHidden }: {
 								divider={index === builtInChannels.length - 1}
 							/>
 						))}
-						{normalChannels.map((channel, index) => (
-							<HandleChannels key={index} channel={channel} onClick={(e) => {
-								e.stopPropagation();
-								e.nativeEvent.preventDefault();
+						<Draggables
+							items={normalChannels}
+							onDrop={(items) => {
+								// ? we now need to resort them like the custom channels
+							}}
+							render={(channel) => (
+								<Channel
+									text={channel.name}
+									endContent={channel.type === channelTypes.GuildCategory ? <ChevronDown size={20} color="#acaebf" /> :
+										<Settings size={16}
+											onClick={(e) => {
+												e.stopPropagation();
+												e.nativeEvent.preventDefault();
 
-								onOpenChangeChannelSettings();
-							}} currentChannelId={currentChannelId} />
-						))}
+												onOpenChangeChannelSettings();
+											}} />}
+									startContent={channel.icon}
+									shouldHideHover={channel.type === channelTypes.GuildCategory}
+									onlyShowOnHover={channel.type !== channelTypes.GuildCategory}
+									hasUnreadMessages={channel.hasUnread}
+									isActive={channel.id === currentChannelId}
+									link={channel.link}
+									no-drag={channel.type === channelTypes.GuildCategory}
+									key={channel.id}
+								/>
+							)}
+						/>
 					</div>
 				</div>
 				<div className={twMerge("w-full overflow-hidden", navBarLocation === NavBarLocation.Left ? isSideBarOpen ? "ml-[17rem]" : "" : "ml-[13rem]")}>

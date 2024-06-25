@@ -1,6 +1,6 @@
 import { X, Pen, CirclePlus, SendHorizontal, SmilePlus } from "lucide-react";
 import SlateEditor from "./SlateEditor.tsx";
-import { Divider, Image, Tooltip } from "@nextui-org/react";
+import { Divider, Image } from "@nextui-org/react";
 import TypingDots from "./TypingDats.tsx";
 import { useEffect, useRef, useState } from "react";
 import { twMerge } from "tailwind-merge";
@@ -12,6 +12,7 @@ import { useRoleStore } from "@/wrapper/Stores/RoleStore.ts";
 import fastDeepEqual from "fast-deep-equal";
 import { useSettingsStore } from "@/wrapper/Stores.ts";
 import { NavBarLocation } from "@/types/payloads/ready.ts";
+import Tooltip from "../ToolTip.tsx";
 
 const FileComponent = ({ fileName, imageUrl }: { fileName?: string; imageUrl?: string; }) => {
 	return (
