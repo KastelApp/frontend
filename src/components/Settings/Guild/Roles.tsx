@@ -8,7 +8,7 @@ import { Role, useRoleStore } from "@/wrapper/Stores/RoleStore.ts";
 import deepEqual from "fast-deep-equal";
 import SaveChanges from "@/components/SaveChanges.tsx";
 import Permissions from "@/wrapper/Permissions.ts";
-import Tooltip from "@/components/ToolTip.tsx";
+import Tooltip from "@/components/Tooltip.tsx";
 
 const generateRgbAndHsv = (color: string) => {
 	return {

@@ -1,4 +1,4 @@
-import Tooltip from "@/components/ToolTip.tsx";
+import Tooltip from "@/components/Tooltip.tsx";
 import { Avatar, Button, Chip } from "@nextui-org/react";
 import { BadgeCheck } from "lucide-react";
 

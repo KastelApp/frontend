@@ -3,7 +3,7 @@ import Link from "next/link";
 import { memo } from "react";
 import { twMerge } from "tailwind-merge";
 import { BaseContextMenuProps } from "../Dropdowns/BaseContextMenu.tsx";
-import Tooltip from "../ToolTip.tsx";
+import Tooltip from "../Tooltip.tsx";
 
 const NavBarIcon = memo(({
     icon,

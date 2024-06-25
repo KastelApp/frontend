@@ -1,7 +1,7 @@
 import StaffBadge from "@/badges/Staff.tsx";
 import { GuildFeatures } from "@/utils/Constants.ts";
 import { BadgeCheck } from "lucide-react";
-import Tooltip from "./ToolTip.tsx";
+import Tooltip from "./Tooltip.tsx";
 
 const GetGuildText = ({ features }: { features: string[]; }) => {
     let texts = [];

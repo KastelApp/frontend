@@ -13,7 +13,7 @@ import fastDeepEqual from "fast-deep-equal";
 import { Member, useMemberStore } from "@/wrapper/Stores/Members.ts";
 import { useChannelStore, usePerChannelStore } from "@/wrapper/Stores/ChannelStore.ts";
 import { useRoleStore } from "@/wrapper/Stores/RoleStore.ts";
-import Tooltip from "../ToolTip.tsx";
+import Tooltip from "../Tooltip.tsx";
 
 const Message = memo(({
 	className,

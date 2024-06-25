@@ -6,7 +6,7 @@ import BugHunterLevel3 from "./BugHunter3.tsx";
 import { publicFlags as pubFlags } from "@/utils/Constants.ts";
 import Sponsor from "./Sponsor.tsx";
 import { twMerge } from "tailwind-merge";
-import Tooltip from "@/components/ToolTip.tsx";
+import Tooltip from "@/components/Tooltip.tsx";
 
 /**
  * Just a small helper component to display all badges a user has.

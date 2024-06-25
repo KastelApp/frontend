@@ -12,7 +12,7 @@ import { useRoleStore } from "@/wrapper/Stores/RoleStore.ts";
 import fastDeepEqual from "fast-deep-equal";
 import { useSettingsStore } from "@/wrapper/Stores.ts";
 import { NavBarLocation } from "@/types/payloads/ready.ts";
-import Tooltip from "../ToolTip.tsx";
+import Tooltip from "../Tooltip.tsx";
 
 const FileComponent = ({ fileName, imageUrl }: { fileName?: string; imageUrl?: string; }) => {
 	return (
