@@ -23,6 +23,12 @@ export interface User {
     isSystem: boolean;
     isBot: boolean;
     defaultAvatar: string;
+    metaData: {
+        /**
+         * The user has no bio, do not make a API request (only set after initial fetch)
+         */
+        bioless: boolean
+    }
 }
 
 export interface UpdateUser {
@@ -63,6 +69,7 @@ export interface UserStore {
             }
         }
     }>;
+    updateUser(user: Partial<User>): void;
 }
 
 export const useUserStore = create<UserStore>((set, get) => ({
@@ -93,7 +100,10 @@ export const useUserStore = create<UserStore>((set, get) => ({
                         username: "Unknown User",
                         isBot: false,
                         isSystem: false,
-                        defaultAvatar: get().getDefaultAvatar(user.id ?? "0")
+                        defaultAvatar: get().getDefaultAvatar(user.id ?? "0"),
+                        metaData: {
+                            bioless: false
+                        }
                     },
                     ...foundUser,
                     ...user
@@ -222,5 +232,25 @@ export const useUserStore = create<UserStore>((set, get) => ({
                 unknown: {}
             }
         }
+    },
+    updateUser: (user) => {
+        const gotUser = get().getUser(user.id!);
+
+        if (!gotUser) {
+            Logger.error("Failed to get user", "UserStore | updateUser()");
+            return;
+        }
+
+        const newUser = {
+            ...gotUser,
+            ...user
+        };
+
+        set({
+            users: [
+                ...get().users.filter((currentUser) => currentUser.id !== user.id),
+                newUser
+            ]
+        })
     }
 }));

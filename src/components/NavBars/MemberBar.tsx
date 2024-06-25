@@ -1,4 +1,4 @@
-import { useGuildSettingsStore, useTranslationStore } from "@/wrapper/Stores.ts";
+import { useAPIStore, useGuildSettingsStore, useTranslationStore } from "@/wrapper/Stores.ts";
 import {
 	Avatar,
 	Badge,
@@ -76,13 +76,34 @@ const MemberItem = memo(({ member, color }: {
 			>
 				<PopoverTrigger>
 					<div
-						className="flex items-center justify-between w-full h-12 px-2 cursor-pointer rounded-lg hover:bg-slate-800 relative max-w-48"
-						onClick={() => {
-							setLoading(true);
-
-							setTimeout(() => {
+						className="flex items-center justify-=between w-full h-12 px-2 cursor-pointer rounded-lg hover:bg-slate-800 relative max-w-48"
+						onClick={async () => {
+							if (member.user.metaData.bioless || member.user.bio !== null) {
 								setLoading(false);
-							}, 1000);
+
+								return;
+							} 
+
+							const api = useAPIStore.getState().api;
+
+							const profile = await api.get<unknown, {
+								// TODO: Add connections (Discord, Twitter (X), Github, Steam, Spotify (Not sure if we can do this one), Reddit, Youtube, Twitch)
+								bio: string | null; 
+								connections: unknown[];
+								mutualFriends: string[];
+								mutualGuilds: string[];
+							}>({
+								url: `/users/${member.user.id}/profile`,
+							});
+
+							if (profile.ok && profile.status === 200) {
+								useUserStore.getState().updateUser({
+									bio: profile.body.bio,
+									id: member.user.id,
+								})
+							}
+
+							setLoading(false);
 						}}
 					>
 						<div className="flex items-center">
