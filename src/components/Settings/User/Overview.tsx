@@ -47,6 +47,8 @@ const OverView = () => {
 
 	const { isOpen, onClose, onOpenChange } = useDisclosure();
 
+	if (!user) return null;
+
 	return (
 		<div>
 			<EditUser isOpen={isOpen} onClose={onClose} onOpenChange={onOpenChange} />
@@ -109,7 +111,7 @@ const OverView = () => {
 							</div>
 						</div>
 						<Divider className="mt-2" />
-						{!user?.emailVerified && (
+						{!user.emailVerified && (
 							<div className="w-full bg-warning/25 border-1 border-warning rounded-md">
 								<div className="flex">
 									<div className="p-2 flex">

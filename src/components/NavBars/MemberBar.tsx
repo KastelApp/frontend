@@ -49,11 +49,11 @@ const MemberItem = memo(({ member, color }: {
 
 	useEffect(() => {
 		const int = setInterval(() => {
-			setTyping((prev) => !prev)
-		}, 2500)
+			setTyping((prev) => !prev);
+		}, 2500);
 
 		return () => clearInterval(int);
-	}, [])
+	}, []);
 
 	return (
 		<>
@@ -78,17 +78,19 @@ const MemberItem = memo(({ member, color }: {
 					<div
 						className="flex items-center justify-=between w-full h-12 px-2 cursor-pointer rounded-lg hover:bg-slate-800 relative max-w-48"
 						onClick={async () => {
-							if (member.user.metaData.bioless || member.user.bio !== null) {
+							if (member.user.metaData.bioless || typeof member.user.bio === "string") {
 								setLoading(false);
 
 								return;
-							} 
+							}
+
+							setLoading(true);
 
 							const api = useAPIStore.getState().api;
 
 							const profile = await api.get<unknown, {
 								// TODO: Add connections (Discord, Twitter (X), Github, Steam, Spotify (Not sure if we can do this one), Reddit, Youtube, Twitch)
-								bio: string | null; 
+								bio: string | null;
 								connections: unknown[];
 								mutualFriends: string[];
 								mutualGuilds: string[];
@@ -100,10 +102,13 @@ const MemberItem = memo(({ member, color }: {
 								useUserStore.getState().updateUser({
 									bio: profile.body.bio,
 									id: member.user.id,
-								})
+									metaData: {
+										bioless: typeof profile.body.bio !== "string",
+									}
+								});
 							}
 
-							setLoading(false);
+							setTimeout(() => setLoading(false), 75)
 						}}
 					>
 						<div className="flex items-center">
@@ -183,6 +188,8 @@ const MemberBar = () => {
 	const roles = roleRef.current;
 	const members = memberRef.current;
 
+	const [signal, setSignal] = useState(0);
+
 	useEffect(() => {
 		const roleSubscribe = useRoleStore.subscribe((s) => {
 			const roles = s.getRoles(currentGuildId);
@@ -200,9 +207,12 @@ const MemberBar = () => {
 			memberRef.current = members;
 		});
 
+		const userSubscribe = useUserStore.subscribe(() => setSignal((prev) => prev + 1));
+
 		return () => {
 			roleSubscribe();
 			memberSubscribe();
+			userSubscribe();
 		};
 	}, []);
 
@@ -218,8 +228,6 @@ const MemberBar = () => {
 			memberRef.current = members;
 		}
 	}, [currentGuildId]);
-
-
 
 	const { getUser } = useUserStore();
 
@@ -367,12 +375,18 @@ const MemberBar = () => {
 
 		defaultSections.sort((a, b) => a.position - b.position).reverse();
 
-		setSections(defaultSections.filter((section) => section.members.length > 0));
+		const filtered = defaultSections.filter((section) => section.members.length > 0);
+
+		setSections((prev) => {
+			if (deepEqual(prev, filtered)) return prev;
+
+			return filtered;
+		});
 	};
 
 	useEffect(() => {
 		sort();
-	}, [roles, members]);
+	}, [roles, members, signal]);
 
 	return (
 		<div

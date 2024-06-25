@@ -1,6 +1,6 @@
 import { Chip, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, useDisclosure } from "@nextui-org/react";
 import { ArrowRight, LogOut, Settings } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { twMerge } from "tailwind-merge";
 import { motion } from "framer-motion";
 import CustomStatus from "../Modals/CustomStatus.tsx";
@@ -9,10 +9,13 @@ import BaseSettings from "../Modals/BaseSettings.tsx";
 import { Section } from "@/types/settings.ts";
 import { useRouter } from "next/router";
 import { useTokenStore } from "@/wrapper/Stores.ts";
+import { useUserStore } from "@/wrapper/Stores/UserStore.ts";
+import DifferentTesting from "../Settings/User/DifferentTesting.tsx";
 
 const UserOptions = ({ children, type = "context", orientation = "vertical" }: { children: React.ReactElement | React.ReactElement[]; type?: "normal" | "context", orientation?: "vertical" | "horizontal"; }) => {
 	const router = useRouter();
 	const { setToken } = useTokenStore();
+	const { getCurrentUser, isStaff } = useUserStore();
 	const [statusOpen, setStatusOpen] = useState(false);
 	const [status, setStatus] = useState<"Online" | "Invisible" | "DND" | "Idle">("Invisible");
 
@@ -68,19 +71,22 @@ const UserOptions = ({ children, type = "context", orientation = "vertical" }: {
 		// todo: handle other logic
 	};
 
-	const sections: Section[] = [
-		{
-			title: null,
-			children: [
-				{
-					title: "Overview",
-					id: "overview",
-					section: <OverView />,
-					disabled: false,
-				},
-			],
-		},
-		{ // t! If the user does not have developer mode enabled, do not show these
+	const [sections, setSections] = useState<Section[]>([{
+		title: null,
+		children: [
+			{
+				title: "Overview",
+				id: "overview",
+				section: <OverView />,
+				disabled: false,
+			},
+		],
+	}]);
+
+	useEffect(() => {
+		const gotUser = getCurrentUser();
+
+		const developerSections = { // t! If the user does not have developer mode enabled, do not show these
 			title: "Developer",
 			children: [
 				{
@@ -91,10 +97,36 @@ const UserOptions = ({ children, type = "context", orientation = "vertical" }: {
 					// t! which we haven't finalized yet (or if we just want a low roll outs)
 					section: <div>Experiments</div>,
 					disabled: false,
+				},
+				{
+					title: "Different Testing",
+					id: "dft",
+					section: <DifferentTesting />,
+					disabled: false,
 				}
 			],
 		}
-	];
+
+		if (isStaff(gotUser?.id ?? "")) {
+			setSections((prev) => ([
+				...prev,
+				developerSections
+			]))
+		}
+
+		useUserStore.subscribe((state) => {
+			const newCurrentUser = state.getCurrentUser();
+
+			if (!state.isStaff(newCurrentUser?.id ?? "")) {
+				setSections((prev) => prev.filter((section) => section.title !== "Developer"));
+			} else if (state.isStaff(newCurrentUser?.id ?? "") && !sections.some((section) => section.title === "Developer")) {
+				setSections((prev) => ([
+					...prev,
+					developerSections
+				]))
+			}
+		})
+	}, [])
 
 	return (
 		<>
