@@ -78,6 +78,12 @@ const Init = ({
                 return;
             }
 
+            if (!Array.isArray(relationships.body)) {
+                setIsReady(true);
+
+                return;
+            }
+
             for (const relationship of (relationships.body || [])) {
                 if (relationship.user) {
                     useUserStore.getState().addUser(relationship.user);
