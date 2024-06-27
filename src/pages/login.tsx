@@ -16,6 +16,7 @@ import { useClientStore, useTokenStore, useTranslationStore } from "@/wrapper/St
 import SEO from "@/components/SEO.tsx";
 import NextLink from "next/link";
 import { useRouter } from "next/router";
+import onEnter from "@/utils/onEnter.ts";
 
 const Login = () => {
 	const [isVisible, setIsVisible] = useState(false);
@@ -61,6 +62,81 @@ const Login = () => {
 		}
 	}, [email, password]);
 
+	const login = async () => {
+		if (loading) return;
+
+		let hasError = false;
+
+		// ? Validate email
+		if (!email || !email.includes("@") || !email.includes(".")) {
+			setEmailError(t("login.email.error"));
+
+			hasError = true;
+		} else {
+			setEmailError("");
+		}
+
+		// ? Validate password
+		if (!password || password.length < 3) {
+			setPasswordError(t("login.password.error"));
+
+			hasError = true;
+		} else {
+			setPasswordError("");
+		}
+
+		if (emailError || passwordError || hasError) return;
+
+		setLoading(true);
+
+		const attemptLogin = await client.login({
+			email,
+			password,
+			resetClient: true
+		});
+
+		if (!attemptLogin.success) {
+			if (attemptLogin.errors.captchaRequired) {
+				// todo: users should not be able to access this yet
+				onOpenChangeCaptcha();
+			}
+
+			if (attemptLogin.errors.email) {
+				setEmailError(t("login.email.error"));
+			}
+
+			if (attemptLogin.errors.password) {
+				setPasswordError(t("login.password.error"));
+			}
+
+			setLoading(false);
+
+			if (attemptLogin.errors.internalError) {
+				setError(t("error.internalServerError"));
+
+				return;
+			}
+
+			if (Object.keys(attemptLogin.errors.unknown).length > 0) {
+				// ? If for some reason there's an unknown error message, we just show the first one
+				// ? Which is why we return for the internal error above (since it would override this one)
+				setError(Object.values(attemptLogin.errors.unknown)[0].message);
+			}
+
+			return;
+		}
+
+		setError("");
+		setEmailError("");
+		setPasswordError("");
+
+		// ? If we get here, the login was successful so now we can set the token in storage and redirect
+
+		setToken(attemptLogin.token);
+
+		router.push("/app");
+	};
+
 	return (
 		<>
 			<SEO title={"Login"} />
@@ -92,13 +168,14 @@ const Login = () => {
 										isRequired
 										errorMessage={emailError || t("login.email.error")}
 										isInvalid={!!emailError}
+										tabIndex={1}
 									/>
 									<Input
 										label={t("login.password.label")}
 										variant="bordered"
 										placeholder={t("login.password.placeholder")}
 										endContent={
-											<button className="focus:outline-none" type="button" onClick={toggleVisibility}>
+											<button className="focus:outline-none" type="button" onClick={toggleVisibility} tabIndex={-1}>
 												{isVisible ? (
 													<EyeIcon className="text-2xl text-default-400 pointer-events-none" />
 												) : (
@@ -116,97 +193,27 @@ const Login = () => {
 										minLength={4}
 										maxLength={72}
 										isInvalid={!!passwordError}
+										onKeyUp={onEnter(login)}
+										tabIndex={2}
 									/>
 								</div>
 								<div className="mt-8">
 									<Button
-										onClick={async () => {
-											if (loading) return;
-
-											let hasError = false;
-
-											// ? Validate email
-											if (!email || !email.includes("@") || !email.includes(".")) {
-												setEmailError(t("login.email.error"));
-
-												hasError = true;
-											} else {
-												setEmailError("");
-											}
-
-											// ? Validate password
-											if (!password || password.length < 3) {
-												setPasswordError(t("login.password.error"));
-
-												hasError = true;
-											} else {
-												setPasswordError("");
-											}
-
-											if (emailError || passwordError || hasError) return;
-
-											setLoading(true);
-
-											const attemptLogin = await client.login({
-												email,
-												password,
-												resetClient: true
-											});
-
-											if (!attemptLogin.success) {
-												if (attemptLogin.errors.captchaRequired) {
-													// todo: users should not be able to access this yet
-													onOpenChangeCaptcha();
-												}
-
-												if (attemptLogin.errors.email) {
-													setEmailError(t("login.email.error"));
-												}
-
-												if (attemptLogin.errors.password) {
-													setPasswordError(t("login.password.error"));
-												}
-
-												setLoading(false);
-
-												if (attemptLogin.errors.internalError) {
-													setError(t("error.internalServerError"));
-
-													return;
-												}
-
-												if (Object.keys(attemptLogin.errors.unknown).length > 0) {
-													// ? If for some reason there's an unknown error message, we just show the first one
-													// ? Which is why we return for the internal error above (since it would override this one)
-													setError(Object.values(attemptLogin.errors.unknown)[0].message);
-												}
-
-												return;
-											}
-
-											setError("");
-											setEmailError("");
-											setPasswordError("");
-
-											// ? If we get here, the login was successful so now we can set the token in storage and redirect
-
-											setToken(attemptLogin.token);
-
-											router.push("/app");
-										}}
+										onClick={login}
 										size="md"
 										color="primary"
 										variant="flat"
 										className="w-full"
+										tabIndex={3}
 									>
 										{loading ? <LoaderCircle className="text-white animate-spin" /> : t("login.button")}
 									</Button>
 								</div>
 								<div className="mt-4 flex justify-between">
-									<Link href="/register" color="primary" className="text-sm" as={NextLink}>
+									<Link href="/register" color="primary" className="text-sm" as={NextLink} tabIndex={4}>
 										{t("login.register")}
 									</Link>
-									<Link href="/register" color="primary" className="text-sm" as={NextLink}>
+									<Link href="/register" color="primary" className="text-sm" as={NextLink} tabIndex={5}>
 										{t("login.forgot")}
 									</Link>
 								</div>

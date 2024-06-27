@@ -144,10 +144,7 @@ const BlockedFriends = () => {
 		return (
 			<div className="flex flex-col gap-4">
 				<div className="flex justify-between gap-3 items-end">
-					<div className="flex w-full sm:max-w-[44%] text-default-400 text-small ml-3">
-						{users.length} Blocked Users
-					</div>
-					<div className="flex gap-3">
+					<div className="flex gap-3 ml-auto">
 						<Dropdown>
 							<DropdownTrigger className="hidden sm:flex">
 								<Button endContent={<ChevronDown className="text-small" />} variant="flat">
@@ -173,7 +170,7 @@ const BlockedFriends = () => {
 				</div>
 			</div>
 		);
-	}, [visibleColumns, users.length]);
+	}, [visibleColumns, users]);
 
 	return (
 		<Table
@@ -181,7 +178,8 @@ const BlockedFriends = () => {
 			isHeaderSticky
 			bottomContentPlacement="outside"
 			classNames={{
-				wrapper: "max-h-[382px]",
+				wrapper: "max-h-[382px] bg-accent",
+				th: "bg-background"
 			}}
 			selectedKeys={selectedKeys}
 			selectionMode="none"

@@ -225,11 +225,11 @@ const permissions = {
 };
 
 const relationshipFlags = {
-	None: 0,
-	Blocked: 1,
-	FriendRequest: 2,
-	Friend: 3,
-	MutualFriend: 4,
+	None: 1 << 0,
+	Blocked: 1 << 1,
+	FriendRequest: 1 << 2,
+	Friend: 1 << 3,
+	MutualFriend: 1 << 4,
 };
 
 const snowflake = {

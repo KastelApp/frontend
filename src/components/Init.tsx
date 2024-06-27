@@ -3,6 +3,10 @@ import { useRouter } from "next/router";
 import { useEffect } from "react";
 import Loading from "./Loading.tsx";
 import AppLayout from "@/layouts/AppLayout.tsx";
+import { useRelationshipsStore, Relationship as RelationshipState } from "@/wrapper/Stores/RelationshipsStore.ts";
+import Logger from "@/utils/Logger.ts";
+import { Relationship } from "@/types/http/user/relationships.ts";
+import { useUserStore } from "@/wrapper/Stores/UserStore.ts";
 
 const Init = ({
     children,
@@ -16,6 +20,7 @@ const Init = ({
     const { api } = useAPIStore();
     const router = useRouter();
     const { setIsReady, isReady } = useIsReady();
+    const { addRelationship } = useRelationshipsStore();
 
     useEffect(() => {
         api.token = token;
@@ -59,7 +64,32 @@ const Init = ({
 
         client.connect(token);
 
-        client.on("ready", () => {
+        client.on("ready", async () => {
+            const relationships = await api.get<unknown, Relationship[]>({
+                url: "/users/@me/relationships?includeUser=true"
+            });
+
+            // ? If it fails we just set is ready to true and log out the failure
+            if (!relationships || relationships.status !== 200) {
+                Logger.error("Failed to fetch relationships", "Init | ready event");
+
+                setIsReady(true);
+
+                return;
+            }
+
+            for (const relationship of relationships.body) {
+                if (relationship.user) {
+                    useUserStore.getState().addUser(relationship.user);
+
+                    relationship.userId = relationship.user.id;
+
+                    delete relationship.user;
+                }
+
+                addRelationship(relationship as RelationshipState);
+            }
+
             setIsReady(true);
         });
 

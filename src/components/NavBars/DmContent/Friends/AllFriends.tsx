@@ -1,4 +1,4 @@
-import { Key, useCallback, useMemo, useState } from "react";
+import { Key, useCallback, useEffect, useMemo, useState } from "react";
 import {
 	Table,
 	TableHeader,
@@ -19,6 +19,8 @@ import {
 	SortDescriptor,
 } from "@nextui-org/react";
 import { ChevronDown, EllipsisVertical, Search } from "lucide-react";
+import { useRelationshipsStore } from "@/wrapper/Stores/RelationshipsStore.ts";
+import { User as UserType, useUserStore } from "@/wrapper/Stores/UserStore.ts";
 
 const statusColorMap: Record<string, ChipProps["color"]> = {
 	online: "success",
@@ -44,59 +46,17 @@ const statusOptions = [
 	{ name: "Idle", uid: "idle" },
 ];
 
-const users = [
-	{
-		id: "536277067310956565",
-		username: "Waffles",
-		tag: "1750",
-		avatar: "https://development.kastelapp.com/icon-2.png",
-		friendSince: "2024-04-25T04:25:58.704Z",
-		status: "online",
-	},
-	{
-		id: "779930036635172874",
-		username: "Pancakes",
-		tag: "8888",
-		avatar: "https://development.kastelapp.com/icon-3.png",
-		friendSince: "2024-04-25T04:25:58.704Z",
-		status: "offline",
-	},
-	{
-		id: "81384788765712384",
-		username: "Dogo",
-		tag: "1234",
-		avatar: "https://development.kastelapp.com/icon-4.png",
-		friendSince: "2021-04-25T04:25:58.704Z",
-		status: "dnd",
-	},
-	{
-		id: "169256939211980800",
-		username: "Cats",
-		tag: "5678",
-		avatar: "https://development.kastelapp.com/icon.png",
-		friendSince: "2022-04-25T04:25:58.704Z",
-		status: "idle",
-	},
-	{
-		id: "379781622704111626",
-		username: "DarkerInk",
-		tag: "0001",
-		avatar: "https://development.kastelapp.com/icon.png",
-		friendSince: "2023-04-25T04:25:58.704Z",
-		status: "online",
-	},
-];
 
-interface User {
+interface Friend {
 	id: string;
-	username: string;
-	tag: string;
-	avatar: string;
 	friendSince: string;
+	user: UserType;
 	status: string;
 }
 
 const AllFriends = () => {
+	const { getFriendRelationships } = useRelationshipsStore();
+	const [friends, setFriends] = useState<Friend[]>([]);
 	const [filterValue, setFilterValue] = useState("");
 	const [selectedKeys, setSelectedKeys] = useState<Selection>(new Set([]));
 	const [visibleColumns, setVisibleColumns] = useState<Selection>(new Set(initialColumns));
@@ -115,41 +75,37 @@ const AllFriends = () => {
 	}, [visibleColumns]);
 
 	const filteredItems = useMemo(() => {
-		let filteredUsers = [...users];
+		let filteredUsers = [...friends];
 
 		if (hasSearchFilter) {
-			filteredUsers = filteredUsers.filter((user) => user.username.toLowerCase().includes(filterValue.toLowerCase()));
+			filteredUsers = filteredUsers.filter((user) => user.user.username.toLowerCase().includes(filterValue.toLowerCase()));
 		}
 		if (statusFilter !== "all" && Array.from(statusFilter).length !== statusOptions.length) {
 			filteredUsers = filteredUsers.filter((user) => Array.from(statusFilter).includes(user.status));
 		}
 
 		return filteredUsers;
-	}, [users, filterValue, statusFilter]);
+	}, [friends, filterValue, statusFilter]);
 	const sortedItems = useMemo(() => {
-		return [...filteredItems].sort((a: User, b: User) => {
+		return [...filteredItems].sort((a: Friend, b: Friend) => {
 			if (sortDescriptor.column === "friendSince") {
-				const first = new Date(a[sortDescriptor.column as keyof User]);
-				const second = new Date(b[sortDescriptor.column as keyof User]);
+				const first = new Date(a.friendSince);
+				const second = new Date(b.friendSince);
 				const cmp = first < second ? -1 : first > second ? 1 : 0;
 
 				return sortDescriptor.direction === "descending" ? -cmp : cmp;
 			}
 
-			const first = a[sortDescriptor.column as keyof User];
-			const second = b[sortDescriptor.column as keyof User];
-			const cmp = first.length < second.length ? -1 : first.length > second.length ? 1 : 0;
+			const first = BigInt(a.id)
+			const second = BigInt(b.id)
+			const cmp = first < second ? -1 : first > second ? 1 : 0;
 
 			return sortDescriptor.direction === "descending" ? -cmp : cmp;
 		});
 	}, [sortDescriptor, filteredItems]);
 
-	const onlineFriends = useMemo(() => {
-		return users.filter((user) => user.status === "online").length;
-	}, [users]);
-
-	const renderCell = useCallback((user: User, columnKey: Key) => {
-		const cellValue = user[columnKey as keyof User];
+	const renderCell = useCallback((user: Friend, columnKey: Key) => {
+		const cellValue = user[columnKey as keyof Friend];
 
 		switch (columnKey) {
 			case "username": {
@@ -157,13 +113,13 @@ const AllFriends = () => {
 					<User
 						avatarProps={{
 							radius: "lg",
-							src: user.avatar,
+							src: user.user.avatar!,
 							imgProps: { className: "transition-none" },
 						}}
-						description={`${user.username}#${user.tag}`}
-						name={cellValue}
+						description={`${user.user.username}#${user.user.tag}`}
+						name={user.user.username}
 					>
-						{user.username}
+						{user.user.username}
 					</User>
 				);
 			}
@@ -175,7 +131,7 @@ const AllFriends = () => {
 						size="sm"
 						variant="dot"
 					>
-						{cellValue}
+						{cellValue as string}
 					</Chip>
 				);
 			}
@@ -201,7 +157,7 @@ const AllFriends = () => {
 				);
 			}
 			case "friendSince": {
-				return new Date(cellValue).toLocaleString();
+				return new Date(cellValue as string).toLocaleString();
 			}
 			default:
 				return cellValue;
@@ -219,6 +175,67 @@ const AllFriends = () => {
 	const onClear = useCallback(() => {
 		setFilterValue("");
 	}, []);
+
+	useEffect(() => {
+		const subscribed = useRelationshipsStore.subscribe((state) => {
+			setFriends(state.getFriendRelationships().map((x) => {
+				
+				const foundUser = useUserStore.getState().getUser(x.userId);
+
+				if (!foundUser) return null;
+
+				return {
+					friendSince: x.createdAt,
+					id: x.relationshipId,
+					status: "online",
+					user: {
+						...foundUser,
+						avatar: useUserStore.getState().getDefaultAvatar(foundUser.id),
+					}
+				}
+			}).filter((x) => x !== null))
+		});
+
+		const userSubscribed = useUserStore.subscribe((state) => {
+			// if user exists in friends and the user is different, update the user
+			const updatedFriends = friends.map((friend) => {
+				const user = state.getUser(friend.user.id);
+
+				if (!user) return friend;
+
+				return {
+					...friend,
+					user: {
+						...user,
+						avatar: state.getDefaultAvatar(user.id),
+					}
+				}
+			});
+
+			setFriends(updatedFriends);
+		})
+
+		setFriends(getFriendRelationships().map((x) => {
+			const foundUser = useUserStore.getState().getUser(x.userId);
+
+			if (!foundUser) return null;
+
+			return {
+				friendSince: x.createdAt,
+				id: x.relationshipId,
+				status: "online",
+				user: {
+					...foundUser,
+					avatar: useUserStore.getState().getDefaultAvatar(foundUser.id),
+				}
+			}
+		}).filter((x) => x !== null))
+
+		return () => {
+			subscribed();
+			userSubscribed();
+		}
+	}, [])
 
 	const topContent = useMemo(() => {
 		return (
@@ -278,14 +295,9 @@ const AllFriends = () => {
 						</Dropdown>
 					</div>
 				</div>
-				<div className="flex justify-between items-center">
-					<span className="text-default-400 text-small">
-						Total {users.length} friends - {onlineFriends}/{users.length} online
-					</span>
-				</div>
 			</div>
 		);
-	}, [filterValue, statusFilter, visibleColumns, onSearchChange, users.length, hasSearchFilter]);
+	}, [filterValue, statusFilter, visibleColumns, onSearchChange, hasSearchFilter]);
 
 	return (
 		<Table
@@ -293,7 +305,8 @@ const AllFriends = () => {
 			isHeaderSticky
 			bottomContentPlacement="outside"
 			classNames={{
-				wrapper: "max-h-[382px]",
+				wrapper: "max-h-[382px] bg-accent",
+				th: "bg-background"
 			}}
 			selectedKeys={selectedKeys}
 			selectionMode="none"
@@ -314,9 +327,9 @@ const AllFriends = () => {
 					</TableColumn>
 				)}
 			</TableHeader>
-			<TableBody emptyContent={"No users found"} items={sortedItems}>
+			<TableBody emptyContent={"Seems lonely here, why not add someone?"} items={sortedItems}>
 				{(item) => (
-					<TableRow key={item.id}>{(columnKey) => <TableCell>{renderCell(item, columnKey)}</TableCell>}</TableRow>
+					<TableRow key={item.id}>{(columnKey) => <TableCell>{renderCell(item, columnKey) as string}</TableCell>}</TableRow>
 				)}
 			</TableBody>
 		</Table>

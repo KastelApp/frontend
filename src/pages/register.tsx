@@ -17,6 +17,7 @@ import SEO from "@/components/SEO.tsx";
 import NextLink from "next/link";
 import { useClientStore, useTokenStore, useTranslationStore } from "@/wrapper/Stores.ts";
 import { useRouter } from "next/router";
+import onEnter from "@/utils/onEnter.ts";
 
 const Register = () => {
 	const [isVisible, setIsVisible] = useState(false);
@@ -72,6 +73,110 @@ const Register = () => {
 		}
 	}, [username, email, password, passwordConfirm]);
 
+	const register = async (e: React.MouseEvent<HTMLButtonElement> | React.KeyboardEvent) => {
+		if (loading) return;
+
+		let hasError = false;
+
+		// ? Validate username
+		if (!username || username.length < 3) {
+			setUsernameError(t("register.username.error"));
+
+			hasError = true;
+		} else {
+			setUsernameError("");
+		}
+
+		// ? Validate email
+		if (!email || !email.includes("@") || !email.includes(".")) {
+			setEmailError(t("register.email.error"));
+
+			hasError = true;
+		} else {
+			setEmailError("");
+		}
+
+		// ? Validate password & confirm password
+		if (!password || password.length < 4) {
+			setPasswordError(t("register.password.error"));
+
+			hasError = true;
+		} else {
+			setPasswordError("");
+		}
+
+		if (!passwordConfirm || passwordConfirm !== password) {
+			setPasswordConfirmError(t("register.password.confirm.error"));
+
+			hasError = true;
+		} else {
+			setPasswordConfirmError("");
+		}
+
+		if (usernameError || emailError || passwordError || passwordConfirmError || hasError) return;
+
+		setLoading(true);
+
+		const attemptRegister = await client.register({
+			email,
+			password,
+			username,
+			resetClient: true,
+		});
+
+
+		if (!attemptRegister.success) {
+			if (attemptRegister.errors.captchaRequired) {
+				onOpenChangeCaptcha();
+			}
+
+			if (attemptRegister.errors.email) {
+				setEmailError(t("register.email.error"));
+			}
+
+			if (attemptRegister.errors.password) {
+				setPasswordError(t("register.password.error"));
+			}
+
+			if (attemptRegister.errors.username) {
+				setUsernameError(t("register.username.error"));
+			}
+
+			setLoading(false);
+
+			if (attemptRegister.errors.internalError) {
+				setError(t("error.internalServerError"));
+				return;
+			}
+
+			if (Object.keys(attemptRegister.errors).length > 0) {
+				setError(Object.values(attemptRegister.errors.unknown)[0].message);
+			}
+
+			return;
+		}
+
+		// const x = e.clientX / window.innerWidth;
+		// const y = e.clientY / window.innerHeight;
+		// ? do clientx and y if its a mouse event else use bounding client rect
+		const x = "clientX" in e ? e.clientX / window.innerWidth : e.currentTarget.getBoundingClientRect().x;
+		const y = "clientY" in e ? e.clientY / window.innerHeight : e.currentTarget.getBoundingClientRect().y;
+
+		confetti({
+			origin: {
+				x,
+				y,
+			},
+			particleCount: 75,
+		});
+
+		setToken(attemptRegister.token);
+
+		setTimeout(() => {
+			router.push("/app");
+		}, 1000);
+	}
+
 	return (
 		<>
 			<SEO title={"Register"} />
@@ -103,6 +208,7 @@ const Register = () => {
 										errorMessage={usernameError || t("register.username.error")}
 										isInvalid={!!usernameError}
 										minLength={3}
+										tabIndex={1}
 									/>
 									<Input
 										isClearable
@@ -118,13 +224,14 @@ const Register = () => {
 										isRequired
 										errorMessage={emailError || t("register.email.error")}
 										isInvalid={!!emailError}
+										tabIndex={2}
 									/>
 									<Input
 										label={t("register.password.label")}
 										variant="bordered"
 										placeholder={t("register.password.placeholder")}
 										endContent={
-											<button className="focus:outline-none" type="button" onClick={toggleVisibility}>
+											<button className="focus:outline-none" type="button" onClick={toggleVisibility} tabIndex={-1}>
 												{isVisible ? (
 													<EyeIcon className="text-2xl text-default-400 pointer-events-none" />
 												) : (
@@ -142,13 +249,14 @@ const Register = () => {
 										minLength={4}
 										maxLength={72}
 										isInvalid={!!passwordError}
+										tabIndex={3}
 									/>
 									<Input
 										label={t("register.password.confirm.label")}
 										variant="bordered"
 										placeholder={t("register.password.confirm.placeholder")}
 										endContent={
-											<button className="focus:outline-none" type="button" onClick={toggleConfirmVisibility}>
+											<button className="focus:outline-none" type="button" onClick={toggleConfirmVisibility} tabIndex={-1}>
 												{isConfirmVisible ? (
 													<EyeIcon className="text-2xl text-default-400 pointer-events-none" />
 												) : (
@@ -166,114 +274,18 @@ const Register = () => {
 										minLength={4}
 										maxLength={72}
 										isInvalid={!!passwordConfirmError}
+										onKeyUp={onEnter(register, true)}
+										tabIndex={4}
 									/>
 								</div>
 								<div className="mt-8">
 									<Button
-										onClick={async (e) => {
-											if (loading) return;
-
-											let hasError = false;
-
-											// ? Validate username
-											if (!username || username.length < 3) {
-												setUsernameError(t("register.username.error"));
-
-												hasError = true;
-											} else {
-												setUsernameError("");
-											}
-
-											// ? Validate email
-											if (!email || !email.includes("@") || !email.includes(".")) {
-												setEmailError(t("register.email.error"));
-
-												hasError = true;
-											} else {
-												setEmailError("");
-											}
-
-											// ? Validate password & confirm password
-											if (!password || password.length < 4) {
-												setPasswordError(t("register.password.error"));
-
-												hasError = true;
-											} else {
-												setPasswordError("");
-											}
-
-											if (!passwordConfirm || passwordConfirm !== password) {
-												setPasswordConfirmError(t("register.password.confirm.error"));
-
-												hasError = true;
-											} else {
-												setPasswordConfirmError("");
-											}
-
-											if (usernameError || emailError || passwordError || passwordConfirmError || hasError) return;
-
-											setLoading(true);
-
-											const attemptRegister = await client.register({
-												email,
-												password,
-												username,
-												resetClient: true,
-											});
-
-
-											if (!attemptRegister.success) {
-												if (attemptRegister.errors.captchaRequired) {
-													onOpenChangeCaptcha();
-												}
-
-												if (attemptRegister.errors.email) {
-													setEmailError(t("register.email.error"));
-												}
-
-												if (attemptRegister.errors.password) {
-													setPasswordError(t("register.password.error"));
-												}
-
-												if (attemptRegister.errors.username) {
-													setUsernameError(t("register.username.error"));
-												}
-
-												setLoading(false);
-
-												if (attemptRegister.errors.internalError) {
-													setError(t("error.internalServerError"));
-													return;
-												}
-
-												if (Object.keys(attemptRegister.errors).length > 0) {
-													setError(Object.values(attemptRegister.errors.unknown)[0].message);
-												}
-
-												return;
-											}
-
-											const x = e.clientX / window.innerWidth;
-											const y = e.clientY / window.innerHeight;
-
-											confetti({
-												origin: {
-													x,
-													y,
-												},
-												particleCount: 75,
-											});
-
-											setToken(attemptRegister.token);
-
-											setTimeout(() => {
-												router.push("/app");
-											}, 1000);
-										}}
+										onClick={register}
 										size="md"
 										color="primary"
 										variant="flat"
 										className="w-full"
+										tabIndex={5}
 									>
 										{loading ? <LoaderCircle className="animate-spin" size={24} /> : t("register.button")}
 									</Button>
