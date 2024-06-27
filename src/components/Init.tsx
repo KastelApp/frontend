@@ -78,7 +78,7 @@ const Init = ({
                 return;
             }
 
-            for (const relationship of relationships.body) {
+            for (const relationship of (relationships.body || [])) {
                 if (relationship.user) {
                     useUserStore.getState().addUser(relationship.user);
 
