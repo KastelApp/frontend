@@ -14,6 +14,7 @@ import { Member, useMemberStore } from "@/wrapper/Stores/Members.ts";
 import { useChannelStore, usePerChannelStore } from "@/wrapper/Stores/ChannelStore.ts";
 import { useRoleStore } from "@/wrapper/Stores/RoleStore.ts";
 import Tooltip from "../Tooltip.tsx";
+import useCustomScrollIntoView from "@/hooks/useCustomScrollIntoView.ts";
 
 const Message = memo(({
 	className,
@@ -47,6 +48,7 @@ const Message = memo(({
 	});
 
 	const [highlighted, setHighlighted] = useState(false);
+	const scrollIntoView = useCustomScrollIntoView();
 
 	useEffect(() => {
 		if (message.replyingTo) {
@@ -297,30 +299,22 @@ const Message = memo(({
 							}}>{message.mentions.users.includes(replyingMessage.authorId) ? "@" : ""}{replyingAuthor.user?.globalNickname ?? replyingAuthor?.user?.username}</span>
 						</div>
 					</PopOverData>
-					<p className="text-gray-300 text-2xs ml-2 select-none cursor-pointer" onClick={() => {
+					<p className="text-gray-300 text-2xs ml-2 select-none cursor-pointer" onClick={async () => {
 						usePerChannelStore.getState().updateChannel(message.channelId, {
 							currentStates: [...usePerChannelStore.getState().getChannel(message.channelId).currentStates, "jumped"],
 							jumpingStateId: replyingMessage.id
 						});
 
-						const foundMessage = document.getElementById(`chatmessage-${message.channelId}-${replyingMessage.id}`);
+						scrollIntoView(`chatmessage-${message.channelId}-${replyingMessage.id}`, "inf-scroller-msg-container")
 
-						if (foundMessage) {
-							foundMessage.scrollIntoView({
-								behavior: "smooth",
-								block: "nearest",
-								inline: "start"
-							});
-						}
+						// setTimeout(() => {
+						// 	usePerChannelStore.getState().updateChannel(message.channelId, {
+						// 		currentStates: usePerChannelStore.getState().getChannel(message.channelId).currentStates.filter((state) => state !== "jumped") ?? [],
+						// 		jumpingStateId: null
+						// 	});
 
-						setTimeout(() => {
-							usePerChannelStore.getState().updateChannel(message.channelId, {
-								currentStates: usePerChannelStore.getState().getChannel(message.channelId).currentStates.filter((state) => state !== "jumped") ?? [],
-								jumpingStateId: null
-							});
-
-							console.log("timeout")
-						}, 1000);
+						// 	console.log("timeout")
+						// }, 2000);
 
 					}}>{replyingMessage.content}</p>
 				</div>

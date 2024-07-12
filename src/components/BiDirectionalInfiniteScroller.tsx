@@ -81,6 +81,7 @@ interface BiDirectionalInfiniteScrollerProps<T> {
         dataDiv?: React.CSSProperties;
         scrollWrapper?: React.CSSProperties;
     };
+    id?: string;
 }
 
 /**
@@ -107,6 +108,7 @@ const BiDirectionalInfiniteScroller = <T,>({
     classNames,
     style,
     styles,
+    id
 }: BiDirectionalInfiniteScrollerProps<T>) => {
 
     if (!data) throw new Error("Data is required for BiDirectionalInfiniteScroller");
@@ -333,7 +335,7 @@ const BiDirectionalInfiniteScroller = <T,>({
 
     return (
         <div className={className} style={style}>
-            <div ref={scrollWrapperRef} className={twMerge("overflow-y-auto h-full", classNames?.scrollWrapper)} style={styles?.scrollWrapper}>
+            <div id={id} ref={scrollWrapperRef} className={twMerge("overflow-y-auto h-full", classNames?.scrollWrapper)} style={styles?.scrollWrapper}>
                 <div tabIndex={-1} role="group" className={classNames?.dataDiv} style={styles?.dataDiv}>
                     {hasMoreTop && topSkeleton &&
                         <div ref={topSkeletonRef} className={classNames?.topSkeleton} style={styles?.topSkeleton}>

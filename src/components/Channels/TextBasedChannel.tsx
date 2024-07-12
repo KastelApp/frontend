@@ -228,7 +228,7 @@ const TextBasedChannel = () => {
 		channelId={channelId}
 		guildId={guildId}
 		>
-			<div className="mt-auto overflow-y-auto">
+			<div className="mt-auto overflow-y-auto" id="inf-scroller-msg-container">
 				{!initialFetch && skelliedMessages}
 				<BiDirectionalInfiniteScroller
 					data={renderedMessages}

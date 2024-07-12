@@ -5,7 +5,7 @@ import { useCallback, useEffect, useRef } from "react";
 import Draggables from "../DraggableComponent.tsx";
 import { Avatar, Divider } from "@nextui-org/react";
 import { NavBarIcon } from "./NavBarIcon.tsx";
-import { Compass, Home } from "lucide-react";
+import { Compass, Home, TriangleAlert } from "lucide-react";
 import AddGuildButton from "../AddGuildButton.tsx";
 import UserOptions from "../Dropdowns/UserOptions.tsx";
 
@@ -35,7 +35,7 @@ const BottomNavBar = () => {
     }, []);
 
     const mappedGuilds = useCallback(() => {
-        return <Draggables items={guilds} onDrop={console.log} orientation="horizontal"
+        return <Draggables items={guilds.filter((guild) => !guild.unavailable)} onDrop={console.log} orientation="horizontal"
             className="horizontal-scroll-content flex gap-3"
             render={(item, index) => {
                 let hasUnread = false;
@@ -107,8 +107,12 @@ const BottomNavBar = () => {
                 <Divider orientation="vertical" className="ml-2 h-10 w-0.5" />
                 <div className="h-full py-2 ml-3 overflow-x-auto overflow-y-hidden horizontal-scroll-container scrollbar-hide gap-3" ref={scrollContainerRef}>
                     {mappedGuilds()}
-                    <div className="horizontal-scroll-content flex">
+                    <div className="horizontal-scroll-content flex gap-2">
                         <AddGuildButton orientation="horizontal" />
+                        {guilds.filter((guild) => guild.unavailable).length > 0 &&
+                            <NavBarIcon orientation="horizontal" isNormalIcon icon={
+                                <TriangleAlert className="text-danger-500" strokeWidth={2.5} />
+                            } description={`${guilds.filter((guild) => guild.unavailable).length} unavailable guilds`} />}
                     </div>
                 </div>
                 <div className="min-w-12" />
