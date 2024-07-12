@@ -30,6 +30,26 @@ const quotes: Quote[] = [
     {
         quote: "That the name of our platform actually came from Supernatural and a tiny bit of mispelling",
         type: "FACT"
+    },
+    {
+        quote: "Meow Meow Meow :33 mrp~~",
+        type: "NOTE"
+    },
+    {
+        quote: "Someone on the staff team is obsessed with Dr. Pepper",
+        type: "FACT"
+    }, 
+    {
+        quote: "You look so handsome/pretty today!! :3",
+        type: "FACT"
+    },
+    {
+        quote: "\"Don't let yesterday take up too much of today\" — Will Rogers",
+        type: "QUOTE"
+    },
+    {
+        quote: "Don't forget to take care of yourself!!",
+        type: "NOTE"
     }
 ];
 
