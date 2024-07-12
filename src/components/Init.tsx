@@ -65,6 +65,9 @@ const Init = ({
         client.connect(token);
 
         client.on("ready", async () => {
+            // @ts-expect-error -- For now exposing the api to global so I can mess with stuff
+            globalThis.api = api;
+
             const relationships = await api.get<unknown, Relationship[]>({
                 url: "/users/@me/relationships?includeUser=true"
             });
