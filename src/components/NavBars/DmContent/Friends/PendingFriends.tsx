@@ -114,6 +114,11 @@ const PendingFriends = () => {
 									Deny
 								</DropdownItem>
 							)) as never}
+							{(user.pending && (
+								<DropdownItem key="ignore" color="warning" variant="flat">
+									Ignore
+								</DropdownItem>
+							)) as never}
 							{(!user.pending && (
 								<DropdownItem key="cancel" color="danger" variant="flat">Cancel</DropdownItem>
 							)) as never}
