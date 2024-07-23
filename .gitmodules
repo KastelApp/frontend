@@ -1,4 +1,0 @@
-[submodule "public/docs"]
-	path = public/docs
-	url = https://github.com/KastelApp/Docs
-	branch = ink/docs
