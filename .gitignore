@@ -43,4 +43,5 @@ next-env.d.ts
 dev/
 inf/
 infv2/
+inf3/
 docs.json

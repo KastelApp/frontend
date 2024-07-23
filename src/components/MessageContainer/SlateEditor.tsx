@@ -1,7 +1,7 @@
 // @ts-expect-error -- I don't want the types
 import Prism from "prismjs";
 import "prismjs/components/prism-markdown";
-import { useCallback, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { Slate, Editable, withReact, ReactEditor } from "slate-react";
 import { Editor, Node, Range, Text, Transforms, createEditor } from "slate";
 import { withHistory } from "slate-history";
@@ -13,7 +13,39 @@ import Element from "./renderers/Element.tsx";
 import withCustomDelete, { TypeNode } from "./plugins/withCustomDelete.tsx";
 import Constants from "@/utils/Constants.ts";
 
-const SlateEditor = ({ placeholder, isReadOnly, readOnlyMessage, sendMessage }: { placeholder: string; readOnlyMessage?: string; isReadOnly?: boolean; sendMessage?: (message: string) => void; }) => {
+const convertSTringToDescendantText = (text: string) => {
+	const textArray = text.split("\n");
+
+	return textArray.map((text) => {
+		if (text.startsWith("> ") || text.startsWith(">>> ")) {
+			return {
+				type: "blockquote",
+				children: [{ text: text.slice(2) }],
+			};
+		}
+
+		return {
+			type: "paragraph",
+			children: [{ text }],
+		};
+	});
+};
+
+const SlateEditor = ({
+	placeholder,
+	isReadOnly,
+	readOnlyMessage,
+	sendMessage,
+	onType,
+	initialText = ""
+}: {
+	placeholder: string;
+	readOnlyMessage?: string;
+	isReadOnly?: boolean;
+	sendMessage?: (message: string) => void;
+	onType?: (message: string) => void;
+	initialText?: string;
+}) => {
 	const renderLeaf = useCallback((props: LeafProps) => {
 		return <Leaf {...props} />;
 	}, []);
@@ -90,16 +122,29 @@ const SlateEditor = ({ placeholder, isReadOnly, readOnlyMessage, sendMessage }: 
 		return ranges;
 	}, []);
 
+	useEffect(() => {
+		editor.children = convertSTringToDescendantText(initialText);
+	}, [initialText]);
+
 	return (
 		<Slate
 			editor={editor}
-			initialValue={[
-				{
-					// @ts-expect-error -- Unsure how to fix these types
-					type: "paragraph",
-					children: [{ text: "" }], // ? we are requred to have an empty text node
-				},
-			]}
+			initialValue={convertSTringToDescendantText(initialText)}
+			onChange={() => {
+				if (onType && !isReadOnly) {
+					const text = editor.children.map((node) => {
+						const str = Node.string(node);
+
+						return ("type" in node && node.type === "blockquote") ? `> ${str}` : str;
+					}).join("\n");
+
+					if (!text.trim()) {
+						return;
+					}
+
+					onType(text);
+				}
+			}}
 		>
 			<Editable
 				// @ts-expect-error -- Unsure how to fix these types

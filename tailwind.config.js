@@ -72,7 +72,10 @@ export default {
 				},
 				".item-drag": {
 					"-webkit-user-drag": "none"
-				}
+				},
+				".no-overflow-anchoring": {
+					overflowAnchor: "none",
+				  },
 			})
 		})
 	],

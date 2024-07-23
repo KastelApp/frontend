@@ -13,6 +13,7 @@ import fastDeepEqual from "fast-deep-equal";
 import { useSettingsStore } from "@/wrapper/Stores.ts";
 import { NavBarLocation } from "@/types/payloads/ready.ts";
 import Tooltip from "../Tooltip.tsx";
+import useTypingIndicator from "@/hooks/useTypingIndicator.ts";
 
 const FileComponent = ({ fileName, imageUrl }: { fileName?: string; imageUrl?: string; }) => {
 	return (
@@ -52,7 +53,7 @@ const MessageContainer = ({ placeholder, children, isReadOnly, sendMessage, chan
 	const [files, setFiles] = useState<{ name: string; url: string; }[]>([]);
 	const [replying, setReplying] = useState<boolean>(false);
 
-	const { getChannel } = usePerChannelStore();
+	const { getChannel, updateChannel } = usePerChannelStore();
 	const { getMessage } = useMessageStore();
 
 	const channelIdRef = useRef<string>(channelId);
@@ -67,6 +68,56 @@ const MessageContainer = ({ placeholder, children, isReadOnly, sendMessage, chan
 		roleColor: null
 	});
 
+	const [startedTypingAt, setStartedTypingAt] = useState(0);
+    const [lastTypedAt, setLastTypedAt] = useState(0);
+    const [lastSentTypingAt, setLastSentTypingAt] = useState(0);
+	const [content, setContent] = useState("");
+
+	const {
+		isTyping,
+		sendUserIsTyping,
+		sentTypingEvent,
+		shouldSendTypingEvent
+	} = useTypingIndicator({
+		lastSentTypingAt,
+        lastTypedAt,
+        setLastSentTypingAt,
+        setLastTypedAt,
+        setStartedTypingAt,
+        startedTypingAt
+	});
+
+	useEffect(() => {
+		const gotChannel = getChannel(channelId);
+
+		let shouldUpdatingLastTyping = false;
+		let shouldUpdateStartedTyping = false;
+		let shouldUpdateLastSentTyping = false;
+
+		if (gotChannel.lastTyped !== lastTypedAt) {
+			shouldUpdatingLastTyping = true;
+		}
+
+		if (gotChannel.lastTypingSent !== lastSentTypingAt) {
+			shouldUpdateLastSentTyping = true;
+		}
+
+		if (gotChannel.typingStarted !== startedTypingAt) {
+			shouldUpdateStartedTyping = true;
+		}
+
+		updateChannel(channelId, {
+			...(shouldUpdatingLastTyping ? { lastTyped: lastTypedAt } : {}),
+			...(shouldUpdateLastSentTyping ? { lastTypingSent: lastSentTypingAt } : {}),
+			...(shouldUpdateStartedTyping ? { typingStarted: startedTypingAt } : {})
+		})
+	}, [startedTypingAt, lastTypedAt, lastSentTypingAt]);
+
+	useEffect(() => {
+		console.log("isTyping", isTyping);
+		console.log("shouldSendTypingEvent", shouldSendTypingEvent);
+	}, [isTyping, shouldSendTypingEvent]);
+
 	const [signal, setSignal] = useState<number>(0);
 	// ? the users usernames / nickname
 	const [typingUsers, setTypingUsers] = useState<string[]>(["DarkerInk"]);
@@ -77,6 +128,12 @@ const MessageContainer = ({ placeholder, children, isReadOnly, sendMessage, chan
 			const newChannel = state.channels[channelIdRef.current];
 
 			if (!fastDeepEqual(oldChannel, newChannel)) {
+				if (oldChannel && newChannel && (oldChannel.previousMessageContent !== newChannel.previousMessageContent
+					|| oldChannel.typingStarted !== newChannel.typingStarted
+					|| oldChannel.lastTypingSent !== newChannel.lastTypingSent
+					|| oldChannel.lastTyped !== newChannel.lastTyped)
+				) return;
+
 				setSignal((old) => old + 1);
 			}
 		});
@@ -88,6 +145,14 @@ const MessageContainer = ({ placeholder, children, isReadOnly, sendMessage, chan
 		channelIdRef.current = channelId;
 
 		const channel = getChannel(channelId);
+
+		setTypingUsers(channel.typingUserIds);
+		setLastSentTypingAt(channel.lastTypingSent);
+		setLastTypedAt(channel.lastTyped);
+		setStartedTypingAt(channel.typingStarted);
+		if (channel.previousMessageContent !== content) setContent(channel.previousMessageContent ?? "");
+
+		console.log("updating")
 
 		if (channel.typingUserIds.length > 0) {
 			const typingUsers = channel.typingUserIds.map((userId) => {
@@ -137,6 +202,12 @@ const MessageContainer = ({ placeholder, children, isReadOnly, sendMessage, chan
 			});
 		}
 	}, [channelId, guildId, signal]);
+
+	useEffect(() => {
+		updateChannel(channelId, {
+			previousMessageContent: content
+		});
+	}, [content])
 
 	return (
 		<div className="flex flex-col h-screen overflow-x-hidden" style={{
@@ -211,10 +282,27 @@ const MessageContainer = ({ placeholder, children, isReadOnly, sendMessage, chan
 									}}
 								/>
 							</div>
-							<SlateEditor sendMessage={sendMessage} placeholder={placeholder} isReadOnly={isReadOnly} readOnlyMessage="You do not have permission to send messages in this channel" />
+							<SlateEditor
+								sendMessage={(msg) => {
+									sendMessage(msg);
+
+									setContent("");
+								}}
+								placeholder={placeholder}
+								isReadOnly={isReadOnly}
+								initialText={content}
+								readOnlyMessage="You do not have permission to send messages in this channel"
+								onType={(text) => {
+									if (isReadOnly) return;
+
+									setContent(text);
+
+									sendUserIsTyping();
+								}}
+							/>
 							<div className="flex ml-4 gap-2">
 								<SmilePlus size={22} color="#acaebf" className={twMerge(isReadOnly ? "" : "cursor-pointer")} />
-								<SendHorizontal size={22} color="#acaebf" className={twMerge(isReadOnly ? "" : "cursor-pointer")} />
+								<SendHorizontal size={22} color="#8c52ff" className={twMerge(isReadOnly ? "" : "cursor-pointer")} />
 							</div>
 						</div>
 					</div>

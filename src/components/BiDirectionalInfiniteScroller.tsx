@@ -42,13 +42,6 @@ interface BiDirectionalInfiniteScrollerProps<T> {
      */
     bottomContent?: React.ReactNode;
     data: T[];
-    /**
-     * okay, virtualized is a semi lie, what it means, is that if you have 300 items, and virtualizedCount is set to 250, we will
-     * only render 250 items max at a time, once the limit is reached we may remove around 150. Then when you scroll back up if there's
-     * some cache left, we will fetch from that cache instead of re-fetching the data. (wip) 
-     */
-    virtualized?: boolean;
-    virtualizedCount?: number;
     renderItem: (item: T, index: number, items: T[]) => React.ReactNode;
     /**
      * The threshold to trigger the onTopReached function. (Defaults to 0.8, it means when the user has scrolled 80% of the total height of the scroller)
@@ -84,10 +77,6 @@ interface BiDirectionalInfiniteScrollerProps<T> {
     id?: string;
 }
 
-/**
- * I got super pissed to the fact NOWHERE has a bi-directional infinite scroller for react.
- * there is react-infinite-scroll-component which is MEANT to have it but like the 20 different issues complaining about it not working, I'm not going to bother.
- */
 const BiDirectionalInfiniteScroller = <T,>({
     data,
     hasMoreBottom = false,
@@ -151,53 +140,53 @@ const BiDirectionalInfiniteScroller = <T,>({
     }, [hasMoreTop, hasMoreBottom, isFastScrolling, loading, canFetchAgain]);
 
     /**
-     * This attempts to jump the user up when fetching new messages, so the last possible message is visible so when we add new data, our scroll position
+     * This attempts to jump the user up when fetching new elements, so the last possible element is visible so when we add new data, our scroll position
      * isn't stored in the skeleton box (as then you get stuck in a infinite loop of fetching new data)
      */
     const fixPositioning = () => {
-        const messageWrapper = scrollWrapperRef.current;
+        const elementWrapper = scrollWrapperRef.current;
         const scrollerInner = scrollerInnerRef.current;
 
-        if (!messageWrapper || !scrollerInner) return;
+        if (!elementWrapper || !scrollerInner) return;
 
-        const messageWrapperRect = messageWrapper.getBoundingClientRect();
-        const messages = scrollerInner.querySelectorAll("li");
-        let anyMessageInView = false;
-        let closestMessage: HTMLLIElement | null = null;
+        const elementWrapperRect = elementWrapper.getBoundingClientRect();
+        const elements = scrollerInner.querySelectorAll("li");
+        let anyElementInView = false;
+        let closestElement: HTMLLIElement | null = null;
         let closestDistance = Infinity;
 
-        for (const message of messages) {
-            const messageRect = message.getBoundingClientRect();
+        for (const element of elements) {
+            const elementRect = element.getBoundingClientRect();
 
-            // ? Check if any part of the message is in view
+            // ? Check if any part of the element is in view
             if (
-                (messageRect.top >= messageWrapperRect.top && messageRect.bottom <= messageWrapperRect.bottom) ||
-                (messageRect.top <= messageWrapperRect.top && messageRect.bottom >= messageWrapperRect.top) ||
-                (messageRect.top <= messageWrapperRect.bottom && messageRect.bottom >= messageWrapperRect.bottom)
+                (elementRect.top >= elementWrapperRect.top && elementRect.bottom <= elementWrapperRect.bottom) ||
+                (elementRect.top <= elementWrapperRect.top && elementRect.bottom >= elementWrapperRect.top) ||
+                (elementRect.top <= elementWrapperRect.bottom && elementRect.bottom >= elementWrapperRect.bottom)
             ) {
-                anyMessageInView = true;
+                anyElementInView = true;
             }
 
-            // ? Calculate the closest message to the viewport (this is so we can move the closest message into view (cc below))
+            // ? Calculate the closest element to the viewport (this is so we can move the closest element into view (cc below))
             const distance = Math.min(
-                Math.abs(messageRect.top - messageWrapperRect.top),
-                Math.abs(messageRect.bottom - messageWrapperRect.bottom)
+                Math.abs(elementRect.top - elementWrapperRect.top),
+                Math.abs(elementRect.bottom - elementWrapperRect.bottom)
             );
 
             if (distance < closestDistance) {
                 closestDistance = distance;
-                closestMessage = message as HTMLLIElement;
+                closestElement = element as HTMLLIElement;
             }
         }
 
-        if (!anyMessageInView && closestMessage) {
-            const messageRect = closestMessage.getBoundingClientRect();
-            if (messageRect.top > 0) {
-                const scrollOffset = (messageRect.bottom - messageWrapperRect.bottom) - closestMessage.clientHeight + 20;
-                messageWrapper.scrollTop += scrollOffset;
+        if (!anyElementInView && closestElement) {
+            const closestElementRect = closestElement.getBoundingClientRect();
+            if (closestElementRect.top > 0) {
+                const scrollOffset = (closestElementRect.bottom - elementWrapperRect.bottom) - closestElement.clientHeight + 20;
+                elementWrapper.scrollTop += scrollOffset;
             } else {
-                const scrollOffset = messageRect.top - messageWrapperRect.top + (closestMessage.clientHeight - 10);
-                messageWrapper.scrollTop += scrollOffset;
+                const scrollOffset = closestElementRect.top - elementWrapperRect.top + (closestElement.clientHeight - 10);
+                elementWrapper.scrollTop += scrollOffset;
             }
         }
     };
@@ -207,12 +196,12 @@ const BiDirectionalInfiniteScroller = <T,>({
 
         fixPositioning();
 
-        const messageWrapper = scrollWrapperRef.current;
+        const elementWrapper = scrollWrapperRef.current;
         const scroller = scrollerInnerRef.current;
 
-        if (!messageWrapper || !scroller) return;
+        if (!elementWrapper || !scroller) return;
 
-        const { scrollTop: currentScrollPosition } = messageWrapper;
+        const { scrollTop: currentScrollPosition } = elementWrapper;
         const currentScrollHeight = scroller.scrollHeight;
 
         await onTopReached();
@@ -220,7 +209,7 @@ const BiDirectionalInfiniteScroller = <T,>({
         setTimeout(() => {
             const newScrollHeight = scroller.scrollHeight;
             const scrollDifference = newScrollHeight - currentScrollHeight;
-            messageWrapper.scrollTop = currentScrollPosition + scrollDifference;
+            elementWrapper.scrollTop = currentScrollPosition + scrollDifference;
         }, 0);
     };
 

@@ -1,12 +1,16 @@
 import AllBadges from "@/badges/AllBadges.tsx";
 import { Member } from "@/wrapper/Stores/Members.ts";
+import { Role } from "@/wrapper/Stores/RoleStore.ts";
 import { User, useUserStore } from "@/wrapper/Stores/UserStore.ts";
 import { Avatar, Badge, Card, CardBody, Divider, Input } from "@nextui-org/react";
 import { X } from "lucide-react";
 
 const UserPopover = ({ member, onClick }: {
 	member: {
-		member: Member | null;
+		member: {
+			roles: Role[];
+			member: Member;
+		} | null;
 		user: User;
 	}; onClick?: () => void;
 }) => {
@@ -42,10 +46,8 @@ const UserPopover = ({ member, onClick }: {
 								<div className="group-hover:bg-opacity-50 rounded-full absolute inset-0 bg-black bg-opacity-0"></div>
 							</div>
 						</Badge>
-						<div className="flex items-end justify-end">
-							<div className="bg-[#131315] rounded-md p-1 ml-[-10px]">
-								<AllBadges privateFlags={member.user.flags} publicFlags={member.user.publicFlags} size={18} />
-							</div>
+						<div className="bg-[#131315] rounded-md p-1">
+							<AllBadges privateFlags={member.user.flags} publicFlags={member.user.publicFlags} size={18} />
 						</div>
 					</div>
 					<Divider className="mt-2" />
@@ -73,19 +75,19 @@ const UserPopover = ({ member, onClick }: {
 									<div className="mt-2">
 										<span className="text-white font-bold">Roles</span>
 										<div className="flex flex-wrap select-none">
-											{/* {member.roles.map((role) => (
+											{member.member.roles.map((role) => (
 										<div
 											className="flex flex-wrap bg-accent border-gray-400 border rounded-md px-2 py-0 mt-2 mr-1 group"
-											key={role}
+											key={role.id}
 										>
 											<span className="flex box-border rounded-full border-background w-3.5 h-3.5 min-w-3.5 min-h-3.5 px-1 mt-[0.1rem] mr-1" style={{
 												backgroundColor: "green",
 											}}>
 												<X size={14} className="hidden group-hover:block" strokeWidth={8} color="gray" />
 											</span>
-											<span className="text-white text-xs">{role}</span>
+											<span className="text-white text-xs">{role.name}</span>
 										</div>
-									))} */}
+									))}
 										</div>
 									</div>
 								)}

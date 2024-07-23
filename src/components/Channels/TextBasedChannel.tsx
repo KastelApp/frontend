@@ -231,7 +231,7 @@ const TextBasedChannel = () => {
 			<div className="mt-auto overflow-y-auto" id="inf-scroller-msg-container">
 				{!initialFetch && skelliedMessages}
 				<BiDirectionalInfiniteScroller
-					data={renderedMessages}
+					data={renderedMessages.slice(0, 15)}
 					renderItem={(message) => (
 						<Message
 							message={message}
@@ -249,7 +249,7 @@ const TextBasedChannel = () => {
 					initialScrollTop={-1}
 					loading={fetching}
 					topContent={
-						!perChannel.hasMoreBefore &&
+						!false &&
 						<div className="mb-4 mr-16 ml-2 flex border-b-1 border-gray-800 select-none">
 							<div className="flex mb-2">
 								<div className="bg-slate-700 p-2 rounded-full flex items-center">
@@ -262,7 +262,7 @@ const TextBasedChannel = () => {
 							</div>
 						</div>
 					}
-					hasMoreTop={perChannel.hasMoreBefore}
+					hasMoreTop={false}
 				/>
 				<div ref={bottomRef} />
 			</div>

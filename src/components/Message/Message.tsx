@@ -1,6 +1,6 @@
 import { Avatar, Chip, Popover, PopoverContent, PopoverTrigger, useDisclosure } from "@nextui-org/react";
 import UserPopover from "@/components/Popovers/UserPopover.tsx";
-import { memo, useEffect, useState } from "react";
+import { memo, useEffect, useRef, useState } from "react";
 import { Pen, Reply, Trash2, Ellipsis } from "lucide-react";
 import { twMerge } from "tailwind-merge";
 import UserModal from "@/components/Modals/UserModal.tsx";
@@ -19,13 +19,17 @@ import useCustomScrollIntoView from "@/hooks/useCustomScrollIntoView.ts";
 const Message = memo(({
 	className,
 	disableButtons,
-	message
+	message,
+	id,
 }: {
 	message: MessageType;
 	className?: string;
 	disableButtons?: boolean;
+	id?: string;
 }) => {
 	const guildId = useChannelStore.getState().getGuildId(message.channelId);
+
+	const { messages } = useMessageStore();
 
 	const [author, setAuthor] = useState<{
 		user: User | null;
@@ -36,7 +40,6 @@ const Message = memo(({
 		user: useUserStore.getState().getUser(message.authorId),
 		roleColor: null
 	});
-	const [replyingMessage, setReplyingMessage] = useState<MessageType | null>(null);
 	const [replyingAuthor, setReplyingAuthor] = useState<{
 		user: User | null;
 		member: Member | null;
@@ -46,46 +49,45 @@ const Message = memo(({
 		member: null,
 		roleColor: null
 	});
+	
+	const [replyingMessage, setReplyingMessage] = useState<MessageType | null | undefined>(() => {
+		const foundReply = messages.find((msg) => msg.id === message.replyingTo);
 
+		if (foundReply) {
+			if (!replyingAuthor.user) {
+				const fetchedAuthor = useUserStore.getState().getUser(foundReply.authorId);
+				const fetchedMember = guildId ? useMemberStore.getState().getMember(guildId, foundReply.authorId) ?? null : null;
+
+				let roleData: { color: string; id: string; } | null = null;
+
+				if (fetchedMember) {
+					const roles = useRoleStore.getState().getRoles(guildId ?? "");
+					const topColorRole = fetchedMember.roles
+						.map((roleId) => roles.find((role) => role.id === roleId))
+						.filter((role) => role !== undefined)
+						.sort((a, b) => a!.position - b!.position)
+						.reverse()[0];
+
+					roleData = {
+						color: topColorRole ? topColorRole.color.toString(16) : "",
+						id: topColorRole ? topColorRole.id : ""
+					};
+				}
+
+				setReplyingAuthor({
+					user: fetchedAuthor,
+					member: fetchedMember,
+					roleColor: roleData
+				});
+			}
+		}
+		
+		return foundReply ?? null;
+	})
 	const [highlighted, setHighlighted] = useState(false);
 	const scrollIntoView = useCustomScrollIntoView();
 
 	useEffect(() => {
-		if (message.replyingTo) {
-			const foundReply = useMessageStore.getState().getMessage(message.replyingTo);
-
-			if (foundReply) {
-				setReplyingMessage(foundReply);
-
-				if (!replyingAuthor.user) {
-					const fetchedAuthor = useUserStore.getState().getUser(foundReply.authorId);
-					const fetchedMember = guildId ? useMemberStore.getState().getMember(guildId, foundReply.authorId) ?? null : null;
-
-					let roleData: { color: string; id: string; } | null = null;
-
-					if (fetchedMember) {
-						const roles = useRoleStore.getState().getRoles(guildId ?? "");
-						const topColorRole = fetchedMember.roles
-							.map((roleId) => roles.find((role) => role.id === roleId))
-							.filter((role) => role !== undefined)
-							.sort((a, b) => a!.position - b!.position)
-							.reverse()[0];
-
-						roleData = {
-							color: topColorRole ? topColorRole.color.toString(16) : "",
-							id: topColorRole ? topColorRole.id : ""
-						};
-					}
-
-					setReplyingAuthor({
-						user: fetchedAuthor,
-						member: fetchedMember,
-						roleColor: roleData
-					});
-				}
-			}
-		}
-
 		const messageSubscribed = useMessageStore.subscribe(async (state) => {
 			if (!message.replyingTo) return;
 
@@ -205,10 +207,9 @@ const Message = memo(({
 
 				return;
 			}
-			
-			setHighlighted(true);
-		})
 
+			setHighlighted(true);
+		});
 
 		return () => {
 			messageSubscribed();
@@ -242,7 +243,10 @@ const Message = memo(({
 						<UserPopover
 							member={{
 								user: author.user!,
-								member: author.member
+								member: author.member ? {
+									member: author.member,
+									roles: []
+								} : null
 							}}
 							onClick={() => {
 								onOpen();
@@ -255,7 +259,6 @@ const Message = memo(({
 		);
 	};
 
-
 	return (
 		<div
 			className={twMerge(
@@ -267,7 +270,7 @@ const Message = memo(({
 				// todo: role check
 			)}
 			tabIndex={0}
-			id={`chatmessage-${message.channelId}-${message.id}`}
+			id={id ?? `chatmessage-${message.channelId}-${message.id}`}
 		>
 			{replyingMessage && (
 				<div className="flex items-center ml-4 mb-1">
@@ -305,7 +308,7 @@ const Message = memo(({
 							jumpingStateId: replyingMessage.id
 						});
 
-						scrollIntoView(`chatmessage-${message.channelId}-${replyingMessage.id}`, "inf-scroller-msg-container")
+						scrollIntoView(`chatmessage-${message.channelId}-${replyingMessage.id}`, "inf-scroller-msg-container");
 
 						// setTimeout(() => {
 						// 	usePerChannelStore.getState().updateChannel(message.channelId, {

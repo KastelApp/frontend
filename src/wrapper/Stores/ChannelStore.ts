@@ -85,6 +85,10 @@ export interface PerChannel {
      */
     lastTypingSent: number;
     /**
+     * When the user started typing
+     */
+    typingStarted: number;
+    /**
      * If there's more messages before (i.e on the top)
      */
     hasMoreBefore: boolean;
@@ -271,7 +275,8 @@ export const usePerChannelStore = create(
                         editingStateId: null,
                         replyingStateId: null,
                         typingUserIds: [],
-                        jumpingStateId: null
+                        jumpingStateId: null,
+                        typingStarted: 0
                     },
                     ...get().channels[channelId]
                 };
@@ -292,7 +297,8 @@ export const usePerChannelStore = create(
                             editingStateId: null,
                             replyingStateId: null,
                             typingUserIds: [],
-                            jumpingStateId: null
+                            jumpingStateId: null,
+                            typingStarted: 0
                         }
                     }
                 })
@@ -317,7 +323,8 @@ export const usePerChannelStore = create(
                     editingStateId: null,
                     replyingStateId: null,
                     typingUserIds: [],
-                    jumpingStateId: null
+                    jumpingStateId: null,
+                    typingStarted: 0
                 }
 
                 const channel = get().getChannel(channelId) ?? base;

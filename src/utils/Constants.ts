@@ -97,6 +97,18 @@ const publicFlags = {
 	BugHunterLevel3: 1n << 10n,
 };
 
+const badgeOrder = [
+	publicFlags.StaffBadge,
+	publicFlags.PartnerBadge,
+	publicFlags.ModeratorBadge,
+	publicFlags.BugHunterLevel1,
+	publicFlags.BugHunterLevel2,
+	publicFlags.BugHunterLevel3,
+	publicFlags.DeveloperBadge,
+	publicFlags.VerifiedBotDeveloperBadge,
+	publicFlags.SponsorBadge,
+]
+
 const privateFlags = {
 	Ghost: 1n << 0n,
 	System: 1n << 1n,
@@ -297,7 +309,8 @@ export default {
 	userSendCodes,
 	snowflake,
 	settings,
-	fakeUserIds
+	fakeUserIds,
+	badgeOrder
 };
 
 export {
@@ -318,5 +331,6 @@ export {
 	userSendCodes,
 	snowflake,
 	settings,
-	fakeUserIds
+	fakeUserIds,
+	badgeOrder
 };

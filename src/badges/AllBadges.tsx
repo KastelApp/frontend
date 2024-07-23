@@ -3,10 +3,14 @@ import StaffBadge from "./Staff.tsx";
 import BugHunterLevel1 from "./BugHunter1.tsx";
 import BugHunterLevel2 from "./BugHunter2.tsx";
 import BugHunterLevel3 from "./BugHunter3.tsx";
-import { publicFlags as pubFlags } from "@/utils/Constants.ts";
+import { badgeOrder, publicFlags as pubFlags } from "@/utils/Constants.ts";
 import Sponsor from "./Sponsor.tsx";
 import { twMerge } from "tailwind-merge";
 import Tooltip from "@/components/Tooltip.tsx";
+import Moderator from "@/badges/Moderator.tsx";
+import Contributor from "@/badges/Contributor.tsx";
+import Partner from "@/badges/Partner.tsx";
+import BotBadge from "@/badges/BotBadge.tsx";
 
 /**
  * Just a small helper component to display all badges a user has.
@@ -24,27 +28,26 @@ const AllBadges = ({
 
 	const badges = Object.entries(flags.PublicFlags.toJSON())
 		.filter(([, value]) => value === true)
-		.map(([key]) => key) as (keyof typeof pubFlags)[];
+		.map(([key]) => key)
+		.sort((a, b) => badgeOrder.indexOf(pubFlags[a as keyof typeof pubFlags]) - badgeOrder.indexOf(pubFlags[b as keyof typeof pubFlags]));
 
 	return (
-		<div className={twMerge("rounded-md p-1 ml-2 bg-charcoal-600 flex-wrap items-center justify-center gap-2", badges.length > 0 ? "flex" : "hidden")}>
-			{badges.map((flag) => {
+		<div className={twMerge("rounded-md pt-1.5 pr-1.5 bg-charcoal-600 flex flex-wrap justify-end max-w-48 w-fit")}>
+			{badges.map((flag, index) => {
 				switch (flag) {
-					case "StaffBadge": {
+					case "StaffBadge":
 						return (
-							<div className="relative">
-								<Tooltip content="Staff" color="warning">
+							<div key={index} className="relative flex-none w-1/5 p-1">
+								<Tooltip content="Staff" color="secondary">
 									<span className="text-lg text-warning cursor-pointer hover:opacity-75">
 										<StaffBadge size={size} />
 									</span>
 								</Tooltip>
 							</div>
 						);
-					}
-
-					case "BugHunterLevel1": {
+					case "BugHunterLevel1":
 						return (
-							<div className="relative">
+							<div key={index} className="relative flex-none w-1/5 p-1">
 								<Tooltip content="Minor Bug Hunter" color="success">
 									<span className="text-lg text-success cursor-pointer hover:opacity-75">
 										<BugHunterLevel1 size={size} />
@@ -52,11 +55,9 @@ const AllBadges = ({
 								</Tooltip>
 							</div>
 						);
-					}
-
-					case "BugHunterLevel2": {
+					case "BugHunterLevel2":
 						return (
-							<div className="relative">
+							<div key={index} className="relative flex-none w-1/5 p-1">
 								<Tooltip content="Intermediate Bug Hunter" color="warning">
 									<span className="text-lg text-success cursor-pointer hover:opacity-75">
 										<BugHunterLevel2 size={size} />
@@ -64,11 +65,9 @@ const AllBadges = ({
 								</Tooltip>
 							</div>
 						);
-					}
-
-					case "BugHunterLevel3": {
+					case "BugHunterLevel3":
 						return (
-							<div className="relative">
+							<div key={index} className="relative flex-none w-1/5 p-1">
 								<Tooltip showArrow content="Major Bug Hunter" color="secondary">
 									<span className="text-lg text-success cursor-pointer hover:opacity-75">
 										<BugHunterLevel3 size={size} />
@@ -76,11 +75,9 @@ const AllBadges = ({
 								</Tooltip>
 							</div>
 						);
-					}
-
-					case "SponsorBadge": {
+					case "SponsorBadge":
 						return (
-							<div className="relative">
+							<div key={index} className="relative flex-none w-1/5 p-1">
 								<Tooltip content="Has Sponsored Kastel" color="secondary">
 									<span className="text-lg text-secondary cursor-pointer hover:opacity-75">
 										<Sponsor size={size} />
@@ -88,11 +85,48 @@ const AllBadges = ({
 								</Tooltip>
 							</div>
 						);
-					}
-
-					default: {
+					case "ModeratorBadge":
+						return (
+							<div key={index} className="relative flex-none w-1/5 p-1">
+								<Tooltip content="Moderator Program" color="primary">
+									<span className="text-lg text-info cursor-pointer hover:opacity-75">
+										<Moderator size={size} />
+									</span>
+								</Tooltip>
+							</div>
+						);
+					case "DeveloperBadge":
+						return (
+							<div key={index} className="relative flex-none w-1/5 p-1">
+								<Tooltip content="Developer" color="danger">
+									<span className="text-lg text-danger cursor-pointer hover:opacity-75">
+										<Contributor size={size} />
+									</span>
+								</Tooltip>
+							</div>
+						);
+					case "PartnerBadge":
+						return (
+							<div key={index} className="relative flex-none w-1/5 p-1">
+								<Tooltip content="Partner" color="success">
+									<span className="text-lg text-success cursor-pointer hover:opacity-75">
+										<Partner size={size} />
+									</span>
+								</Tooltip>
+							</div>
+						);
+					case "VerifiedBotDeveloperBadge":
+						return (
+							<div key={index} className="relative flex-none w-1/5 p-1">
+								<Tooltip content="Verified Bot Developer" color="danger">
+									<span className="text-lg text-danger cursor-pointer hover:opacity-75">
+										<BotBadge size={size} />
+									</span>
+								</Tooltip>
+							</div>
+						);
+					default:
 						return null;
-					}
 				}
 			})}
 		</div>

@@ -14,7 +14,7 @@ import { twMerge } from "tailwind-merge";
 import UserPopover from "../Popovers/UserPopover.tsx";
 import UserModal from "../Modals/UserModal.tsx";
 import { useRouter } from "next/router";
-import { useRoleStore } from "@/wrapper/Stores/RoleStore.ts";
+import { Role, useRoleStore } from "@/wrapper/Stores/RoleStore.ts";
 import { Member, useMemberStore } from "@/wrapper/Stores/Members.ts";
 import { User, useUserStore } from "@/wrapper/Stores/UserStore.ts";
 import deepEqual from "fast-deep-equal";
@@ -78,6 +78,7 @@ const MemberItem = memo(({ member, color }: {
 					<div
 						className="flex items-center justify-=between w-full h-12 px-2 cursor-pointer rounded-lg hover:bg-slate-800 relative max-w-48"
 						onClick={async () => {
+							console.log(member)
 							if (member.user.metaData.bioless || typeof member.user.bio === "string") {
 								setLoading(false);
 
@@ -108,7 +109,7 @@ const MemberItem = memo(({ member, color }: {
 								});
 							}
 
-							setTimeout(() => setLoading(false), 75)
+							setTimeout(() => setLoading(false), 75);
 						}}
 					>
 						<div className="flex items-center">
@@ -160,7 +161,13 @@ const MemberItem = memo(({ member, color }: {
 						<Spinner />
 					) : (
 						<UserPopover
-							member={member}
+							member={{
+								user: member.user,
+								member: {
+									member: member.member,
+									roles: [],
+								}
+							}}
 							onClick={() => {
 								onOpen();
 								setIsOpen(false);
@@ -182,11 +189,8 @@ const MemberBar = () => {
 
 	const guildSettings = rawGuildSettings[currentGuildId ?? ""] ?? { memberBarHidden: false };
 
-	const roleRef = useRef(useRoleStore.getState().getRoles(currentGuildId));
-	const memberRef = useRef(useMemberStore.getState().getMembers(currentGuildId));
-
-	const roles = roleRef.current;
-	const members = memberRef.current;
+	const roleRef = useRef<Role[] | null>(null);
+	const memberRef = useRef<Member[] | null>(null);
 
 	const [signal, setSignal] = useState(0);
 
@@ -216,24 +220,13 @@ const MemberBar = () => {
 		};
 	}, []);
 
-	useEffect(() => {
-		const roles = useRoleStore.getState().getRoles(currentGuildId);
-		const members = useMemberStore.getState().getMembers(currentGuildId);
 
-		if (!deepEqual(roles, roleRef.current)) {
-			roleRef.current = roles;
-		}
-
-		if (!deepEqual(members, memberRef.current)) {
-			memberRef.current = members;
-		}
-	}, [currentGuildId]);
 
 	const { getUser } = useUserStore();
 
 	const [sections, setSections] = useState<Section[]>();
 
-	const sort = async () => {
+	const sort = async (members: Member[], roles: Role[]) => {
 		const defaultSections: Section[] = [
 			{
 				name: "Offline",
@@ -385,8 +378,19 @@ const MemberBar = () => {
 	};
 
 	useEffect(() => {
-		sort();
-	}, [roles, members, signal]);
+		const roles = useRoleStore.getState().getRoles(currentGuildId);
+		const members = useMemberStore.getState().getMembers(currentGuildId);
+
+		console.log(members, memberRef.current)
+
+		if (!deepEqual(roles, roleRef.current) || !deepEqual(members, memberRef.current)) {
+
+			roleRef.current = roles;
+			memberRef.current = members;
+
+			sort(members, roles);
+		}
+	}, [currentGuildId, signal]);
 
 	return (
 		<div
