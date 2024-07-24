@@ -19,6 +19,7 @@ import { Member, useMemberStore } from "@/wrapper/Stores/Members.ts";
 import { User, useUserStore } from "@/wrapper/Stores/UserStore.ts";
 import deepEqual from "fast-deep-equal";
 import TypingDots from "../MessageContainer/TypingDats.tsx";
+import { usePerChannelStore } from "@/wrapper/Stores/ChannelStore.ts";
 
 interface Section {
 	name: string; // ? two defaults, "offline" and "online"
@@ -32,28 +33,45 @@ interface Section {
 	position: number;
 }
 
-const MemberItem = memo(({ member, color }: {
+const MemberItem = memo(({ member, color, channelId }: {
 	member: {
 		member: Member;
 		user: User;
-	}; color: string | null;
+	};
+	color: string | null;
+	channelId: string;
 }) => {
 	const [loading, setLoading] = useState(false);
 	const [isOpen, setIsOpen] = useState(false);
 
 	const { isOpen: isModalOpen, onOpen, onClose } = useDisclosure();
-
 	const { t } = useTranslationStore();
-
 	const [typing, setTyping] = useState(false);
+	const { getChannel } = usePerChannelStore();
 
 	useEffect(() => {
-		const int = setInterval(() => {
-			setTyping((prev) => !prev);
-		}, 2500);
+		const channel = getChannel(channelId);
 
-		return () => clearInterval(int);
-	}, []);
+		if (!channel) return;
+
+		const foundUser = channel.typingUsers.find((user) => user.id === member.user.id);
+
+		if (foundUser && Date.now() - foundUser.started < 7000) {
+			setTyping(true);
+		}
+
+		const subscribed = usePerChannelStore.subscribe((state) => {
+			const foundUser = state.getChannel(channelId)?.typingUsers.find((user) => user.id === member.user.id);
+
+			if (foundUser && Date.now() - foundUser.started < 7000) {
+				setTyping(true);
+			} else {
+				setTyping(false);
+			}
+		})
+
+		return () => subscribed();
+	}, [channelId]);
 
 	return (
 		<>
@@ -185,6 +203,7 @@ const MemberBar = () => {
 	const { guildSettings: rawGuildSettings } = useGuildSettingsStore();
 
 	const currentGuildId = router.query.guildId as string;
+	const channelId = router.query.channelId as string;
 
 	const guildSettings = rawGuildSettings[currentGuildId ?? ""] ?? { memberBarHidden: false };
 
@@ -430,7 +449,7 @@ const MemberBar = () => {
 								{section.name} — {section.members.length}
 							</p>
 							{section.members.map((member, index) => (
-								<MemberItem key={index} member={member.member} color={member.color} />
+								<MemberItem key={index} member={member.member} color={member.color} channelId={channelId} />
 							))}
 						</div>
 					))}

@@ -7,6 +7,7 @@ import { useRelationshipsStore, Relationship as RelationshipState } from "@/wrap
 import Logger from "@/utils/Logger.ts";
 import { Relationship } from "@/types/http/user/relationships.ts";
 import { useUserStore } from "@/wrapper/Stores/UserStore.ts";
+import { usePerChannelStore } from "@/wrapper/Stores/ChannelStore.ts";
 
 const Init = ({
     children,
@@ -21,6 +22,7 @@ const Init = ({
     const router = useRouter();
     const { setIsReady, isReady } = useIsReady();
     const { addRelationship } = useRelationshipsStore();
+    const { channels } = usePerChannelStore();
 
     useEffect(() => {
         api.token = token;
@@ -36,6 +38,25 @@ const Init = ({
         "/login",
         "/register",
     ];
+
+    useEffect(() => {
+        const int = setInterval(() => {
+            // ? we go thru all channels if they have a typing user, we check if the time is greater than 7 seconds, if so we remove them
+            for (const [channelId, channel] of Object.entries(channels)) {
+                if (!channel.typingUsers || channel.typingUsers.length === 0 || !channel.typingUsers.some((user) => Date.now() - user.started > 7000)) continue;
+
+                channel.typingUsers = channel.typingUsers.filter((user) => Date.now() - user.started < 7000);
+
+                usePerChannelStore.getState().updateChannel(channelId, {
+                    typingUsers: channel.typingUsers
+                });
+
+                console.log("Removing", channel.typingUsers);
+            }
+        }, 1000);
+
+        return () => clearInterval(int);
+    }, [channels])
 
     useEffect(() => {
         if (blacklistedTokenPaths.some((path) => router.pathname.match(path) || path === router.pathname) && token) {

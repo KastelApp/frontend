@@ -1,6 +1,7 @@
 import Websocket from "../Websocket.ts";
 import { EventPayload } from "@/types/payloads/event.ts";
 import Logger from "@/utils/Logger.ts";
+import typing from "@/wrapper/gateway/Events/typing.ts";
 
 const isEventPayload = (data: unknown): data is EventPayload => {
     if (typeof data !== "object" || data === null || data === undefined)
@@ -23,7 +24,7 @@ const event = (ws: Websocket, data: unknown) => {
 
     switch (data.event) {
         case "Typing": {
-            console.log(ws, data.data);
+            typing(ws, data.data);
 
             break;
         }

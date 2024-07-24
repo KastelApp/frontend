@@ -4,13 +4,13 @@ import { Divider, Image } from "@nextui-org/react";
 import TypingDots from "./TypingDats.tsx";
 import { useEffect, useRef, useState } from "react";
 import { twMerge } from "tailwind-merge";
-import { usePerChannelStore } from "@/wrapper/Stores/ChannelStore.ts";
+import { useContentStore, usePerChannelStore } from "@/wrapper/Stores/ChannelStore.ts";
 import { User, useUserStore } from "@/wrapper/Stores/UserStore.ts";
 import { Member, useMemberStore } from "@/wrapper/Stores/Members.ts";
 import { useMessageStore } from "@/wrapper/Stores/MessageStore.ts";
 import { useRoleStore } from "@/wrapper/Stores/RoleStore.ts";
 import fastDeepEqual from "fast-deep-equal";
-import { useSettingsStore } from "@/wrapper/Stores.ts";
+import { useAPIStore, useSettingsStore } from "@/wrapper/Stores.ts";
 import { NavBarLocation } from "@/types/payloads/ready.ts";
 import Tooltip from "../Tooltip.tsx";
 import useTypingIndicator from "@/hooks/useTypingIndicator.ts";
@@ -69,8 +69,8 @@ const MessageContainer = ({ placeholder, children, isReadOnly, sendMessage, chan
 	});
 
 	const [startedTypingAt, setStartedTypingAt] = useState(0);
-    const [lastTypedAt, setLastTypedAt] = useState(0);
-    const [lastSentTypingAt, setLastSentTypingAt] = useState(0);
+	const [lastTypedAt, setLastTypedAt] = useState(0);
+	const [lastSentTypingAt, setLastSentTypingAt] = useState(0);
 	const [content, setContent] = useState("");
 
 	const {
@@ -80,11 +80,11 @@ const MessageContainer = ({ placeholder, children, isReadOnly, sendMessage, chan
 		shouldSendTypingEvent
 	} = useTypingIndicator({
 		lastSentTypingAt,
-        lastTypedAt,
-        setLastSentTypingAt,
-        setLastTypedAt,
-        setStartedTypingAt,
-        startedTypingAt
+		lastTypedAt,
+		setLastSentTypingAt,
+		setLastTypedAt,
+		setStartedTypingAt,
+		startedTypingAt
 	});
 
 	useEffect(() => {
@@ -110,12 +110,20 @@ const MessageContainer = ({ placeholder, children, isReadOnly, sendMessage, chan
 			...(shouldUpdatingLastTyping ? { lastTyped: lastTypedAt } : {}),
 			...(shouldUpdateLastSentTyping ? { lastTypingSent: lastSentTypingAt } : {}),
 			...(shouldUpdateStartedTyping ? { typingStarted: startedTypingAt } : {})
-		})
+		});
 	}, [startedTypingAt, lastTypedAt, lastSentTypingAt]);
 
+	const { api } = useAPIStore();
+
 	useEffect(() => {
+		const sendType = async (channelId: string) => {
+			await api.post({
+				url: `/channels/${channelId}/typing`
+			});
+		};
+
 		if (shouldSendTypingEvent) {
-			sentTypingEvent();
+			sendType(channelId).then(() => sentTypingEvent());
 		}
 	}, [isTyping, shouldSendTypingEvent]);
 
@@ -128,41 +136,43 @@ const MessageContainer = ({ placeholder, children, isReadOnly, sendMessage, chan
 			const oldChannel = prevState.channels[channelIdRef.current];
 			const newChannel = state.channels[channelIdRef.current];
 
-			if (!fastDeepEqual(oldChannel, newChannel)) {
-				if (oldChannel && newChannel && (oldChannel.previousMessageContent !== newChannel.previousMessageContent
-					|| oldChannel.typingStarted !== newChannel.typingStarted
-					|| oldChannel.lastTypingSent !== newChannel.lastTypingSent
-					|| oldChannel.lastTyped !== newChannel.lastTyped)
-				) return;
+			if (fastDeepEqual(oldChannel, newChannel)) return;
 
-				setSignal((old) => old + 1);
-			}
+			setSignal((prev) => prev + 1);
 		});
 
 		return () => subscribed();
 	}, []);
+
+	const { getContent, setContent: setMsgContent } = useContentStore();
 
 	useEffect(() => {
 		channelIdRef.current = channelId;
 
 		const channel = getChannel(channelId);
 
+		setContent(getContent(channelId) ?? "");
 		setLastSentTypingAt(channel.lastTypingSent);
 		setLastTypedAt(channel.lastTyped);
 		setStartedTypingAt(channel.typingStarted);
 
-		if (channel.previousMessageContent !== content) setContent(channel.previousMessageContent ?? "");
+		const filteredTypingUsers = channel.typingUsers.filter((user) => user.started > Date.now() - 7000);
 
-		if (channel.typingUserIds.length > 0) {
-			const typingUsers = channel.typingUserIds.map((userId) => {
-				const user = useUserStore.getState().getUser(userId);
-				const member = guildId ? useMemberStore.getState().getMember(guildId, userId) : null;
-
-				return member ? member.nickname ?? user?.globalNickname ?? user?.username : user?.globalNickname ?? user?.username;
-			}).filter((username) => typeof username === "string");
-
-			setTypingUsers(typingUsers);
+		if (filteredTypingUsers.length !== channel.typingUsers.length) {
+			updateChannel(channelId, {
+				typingUsers: filteredTypingUsers
+			});
 		}
+
+		// ? we want to ignore ourselves
+		const typingUsers = filteredTypingUsers.filter((typing) => typing.id !== useUserStore.getState().getCurrentUser()?.id).map((typing) => {
+			const user = useUserStore.getState().getUser(typing.id);
+			const member = guildId ? useMemberStore.getState().getMember(guildId, typing.id) : null;
+
+			return member ? member.nickname ?? user?.globalNickname ?? user?.username : user?.globalNickname ?? user?.username;
+		}).filter((username) => typeof username === "string");
+
+		setTypingUsers(typingUsers);
 
 		if (!channel.currentStates.includes("replying")) {
 			setReplying(false);
@@ -201,12 +211,6 @@ const MessageContainer = ({ placeholder, children, isReadOnly, sendMessage, chan
 			});
 		}
 	}, [channelId, guildId, signal]);
-
-	useEffect(() => {
-		updateChannel(channelId, {
-			previousMessageContent: content
-		});
-	}, [content])
 
 	return (
 		<div className="flex flex-col h-screen overflow-x-hidden" style={{
@@ -286,6 +290,7 @@ const MessageContainer = ({ placeholder, children, isReadOnly, sendMessage, chan
 									sendMessage(msg);
 
 									setContent("");
+									setMsgContent(channelId, "");
 								}}
 								placeholder={placeholder}
 								isReadOnly={isReadOnly}
@@ -295,7 +300,8 @@ const MessageContainer = ({ placeholder, children, isReadOnly, sendMessage, chan
 									if (isReadOnly) return;
 
 									setContent(text);
-
+									setMsgContent(channelId, text);
+									
 									sendUserIsTyping();
 								}}
 							/>

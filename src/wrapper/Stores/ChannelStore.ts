@@ -53,10 +53,6 @@ export interface ChannelStore {
 
 export interface PerChannel {
     /**
-     * The content of the message you are currently typing
-     */
-    previousMessageContent: string | null;
-    /**
      * default - The user is not editing or replying to a message
      * editing - The user is editing a message
      * replying - The user is replying to a message
@@ -103,7 +99,10 @@ export interface PerChannel {
     /**
      * The user's who are currently typing
      */
-    typingUserIds: string[];
+    typingUsers: {
+        id: string;
+        started: number;
+    }[];
 }
 
 export interface PerChannelStore {
@@ -115,6 +114,20 @@ export interface PerChannelStore {
     removeChannel(channelId: string): void;
     updateChannel(channelId: string, data: Partial<PerChannel>): void;
 }
+
+export interface ContentStore {
+    channels: {
+        [key: string]: string
+    };
+    getContent(channelId: string): string;
+    setContent(channelId: string, content: string): void;
+}
+
+export const useContentStore = create(persist<ContentStore>((set, get) => ({
+    channels: {},
+    getContent: (channelId) => get().channels[channelId] ?? "",
+    setContent: (channelId, content) => set({ channels: { ...get().channels, [channelId]: content } })
+}), { name: "content" }));
 
 export const useChannelStore = create<ChannelStore>((set, get) => ({
     channels: [],
@@ -257,103 +270,88 @@ export const useChannelStore = create<ChannelStore>((set, get) => ({
     }
 }));
 
-export const usePerChannelStore = create(
-    persist<PerChannelStore>(
-        (set, get) => ({
-            channels: {},
-            getChannel: (channelId) => {
-                return {
-                    ...{
-                        currentStates: [],
-                        lastTyped: 0,
-                        lastTypingSent: 0,
-                        previousMessageContent: null,
-                        scrollPosition: 0,
-                        fetchingError: false,
-                        hasMoreAfter: true,
-                        hasMoreBefore: true,
-                        editingStateId: null,
-                        replyingStateId: null,
-                        typingUserIds: [],
-                        jumpingStateId: null,
-                        typingStarted: 0
-                    },
-                    ...get().channels[channelId]
-                };
-            },
-            addChannel: (channelId) => {
-                set({
-                    channels: {
-                        ...get().channels,
-                        [channelId]: {
-                            previousMessageContent: null,
-                            currentStates: [],
-                            scrollPosition: 0,
-                            lastTyped: 0,
-                            lastTypingSent: 0,
-                            fetchingError: false,
-                            hasMoreAfter: true,
-                            hasMoreBefore: true,
-                            editingStateId: null,
-                            replyingStateId: null,
-                            typingUserIds: [],
-                            jumpingStateId: null,
-                            typingStarted: 0
-                        }
-                    }
-                })
-            },
-            removeChannel: (channelId) => {
-                const channels = get().channels;
-
-                delete channels[channelId];
-
-                set({ channels });
-            },
-            updateChannel: (channelId, data) => {
-                const base: PerChannel = {
+export const usePerChannelStore = create<PerChannelStore>(
+    (set, get) => ({
+        channels: {},
+        getChannel: (channelId) => {
+            return {
+                ...{
                     currentStates: [],
                     lastTyped: 0,
                     lastTypingSent: 0,
-                    previousMessageContent: null,
                     scrollPosition: 0,
                     fetchingError: false,
                     hasMoreAfter: true,
                     hasMoreBefore: true,
                     editingStateId: null,
                     replyingStateId: null,
-                    typingUserIds: [],
+                    typingUsers: [],
                     jumpingStateId: null,
                     typingStarted: 0
-                }
-
-                const channel = get().getChannel(channelId) ?? base;
-
-                // ? de-dupe the states (because im lazy)
-                const currentStates = data.currentStates ? Array.from(new Set([...data.currentStates])) : Array.from(new Set([...channel.currentStates]));
-
-                set({
-                    channels: {
-                        ...get().channels,
-                        [channelId]: {
-                            ...base,
-                            ...channel,
-                            ...data,
-                            currentStates
-                        }
+                } satisfies PerChannel,
+                ...get().channels[channelId]
+            };
+        },
+        addChannel: (channelId) => {
+            set({
+                channels: {
+                    ...get().channels,
+                    [channelId]: {
+                        currentStates: [],
+                        scrollPosition: 0,
+                        lastTyped: 0,
+                        lastTypingSent: 0,
+                        fetchingError: false,
+                        hasMoreAfter: true,
+                        hasMoreBefore: true,
+                        editingStateId: null,
+                        replyingStateId: null,
+                        typingUsers: [],
+                        jumpingStateId: null,
+                        typingStarted: 0
                     }
-                });
-            }
-        }),
-        {
-            name: "perChannelStore",
-            partialize: (state) => {
-                return {
-                    channels: Object.fromEntries(
-                        Object.entries(state.channels).map(([key, value]) => [key, { previousMessageContent: value.previousMessageContent }])
-                    )
-                } as unknown as PerChannelStore;
-            }
+                }
+            });
+        },
+        removeChannel: (channelId) => {
+            const channels = get().channels;
+
+            delete channels[channelId];
+
+            set({ channels });
+        },
+        updateChannel: (channelId, data) => {
+            const base: PerChannel = {
+                currentStates: [],
+                lastTyped: 0,
+                lastTypingSent: 0,
+                scrollPosition: 0,
+                fetchingError: false,
+                hasMoreAfter: true,
+                hasMoreBefore: true,
+                editingStateId: null,
+                replyingStateId: null,
+                typingUsers: [],
+                jumpingStateId: null,
+                typingStarted: 0
+            };
+
+            const channel = get().getChannel(channelId) ?? base;
+
+            // ? de-dupe the states (because im lazy)
+            const currentStates = data.currentStates ? Array.from(new Set([...data.currentStates])) : Array.from(new Set([...channel.currentStates]));
+
+            set({
+                channels: {
+                    ...get().channels,
+                    [channelId]: {
+                        ...base,
+                        ...channel,
+                        ...data,
+                        currentStates
+                    }
+                }
+            });
         }
-    )
+    })
 );

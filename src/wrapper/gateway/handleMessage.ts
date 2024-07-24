@@ -157,7 +157,7 @@ const handleMessage = async (ws: Websocket, data: unknown) => {
         }
 
         case opCodes.event: {
-            event(ws, decompressed.data);
+            event(ws, decompressed);
 
             break;
         }
