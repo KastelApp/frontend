@@ -6,7 +6,7 @@ import { twMerge } from "tailwind-merge";
 import UserModal from "@/components/Modals/UserModal.tsx";
 // import RichEmbed, { Embed } from "./Embeds/RichEmbed.tsx";
 // import IFrameEmbed from "./Embeds/IFrameEmbed.tsx";
-// import InviteEmbed from "./Embeds/InviteEmbed.tsx";
+import InviteEmbed from "./Embeds/InviteEmbed.tsx";
 import { MessageStates, Message as MessageType, useMessageStore } from "@/wrapper/Stores/MessageStore.ts";
 import { User, useUserStore } from "@/wrapper/Stores/UserStore.ts";
 import fastDeepEqual from "fast-deep-equal";
@@ -16,6 +16,8 @@ import { useRoleStore } from "@/wrapper/Stores/RoleStore.ts";
 import { useTranslationStore } from "@/wrapper/Stores.ts";
 import Image from "next/image";
 import formatDate from "@/utils/formatDate.ts";
+import { useInviteStore } from "@/wrapper/Stores/InviteStore.ts";
+import { useGuildStore } from "@/wrapper/Stores/GuildStore.ts";
 
 const Message = memo(({
 	className,
@@ -50,6 +52,23 @@ const Message = memo(({
 		member: null,
 		roleColor: null
 	});
+
+	const { fetchInvite, getInvite } = useInviteStore();
+	const { getGuild } = useGuildStore();
+	const [fetchedInvites, setFetchedInvites] = useState(false);
+
+	const fetchInvites = async () => {
+		for (const invite of message.invites) {
+			await fetchInvite(invite);
+		}
+
+		setFetchedInvites(true);
+	};
+
+	useEffect(() => {
+		setFetchedInvites(false);
+		fetchInvites();
+	}, [message.invites]);
 
 	const [replyingMessage, setReplyingMessage] = useState<MessageType | null | undefined>(() => {
 		const foundReply = messages.find((msg) => msg.id === message.replyingTo);
@@ -343,12 +362,28 @@ const Message = memo(({
 					>
 						{message.content}
 					</p>
-					{/* {invites && invites.map((invite, index) => (
-                <div key={index} className="mt-2 inline-block max-w-full overflow-hidden">
-                    <InviteEmbed invite={invite} />
-                </div>
-            ))}
-            {embeds && embeds.map((embed, index) => (
+					{fetchedInvites && message.invites.map((invite, index) => {
+						const fetchedInvite = getInvite(invite);
+
+						const guild = fetchedInvite ? getGuild(fetchedInvite.guildId) : null
+
+						return (
+							<div key={index} className="mt-2 inline-block max-w-full overflow-hidden">
+								<InviteEmbed invite={fetchedInvite ? {
+									code: fetchedInvite.code,
+									guild: {
+										icon: guild!.icon,
+										name: guild!.name,
+										members: {
+											online: 0,
+											total: guild?.memberCount ?? 0
+										}
+									}
+								} : null} />
+							</div>
+						)
+					})}
+					{/* {embeds && embeds.map((embed, index) => (
                 <div key={index} className="mt-2 inline-block max-w-full overflow-hidden">
                     {embed.type === "Rich" ?
                         <RichEmbed embed={embed} /> : embed.type === "Iframe" ? <IFrameEmbed embed={embed} /> : null}

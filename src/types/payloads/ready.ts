@@ -36,6 +36,7 @@ export interface Guild {
 	members: Member[];
 	channelProperties: ChannelProperty[];
 	unavailable: boolean;
+	memberCount: number;
 }
 
 export interface Owner {

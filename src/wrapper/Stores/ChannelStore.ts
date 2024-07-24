@@ -40,7 +40,7 @@ export interface CustomChannel extends Channel {
 
 export interface ChannelStore {
     channels: Channel[];
-    addChannel(channel: Channel): void;
+    addChannel(channel: Partial<Channel>): void;
     removeChannel(id: string): void;
     getChannel(id: string): Promise<Channel | undefined>;
     getChannels(guildId: string): Channel[];
@@ -142,7 +142,7 @@ export const useChannelStore = create<ChannelStore>((set, get) => ({
                 {
                     ...foundChannel,
                     ...channel
-                }
+                } as Channel
             ]
         });
     },

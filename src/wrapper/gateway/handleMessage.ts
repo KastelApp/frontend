@@ -105,7 +105,8 @@ const handleMessage = async (ws: Websocket, data: unknown) => {
                     features: guild.features,
                     description: guild.description,
                     coOwners: guild.coOwners.map((coOwner) => coOwner.id),
-                    channelProperties: guild.channelProperties
+                    channelProperties: guild.channelProperties,
+                    memberCount: guild.memberCount,
                 });
 
                 for (const channel of guild.channels) {

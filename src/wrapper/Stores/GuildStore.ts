@@ -18,11 +18,12 @@ export interface Guild {
         lastMessageAckId: string | null;
         timedoutUntil: string | null;
     }[];
+    memberCount: number
 }
 
 export interface GuildStore {
     guilds: Guild[];
-    addGuild(guild: Guild): void;
+    addGuild(guild: Partial<Guild>): void;
     removeGuild(id: string): void;
     // ? This isn't a promise due to the fact that we have no reason to fetch a guild via the api
     getGuild(id: string): Guild | undefined;
@@ -42,7 +43,7 @@ export const useGuildStore = create<GuildStore>((set, get) => ({
                 {
                     ...foundGuild,
                     ...guild
-                }
+                } as Guild
             ]
         });
     },
@@ -59,6 +60,7 @@ export const useGuildStore = create<GuildStore>((set, get) => ({
         flags: 0,
         unavailable: true,
         channelProperties: [],
+        memberCount: 0
     },
     updateReadState: async (guildId, channelId, lastMessageAckId) => {
         const guild = get().getGuild(guildId);

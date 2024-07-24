@@ -9,6 +9,8 @@ export interface ErrorResponse<Errors extends Record<string, BaseError> = Record
 	errors: Errors;
 }
 
+export type ErrorResponseData<Data, Errors extends Record<string, BaseError> = Record<string, BaseError>> = Data | ErrorResponse<Errors>;
+
 export const isErrorResponse = <PossibleErrors extends Record<string, BaseError>>(
 	obj: unknown,
 ): obj is ErrorResponse<PossibleErrors> => {
