@@ -78,7 +78,6 @@ const MemberItem = memo(({ member, color }: {
 					<div
 						className="flex items-center justify-=between w-full h-12 px-2 cursor-pointer rounded-lg hover:bg-slate-800 relative max-w-48"
 						onClick={async () => {
-							console.log(member)
 							if (member.user.metaData.bioless || typeof member.user.bio === "string") {
 								setLoading(false);
 
@@ -192,13 +191,21 @@ const MemberBar = () => {
 	const roleRef = useRef<Role[] | null>(null);
 	const memberRef = useRef<Member[] | null>(null);
 
-	const [signal, setSignal] = useState(0);
+	const { getUser } = useUserStore();
+
+	const [sections, setSections] = useState<Section[]>([]);
+
+	const sectionsRef = useRef<Section[]>([]);
+
+	useEffect(() => {
+		sectionsRef.current = sections;
+	}, [sections])
 
 	useEffect(() => {
 		const roleSubscribe = useRoleStore.subscribe((s) => {
 			const roles = s.getRoles(currentGuildId);
 
-			if (deepEqual(roles, roleRef.current)) return;
+			if (deepEqual(roles, roleRef.current)) return; // ? its the same nothing changed
 
 			roleRef.current = roles;
 		});
@@ -211,7 +218,32 @@ const MemberBar = () => {
 			memberRef.current = members;
 		});
 
-		const userSubscribe = useUserStore.subscribe(() => setSignal((prev) => prev + 1));
+		const userSubscribe = useUserStore.subscribe((state) => {
+			// ? in sections if we find a user that is changed, we update the user
+			const newSections = [...sectionsRef.current];
+
+			for (const section of newSections) {
+				for (const member of section.members) {
+					const oldUser = member.member.user;
+					const newUser = state.users.find((user) => user.id === oldUser.id);
+
+					if (!newUser) {
+						// ? the user is uncached? we should remove them from the member list then
+						section.members = section.members.filter((m) => m.member.user.id !== oldUser.id);
+
+						continue;
+					}
+
+					if (deepEqual(oldUser, newUser)) continue; // ? the user is the same so we just skip
+
+					member.member.user = newUser;
+				}
+			}
+
+			if (deepEqual(newSections, sectionsRef.current)) return; // ? sections are the same nothing to change
+
+			setSections(newSections);
+		});
 
 		return () => {
 			roleSubscribe();
@@ -219,12 +251,6 @@ const MemberBar = () => {
 			userSubscribe();
 		};
 	}, []);
-
-
-
-	const { getUser } = useUserStore();
-
-	const [sections, setSections] = useState<Section[]>();
 
 	const sort = async (members: Member[], roles: Role[]) => {
 		const defaultSections: Section[] = [
@@ -381,16 +407,13 @@ const MemberBar = () => {
 		const roles = useRoleStore.getState().getRoles(currentGuildId);
 		const members = useMemberStore.getState().getMembers(currentGuildId);
 
-		console.log(members, memberRef.current)
-
 		if (!deepEqual(roles, roleRef.current) || !deepEqual(members, memberRef.current)) {
-
 			roleRef.current = roles;
 			memberRef.current = members;
 
 			sort(members, roles);
 		}
-	}, [currentGuildId, signal]);
+	}, [currentGuildId]);
 
 	return (
 		<div
@@ -401,7 +424,7 @@ const MemberBar = () => {
 		>
 			<div className="fixed w-52 h-screen m-0 overflow-y-auto bg-accent transition-opacity ease-in-out duration-300 !overflow-x-hidden">
 				<div className="flex w-full flex-col ml-2 last:mb-12">
-					{sections?.map((section, index) => (
+					{sections.map((section, index) => (
 						<div key={index}>
 							<p className="text-white text-xs ml-2 mt-2">
 								{section.name} — {section.members.length}
