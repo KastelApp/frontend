@@ -5,23 +5,31 @@ const formatDate = (date: string | Date) => {
     const todaysDate = new Date();
     const dateObj = new Date(date);
 
+    const opts = { hour: "2-digit", minute: "2-digit" } as const;
+
     if (dateObj.toDateString() === todaysDate.toDateString()) {
-        return `Today at ${dateObj.toLocaleTimeString()}`;
+        return `Today at ${dateObj.toLocaleTimeString(undefined, opts)}`;
     }
 
     todaysDate.setDate(todaysDate.getDate() - 1);
 
     if (dateObj.toDateString() === todaysDate.toDateString()) {
-        return `Yesterday at ${dateObj.toLocaleTimeString()}`;
+        return `Yesterday at ${dateObj.toLocaleTimeString(undefined, opts)}`;
     }
 
     todaysDate.setDate(todaysDate.getDate() + 2);
 
     if (dateObj.toDateString() === todaysDate.toDateString()) {
-        return `Tomorrow at ${dateObj.toLocaleTimeString()}`;
+        return `Tomorrow at ${dateObj.toLocaleTimeString(undefined, opts)}`;
     }
 
-    return dateObj.toLocaleString();
+    return dateObj.toLocaleString(undefined, {
+        month: "numeric",
+        day: "numeric",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit"
+    });
 }
 
 export default formatDate;
