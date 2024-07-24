@@ -7,7 +7,6 @@ import { useRouter } from "next/router";
 import "@/styles/globals.css";
 import "@/styles/colorPalette.css";
 import ErrorBoundary from "@/layouts/ErrorBoundary.tsx";
-import ErrorHandler from "@/layouts/ErrorHandler.tsx";
 import { useTranslationStore } from "@/wrapper/Stores.ts";
 import SEO from "@/components/SEO.tsx";
 import { DefaultSeo } from "next-seo";
@@ -16,11 +15,11 @@ import Init from "@/components/Init.tsx";
 import { NextPage } from "next";
 
 type NextPageWithLayout = NextPage & {
-  shouldHaveLayout?: boolean;
+	shouldHaveLayout?: boolean;
 };
 
 type AppPropsWithLayout = AppProps & {
-  Component: NextPageWithLayout;
+	Component: NextPageWithLayout;
 };
 
 
@@ -38,15 +37,13 @@ const App = ({ Component, pageProps }: AppPropsWithLayout) => {
 		<>
 			<DefaultSeo {...SEO} />
 			<ErrorBoundary>
-				<ErrorHandler>
-					<NextUIProvider navigate={router.push}>
-						<NextThemesProvider>
-							<Init shouldHaveLayout={shouldHaveLayout}>
-								<Component {...pageProps} />
-							</Init>
-						</NextThemesProvider>
-					</NextUIProvider>
-				</ErrorHandler>
+				<NextUIProvider navigate={router.push}>
+					<NextThemesProvider>
+						<Init shouldHaveLayout={shouldHaveLayout}>
+							<Component {...pageProps} />
+						</Init>
+					</NextThemesProvider>
+				</NextUIProvider>
 			</ErrorBoundary>
 		</>
 	);

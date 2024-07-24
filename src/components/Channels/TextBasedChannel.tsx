@@ -23,7 +23,6 @@ const skelliedMessages = Array.from({ length: 30 }, (_, i) => <SkellyMessage key
 const TextBasedChannel = () => {
 	const router = useRouter();
 	const [readOnly, setReadOnly] = useState(true); // ? This is just so we know if the user can send messages or not (we prevent any changes / letting them type if so)
-	const [canViewMessages, setCanViewMessages] = useState(false); // ? This is for when message history is disabled, true = can view messages, false = cannot view messages
 	const [changeSignal, setChangeSignal] = useState(0); // ? every time we want a re-render, we increment this value
 
 	const { channelId, guildId } = router.query as { guildId: string; channelId: string; };
@@ -39,14 +38,12 @@ const TextBasedChannel = () => {
 	const { getChannel, updateChannel } = usePerChannelStore();
 
 	const [renderedMessages, setRenderedMessages] = useState<MessageType[]>([]);
-	const [hadError, setHadError] = useState(false);
+	const hadErrorRef = useRef(false);
 	const [fetching, setFetching] = useState(false);
 	const [initialFetch, setInitialFetch] = useState(false);
 	const [channelName, setChannelName] = useState("");
 	const fetchingRef = useRef(false);
 	const [isInViewOfBottom] = useState(true);
-
-	const perChannel = getChannel(channelId);
 
 	useEffect(() => {
 		fetchingRef.current = fetching;
@@ -98,7 +95,7 @@ const TextBasedChannel = () => {
 	}, []);
 
 	const setMessages = async (guildId: string, channelId: string) => {
-		if (fetchingRef.current) return;
+		if (fetchingRef.current || hadErrorRef.current) return;
 
 		setFetching(true);
 
@@ -111,7 +108,7 @@ const TextBasedChannel = () => {
 			});
 
 			if (!fetched) {
-				setHadError(true);
+				hadErrorRef.current = true;
 
 				updateChannel(channelId, {
 					fetchingError: true
@@ -149,7 +146,8 @@ const TextBasedChannel = () => {
 	};
 
 	useEffect(() => {
-		setHadError(false);
+		hadErrorRef.current = false;
+
 		setInitialFetch(false);
 		setRenderedMessages([]);
 
@@ -192,46 +190,50 @@ const TextBasedChannel = () => {
 			return;
 		}
 
-		setReadOnly(!permissionHandler.hasChannelPermission(channelId, ["SendMessages"]));
+		setReadOnly(!permissionHandler.hasChannelPermission(channelId, ["SendMessages"]))
 
 		const perChannel = getChannel(channelId);
 
 		if (perChannel.fetchingError) {
 			console.log("had error :/");
-			setHadError(true);
+
+			hadErrorRef.current = true;
 
 			return;
 		}
 
-		setMessages(guildId, channelId);
+		if (permissionHandler.hasChannelPermission(channelId, ["ViewMessageHistory"])) setMessages(guildId, channelId);
 	}, [channelId, guildId, changeSignal]);
 
 	return (
-		<MessageContainer placeholder={`Message #${channelName}`} isReadOnly={readOnly} sendMessage={(content) => {
-			createMessage(channelId, {
-				content,
-				id: "cats"
-			});
+		<MessageContainer
+			placeholder={`Message #${channelName}`}
+			isReadOnly={readOnly}
+			sendMessage={(content) => {
+				createMessage(channelId, {
+					content,
+					id: "cats"
+				});
 
-			setTimeout(() => bottomRef.current?.scrollIntoView({
-				behavior: "instant",
-				block: "nearest",
-				inline: "start"
-			}), 50);
+				setTimeout(() => bottomRef.current?.scrollIntoView({
+					behavior: "instant",
+					block: "nearest",
+					inline: "start"
+				}), 50);
 
-			setTimeout(() => {
-				editMessage("cats", {
-					content: "I wuv cats"
-				})
-			}, 2000)
-		}}
-		channelId={channelId}
-		guildId={guildId}
+				setTimeout(() => {
+					editMessage("cats", {
+						content: "I wuv cats"
+					});
+				}, 2000);
+			}}
+			channelId={channelId}
+			guildId={guildId}
 		>
-			<div className="mt-auto overflow-y-auto" id="inf-scroller-msg-container">
+			<div className="mt-auto overflow-y-auto ml-2" id="inf-scroller-msg-container">
 				{!initialFetch && skelliedMessages}
 				<BiDirectionalInfiniteScroller
-					data={renderedMessages.slice(0, 15)}
+					data={renderedMessages}
 					renderItem={(message) => (
 						<Message
 							message={message}

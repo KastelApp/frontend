@@ -1,20 +1,21 @@
-import { Avatar, Chip, Popover, PopoverContent, PopoverTrigger, useDisclosure } from "@nextui-org/react";
+import { Chip, Popover, PopoverContent, PopoverTrigger, Tooltip, useDisclosure } from "@nextui-org/react";
 import UserPopover from "@/components/Popovers/UserPopover.tsx";
-import { memo, useEffect, useRef, useState } from "react";
+import { memo, useEffect, useState } from "react";
 import { Pen, Reply, Trash2, Ellipsis } from "lucide-react";
 import { twMerge } from "tailwind-merge";
 import UserModal from "@/components/Modals/UserModal.tsx";
-import RichEmbed, { Embed } from "./Embeds/RichEmbed.tsx";
-import IFrameEmbed from "./Embeds/IFrameEmbed.tsx";
-import InviteEmbed from "./Embeds/InviteEmbed.tsx";
+// import RichEmbed, { Embed } from "./Embeds/RichEmbed.tsx";
+// import IFrameEmbed from "./Embeds/IFrameEmbed.tsx";
+// import InviteEmbed from "./Embeds/InviteEmbed.tsx";
 import { MessageStates, Message as MessageType, useMessageStore } from "@/wrapper/Stores/MessageStore.ts";
 import { User, useUserStore } from "@/wrapper/Stores/UserStore.ts";
 import fastDeepEqual from "fast-deep-equal";
 import { Member, useMemberStore } from "@/wrapper/Stores/Members.ts";
 import { useChannelStore, usePerChannelStore } from "@/wrapper/Stores/ChannelStore.ts";
 import { useRoleStore } from "@/wrapper/Stores/RoleStore.ts";
-import Tooltip from "../Tooltip.tsx";
-import useCustomScrollIntoView from "@/hooks/useCustomScrollIntoView.ts";
+import { useTranslationStore } from "@/wrapper/Stores.ts";
+import Image from "next/image";
+import formatDate from "@/utils/formatDate.ts";
 
 const Message = memo(({
 	className,
@@ -28,8 +29,8 @@ const Message = memo(({
 	id?: string;
 }) => {
 	const guildId = useChannelStore.getState().getGuildId(message.channelId);
-
 	const { messages } = useMessageStore();
+	const { t } = useTranslationStore();
 
 	const [author, setAuthor] = useState<{
 		user: User | null;
@@ -49,7 +50,7 @@ const Message = memo(({
 		member: null,
 		roleColor: null
 	});
-	
+
 	const [replyingMessage, setReplyingMessage] = useState<MessageType | null | undefined>(() => {
 		const foundReply = messages.find((msg) => msg.id === message.replyingTo);
 
@@ -81,11 +82,11 @@ const Message = memo(({
 				});
 			}
 		}
-		
+
 		return foundReply ?? null;
-	})
+	});
+
 	const [highlighted, setHighlighted] = useState(false);
-	const scrollIntoView = useCustomScrollIntoView();
 
 	useEffect(() => {
 		const messageSubscribed = useMessageStore.subscribe(async (state) => {
@@ -94,8 +95,6 @@ const Message = memo(({
 			const msg = state.messages.find((msg) => msg.id === message.replyingTo);
 
 			if (!msg) return;
-
-			// ? only update if they are different
 
 			if (fastDeepEqual(msg, replyingMessage)) return;
 
@@ -259,12 +258,13 @@ const Message = memo(({
 		);
 	};
 
+	const formattedDate = formatDate(message.creationDate);
+
 	return (
 		<div
 			className={twMerge(
 				"group w-full hover:bg-msg-hover mb-2 relative transition-all duration-300 ease-in",
 				className,
-				// mention ? "bg-mention hover:bg-mention-hover" : "",
 				message.mentions.users.includes(useUserStore.getState().getCurrentUser()?.id ?? "") ? "bg-mention hover:bg-mention-hover" : "",
 				highlighted ? "bg-msg-jumped" : "",
 				// todo: role check
@@ -284,10 +284,12 @@ const Message = memo(({
 					/>
 					<PopOverData>
 						<div className="flex items-center cursor-pointer">
-							<Avatar
-								src="https://development.kastelapp.com/icon-1.png"
-								className="ml-2 cursor-pointer w-4 h-4"
-								imgProps={{ className: "transition-none" }}
+							<Image
+								src={replyingAuthor.user?.avatar ?? useUserStore.getState().getDefaultAvatar(replyingAuthor.user?.id ?? "")}
+								alt="User Avatar"
+								width={32}
+								height={32}
+								className="rounded-full cursor-pointer w-4 h-4"
 							/>
 							<span className="text-xs ml-1 text-white" style={{
 								// ? If the user is in the server but has no role color, the color should be white
@@ -302,79 +304,56 @@ const Message = memo(({
 							}}>{message.mentions.users.includes(replyingMessage.authorId) ? "@" : ""}{replyingAuthor.user?.globalNickname ?? replyingAuthor?.user?.username}</span>
 						</div>
 					</PopOverData>
-					<p className="text-gray-300 text-2xs ml-2 select-none cursor-pointer" onClick={async () => {
-						usePerChannelStore.getState().updateChannel(message.channelId, {
-							currentStates: [...usePerChannelStore.getState().getChannel(message.channelId).currentStates, "jumped"],
-							jumpingStateId: replyingMessage.id
-						});
-
-						scrollIntoView(`chatmessage-${message.channelId}-${replyingMessage.id}`, "inf-scroller-msg-container");
-
-						// setTimeout(() => {
-						// 	usePerChannelStore.getState().updateChannel(message.channelId, {
-						// 		currentStates: usePerChannelStore.getState().getChannel(message.channelId).currentStates.filter((state) => state !== "jumped") ?? [],
-						// 		jumpingStateId: null
-						// 	});
-
-						// 	console.log("timeout")
-						// }, 2000);
-
-					}}>{replyingMessage.content}</p>
+					<p className="text-gray-300 text-2xs ml-2 select-none">{replyingMessage.content}</p>
 				</div>
 			)}
 			<div className="flex">
 				<PopOverData>
-					<Avatar
-						src="https://development.kastelapp.com/icon-1.png"
-						className=" mt-1 ml-2 cursor-pointer min-w-8 min-h-8 w-8 h-8 hover:scale-95 transition-all duration-300 ease-in-out transform"
-						imgProps={{ className: "transition-none" }}
-					/>
+					<Image src={author.user?.avatar ?? useUserStore.getState().getDefaultAvatar(author.user?.id ?? "")} alt="User Avatar" width={32} height={32} className="rounded-full cursor-pointer w-8 h-8" />
 				</PopOverData>
-				<div className="relative">
-					<div className="flex flex-col ml-2">
-						<span>
-							<PopOverData>
-								<span className="inline cursor-pointer text-white" style={{
-									// ? same as above
-									color: guildId ?
-										author.member ?
-											author.roleColor?.color ? `#${author.roleColor.color}` : "#CFDBFF"
-											: "#ACAEBF"
-										: "#CFDBFF"
-								}}>{author.user?.globalNickname ?? author.user?.username}</span>
-							</PopOverData>
-							{/* {tag && (
-								<Chip color="success" variant="flat" className="ml-1 w-1 p-0 h-4 text-[10px] rounded-sm" radius="none">
-									{tag}
-								</Chip>
-							)} */}
-							<Tooltip content="Saturday, May 11. 2024 12:00 PM" placement="top" delay={500}>
-								<span className="text-gray-400 text-2xs mt-1 ml-1 select-none">{new Date(message.creationDate).toLocaleString()}</span>
-							</Tooltip>
-						</span>
-						<div
-							className={
-								twMerge("text-white whitespace-pre-line overflow-hidden break-words",
-									message.state === MessageStates.Failed
-										|| message.state === MessageStates.Unknown ? "text-red-500" : "",
-									message.state === MessageStates.Sending ? "text-gray-400" : "",
-								)
-							}
-						>
-							<p>{message.content}</p>
-						</div>
-						{/* {invites && invites.map((invite, index) => (
-							<div key={index} className="mt-2 inline-block max-w-full overflow-hidden">
-								<InviteEmbed invite={invite} />
-							</div>
-						))}
-						{embeds && embeds.map((embed, index) => (
-							<div key={index} className="mt-2 inline-block max-w-full overflow-hidden">
-								{embed.type === "Rich" ?
-									<RichEmbed embed={embed} /> : embed.type === "Iframe" ? <IFrameEmbed embed={embed} /> : null}
-							</div>
-						))} */}
+				<div className="relative flex flex-col ml-2">
+					<div>
+						<PopOverData>
+							<span className="inline cursor-pointer text-white" style={{
+								// ? same as above
+								color: guildId ?
+									author.member ?
+										author.roleColor?.color ? `#${author.roleColor.color}` : "#CFDBFF"
+										: "#ACAEBF"
+									: "#CFDBFF"
+							}}>{author.user?.globalNickname ?? author.user?.username}</span>
+						</PopOverData>
+						{author.user && (author.user.isBot || author.user.isSystem) && (
+							<Chip color="success" variant="flat" className="ml-1 w-1 p-0 h-4 text-[10px] rounded-sm" radius="none">
+								{author.user.isBot ? t("tags.bot") : t("tags.system")}
+							</Chip>
+						)}
+						<Tooltip content="Saturday, May 11. 2024 12:00 PM" placement="top" delay={500}>
+							<span className="text-gray-400 text-2xs mt-1 ml-1 select-none">{formattedDate}</span>
+						</Tooltip>
 					</div>
+					<p
+						className={
+							twMerge("text-white whitespace-pre-line overflow-hidden break-words",
+								message.state === MessageStates.Failed
+									|| message.state === MessageStates.Unknown ? "text-red-500" : "",
+								message.state === MessageStates.Sending ? "text-gray-400" : "",
+							)
+						}
+					>
+						{message.content}
+					</p>
+					{/* {invites && invites.map((invite, index) => (
+                <div key={index} className="mt-2 inline-block max-w-full overflow-hidden">
+                    <InviteEmbed invite={invite} />
+                </div>
+            ))}
+            {embeds && embeds.map((embed, index) => (
+                <div key={index} className="mt-2 inline-block max-w-full overflow-hidden">
+                    {embed.type === "Rich" ?
+                        <RichEmbed embed={embed} /> : embed.type === "Iframe" ? <IFrameEmbed embed={embed} /> : null}
+                </div>
+            ))} */}
 				</div>
 			</div>
 			{!disableButtons && (

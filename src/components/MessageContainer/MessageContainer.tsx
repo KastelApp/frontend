@@ -50,7 +50,7 @@ const MessageContainer = ({ placeholder, children, isReadOnly, sendMessage, chan
 }) => {
 	const { navBarLocation } = useSettingsStore();
 
-	const [files, setFiles] = useState<{ name: string; url: string; }[]>([]);
+	const [files] = useState<{ name: string; url: string; }[]>([]);
 	const [replying, setReplying] = useState<boolean>(false);
 
 	const { getChannel, updateChannel } = usePerChannelStore();
@@ -114,13 +114,14 @@ const MessageContainer = ({ placeholder, children, isReadOnly, sendMessage, chan
 	}, [startedTypingAt, lastTypedAt, lastSentTypingAt]);
 
 	useEffect(() => {
-		console.log("isTyping", isTyping);
-		console.log("shouldSendTypingEvent", shouldSendTypingEvent);
+		if (shouldSendTypingEvent) {
+			sentTypingEvent();
+		}
 	}, [isTyping, shouldSendTypingEvent]);
 
 	const [signal, setSignal] = useState<number>(0);
 	// ? the users usernames / nickname
-	const [typingUsers, setTypingUsers] = useState<string[]>(["DarkerInk"]);
+	const [typingUsers, setTypingUsers] = useState<string[]>([]);
 
 	useEffect(() => {
 		const subscribed = usePerChannelStore.subscribe((state, prevState) => {
@@ -146,13 +147,11 @@ const MessageContainer = ({ placeholder, children, isReadOnly, sendMessage, chan
 
 		const channel = getChannel(channelId);
 
-		setTypingUsers(channel.typingUserIds);
 		setLastSentTypingAt(channel.lastTypingSent);
 		setLastTypedAt(channel.lastTyped);
 		setStartedTypingAt(channel.typingStarted);
-		if (channel.previousMessageContent !== content) setContent(channel.previousMessageContent ?? "");
 
-		console.log("updating")
+		if (channel.previousMessageContent !== content) setContent(channel.previousMessageContent ?? "");
 
 		if (channel.typingUserIds.length > 0) {
 			const typingUsers = channel.typingUserIds.map((userId) => {
@@ -272,13 +271,13 @@ const MessageContainer = ({ placeholder, children, isReadOnly, sendMessage, chan
 									onClick={() => {
 										if (isReadOnly) return;
 
-										setFiles((old) => [
-											...old,
-											{
-												name: "test.png",
-												url: "https://development.kastelapp.com/icon-1.png",
-											},
-										]);
+										// setFiles((old) => [
+										// 	...old,
+										// 	{
+										// 		name: "test.png",
+										// 		url: "https://development.kastelapp.com/icon-1.png",
+										// 	},
+										// ]);
 									}}
 								/>
 							</div>
