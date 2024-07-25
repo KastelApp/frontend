@@ -34,17 +34,22 @@ export const useGuildStore = create<GuildStore>((set, get) => ({
     guilds: [],
     addGuild: (guild) => {
         const currentGuilds = get().guilds;
-
-        const foundGuild = currentGuilds.find((currentGuild) => currentGuild.id === guild.id) ?? {};
-
+        let guildUpdated = false;
+    
+        const updatedGuilds = currentGuilds.map((currentGuild) => {
+            if (currentGuild.id === guild.id) {
+                guildUpdated = true;
+                return { ...currentGuild, ...guild } as Guild;
+            }
+            return currentGuild;
+        });
+    
+        if (!guildUpdated) {
+            updatedGuilds.push(guild as Guild);
+        }
+    
         set({
-            guilds: [
-                ...currentGuilds.filter((currentGuild) => currentGuild.id !== guild.id),
-                {
-                    ...foundGuild,
-                    ...guild
-                } as Guild
-            ]
+            guilds: updatedGuilds,
         });
     },
     removeGuild: (id) => set({ guilds: get().guilds.filter(guild => guild.id !== id) }),
