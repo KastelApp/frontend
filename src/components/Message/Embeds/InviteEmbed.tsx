@@ -55,8 +55,8 @@ const InviteEmbed = ({
                     </div>
                     {invite && (
                         <div className="flex">
-                            <Chip variant="dot" color="success" className="border-0 p-0 text-white">{invite.guild.members.online} Online</Chip>
-                            <Chip variant="dot" color="default" className="border-0 p-0 text-white">{invite.guild.members.total} Members</Chip>
+                            {/* <Chip variant="dot" color="success" className="border-0 p-0 text-white">{invite.guild.members.online} Online</Chip> */}
+                            <Chip variant="dot" color="secondary" className="border-0 p-0 text-white">{invite.guild.members.total} Members</Chip>
                         </div>
                     )}
                 </div>
