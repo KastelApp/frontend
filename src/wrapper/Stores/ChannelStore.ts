@@ -136,6 +136,8 @@ export const useChannelStore = create<ChannelStore>((set, get) => ({
 
         const foundChannel = currentChannels.find((currentChannel) => currentChannel.id === channel.id) ?? { id: null };
 
+        if (channel.name) channel.name = channel.name.trim() || "unknown";
+
         set({
             channels: [
                 ...currentChannels.filter(channel => channel.id !== foundChannel?.id),

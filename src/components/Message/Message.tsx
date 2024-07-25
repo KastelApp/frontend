@@ -362,7 +362,15 @@ const Message = memo(({
 					>
 						{message.content}
 					</p>
-					{fetchedInvites && message.invites.map((invite, index) => {
+					{message.invites.map((invite, index) => {
+						if (!fetchedInvites) {
+							return (
+								<div key={index} className="mt-2 inline-block max-w-full overflow-hidden">
+									<InviteEmbed invite={null} skeleton />
+								</div>
+							)
+						}
+
 						const fetchedInvite = getInvite(invite);
 
 						const guild = fetchedInvite ? getGuild(fetchedInvite.guildId) : null

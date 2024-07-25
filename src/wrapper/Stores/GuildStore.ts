@@ -37,6 +37,8 @@ export const useGuildStore = create<GuildStore>((set, get) => ({
         const currentGuilds = get().guilds;
         let guildUpdated = false;
 
+        if (guild.name) guild.name = guild.name.trim() || "Unknown";
+
         const updatedGuilds = currentGuilds.map((currentGuild) => {
             if (currentGuild.id === guild.id) {
                 guildUpdated = true;

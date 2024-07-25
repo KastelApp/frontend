@@ -46,7 +46,6 @@ class Permissions {
     ignoreAdmin?: boolean,
     type?: HT,
   ): boolean {
-    console.log(perms, ignoreAdmin, type);
     // @ts-expect-error idc
     if (perms.includes("Administrator") && !ignoreAdmin) {
       if (
