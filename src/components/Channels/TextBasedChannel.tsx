@@ -142,6 +142,12 @@ const TextBasedChannel = () => {
 				inline: "start"
 			}), 50);
 
+			for (const msg of newMessages) {
+				for (const invite of msg.invites) {
+					fetchInvite(invite);
+				}
+			}
+
 			return;
 		}
 
@@ -258,18 +264,14 @@ const TextBasedChannel = () => {
 					invites: msg.invites.map((msg) => {
 						const gotInvite = getInvite(msg);
 
-						if (gotInvite) {
-							const guild = getGuild(gotInvite.guildId)!;
+						if (!gotInvite) return null;
 
-							return {
-								...gotInvite,
-								guild
-							}
-						}
+						const guild = getGuild(gotInvite.guildId)!;
 
-						fetchInvite(msg);
-
-						return null
+						return {
+							...gotInvite,
+							guild
+						};
 					})
 				},
 				replyMessage: null
