@@ -36,7 +36,7 @@ export const useGuildStore = create<GuildStore>((set, get) => ({
     addGuild: (guild, partialIfNotFound) => {
         const currentGuilds = get().guilds;
         let guildUpdated = false;
-    
+
         const updatedGuilds = currentGuilds.map((currentGuild) => {
             if (currentGuild.id === guild.id) {
                 guildUpdated = true;
@@ -52,7 +52,7 @@ export const useGuildStore = create<GuildStore>((set, get) => ({
 
             updatedGuilds.push(guild as Guild);
         }
-    
+
         set({
             guilds: updatedGuilds,
         });
