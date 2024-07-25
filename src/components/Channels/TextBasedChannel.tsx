@@ -1,6 +1,5 @@
-import Message from "@/components/Message/Message.tsx";
+import Message, { MessageProps } from "@/components/Message/Message.tsx";
 import MessageContainer from "@/components/MessageContainer/MessageContainer.tsx";
-import BiDirectionalInfiniteScroller from "../BiDirectionalInfiniteScroller.tsx";
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/router";
 import { useUserStore } from "@/wrapper/Stores/UserStore.ts";
@@ -14,6 +13,10 @@ import SkellyMessage from "../Message/SkellyMessage.tsx";
 import diff from "@/utils/diff.ts";
 import ChannelIcon from "../ChannelIcon.tsx";
 import { channelTypes } from "@/utils/Constants.ts";
+import fastDeepEqual from "fast-deep-equal";
+import BiDirectionalInfiniteScroller from "@/components/BiDirectionalInfiniteScroller.tsx";
+import { useInviteStore } from "@/wrapper/Stores/InviteStore.ts";
+import { useGuildStore } from "@/wrapper/Stores/GuildStore.ts";
 
 const skelliedMessages = Array.from({ length: 30 }, (_, i) => <SkellyMessage key={i} />);
 
@@ -30,14 +33,17 @@ const TextBasedChannel = () => {
 	const bottomRef = useRef<HTMLDivElement>(null);
 	const channelIdRef = useRef(channelId);
 
-	const { getCurrentUser } = useUserStore();
+	const { getCurrentUser, getUser } = useUserStore();
 	const { getMember } = useMemberStore();
 	const { getRoles } = useRoleStore();
 	const { getChannels } = useChannelStore();
-	const { fetchMessages, createMessage, getMessages, editMessage } = useMessageStore();
+	const { fetchMessages, createMessage, getMessages } = useMessageStore();
 	const { getChannel, updateChannel } = usePerChannelStore();
+	const { getInvite, fetchInvite } = useInviteStore();
+	const { getGuild } = useGuildStore();
 
-	const [renderedMessages, setRenderedMessages] = useState<MessageType[]>([]);
+	const [fetchedMessages, setFetchedMessages] = useState<MessageType[]>([]);
+	const [renderedMessages, setRenderedMessages] = useState<Omit<MessageProps, "className" | "disableButtons" | "id">[]>([]);
 	const hadErrorRef = useRef(false);
 	const [fetching, setFetching] = useState(false);
 	const [initialFetch, setInitialFetch] = useState(false);
@@ -51,15 +57,18 @@ const TextBasedChannel = () => {
 
 	useEffect(() => {
 		const memberSubscription = useMemberStore.subscribe(() => setChangeSignal((prev) => prev + 1));
+		const userSubscription = useUserStore.subscribe(() => setChangeSignal((prev) => prev + 1));
 		const roleSubscription = useRoleStore.subscribe(() => setChangeSignal((prev) => prev + 1));
 		const channelSubscription = useChannelStore.subscribe(() => setChangeSignal((prev) => prev + 1));
+		const guildSubscription = useGuildStore.subscribe(() => setChangeSignal((prev) => prev + 1));
+		const inviteSubscription = useInviteStore.subscribe(() => setChangeSignal((prev) => prev + 1));
 		const messageSubscription = useMessageStore.subscribe((state, prevState) => {
 			const oldMessages = prevState.messages.filter((msg) => msg.channelId === channelIdRef.current);
 			const newMessages = state.messages.filter((msg) => msg.channelId === channelIdRef.current);
 
 			const diffed = diff(oldMessages, newMessages);
 
-			setRenderedMessages((prev) => {
+			setFetchedMessages((prev) => {
 				let updatedMessages = prev;
 
 				if (diffed.removed.length > 0) {
@@ -91,6 +100,9 @@ const TextBasedChannel = () => {
 			roleSubscription();
 			channelSubscription();
 			messageSubscription();
+			userSubscription();
+			inviteSubscription();
+			guildSubscription();
 		};
 	}, []);
 
@@ -119,8 +131,8 @@ const TextBasedChannel = () => {
 
 			const newMessages = getMessages(channelId);
 
-			setRenderedMessages(newMessages.toSorted((a, b) => a.creationDate.getTime() - b.creationDate.getTime()));
-			setFetching(false);
+			setFetchedMessages(newMessages.toSorted((a, b) => a.creationDate.getTime() - b.creationDate.getTime()));
+			// setFetching(false);
 			setInitialFetch(true);
 
 			//?  we assume this is the first load so we scroll to the bottom
@@ -133,23 +145,23 @@ const TextBasedChannel = () => {
 			return;
 		}
 
-		setFetching(false);
+		// setFetching(false);
 		setInitialFetch(true);
 
 		if (messageCache.length > 250) {
-			setRenderedMessages(messageCache.slice(0, 250).toSorted((a, b) => a.creationDate.getTime() - b.creationDate.getTime()));
+			setFetchedMessages(messageCache.slice(0, 250).toSorted((a, b) => a.creationDate.getTime() - b.creationDate.getTime()));
 
 			return;
 		}
 
-		setRenderedMessages(messageCache.toSorted((a, b) => a.creationDate.getTime() - b.creationDate.getTime()));
+		setFetchedMessages(messageCache.toSorted((a, b) => a.creationDate.getTime() - b.creationDate.getTime()));
 	};
 
 	useEffect(() => {
 		hadErrorRef.current = false;
 
 		setInitialFetch(false);
-		setRenderedMessages([]);
+		setFetchedMessages([]);
 
 		channelIdRef.current = channelId;
 
@@ -190,7 +202,7 @@ const TextBasedChannel = () => {
 			return;
 		}
 
-		setReadOnly(!permissionHandler.hasChannelPermission(channelId, ["SendMessages"]))
+		setReadOnly(!permissionHandler.hasChannelPermission(channelId, ["SendMessages"]));
 
 		const perChannel = getChannel(channelId);
 
@@ -205,27 +217,92 @@ const TextBasedChannel = () => {
 		if (permissionHandler.hasChannelPermission(channelId, ["ViewMessageHistory"])) setMessages(guildId, channelId);
 	}, [channelId, guildId, changeSignal]);
 
+	useEffect(() => {
+		const finishedMsgs: Omit<MessageProps, "className" | "disableButtons" | "id">[] = [];
+
+		const currentUser = getCurrentUser()!;
+
+		for (const msg of fetchedMessages) {
+
+			const fetchedAuthor = getUser(msg.authorId);
+			const fetchedMember = guildId ? getMember(guildId, msg.authorId) ?? null : null;
+
+			let roleData: { color: string; id: string; } | null = null;
+
+			if (fetchedMember) {
+				const roles = useRoleStore.getState().getRoles(guildId ?? "");
+				const topColorRole = fetchedMember.roles
+					.map((roleId) => roles.find((role) => role.id === roleId))
+					.filter((role) => role !== undefined)
+					.sort((a, b) => a!.position - b!.position)
+					.reverse()[0];
+
+				roleData = {
+					color: topColorRole ? topColorRole.color.toString(16) : "",
+					id: topColorRole ? topColorRole.id : ""
+				};
+			}
+
+
+			finishedMsgs.push({
+				inGuild: !guildId || false,
+				mentionsUser: msg.mentions.users.includes(currentUser.id),
+				highlighted: false,
+				message: {
+					...msg,
+					author: {
+						user: fetchedAuthor!,
+						member: fetchedMember,
+						roleColor: roleData
+					},
+					invites: msg.invites.map((msg) => {
+						const gotInvite = getInvite(msg);
+
+						if (gotInvite) {
+							const guild = getGuild(gotInvite.guildId)!;
+
+							return {
+								...gotInvite,
+								guild
+							}
+						}
+
+						fetchInvite(msg);
+
+						return null
+					})
+				},
+				replyMessage: null
+			});
+		}
+
+		setFetching(false);
+
+		if (!fastDeepEqual(finishedMsgs, renderedMessages)) {
+			setRenderedMessages(finishedMsgs);
+		}
+
+	}, [fetchedMessages, changeSignal]);
+
 	return (
 		<MessageContainer
 			placeholder={`Message #${channelName}`}
 			isReadOnly={readOnly}
-			sendMessage={(content) => {
-				createMessage(channelId, {
-					content,
-					id: "cats"
-				});
-
-				setTimeout(() => bottomRef.current?.scrollIntoView({
-					behavior: "instant",
-					block: "nearest",
-					inline: "start"
-				}), 50);
-
-				setTimeout(() => {
-					editMessage("cats", {
-						content: "I wuv cats"
+			sendMessage={async (content) => {
+				for (let i = 0; i < 50; i++) {
+					createMessage(channelId, {
+						content: content + i,
+						id: i.toString()
 					});
-				}, 2000);
+
+					setTimeout(() => bottomRef.current?.scrollIntoView({
+						behavior: "instant",
+						block: "nearest",
+						inline: "start"
+					}), 50);
+
+					await new Promise((resolve) => setTimeout(resolve, 100));
+				}
 			}}
 			channelId={channelId}
 			guildId={guildId}
@@ -236,8 +313,9 @@ const TextBasedChannel = () => {
 					data={renderedMessages}
 					renderItem={(message) => (
 						<Message
-							message={message}
-							key={message.id}
+							// message={message}
+							{...message}
+							key={message.message.id}
 						/>
 					)}
 					onBottomReached={async () => {
