@@ -35,7 +35,7 @@ const BottomNavBar = () => {
     }, []);
 
     const mappedGuilds = useCallback(() => {
-        return <Draggables items={guilds.filter((guild) => !guild.unavailable)} onDrop={console.log} orientation="horizontal"
+        return <Draggables items={guilds.filter((guild) => !guild.unavailable || guild.partial)} onDrop={console.log} orientation="horizontal"
             className="horizontal-scroll-content flex gap-3"
             render={(item, index) => {
                 let hasUnread = false;

@@ -19,11 +19,12 @@ export interface Guild {
         timedoutUntil: string | null;
     }[];
     memberCount: number
+    partial?: boolean;
 }
 
 export interface GuildStore {
     guilds: Guild[];
-    addGuild(guild: Partial<Guild>): void;
+    addGuild(guild: Partial<Guild>, partialIfNotFound?: boolean): void;
     removeGuild(id: string): void;
     // ? This isn't a promise due to the fact that we have no reason to fetch a guild via the api
     getGuild(id: string): Guild | undefined;
@@ -32,7 +33,7 @@ export interface GuildStore {
 
 export const useGuildStore = create<GuildStore>((set, get) => ({
     guilds: [],
-    addGuild: (guild) => {
+    addGuild: (guild, partialIfNotFound) => {
         const currentGuilds = get().guilds;
         let guildUpdated = false;
     
@@ -45,6 +46,10 @@ export const useGuildStore = create<GuildStore>((set, get) => ({
         });
     
         if (!guildUpdated) {
+            if (partialIfNotFound) {
+                guild.partial = true;
+            }
+
             updatedGuilds.push(guild as Guild);
         }
     

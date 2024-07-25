@@ -23,7 +23,7 @@ const LeftNavBar = () => {
 	const { guildId } = router.query as { guildId: string; };
 
 	const mappedGuilds = useCallback(() => {
-		return <Draggables items={guilds} onDrop={console.log} render={(item, index) => {
+		return <Draggables items={guilds.filter((guild) => !guild.unavailable || guild.partial)} onDrop={console.log} render={(item, index) => {
 			let hasUnread = false;
 
 			const gotChannels = getChannelsWithValidPermissions(item.id);

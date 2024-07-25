@@ -120,7 +120,7 @@ export const useInviteStore = create<InviteStore>((set, get) => ({
         }
 
         // ? we add the partials
-        useGuildStore.getState().addGuild(res.body.guild);
+        useGuildStore.getState().addGuild(res.body.guild, true);
         if (res.body.channel) useChannelStore.getState().addChannel({
             ...res.body.channel,
             guildId: res.body.guild.id
@@ -171,7 +171,7 @@ export const useInviteStore = create<InviteStore>((set, get) => ({
 
         // ? we add the partials
 
-        if (res.body.guild) useGuildStore.getState().addGuild(res.body.guild);
+        if (res.body.guild) useGuildStore.getState().addGuild(res.body.guild, true);
 
         if (res.body.channel) useChannelStore.getState().addChannel({
             ...res.body.channel,
