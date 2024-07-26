@@ -26,7 +26,9 @@ class Snowflake {
 		workerIdBytes = 17n,
 		processIdBytes = 12n,
 	) {
-		if (epoch < 0n) throw new Error("Epoch must be a positive integer");
+		if (epoch < 0n) {
+			throw new Error("Epoch must be a positive integer");
+		}
 
 		this.epoch = BigInt(epoch);
 		this.workerId = BigInt(workerId);
@@ -35,15 +37,21 @@ class Snowflake {
 		this.workerIdBytes = workerIdBytes;
 		this.processIdBytes = processIdBytes;
 
-		if (this.workerId > maxWorkerId) throw new Error("Worker ID must be less than or equal to 31");
-		if (this.processId > maxProcessId) throw new Error("Process ID must be less than or equal to 31");
+		if (this.workerId > maxWorkerId) {
+			throw new Error("Worker ID must be less than or equal to 31");
+		}
+		if (this.processId > maxProcessId) {
+			throw new Error("Process ID must be less than or equal to 31");
+		}
 	}
 
 	public generate(): string {
 		const timestamp = BigInt(Date.now()) - this.epoch;
 		const increment = this.incerement++;
 
-		if (this.incerement > maxIncrement) this.incerement = 0n;
+		if (this.incerement > maxIncrement) {
+			this.incerement = 0n;
+		}
 
 		const snowflake =
 			(timestamp << this.timeShift) |
@@ -85,16 +93,26 @@ class Snowflake {
 	}
 
 	public validate(snowflake: string): boolean {
-		const snowflakeBigInt = BigInt(snowflake);
+		try {
+			const snowflakeBigInt = BigInt(snowflake);
 
-		if (snowflakeBigInt < 0n) return false;
+			if (snowflakeBigInt < 0n) {
+				return false;
+			}
 
-		const snowflakeJson = this.json(snowflake);
+			const snowflakeJson = this.json(snowflake);
 
-		if (snowflakeJson.workerId > maxWorkerId) return false;
-		if (snowflakeJson.processId > maxProcessId) return false;
+			if (snowflakeJson.workerId > maxWorkerId) {
+				return false;
+			}
+			if (snowflakeJson.processId > maxProcessId) {
+				return false;
+			}
 
-		return snowflakeJson.increment <= maxIncrement;
+			return snowflakeJson.increment <= maxIncrement;
+		} catch {
+			return false;
+		}
 	}
 }
 

@@ -7,7 +7,7 @@ import { usePerChannelStore } from "./ChannelStore.ts";
 import getInviteCodes from "@/utils/getInviteCodes.ts";
 import { useUserStore } from "./UserStore.ts";
 import fastDeepEqual from "fast-deep-equal";
-import { messageFlags, snowflake } from "@/utils/Constants.ts";
+import { fakeUserIds, messageFlags, snowflake } from "@/utils/Constants.ts";
 import safePromise from "@/utils/safePromise.ts";
 
 export enum MessageStates {
@@ -180,12 +180,37 @@ export const useMessageStore = create<MessageStore>((set, get) => ({
             }
         }));
 
-        if (error || !res) {
+        if (error || !res || res.status !== 200) {
             Logger.warn("Failed to send message", "MessageStore");
 
             get().editMessage(message.id, {
                 state: MessageStates.Failed
             });
+
+            get().addMessage({
+                id: snowflake.generate(),
+                authorId: fakeUserIds.kiki,
+                embeds: [],
+                content: "I'm sorry, though it seems I couldn't get your message to the server, this may be for a number of reasons such as rate limits, internal server errors or just a hiccup in the system. Please try again later.",
+                creationDate: new Date(),
+                editedDate: null,
+                nonce: null,
+                replyingTo: null,
+                attachments: [],
+                flags: messageFlags.System,
+                allowedMentions: 0,
+                mentions: {
+                    channels: [],
+                    roles: [],
+                    users: []
+                },
+                pinned: false,
+                deletable: true,
+                invites: [],
+                discordInvites: [],
+                channelId,
+                state: MessageStates.SystemMessage
+            })
 
             return;
         }

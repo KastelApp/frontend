@@ -23,6 +23,8 @@ export default {
 				"mention-hover": "hsl(40, 86%, 57%, 0.06)",
 				"msg-jumped": "hsl(270, 86%, 57%, 0.1)",
 				"msg-hover": "rgba(0, 0, 0, 0.1)",
+				"msg-system": "hsl(290, 86%, 57%, 0.1)",
+				"msg-system-hover": "hsl(290, 86%, 57%, 0.06)",
 				charcoal: {
 					50: "#f9f9f9",
 					100: "#f3f3f3",

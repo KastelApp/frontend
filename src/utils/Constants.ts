@@ -293,7 +293,7 @@ const fakeUserIds = {
 	ghost: "122652169335591636"
 }
 
-const snowflake = new Snowflake(snowflakeOptions.Epoch, snowflakeOptions.TimeShift, snowflakeOptions.WorkerIdBytes, snowflakeOptions.ProcessIdBytes, snowflakeOptions.WorkerId, snowflakeOptions.ProcessId);
+const snowflake = new Snowflake(snowflakeOptions.Epoch, snowflakeOptions.WorkerId, snowflakeOptions.ProcessId, snowflakeOptions.TimeShift, snowflakeOptions.WorkerIdBytes, snowflakeOptions.ProcessIdBytes);
 
 export default {
 	allowedMentions,

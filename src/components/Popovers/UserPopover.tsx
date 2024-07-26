@@ -16,7 +16,7 @@ const UserPopover = ({ member, onClick }: {
 }) => {
 	return (
 		<div>
-			<div className="rounded-sm p-0 w-[18.70rem]">
+			<div className="rounded-sm p-0 w-[18.70rem] z-[200]">
 				<div>
 					<div className="flex items-end justify-between p-2">
 						<Badge

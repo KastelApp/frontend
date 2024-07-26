@@ -81,6 +81,7 @@ const handleMessage = async (ws: Websocket, data: unknown) => {
                 publicFlags: String(Constants.publicFlags.StaffBadge),
                 flags: String(Constants.privateFlags.System),
                 id: Constants.fakeUserIds.kiki,
+                bio: "Thanks for using Kastel! I'm Kiki, the tiny assistant that does stuff in the background for you!"
             });
 
             useUserStore.getState().addUser({
@@ -91,6 +92,7 @@ const handleMessage = async (ws: Websocket, data: unknown) => {
                 publicFlags: String(Constants.publicFlags.GhostBadge),
                 flags: String(Constants.privateFlags.Ghost),
                 id: Constants.fakeUserIds.ghost,
+                bio: "Boo! 👻 did I scare you?"
             });
 
             for (const guild of data.guilds) {

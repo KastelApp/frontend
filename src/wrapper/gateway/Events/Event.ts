@@ -2,6 +2,7 @@ import Websocket from "../Websocket.ts";
 import { EventPayload } from "@/types/payloads/event.ts";
 import Logger from "@/utils/Logger.ts";
 import messageCreate from "@/wrapper/gateway/Events/messageCreate.ts";
+import messageDelete from "@/wrapper/gateway/Events/messageDelete.ts";
 import typing from "@/wrapper/gateway/Events/typing.ts";
 
 const isEventPayload = (data: unknown): data is EventPayload => {
@@ -32,6 +33,12 @@ const event = (ws: Websocket, data: unknown) => {
 
         case "MessageCreate": {
             messageCreate(ws, data.data);
+
+            break;
+        }
+
+        case "MessageDelete": {
+            messageDelete(ws, data.data);
 
             break;
         }
@@ -74,6 +81,7 @@ const event = (ws: Websocket, data: unknown) => {
 
         default: {
             Logger.warn(`Unknown Event ${data.event}`, "Wrapper | WebSocket");
+            console.log(data);
 
             break;
         }

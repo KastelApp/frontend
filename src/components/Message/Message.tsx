@@ -105,6 +105,7 @@ const Message = ({
 				className,
 				mentionsUser && "bg-mention hover:bg-mention-hover",
 				highlighted && "bg-msg-jumped",
+				message.state === MessageStates.SystemMessage && "bg-msg-system hover:bg-msg-system-hover",
 				// todo: role check
 			)}
 			tabIndex={0}
