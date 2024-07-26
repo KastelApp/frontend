@@ -40,12 +40,8 @@ const typing = (ws: Websocket, payload: unknown) => {
 
     channel.typingUsers = channel.typingUsers.filter((user) => Date.now() - user.started < 7000);
 
-    usePerChannelStore.setState((s) => {
-        s.updateChannel(payload.channelId, {
-            typingUsers: channel.typingUsers
-        });
-
-        return s;
+    usePerChannelStore.getState().updateChannel(payload.channelId, {
+        typingUsers: channel.typingUsers
     })
 };
 

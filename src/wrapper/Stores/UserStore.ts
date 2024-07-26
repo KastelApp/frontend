@@ -50,7 +50,7 @@ export interface UserStore {
     getUser(id: string): User | null;
     getCurrentUser(): User | null;
     getDefaultAvatar(id: string): string;
-    fetchUser(id: string): Promise<User | null>;
+    fetchUser(id: string, ignoreCache?: boolean): Promise<User | null>;
     isStaff(id: string): boolean;
     patchUser(user: UpdateUser): Promise<{
         success: boolean;
@@ -130,8 +130,28 @@ export const useUserStore = create<UserStore>((set, get) => ({
 
         return null;
     },
-    fetchUser: async () => {
-        return null;
+    fetchUser: async (userId, ignoreCache) => {
+        if (!ignoreCache) {
+            const foundUser = get().getUser(userId);
+
+            if (foundUser) return foundUser;
+        }
+
+        const api = useAPIStore.getState().api;
+
+        if (!api) {
+            throw new Error("Failed to get API");
+        }
+
+        const [request, error] = await safePromise(api.get<unknown, User>(`/users/${userId}`));
+
+        if (error || !request) {
+            return null;
+        }
+
+        get().addUser(request.body);
+
+        return request.body;
     },
     removeUser: (id) => set((state) => ({ users: state.users.filter((user) => user.id !== id) })),
     getDefaultAvatar: (id) => `/icon-${BigInt(id) % 5n}.png`,

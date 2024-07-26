@@ -1,5 +1,7 @@
 /* eslint-disable import/no-anonymous-default-export */
 
+import Snowflake from "@/utils/Snowflake.ts";
+
 const settings = {
 	maxMessageSize: 2000,
 	maxUsernameLength: 32,
@@ -244,7 +246,7 @@ const relationshipFlags = {
 	MutualFriend: 1 << 4,
 };
 
-const snowflake = {
+const snowflakeOptions = {
 	Epoch: 1_701_410_400_000n,
 	TimeShift: 22n,
 	WorkerIdBytes: 17n,
@@ -291,6 +293,8 @@ const fakeUserIds = {
 	ghost: "122652169335591636"
 }
 
+const snowflake = new Snowflake(snowflakeOptions.Epoch, snowflakeOptions.TimeShift, snowflakeOptions.WorkerIdBytes, snowflakeOptions.ProcessIdBytes, snowflakeOptions.WorkerId, snowflakeOptions.ProcessId);
+
 export default {
 	allowedMentions,
 	channelTypes,
@@ -307,10 +311,11 @@ export default {
 	statusTypes,
 	opCodes,
 	userSendCodes,
-	snowflake,
+	snowflakeOptions,
 	settings,
 	fakeUserIds,
-	badgeOrder
+	badgeOrder,
+	snowflake
 };
 
 export {
@@ -329,8 +334,9 @@ export {
 	statusTypes,
 	opCodes,
 	userSendCodes,
-	snowflake,
+	snowflakeOptions,
 	settings,
 	fakeUserIds,
-	badgeOrder
+	badgeOrder,
+	snowflake
 };

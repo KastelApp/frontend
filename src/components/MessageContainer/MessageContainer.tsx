@@ -9,7 +9,6 @@ import { User, useUserStore } from "@/wrapper/Stores/UserStore.ts";
 import { Member, useMemberStore } from "@/wrapper/Stores/Members.ts";
 import { useMessageStore } from "@/wrapper/Stores/MessageStore.ts";
 import { useRoleStore } from "@/wrapper/Stores/RoleStore.ts";
-import fastDeepEqual from "fast-deep-equal";
 import { useAPIStore, useSettingsStore } from "@/wrapper/Stores.ts";
 import { NavBarLocation } from "@/types/payloads/ready.ts";
 import Tooltip from "../Tooltip.tsx";
@@ -132,14 +131,7 @@ const MessageContainer = ({ placeholder, children, isReadOnly, sendMessage, chan
 	const [typingUsers, setTypingUsers] = useState<string[]>([]);
 
 	useEffect(() => {
-		const subscribed = usePerChannelStore.subscribe((state, prevState) => {
-			const oldChannel = prevState.channels[channelIdRef.current];
-			const newChannel = state.channels[channelIdRef.current];
-
-			if (fastDeepEqual(oldChannel, newChannel)) return;
-
-			setSignal((prev) => prev + 1);
-		});
+		const subscribed = usePerChannelStore.subscribe(() => setSignal((prev) => prev + 1));
 
 		return () => subscribed();
 	}, []);

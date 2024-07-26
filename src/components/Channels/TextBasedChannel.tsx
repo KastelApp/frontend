@@ -290,21 +290,17 @@ const TextBasedChannel = () => {
 		<MessageContainer
 			placeholder={`Message #${channelName}`}
 			isReadOnly={readOnly}
-			sendMessage={async (content) => {
-				for (let i = 0; i < 50; i++) {
-					createMessage(channelId, {
-						content: content + i,
-						id: i.toString()
-					});
+			sendMessage={(content) => {
+				createMessage(channelId, {
+					content: content,
+				});
 
-					setTimeout(() => bottomRef.current?.scrollIntoView({
-						behavior: "instant",
-						block: "nearest",
-						inline: "start"
-					}), 50);
+				setTimeout(() => bottomRef.current?.scrollIntoView({
+					behavior: "instant",
+					block: "nearest",
+					inline: "start"
+				}), 50);
 
-					await new Promise((resolve) => setTimeout(resolve, 100));
-				}
 			}}
 			channelId={channelId}
 			guildId={guildId}

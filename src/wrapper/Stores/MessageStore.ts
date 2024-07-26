@@ -2,11 +2,13 @@ import type { Embed } from "@/components/Message/Embeds/RichEmbed.tsx";
 import { create } from "zustand";
 import { useAPIStore } from "../Stores.ts";
 import Logger from "@/utils/Logger.ts";
-import { Message as MessageData } from "@/types/http/channels/messages.ts"
+import { CreateMessageOptions, Message as MessageData } from "@/types/http/channels/messages.ts"
 import { usePerChannelStore } from "./ChannelStore.ts";
 import getInviteCodes from "@/utils/getInviteCodes.ts";
 import { useUserStore } from "./UserStore.ts";
 import fastDeepEqual from "fast-deep-equal";
+import { messageFlags, snowflake } from "@/utils/Constants.ts";
+import safePromise from "@/utils/safePromise.ts";
 
 export enum MessageStates {
     /**
@@ -68,7 +70,7 @@ export interface Message {
 
 export interface MessageStore {
     messages: Message[];
-    addMessage(message: Message): void;
+    addMessage(message: Message, updateMessageIfNonce?: boolean): void;
     /**
      * This just removes from the store, This does NOT delete the message API wise
      */
@@ -76,7 +78,7 @@ export interface MessageStore {
     getMessage(id: string): Message | undefined;
     getMessages(channelId: string): Message[];
     deleteMessage(id: string): void;
-    createMessage(channelId: string, options: Partial<Message>): void;
+    createMessage(channelId: string, options: Partial<Message>): Promise<void>;
     editMessage(messageId: string, options: Partial<Message>): void;
     replyToMessage(channelId: string, messageId: string, options: Partial<Message>): void;
     fetchMessages(channelId: string, options?: {
@@ -91,12 +93,18 @@ export const useMessageStore = create<MessageStore>((set, get) => ({
     messages: [],
     addMessage: (message) => {
         const foundMessage = get().messages.find((msg) => msg.id === message.id);
+        // ? if the nonce is null, we ignore it else we find the message thats nonce is the same as the message id / message nonce
+        const foundNonceMessage = get().messages.find((msg) => msg.nonce !== null && (msg.nonce === message.nonce || msg.id === message.nonce));
 
         if (!fastDeepEqual(foundMessage, message)) { // ? prevents useless re-renders
             set({
                 messages: [
-                    ...get().messages.filter((msg) => msg.id !== message.id),
-                    message
+                    ...get().messages.filter((msg) => msg.id !== message.id && msg.nonce === null || (msg.nonce !== message.nonce && msg.id !== message.nonce)),
+                    {
+                        ...foundNonceMessage,
+                        ...foundMessage,
+                        ...message
+                    }
                 ]
             })
         }
@@ -119,18 +127,18 @@ export const useMessageStore = create<MessageStore>((set, get) => ({
             messages: get().messages.map((message) => message.id === id ? { ...message, deletable: false } : message)
         });
     },
-    createMessage: (channelId, options) => {
+    createMessage: async (channelId, options) => {
         const message: Message = {
-            id: "",
+            id: snowflake.generate(),
             authorId: useUserStore.getState().getCurrentUser()?.id ?? "",
             embeds: [],
             content: "",
             creationDate: new Date(),
             editedDate: null,
-            nonce: null,
+            nonce: snowflake.generate(),
             replyingTo: null,
             attachments: [],
-            flags: 0,
+            flags: messageFlags.Normal,
             allowedMentions: 0,
             mentions: {
                 channels: [],
@@ -147,6 +155,61 @@ export const useMessageStore = create<MessageStore>((set, get) => ({
         };
 
         get().addMessage(message);
+
+        const api = useAPIStore.getState().api;
+
+        if (!api) {
+            Logger.warn("API not ready", "MessageStore");
+            
+            get().editMessage(message.id, {
+                state: MessageStates.Failed
+            });
+
+            return;
+        }
+
+        const [res, error] = await safePromise(api.post<CreateMessageOptions, MessageData>({
+            url: `/channels/${channelId}/messages`,
+            data: {
+                content: message.content,
+                embeds: message.embeds,
+                nonce: message.nonce!,
+                replyingTo: message.replyingTo ?? undefined,
+                allowedMentions: message.allowedMentions,
+                flags: message.flags
+            }
+        }));
+
+        if (error || !res) {
+            Logger.warn("Failed to send message", "MessageStore");
+
+            get().editMessage(message.id, {
+                state: MessageStates.Failed
+            });
+
+            return;
+        }
+
+        get().addMessage({
+            id: res.body.id,
+            authorId: res.body.author.id,
+            embeds: [],
+            content: res.body.content,
+            creationDate: new Date(res.body.creationDate),
+            editedDate: res.body.editedDate ? new Date(res.body.editedDate) : null,
+            nonce: res.body.nonce,
+            replyingTo: res.body.replyingTo ? "messageId" in res.body.replyingTo ? res.body.replyingTo.messageId : "id" in res.body.replyingTo ? res.body.replyingTo.id : null : null,
+            attachments: res.body.attachments,
+            flags: res.body.flags,
+            allowedMentions: res.body.allowedMentions,
+            mentions: res.body.mentions,
+            channelId,
+            deletable: res.body.deletable,
+            invites: getInviteCodes(res.body.content),
+            discordInvites: getInviteCodes(res.body.content, true),
+            pinned: res.body.pinned,
+            state: MessageStates.Sent
+        }, true)
     },
     editMessage: (messageId, options) => {
         const message = get().messages.find((message) => message.id === messageId);

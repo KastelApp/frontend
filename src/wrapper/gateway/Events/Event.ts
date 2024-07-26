@@ -1,6 +1,7 @@
 import Websocket from "../Websocket.ts";
 import { EventPayload } from "@/types/payloads/event.ts";
 import Logger from "@/utils/Logger.ts";
+import messageCreate from "@/wrapper/gateway/Events/messageCreate.ts";
 import typing from "@/wrapper/gateway/Events/typing.ts";
 
 const isEventPayload = (data: unknown): data is EventPayload => {
@@ -30,7 +31,7 @@ const event = (ws: Websocket, data: unknown) => {
         }
 
         case "MessageCreate": {
-            console.log(ws, data.data);
+            messageCreate(ws, data.data);
 
             break;
         }

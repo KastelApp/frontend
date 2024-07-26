@@ -94,7 +94,7 @@ const MemberItem = memo(({ member, color, channelId }: {
 			>
 				<PopoverTrigger>
 					<div
-						className="flex items-center justify-=between w-full h-12 px-2 cursor-pointer rounded-lg hover:bg-slate-800 relative max-w-48"
+						className="flex items-center justify-=between w-full h-12 px-2 cursor-pointer rounded-lg hover:bg-slate-800 relative max-w-48 last:mb-24"
 						onClick={async () => {
 							if (member.user.metaData.bioless || typeof member.user.bio === "string") {
 								setLoading(false);
