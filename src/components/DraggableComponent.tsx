@@ -15,6 +15,18 @@ interface DraggableProps<T> {
      * Orientation of the draggables i.e vertical or horizontal
      */
     orientation?: "vertical" | "horizontal";
+    /**
+     * List of indexes to be disabled
+     */
+    disabledIndexes?: number[];
+    /**
+     * List of indexes where items cannot be placed above
+     */
+    noDropAboveIndexes?: number[];
+    /**
+     * List of indexes where items cannot be placed below
+     */
+    noDropBelowIndexes?: number[];
     className?: string;
 }
 
@@ -26,6 +38,9 @@ const Draggables = <T,>({
     onDrop,
     render,
     orientation = "vertical",
+    disabledIndexes = [],
+    noDropAboveIndexes = [],
+    noDropBelowIndexes = [],
     className
 }: DraggableProps<T>) => {
     const [draggingIndex, setDraggingIndex] = useState<number | null>(null);
@@ -38,12 +53,14 @@ const Draggables = <T,>({
     }, [items]);
 
     const handleDragStart = (index: number) => {
-        setDraggingIndex(index);
+        if (!disabledIndexes.includes(index)) {
+            setDraggingIndex(index);
+        }
     };
 
     const handleDragOver = (e: React.DragEvent<HTMLDivElement>, index: number) => {
         e.preventDefault();
-        if (index !== draggingIndex) {
+        if (index !== draggingIndex && !disabledIndexes.includes(index)) {
             const rect = (e.target as HTMLDivElement).getBoundingClientRect();
             const mousePos = orientation === "vertical" ? e.clientY : e.clientX;
             const middlePos = orientation === "vertical" ? (rect.top + rect.bottom) / 2 : (rect.left + rect.right) / 2;
@@ -56,7 +73,15 @@ const Draggables = <T,>({
     };
 
     const handleDrop = () => {
-        if (draggingIndex !== null && dragOverIndex !== null && draggingIndex !== dragOverIndex) {
+        if (
+            draggingIndex !== null &&
+            dragOverIndex !== null &&
+            draggingIndex !== dragOverIndex &&
+            !(
+                (dragOverPosition === "above" && noDropAboveIndexes.includes(dragOverIndex)) ||
+                (dragOverPosition === "below" && noDropBelowIndexes.includes(dragOverIndex))
+            )
+        ) {
             const oldDropItems = [...dragItems];
             const updatedItems = [...dragItems];
             const [removed] = updatedItems.splice(draggingIndex, 1);
@@ -78,20 +103,41 @@ const Draggables = <T,>({
         setDragOverPosition(null);
     };
 
+    const handleGhostDragOver = (e: React.DragEvent<HTMLDivElement>) => {
+        e.preventDefault();
+        setDragOverIndex(dragItems.length);
+        setDragOverPosition("below");
+    };
+
+    const handleGhostDrop = () => {
+        if (draggingIndex !== null) {
+            const oldDropItems = [...dragItems];
+            const updatedItems = [...dragItems];
+            const [removed] = updatedItems.splice(draggingIndex, 1);
+            updatedItems.push(removed);
+            setDragItems(updatedItems);
+            onDrop(updatedItems, oldDropItems);
+        }
+        setDraggingIndex(null);
+        setDragOverIndex(null);
+        setDragOverPosition(null);
+    };
+
     return (
         <div className={className}>
             {dragItems.map((item, index) => (
                 <div
                     key={index}
-                    draggable
+                    draggable={!disabledIndexes.includes(index)}
                     onDragStart={() => handleDragStart(index)}
                     onDragOver={(e) => handleDragOver(e, index)}
                     onDrop={handleDrop}
                     onDragEnd={handleDragEnd}
                     className={twMerge(
                         "rounded",
-                        dragOverIndex === index && dragOverPosition === "above" && draggingIndex !== index ? "border-t-4 border-green-500" : "",
-                        dragOverIndex === index && dragOverPosition === "below" && draggingIndex !== index ? "border-b-4 border-green-500" : "",
+                        disabledIndexes.includes(index) ? "opacity-30 cursor-not-allowed" : "",
+                        dragOverIndex === index && dragOverPosition === "above" && draggingIndex !== index && !noDropAboveIndexes.includes(index) ? "border-t-4 border-green-500" : "",
+                        dragOverIndex === index && dragOverPosition === "below" && draggingIndex !== index && !noDropBelowIndexes.includes(index) ? "border-b-4 border-green-500" : "",
                         dragOverIndex === index && dragOverPosition === "left" && draggingIndex !== index ? "border-l-4 border-green-500" : "",
                         dragOverIndex === index && dragOverPosition === "right" && draggingIndex !== index ? "border-r-4 border-green-500" : "",
                     )}
@@ -99,6 +145,14 @@ const Draggables = <T,>({
                     {render(item, index)}
                 </div>
             ))}
+            <div
+                onDragOver={handleGhostDragOver}
+                onDrop={handleGhostDrop}
+                className={twMerge(
+                    "w-full h-10",
+                    dragOverIndex === dragItems.length && dragOverPosition === "below" ? "border-t-4 border-green-500" : ""
+                )}
+            />
         </div>
     );
 };
