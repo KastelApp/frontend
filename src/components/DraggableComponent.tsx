@@ -27,6 +27,10 @@ interface DraggableProps<T> {
      * List of indexes where items cannot be placed below
      */
     noDropBelowIndexes?: number[];
+    /**
+     * Disables the ghost element
+     */
+    disableGhostElement?: boolean;
     className?: string;
 }
 
@@ -41,7 +45,8 @@ const Draggables = <T,>({
     disabledIndexes = [],
     noDropAboveIndexes = [],
     noDropBelowIndexes = [],
-    className
+    className,
+    disableGhostElement
 }: DraggableProps<T>) => {
     const [draggingIndex, setDraggingIndex] = useState<number | null>(null);
     const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
@@ -145,14 +150,16 @@ const Draggables = <T,>({
                     {render(item, index)}
                 </div>
             ))}
-            <div
-                onDragOver={handleGhostDragOver}
-                onDrop={handleGhostDrop}
-                className={twMerge(
-                    "w-full h-10",
-                    dragOverIndex === dragItems.length && dragOverPosition === "below" ? "border-t-4 border-green-500" : ""
-                )}
-            />
+            {!disableGhostElement && (
+                <div
+                    onDragOver={handleGhostDragOver}
+                    onDrop={handleGhostDrop}
+                    className={twMerge(
+                        "w-full h-10",
+                        dragOverIndex === dragItems.length && dragOverPosition === "below" ? "border-t-4 border-green-500" : ""
+                    )}
+                />
+            )}
         </div>
     );
 };

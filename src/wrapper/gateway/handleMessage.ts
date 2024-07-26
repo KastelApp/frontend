@@ -5,12 +5,13 @@ import Logger from "@/utils/Logger.ts";
 import Constants, { opCodes } from "@/utils/Constants.ts";
 import { HelloPayload } from "@/types/payloads/hello.ts";
 import event from "./Events/Event.ts";
-import { ReadyPayload } from "@/types/payloads/ready.ts";
+import { EmojiPack, NavBarLocation, ReadyPayload, Theme } from "@/types/payloads/ready.ts";
 import { useUserStore } from "../Stores/UserStore.ts";
 import { useGuildStore } from "../Stores/GuildStore.ts";
 import { useChannelStore } from "../Stores/ChannelStore.ts";
 import { useMemberStore } from "../Stores/Members.ts";
 import { useRoleStore } from "../Stores/RoleStore.ts";
+import { useSettingsStore } from "@/wrapper/Stores.ts";
 
 const handleMessage = async (ws: Websocket, data: unknown) => {
     const decompressed = safeParse<EventPayload>(ws.decompress(data));
@@ -145,6 +146,17 @@ const handleMessage = async (ws: Websocket, data: unknown) => {
                     });
                 }
             }
+
+            // useSettingsStore.setState((state) => {
+                useSettingsStore.getState().setEmojiPack(data.settings.emojiPack as EmojiPack);
+                useSettingsStore.getState().setLanguage(data.settings.language);
+                useSettingsStore.getState().setGuildOrder(data.settings.guildOrder);
+                useSettingsStore.getState().setPrivacy(data.settings.privacy);
+                useSettingsStore.getState().setTheme(data.settings.theme as Theme);
+                useSettingsStore.getState().setNavBarLocation(data.settings.navBarLocation as NavBarLocation);
+
+                // return state;
+            // })
 
             setTimeout(() => ws.emit("ready"), 500);
 

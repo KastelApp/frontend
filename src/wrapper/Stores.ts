@@ -8,31 +8,29 @@ import API from "./API.ts";
 import Client from "./Client.ts";
 
 // todo: migrate this to @wrapper/Stores
-export const useSettingsStore = createTrackedSelector(
-	create<SettingsStore>((set, get) => ({
-		emojiPack: EmojiPack.Twemoji,
-		language: "en-US",
-		navBarLocation: NavBarLocation.Bottom,
-		guildOrder: [],
-		privacy: 0,
-		theme: Theme.Dark,
-		isSideBarOpen: true,
-		setEmojiPack: (emojiPack: EmojiPack) => set({ emojiPack }),
-		setLanguage: (language: string) => set({ language }),
-		setNavBarLocation: (navBarLocation: NavBarLocation) => set({ navBarLocation }),
-		setGuildOrder: (
-			guildOrder: {
-				guildId: string;
-				position: number;
-			}[],
-		) => set({ guildOrder }),
-		setPrivacy: (privacy: number) => set({ privacy }),
-		setTheme: (theme: Theme) => set({ theme }),
-		setIsSideBarOpen: (isSideBarOpen: boolean) => set({ isSideBarOpen }),
-		getThemeColor: (darkColor: string, lightColor: string) =>
-			get().theme === Theme.Dark ? darkColor : lightColor,
-	})),
-);
+export const useSettingsStore = create<SettingsStore>((set, get) => ({
+	emojiPack: EmojiPack.Twemoji,
+	language: "en-US",
+	navBarLocation: NavBarLocation.Bottom,
+	guildOrder: [],
+	privacy: 0,
+	theme: Theme.Dark,
+	isSideBarOpen: true,
+	setEmojiPack: (emojiPack: EmojiPack) => set({ emojiPack }),
+	setLanguage: (language: string) => set({ language }),
+	setNavBarLocation: (navBarLocation: NavBarLocation) => set({ navBarLocation }),
+	setGuildOrder: (
+		guildOrder: {
+			guildId: string;
+			position: number;
+		}[],
+	) => set({ guildOrder }),
+	setPrivacy: (privacy: number) => set({ privacy }),
+	setTheme: (theme: Theme) => set({ theme }),
+	setIsSideBarOpen: (isSideBarOpen: boolean) => set({ isSideBarOpen }),
+	getThemeColor: (darkColor: string, lightColor: string) =>
+		get().theme === Theme.Dark ? darkColor : lightColor,
+}));
 
 export const useGuildSettingsStore = createTrackedSelector(
 	create(
