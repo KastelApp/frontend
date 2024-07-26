@@ -251,7 +251,7 @@ const TextBasedChannel = () => {
 
 
 			finishedMsgs.push({
-				inGuild: !guildId || false,
+				inGuild: !!guildId || false,
 				mentionsUser: msg.mentions.users.includes(currentUser.id),
 				highlighted: false,
 				message: {
@@ -274,7 +274,9 @@ const TextBasedChannel = () => {
 						};
 					})
 				},
-				replyMessage: null
+				replyMessage: null,
+				editable: msg.authorId === currentUser.id,
+				deleteable: msg.authorId === currentUser.id, // ? temp until I do the perms
 			});
 		}
 

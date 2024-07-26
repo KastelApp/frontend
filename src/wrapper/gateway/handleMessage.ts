@@ -87,7 +87,7 @@ const handleMessage = async (ws: Websocket, data: unknown) => {
             useUserStore.getState().addUser({
                 username: "Ghost",
                 defaultAvatar: "/icon.png",
-                isSystem: true,
+                isSystem: false,
                 tag: "0000",
                 publicFlags: String(Constants.publicFlags.GhostBadge),
                 flags: String(Constants.privateFlags.Ghost),

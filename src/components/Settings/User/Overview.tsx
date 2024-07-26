@@ -12,7 +12,7 @@ import { useEffect, useRef, useState } from "react";
 const OverView = () => {
 	const [user, setUser] = useState<User | null>(null);
 
-	const { getCurrentUser } = useUserStore();
+	const { getCurrentUser, getUser } = useUserStore();
 
 	const [avatarUrl, setAvatarUrl] = useState<string | null>(user?.avatar ?? null);
 
@@ -195,7 +195,8 @@ const OverView = () => {
 							<p className="mb-2 mt-2 text-lg">Before:</p>
 							<div className="flex items-center bg-charcoal-700 rounded-lg">
 								<div className="mt-2 w-full">
-									<Message message={{
+									<Message
+									message={{
 										content: "I'm a super cool person!",
 										authorId: getCurrentUser()!.id,
 										state: MessageStates.Sent,
@@ -217,8 +218,19 @@ const OverView = () => {
 										pinned: false,
 										nonce: null,
 										replyingTo: null,
-										discordInvites: []
-									}}  disableButtons />
+										discordInvites: [],
+										author: {
+											user: getCurrentUser()!,
+											member: null,
+											roleColor: null
+										}
+									}}
+									highlighted={false}
+									inGuild={false}
+									mentionsUser={false}
+									replyMessage={null}
+									disableButtons
+									/>
 								</div>
 							</div>
 							<p className="mb-2 mt-2 text-lg">After:</p>
@@ -246,8 +258,19 @@ const OverView = () => {
 										pinned: false,
 										nonce: null,
 										replyingTo: null,
-										discordInvites: []
-									}} disableButtons />
+										discordInvites: [],
+										author: {
+											user: getUser(Constants.fakeUserIds.ghost)!,
+											member: null,
+											roleColor: null
+										}
+									}}
+									disableButtons
+									highlighted={false}
+									inGuild={false}
+									mentionsUser={false}
+									replyMessage={null}
+									/>
 								</div>
 							</div>
 						</CardBody>

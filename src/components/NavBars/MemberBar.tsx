@@ -152,9 +152,9 @@ const MemberItem = memo(({ member, color, channelId }: {
 									<div className={twMerge("flex flex-col ml-2", member.user.tag ? "max-w-[6.75rem]" : "max-w-36")}>
 										<p
 											className={twMerge("truncate text-sm", color ? "" : "text-white")}
-											style={color !== null ? { color } : {}}
+											style={color !== null ? { color: `#${color}` } : {}}
 										>
-											{member.user.username}
+											{member.member.nickname ?? member.user.globalNickname ?? member.user.username}
 										</p>
 										{/* {member.customStatus && <p className="text-xs text-gray-500 truncate">{member.customStatus}</p>} */}
 									</div>

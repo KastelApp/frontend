@@ -1,4 +1,4 @@
-import { Chip, Popover, PopoverContent, PopoverTrigger, Tooltip, useDisclosure } from "@nextui-org/react";
+import { Avatar, Chip, Popover, PopoverContent, PopoverTrigger, Tooltip, useDisclosure } from "@nextui-org/react";
 import UserPopover from "@/components/Popovers/UserPopover.tsx";
 import { memo, useState } from "react";
 import { Pen, Reply, Trash2, Ellipsis } from "lucide-react";
@@ -41,6 +41,8 @@ export interface MessageProps {
 		roleColor: { color: string | null; id: string; } | null;
 	} | null;
 	inGuild: boolean;
+	deleteable?: boolean;
+	editable?: boolean;
 }
 
 const Message = ({
@@ -51,7 +53,9 @@ const Message = ({
 	highlighted,
 	mentionsUser,
 	replyMessage,
-	inGuild
+	inGuild,
+	deleteable = false,
+	editable = false,
 }: MessageProps) => {
 	const { t } = useTranslationStore();
 
@@ -148,7 +152,7 @@ const Message = ({
 			)}
 			<div className="flex">
 				<PopOverData>
-					<Image src={message.author.user.avatar ?? useUserStore.getState().getDefaultAvatar(message.author.user.id ?? "")} alt="User Avatar" width={32} height={32} className="rounded-full cursor-pointer w-8 h-8" />
+					<Avatar src={message.author.user.avatar ?? useUserStore.getState().getDefaultAvatar(message.author.user.id ?? "")} alt="User Avatar" className="ml-2 mt-1 min-w-9 max-w-9 max-h-9 min-h-9 rounded-full cursor-pointer" imgProps={{ className: "transition-none" }} />
 				</PopOverData>
 				<div className="relative flex flex-col ml-2">
 					<div>
@@ -226,10 +230,10 @@ const Message = ({
 						}} />
 					</Tooltip>
 					<Tooltip content="Edit">
-						<Pen size={18} color="#acaebf" className="cursor-pointer" />
+						<Pen size={18} color="#acaebf" className={twMerge("cursor-pointer hidden", editable && "block")} />
 					</Tooltip>
 					<Tooltip content="Delete">
-						<Trash2 size={18} className="text-danger cursor-pointer" />
+						<Trash2 size={18} className={twMerge("text-danger cursor-pointer hidden", deleteable && "block")} />
 					</Tooltip>
 					<Tooltip content="More">
 						<Ellipsis size={18} color="#acaebf" className="cursor-pointer" />
