@@ -132,7 +132,6 @@ const TextBasedChannel = () => {
 			const newMessages = getMessages(channelId);
 
 			setFetchedMessages(newMessages.toSorted((a, b) => a.creationDate.getTime() - b.creationDate.getTime()));
-			// setFetching(false);
 			setInitialFetch(true);
 
 			//?  we assume this is the first load so we scroll to the bottom
@@ -151,7 +150,6 @@ const TextBasedChannel = () => {
 			return;
 		}
 
-		// setFetching(false);
 		setInitialFetch(true);
 
 		if (messageCache.length > 250) {
@@ -249,6 +247,36 @@ const TextBasedChannel = () => {
 				};
 			}
 
+			const foundReplyMessage = msg.replyingTo ? fetchedMessages.find((fmsg) => fmsg.id === msg.replyingTo) : null;
+			let replyData: MessageProps["replyMessage"] | null = null;
+
+			if (foundReplyMessage) {
+				const fetchedReplyAuthor = getUser(foundReplyMessage.authorId);
+				const fetchedReplyMember = guildId ? getMember(guildId, foundReplyMessage.authorId) ?? null : null;
+
+				let roleData: { color: string; id: string; } | null = null;
+
+				if (fetchedReplyMember) {
+					const roles = useRoleStore.getState().getRoles(guildId ?? "");
+					const topColorRole = fetchedReplyMember.roles
+						.map((roleId) => roles.find((role) => role.id === roleId))
+						.filter((role) => role !== undefined)
+						.sort((a, b) => a!.position - b!.position)
+						.reverse()[0];
+
+					roleData = {
+						color: topColorRole ? topColorRole.color.toString(16) : "",
+						id: topColorRole ? topColorRole.id : ""
+					};
+				}
+
+				replyData = {
+					message: foundReplyMessage,
+					member: fetchedReplyMember,
+					roleColor: roleData,
+					user: fetchedReplyAuthor!
+				}
+			}
 
 			finishedMsgs.push({
 				inGuild: !!guildId || false,
@@ -274,7 +302,7 @@ const TextBasedChannel = () => {
 						};
 					})
 				},
-				replyMessage: null,
+				replyMessage: replyData,
 				editable: msg.authorId === currentUser.id,
 				deleteable: msg.authorId === currentUser.id, // ? temp until I do the perms
 			});
@@ -293,8 +321,16 @@ const TextBasedChannel = () => {
 			placeholder={`Message #${channelName}`}
 			isReadOnly={readOnly}
 			sendMessage={(content) => {
+				const perChannel = getChannel(channelId);
+
 				createMessage(channelId, {
 					content: content,
+					replyingTo: perChannel.replyingStateId
+				});
+
+				updateChannel(channelId, {
+					replyingStateId: null,
+					currentStates: perChannel.currentStates.filter((state) => state !== "replying")
 				});
 
 				setTimeout(() => bottomRef.current?.scrollIntoView({
@@ -313,7 +349,6 @@ const TextBasedChannel = () => {
 					data={renderedMessages}
 					renderItem={(message) => (
 						<Message
-							// message={message}
 							{...message}
 							key={message.message.id}
 						/>
