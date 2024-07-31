@@ -160,7 +160,7 @@ const EditUser = ({
 									variant="bordered"
 									label="Username"
 									color="primary"
-									description="This is your username"
+									description="This is your username."
 									value={username}
 									onChange={(e) => setUsername(e.target.value)}
 									isInvalid={!!usernameError}
@@ -177,7 +177,7 @@ const EditUser = ({
 									label="Tag"
 									errorMessage={tagError}
 									color="primary"
-									description="This is your tag"
+									description="This is your tag."
 									value={tag}
 									onChange={(e) => {
 										// ? If its not a number we just ignore it
