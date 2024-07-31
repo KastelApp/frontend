@@ -34,8 +34,8 @@
 			"login": "Login",
 			"signup": "Sign Up",
 			"blog": "Blog",
-			"support": "Support!",
-			"docs": "Documentation",
+			"support": "Support",
+			"docs": "Developer Documentation",
 			"app": "Open App"
 		}
 	},
