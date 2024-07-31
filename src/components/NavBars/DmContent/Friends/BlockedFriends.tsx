@@ -20,7 +20,7 @@ import { ChevronDown, EllipsisVertical } from "lucide-react";
 const columns = [
 	{ name: "ID", uid: "id", sortable: true },
 	{ name: "USERNAME", uid: "username", sortable: false },
-	{ name: "Blocked Since", uid: "blockedSince", sortable: true },
+	{ name: "BLOCKED SINCE", uid: "blockedSince", sortable: true },
 	{ name: "ACTIONS", uid: "actions", sortable: false },
 ];
 
@@ -126,7 +126,7 @@ const BlockedFriends = () => {
 						<DropdownMenu disabledKeys={["call"]}>
 							<DropdownItem key="view-dm">View DMs</DropdownItem>
 							<DropdownItem key="block" color="danger" variant="flat">
-								UnBlock
+								Unblock
 							</DropdownItem>
 						</DropdownMenu>
 					</Dropdown>
