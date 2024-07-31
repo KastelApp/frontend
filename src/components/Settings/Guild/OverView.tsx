@@ -83,7 +83,7 @@ const Overview = () => {
 					<div className="flex flex-col col-span-1 sm:col-span-2">
 						<Input
 							label="Guild Name"
-							placeholder="Enter a guild name."
+							placeholder="Enter a guild name"
 							className="w-full"
 							description="The name of your guild."
 						/>
@@ -91,7 +91,7 @@ const Overview = () => {
 					<div className="flex flex-col col-span-1 sm:col-span-2">
 						<Textarea
 							label="Guild Description"
-							placeholder="Enter a guild description."
+							placeholder="Enter a guild description"
 							className="w-full"
 							description="The description of your guild."
 							maxRows={3}
