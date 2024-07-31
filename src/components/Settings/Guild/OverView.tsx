@@ -78,22 +78,22 @@ const Overview = () => {
 								</div>
 							</Badge>
 						</Tooltip>
-						<p className="text-sm text-gray-500 mt-2">Upload a guild icon</p>
+						<p className="text-sm text-gray-500 mt-2">Upload a guild icon.</p>
 					</div>
 					<div className="flex flex-col col-span-1 sm:col-span-2">
 						<Input
 							label="Guild Name"
-							placeholder="Enter a guild name"
+							placeholder="Enter a guild name."
 							className="w-full"
-							description="The name of your guild"
+							description="The name of your guild."
 						/>
 					</div>
 					<div className="flex flex-col col-span-1 sm:col-span-2">
 						<Textarea
 							label="Guild Description"
-							placeholder="Enter a guild description"
+							placeholder="Enter a guild description."
 							className="w-full"
-							description="The description of your guild"
+							description="The description of your guild."
 							maxRows={3}
 						/>
 					</div>
@@ -103,7 +103,7 @@ const Overview = () => {
 				<h2 className="text-xl font-semibold">Guild Features</h2>
 				<div className="flex flex-col mt-4">
 					<SwitchOption title="Maintenance Mode" description="Stop's all non-staff members from accessing the guild." value={maintenanceMode} setValue={setMaintenanceMode} />
-					<SwitchOption title="Invites Disabled" description="Prevents new members from joining the guild." value={invitesDisabled} setValue={setInvitesDisabled} />
+					<SwitchOption title="Disable Invites" description="Prevents new members from joining the guild." value={invitesDisabled} setValue={setInvitesDisabled} />
 					{isStaff(user?.id ?? "") && <SwitchOption title="Internal Staff Guild (Staff Only)" description="Only staff members (with the staff flag) can access the guild." value={staffOnly} setValue={setStaffOnly} />}
 				</div>
 				<Divider className="mb-8 mt-8" />
