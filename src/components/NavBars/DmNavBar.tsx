@@ -178,7 +178,7 @@ const DmNavBar = ({
 				<div className="flex flex-col">
 					<p className="text-white text-xs ml-2 mt-2">Direct Messages</p>
 					{dms.length === 0 && (
-						<p className="text-gray-500 text-sm ml-2 mt-4">Its pretty lonely here... why not dm someone?</p>
+						<p className="text-gray-500 text-sm ml-2 mt-4">It's pretty lonely here...why not DM someone?</p>
 					)}
 					{dms.map((dm, index) => (
 						<DmNavBarItem
