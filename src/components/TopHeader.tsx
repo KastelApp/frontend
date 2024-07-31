@@ -24,8 +24,8 @@ const TopHeader = () => {
 		newTab: boolean;
 	}[] = [
 			{
-				title: t("home.navbar.docs"),
-				href: "/docs",
+				title: "Documentation",
+				href: "https://docs.kastelapp.com/docs",
 				newTab: false,
 			},
 			{
@@ -58,8 +58,8 @@ const TopHeader = () => {
 
 			<NavbarContent className="hidden sm:flex gap-4" justify="center">
 				<NavbarItem>
-					<Link color="foreground" href="/docs" as={NextLink}>
-						{t("home.navbar.docs")}
+					<Link href="https://docs.kastelapp.com/docs" color="foreground" target="_blank" as={NextLink}>
+						Documentation
 					</Link>
 				</NavbarItem>
 				<NavbarItem>
