@@ -302,7 +302,7 @@ const ChannelNavBar = ({ children, isChannelHeaderHidden, isMemberBarHidden }: {
 							{
 								title: "Overview",
 								id: "overview",
-								section: <>Channel ovewview</>,
+								section: <>Channel Overview</>,
 								disabled: false,
 							}
 						]

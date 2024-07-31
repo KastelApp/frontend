@@ -98,7 +98,7 @@ const BottomNavBar = () => {
                     />
                     <NavBarIcon
                         icon={<Compass className="mt-1.5" color="#acaebf" absoluteStrokeWidth />}
-                        description="Discover a guild"
+                        description="Discover a Guild"
                         isDisabled
                         isNormalIcon
                         orientation="horizontal"
