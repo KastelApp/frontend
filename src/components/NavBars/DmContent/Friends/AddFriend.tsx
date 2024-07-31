@@ -26,8 +26,8 @@ const AddFriend = () => {
 
 	return (
 		<div className="flex flex-col gap-2 justify-center items-center">
-			<h1 className="text-xl">Add a friend</h1>
-			<p className="text-gray-400">Enter your friend's username and tag below</p>
+			<h1 className="text-xl">Add a Friend</h1>
+			<p className="text-gray-400">Enter your friend's username and tag below.</p>
 			<Input
 				placeholder="kiki#1750"
 				value={userNameAndTag}
@@ -42,7 +42,7 @@ const AddFriend = () => {
 				isRequired
 				errorMessage={errorMessage}
 				isInvalid={errorMessage !== ""}
-				description="Enter your friend's username and tag (e.g. kiki#1750)"
+				description="Enter your friend's username and tag (e.g. kiki#1750)."
 				onKeyUp={onEnter(submit)}
 			/>
 		</div>

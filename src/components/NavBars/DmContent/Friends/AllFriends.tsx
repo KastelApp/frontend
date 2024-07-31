@@ -244,7 +244,7 @@ const AllFriends = () => {
 					<Input
 						isClearable
 						className="w-full sm:max-w-[44%]"
-						placeholder="Search by username or id..."
+						placeholder="Search by username or ID..."
 						startContent={<Search />}
 						value={filterValue}
 						onClear={() => onClear()}

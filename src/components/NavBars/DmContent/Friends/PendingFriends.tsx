@@ -256,7 +256,7 @@ const PendingFriends = () => {
 					</TableColumn>
 				)}
 			</TableHeader>
-			<TableBody emptyContent={"You have no pending friend requests"} items={sortedItems}>
+			<TableBody emptyContent={"You have no pending friend requests."} items={sortedItems}>
 				{(item) => (
 					<TableRow key={item.id}>{(columnKey) => <TableCell>{renderCell(item, columnKey) as string}</TableCell>}</TableRow>
 				)}

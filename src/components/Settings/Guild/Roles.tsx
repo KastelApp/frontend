@@ -217,21 +217,21 @@ const Roles = () => {
 										<Switch isSelected={false}>
 											Display role members separately from online members
 										</Switch>
-										<p className="text-gray-500 text-sm select-none">This will display role members in a separate category in the member list</p>
+										<p className="text-gray-500 text-sm select-none">This will display role members in a separate category in the member list.</p>
 									</div>
 									<Divider />
 									<div className="cursor-pointer h-full w-full">
 										<Switch isSelected={false}>
 											Mentionable
 										</Switch>
-										<p className="text-gray-500 text-sm select-none">This will allow anyone to mention this role</p>
+										<p className="text-gray-500 text-sm select-none">This will allow anyone to mention this role.</p>
 									</div>
 									<Divider />
 									<div className="cursor-pointer h-full w-full">
 										<Switch isSelected={false}>
 											Allow access to age restricted channels
 										</Switch>
-										<p className="text-gray-500 text-sm select-none">This will allow anyone with this role to access age restricted channels</p>
+										<p className="text-gray-500 text-sm select-none">This will allow anyone with this role to access age restricted channels.</p>
 									</div>
 									<Divider />
 								</div>

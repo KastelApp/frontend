@@ -55,7 +55,7 @@ const ConfirmDelete = ({
 						<li>Banned Members</li>
 					</ul>
 
-					<p>If you are sure please {timer > 0 ? `wait ${timer} seconds more seconds` : "click delete below"}</p>
+					<p>If you are sure, please {timer > 0 ? `wait ${timer} seconds more seconds.` : "click the delete button below."}</p>
 				</ModalBody>
 				<ModalFooter>
 					<Button color="success" variant="flat" onPress={onClose}>

@@ -15,7 +15,7 @@ const ConfirmLeave = ({
 				<ModalHeader className="flex flex-col gap-1">Are you sure you want to leave?</ModalHeader>
 				<ModalBody>
 					<h1 className="text-lg">
-						You will lose access to this server (i.e messages, channels etc) unless you are invited back.
+						You will lose access to this server (i.e. messages, channels, etc) unless you are invited back.
 					</h1>
 				</ModalBody>
 				<ModalFooter>
