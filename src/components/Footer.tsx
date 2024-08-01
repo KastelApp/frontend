@@ -104,7 +104,7 @@ const Footer = () => {
 						. All Rights Reserved.
 					</span>
 					<div className="flex mt-4 sm:justify-center sm:mt-0">
-						<Link href="https://x.com/KastelApp" className="text-gray-500 hover: hover:text-white ms-5" as={NextLink}>
+						<Link href="https://x.com/KastelApp" target="_blank" className="text-gray-500 hover: hover:text-white ms-5" as={NextLink}>
 							<svg
 								className="w-4 h-4"
 								aria-hidden="true"
