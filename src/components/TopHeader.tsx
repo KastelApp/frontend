@@ -29,7 +29,7 @@ const TopHeader = () => {
 				newTab: true,
 			},
 			{
-				title: "Github",
+				title: "GitHub",
 				href: "https://github.com/KastelApp",
 				newTab: true,
 			},
@@ -64,7 +64,7 @@ const TopHeader = () => {
 				</NavbarItem>
 				<NavbarItem>
 					<Link href="https://github.com/KastelApp" color="foreground" target="_blank" as={NextLink}>
-						Github
+						GitHub
 					</Link>
 				</NavbarItem>
 				<NavbarItem>
