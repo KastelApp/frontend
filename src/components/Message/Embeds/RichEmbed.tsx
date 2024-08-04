@@ -1,4 +1,5 @@
-import { Avatar, Card, CardBody, CardFooter, CardHeader, Image, User } from "@nextui-org/react";
+import ImageGrid from "@/pages/playground/imagegrid.tsx";
+import { Avatar, Card, CardBody, CardFooter, CardHeader, Image } from "@nextui-org/react";
 import Link from "next/link";
 import { twMerge } from "tailwind-merge";
 
@@ -26,7 +27,7 @@ interface EmbedField {
 interface EmbedAuthor {
     name: string;
     authorID?: string;
-    iconUrl: string;
+    iconUrl?: string;
     url: string;
 }
 
@@ -93,21 +94,16 @@ const RichEmbed = ({
         <div style={{
             borderLeft: `4px solid #${embed.color?.toString(16) ?? "000000"}`
         }} className="rounded-md inline-block w-auto ">
-            <Card shadow="sm" radius="none" className="rounded-md min-w-0 min-h-0 bg-accent">
+            <Card shadow="sm" radius="none" className="rounded-md min-w-0 min-h-0 bg-lightAccent dark:bg-darkAccent max-w-[430px]">
                 {(embed.title || embed.author?.name || embed.thumbnail?.url) && (
                     <CardHeader className="p-0 pl-3 pt-3 mr-3">
                         <div className="flex flex-col items-start gap-2 text-white">
                             {embed.author?.name && (
-                                <HyperLinkPossibly url={embed.author.url} noColor>
-                                    <User name={embed.author.name} avatarProps={{
-                                        src: embed.author.iconUrl,
-                                        className: "h-6 w-6 rounded-full",
-                                        imgProps: {
-                                            referrerPolicy: "no-referrer"
-                                        }
-                                    }} className="font-bold truncate max-w-md" classNames={{
-                                        name: "text-xs"
-                                    }} />
+                                <HyperLinkPossibly url={embed.author.url} noColor={embed.author.url === undefined}>
+                                    <div>
+                                        {embed.author.iconUrl && <Avatar src={embed.author.iconUrl} className="h-6 w-6 rounded-full" />}
+                                        <p className="font-bold truncate max-w-md">{embed.author.name}</p>
+                                    </div>
                                 </HyperLinkPossibly>
                             )}
                             {embed.title && <HyperLinkPossibly url={embed.url}><p className="truncate max-w-md mb-2">{embed.title}</p></HyperLinkPossibly>}
@@ -133,6 +129,7 @@ const RichEmbed = ({
                             </div>
                         ))}
                     </div>
+                    {embed.files && <ImageGrid length={embed.files.length} />}
                 </CardBody>
                 {(embed.footer?.text || embed.footer?.timestamp) && (
                     <CardFooter className="mr-3">

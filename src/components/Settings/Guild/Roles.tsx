@@ -158,7 +158,7 @@ const Roles = () => {
 	}, [selectedRole]);
 
 	return (
-		<div className="mr-2 bg-accent rounded-lg p-4">
+		<div className="mr-2 bg-lightAccent dark:bg-darkAccent rounded-lg p-4">
 			<h1 className="text-2xl font-semibold mb-4">Roles</h1>
 			<div className="flex h-screen">
 				<div>
@@ -252,7 +252,7 @@ const Roles = () => {
 									/>
 									<div className="flex flex-col space-y-2 overflow-y-auto max-h-[80vh]">
 										{Object.entries(advancedMode ? PermissionsDescriptions.advanced.groups : PermissionsDescriptions.simple.groups).map(([index, permission]) => (
-											<div key={index} className="bg-accent rounded-md p-4">
+											<div key={index} className="bg-lightAccent dark:bg-darkAccent rounded-md p-4">
 												<div className="flex">
 													<p className="text-white font-semibold">{permission.label}</p>
 													<Switch className="ml-auto" size="sm"

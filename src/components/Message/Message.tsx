@@ -7,7 +7,7 @@ import UserModal from "@/components/Modals/UserModal.tsx";
 // import RichEmbed, { Embed } from "./Embeds/RichEmbed.tsx";
 // import IFrameEmbed from "./Embeds/IFrameEmbed.tsx";
 import InviteEmbed from "./Embeds/InviteEmbed.tsx";
-import { MessageStates, Message as MessageType } from "@/wrapper/Stores/MessageStore.ts";
+import { MessageStates, Message as MessageType, useMessageStore } from "@/wrapper/Stores/MessageStore.ts";
 import { User, useUserStore } from "@/wrapper/Stores/UserStore.ts";
 import fastDeepEqual from "fast-deep-equal";
 import { Member } from "@/wrapper/Stores/Members.ts";
@@ -17,6 +17,9 @@ import Image from "next/image";
 import formatDate from "@/utils/formatDate.ts";
 import { Invite } from "@/wrapper/Stores/InviteStore.ts";
 import { Guild } from "@/wrapper/Stores/GuildStore.ts";
+import { Role } from "@/wrapper/Stores/RoleStore.ts";
+import RichEmbed from "@/components/Message/Embeds/RichEmbed.tsx";
+import IFrameEmbed from "@/components/Message/Embeds/IFrameEmbed.tsx";
 
 export interface MessageProps {
 	message: Omit<MessageType, "invites"> & {
@@ -25,7 +28,7 @@ export interface MessageProps {
 		} | null)[];
 		author: {
 			user: User;
-			member: Member | null;
+			member: Omit<Member, "roles"> & { roles: Role[]; } | null;
 			roleColor: { color: string | null; id: string; } | null;
 		};
 	};
@@ -42,7 +45,9 @@ export interface MessageProps {
 	} | null;
 	inGuild: boolean;
 	deleteable?: boolean;
+	replyable?: boolean;
 	editable?: boolean;
+	jumpToMessage?: (msgId: string) => void;
 }
 
 const Message = ({
@@ -56,6 +61,8 @@ const Message = ({
 	inGuild,
 	deleteable = false,
 	editable = false,
+	replyable = false,
+	jumpToMessage,
 }: MessageProps) => {
 	const { t } = useTranslationStore();
 
@@ -83,10 +90,7 @@ const Message = ({
 						<UserPopover
 							member={{
 								user: message.author.user,
-								member: message.author.member ? {
-									member: message.author.member,
-									roles: []
-								} : null
+								member: message.author.member ?? null
 							}}
 							onClick={() => {
 								onOpen();
@@ -100,7 +104,6 @@ const Message = ({
 	};
 
 	const formattedDate = formatDate(message.creationDate);
-
 
 	return (
 		<div
@@ -147,7 +150,11 @@ const Message = ({
 							}}>{message.mentions.users.includes(replyMessage.message.authorId) ? "@" : ""}{replyMessage.user.globalNickname ?? replyMessage.user.username}</span>
 						</div>
 					</PopOverData>
-					<p className="text-gray-300 text-2xs ml-2 select-none">{replyMessage.message.content}</p>
+					<p className="text-white text-2xs ml-2 select-none cursor-pointer" onClick={() => {
+						if (jumpToMessage) {
+							jumpToMessage(replyMessage.message.id);
+						}
+					}} >{replyMessage.message.content}</p>
 				</div>
 			)}
 			<div className="flex">
@@ -211,18 +218,18 @@ const Message = ({
 							</div>
 						);
 					})}
-					{/* {embeds && embeds.map((embed, index) => (
+					{message.embeds && message.embeds.map((embed, index) => (
                 <div key={index} className="mt-2 inline-block max-w-full overflow-hidden">
                     {embed.type === "Rich" ?
                         <RichEmbed embed={embed} /> : embed.type === "Iframe" ? <IFrameEmbed embed={embed} /> : null}
                 </div>
-            ))} */}
+            ))}
 				</div>
 			</div>
 			{!disableButtons && (
 				<div className="z-10 items-center gap-2 bg-gray-800 absolute top-[-1rem] right-0 hidden group-hover:flex hover:flex p-1 rounded-md mr-2">
 					<Tooltip content="Reply">
-						<Reply size={18} color="#acaebf" className="cursor-pointer" onClick={() => {
+						<Reply size={18} color="#acaebf" className={twMerge("cursor-pointer hidden", replyable && "block")} onClick={() => {
 							usePerChannelStore.getState().updateChannel(message.channelId, {
 								currentStates: [...usePerChannelStore.getState().getChannel(message.channelId).currentStates, "replying"],
 								replyingStateId: message.id
@@ -233,7 +240,9 @@ const Message = ({
 						<Pen size={18} color="#acaebf" className={twMerge("cursor-pointer hidden", editable && "block")} />
 					</Tooltip>
 					<Tooltip content="Delete">
-						<Trash2 size={18} className={twMerge("text-danger cursor-pointer hidden", deleteable && "block")} />
+						<Trash2 size={18} className={twMerge("text-danger cursor-pointer hidden", deleteable && "block")} onClick={() => {
+							useMessageStore.getState().deleteMessage(message.id);
+						}} />
 					</Tooltip>
 					<Tooltip content="More">
 						<Ellipsis size={18} color="#acaebf" className="cursor-pointer" />
@@ -246,5 +255,8 @@ const Message = ({
 };
 
 export default memo(Message, (prev, next) => {
-	return fastDeepEqual(prev, next);
+	const prevFunctionless = Object.fromEntries(Object.entries(prev).filter(([, value]) => typeof value !== "function"));
+	const nextFunctionless = Object.fromEntries(Object.entries(next).filter(([, value]) => typeof value !== "function"));
+
+	return fastDeepEqual(prevFunctionless, nextFunctionless);
 });

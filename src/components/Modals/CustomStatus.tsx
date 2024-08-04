@@ -1,4 +1,5 @@
 import { Button, Input, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from "@nextui-org/react";
+import { useState } from "react";
 
 const CustomStatus = ({
 	isOpen,
@@ -9,6 +10,9 @@ const CustomStatus = ({
 	onOpenChange: () => void;
 	onClose: () => void;
 }) => {
+
+	const [status, setStatus] = useState("");
+
 	return (
 		<Modal isOpen={isOpen} onOpenChange={onOpenChange} placement="top-center">
 			<ModalContent>
@@ -19,7 +23,10 @@ const CustomStatus = ({
 						label="Whatcha up to?"
 						placeholder="I'm currently..."
 						variant="bordered"
-						description="Max of 128 characters - 20 remaining"
+						description={`Max of 128 characters - ${128 - status.length} remaining`}
+						value={status}
+						onChange={(e) => setStatus(e.target.value)}
+						maxLength={128}
 					/>
 				</ModalBody>
 				<ModalFooter>

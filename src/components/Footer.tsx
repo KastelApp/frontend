@@ -5,7 +5,7 @@ const Footer = () => {
 	const year = new Date().getFullYear();
 
 	return (
-		<footer className="bg-accent">
+		<footer className="bg-lightAccent dark:bg-darkAccent">
 			<div className="mx-auto w-full max-w-screen-xl p-4 py-6 lg:py-8">
 				<div className="md:flex md:justify-between">
 					<div className="mb-6 md:mb-0 md:text-left">

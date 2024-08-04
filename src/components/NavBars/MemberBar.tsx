@@ -25,7 +25,7 @@ interface Section {
 	name: string; // ? two defaults, "offline" and "online"
 	members: {
 		member: {
-			member: Member;
+			member: Omit<Member, "roles"> & { roles: Role[] };
 			user: User;
 		};
 		color: string | null;
@@ -35,7 +35,7 @@ interface Section {
 
 const MemberItem = memo(({ member, color, channelId }: {
 	member: {
-		member: Member;
+		member: Omit<Member, "roles"> & { roles: Role[] };
 		user: User;
 	};
 	color: string | null;
@@ -94,7 +94,7 @@ const MemberItem = memo(({ member, color, channelId }: {
 			>
 				<PopoverTrigger>
 					<div
-						className="flex items-center justify-=between w-full h-12 px-2 cursor-pointer rounded-lg hover:bg-slate-800 relative max-w-48 last:mb-24"
+						className="flex items-center justify-=between w-full h-12 px-2 cursor-pointer rounded-lg hover:bg-slate-800 relative max-w-48"
 						onClick={async () => {
 							if (member.user.metaData.bioless || typeof member.user.bio === "string") {
 								setLoading(false);
@@ -180,10 +180,7 @@ const MemberItem = memo(({ member, color, channelId }: {
 						<UserPopover
 							member={{
 								user: member.user,
-								member: {
-									member: member.member,
-									roles: [],
-								}
+								member: member.member
 							}}
 							onClick={() => {
 								onOpen();
@@ -293,7 +290,7 @@ const MemberBar = () => {
 
 			const topColorRole = member.roles
 				.map((roleId) => roles.find((role) => role.id === roleId))
-				.filter((role) => role !== undefined)
+				.filter((role) => role !== undefined && role.color !== 0)
 				.sort((a, b) => a!.position - b!.position)
 				.reverse()[0]?.color;
 
@@ -303,7 +300,10 @@ const MemberBar = () => {
 				defaultSections[0].members.push({
 					color: topColorRole ? topColorRole.toString(16) : null,
 					member: {
-						member,
+						member: {
+							...member,
+							roles: member.roles.map((roleId) => roles.find((role) => role.id === roleId)).filter((role) => role !== null && role !== undefined),
+						},
 						user: foundUser!,
 					},
 				});
@@ -316,7 +316,10 @@ const MemberBar = () => {
 				defaultSections[1].members.push({
 					color: topColorRole ? topColorRole.toString(16) : null,
 					member: {
-						member,
+						member: {
+							...member,
+							roles: member.roles.map((roleId) => roles.find((role) => role.id === roleId)).filter((role) => role !== null && role !== undefined),
+						},
 						user: foundUser!,
 					},
 				});
@@ -328,7 +331,7 @@ const MemberBar = () => {
 			// ? If we could not find a hoisted role, push them to online
 			const topRole = member.roles
 				.map((roleId) => roles.find((role) => role.id === roleId))
-				.filter((role) => role !== undefined && role.hoisted)
+				.filter((role) => role !== undefined && role.color !== 0)
 				.sort((a, b) => a!.position - b!.position)
 				.reverse()[0];
 
@@ -336,7 +339,10 @@ const MemberBar = () => {
 				defaultSections[1].members.push({
 					color: topColorRole ? topColorRole.toString(16) : null,
 					member: {
-						member,
+						member: {
+							...member,
+							roles: member.roles.map((roleId) => roles.find((role) => role.id === roleId)).filter((role) => role !== null && role !== undefined),
+						},
 						user: foundUser!,
 					},
 				});
@@ -354,7 +360,10 @@ const MemberBar = () => {
 							{
 								color: topColorRole ? topColorRole.toString(16) : null,
 								member: {
-									member,
+									member: {
+										...member,
+										roles: member.roles.map((roleId) => roles.find((role) => role.id === roleId)).filter((role) => role !== null && role !== undefined),
+									},
 									user: foundUser!,
 								},
 							},
@@ -368,7 +377,10 @@ const MemberBar = () => {
 				section.members.push({
 					color: topColorRole ? topColorRole.toString(16) : null,
 					member: {
-						member,
+						member: {
+							...member,
+							roles: member.roles.map((roleId) => roles.find((role) => role.id === roleId)).filter((role) => role !== null && role !== undefined),
+						},
 						user: foundUser!,
 					},
 				});
@@ -390,7 +402,10 @@ const MemberBar = () => {
 				section.members.push({
 					color: topColorRole ? topColorRole.toString(16) : null,
 					member: {
-						member,
+						member: {
+							...member,
+							roles: member.roles.map((roleId) => roles.find((role) => role.id === roleId)).filter((role) => role !== null && role !== undefined),
+						},
 						user: foundUser!,
 					},
 				});
@@ -404,7 +419,10 @@ const MemberBar = () => {
 				defaultSections[1].members.push({
 					color: topColorRole ? topColorRole.toString(16) : null,
 					member: {
-						member,
+						member: {
+							...member,
+							roles: member.roles.map((roleId) => roles.find((role) => role.id === roleId)).filter((role) => role !== null && role !== undefined),
+						},
 						user: foundUser!,
 					},
 				});
@@ -441,11 +459,11 @@ const MemberBar = () => {
 				guildSettings.memberBarHidden ? "hidden" : "",
 			)}
 		>
-			<div className="fixed w-52 h-screen m-0 overflow-y-auto bg-accent transition-opacity ease-in-out duration-300 !overflow-x-hidden">
+			<div className="fixed w-52 h-screen m-0 overflow-y-auto bg-lightAccent dark:bg-darkAccent transition-opacity ease-in-out duration-300 !overflow-x-hidden">
 				<div className="flex w-full flex-col ml-2 last:mb-12">
 					{sections.map((section, index) => (
-						<div key={index}>
-							<p className="text-white text-xs ml-2 mt-2">
+						<div key={index} className="last:mb-24">
+							<p className="text-white text-xs ml-2 mt-2 select-none">
 								{section.name} — {section.members.length}
 							</p>
 							{section.members.map((member, index) => (

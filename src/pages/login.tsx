@@ -17,6 +17,7 @@ import SEO from "@/components/SEO.tsx";
 import NextLink from "next/link";
 import { useRouter } from "next/router";
 import onEnter from "@/utils/onEnter.ts";
+import TwoFa from "@/components/Modals/TwoFa.tsx";
 
 const Login = () => {
 	const [isVisible, setIsVisible] = useState(false);
@@ -38,10 +39,10 @@ const Login = () => {
 
 	// ? Model specific state (e.g. 2FA code)
 	// t! 2FA stuff
-	// const [twoFaCode, setTwoFaCode] = useState("");
+	const [twoFaCode, setTwoFaCode] = useState("");
 	// const [requiresTwoFa, setRequiresTwoFa] = useState(false);
 	// const [twoFaError, setTwoFaError] = useState("");
-	// const { onClose, isOpen, onOpenChange } = useDisclosure();
+	const { onClose, isOpen, onOpenChange } = useDisclosure();
 
 	// ? Captcha Model specific state
 	const { isOpen: isOpenCaptcha, onOpenChange: onOpenChangeCaptcha } = useDisclosure();
@@ -143,7 +144,7 @@ const Login = () => {
 
 			<HomeLayout>
 				<div className="flex justify-center items-center">
-					<Card className="flex items-center justify-center mt-32 w-full max-w-md p-8 bg-accent">
+					<Card className="flex items-center justify-center mt-32 w-full max-w-md p-8 bg-lightAccent dark:bg-darkAccent">
 						<div className="w-full max-w-md">
 							<div className="text-center">
 								<h1 className="text-3xl font-bold">{t("login.title")}</h1>
@@ -213,9 +214,19 @@ const Login = () => {
 									<Link href="/register" color="primary" className="text-sm" as={NextLink} tabIndex={4}>
 										{t("login.register")}
 									</Link>
-									<Link href="/register" color="primary" className="text-sm" as={NextLink} tabIndex={5}>
+									<Button disableAnimation variant="light" color="primary" className="hover:bg-transparent bg-transparent hover:opacity-80 transition-opacity text-sm" tabIndex={5} onClick={() => {
+										if (loading) return;
+
+										if (!email || !email.includes("@") || !email.includes(".")) {
+											setEmailError(t("login.email.error"));
+
+											return;
+										}
+
+										onOpenChange()
+									}}>
 										{t("login.forgot")}
-									</Link>
+									</Button>
 								</div>
 							</form>
 						</div>
@@ -234,6 +245,7 @@ const Login = () => {
 						</ModalBody>
 					</ModalContent>
 				</Modal>
+				<TwoFa isOpen={isOpen} onOpenChange={onOpenChange} onClose={onClose} />
 			</HomeLayout>
 		</>
 	);

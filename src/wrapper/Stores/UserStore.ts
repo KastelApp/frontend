@@ -21,6 +21,7 @@ export interface User {
     bio: string | null;
     isClient: boolean;
     isSystem: boolean;
+    isGhost: boolean;
     isBot: boolean;
     defaultAvatar: string;
     metaData: {
@@ -94,6 +95,7 @@ export const useUserStore = create<UserStore>((set, get) => ({
                         isClient: false,
                         mfaEnabled: false,
                         mfaVerified: false,
+                        isGhost: true,
                         phoneNumber: null,
                         publicFlags: "0",
                         tag: "0000",

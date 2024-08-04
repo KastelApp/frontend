@@ -1,11 +1,10 @@
 import { NavBarLocation } from "@/types/payloads/ready.ts";
 import { useSelectedTab, useSettingsStore } from "@/wrapper/Stores.ts";
-import { Avatar, Badge, Chip } from "@nextui-org/react";
-import { Backpack, Home, UserRound, X } from "lucide-react";
+import { Avatar, Badge } from "@nextui-org/react";
+import {  Home, UserRound, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { twMerge } from "tailwind-merge";
 import HomeContent from "./DmContent/Home.tsx";
-import Library from "./DmContent/Library.tsx";
 import Friends from "./DmContent/Friends.tsx";
 import TopNavBar from "./TopNavBar.tsx";
 import { useRouter } from "next/router";
@@ -94,7 +93,7 @@ const DmNavBar = ({
 		{
 			name: "Home",
 			id: "home",
-			disabled: false,
+			disabled: true,
 			icon: <Home color="#acaebf" size={20} className="ml-2" />,
 		},
 		{
@@ -102,25 +101,7 @@ const DmNavBar = ({
 			id: "friends",
 			disabled: false,
 			icon: <UserRound color="#acaebf" size={20} className="ml-2" />,
-		},
-		{
-			name: "Library",
-			id: "game-library",
-			disabled: true,
-			icon: <Backpack size={20} className="ml-2" color="gray" />,
-			endContent: (
-				<Chip
-					classNames={{
-						base: "bg-gradient-to-br from-orange-500 to-purple-500 shadow-pink-500/30 mr-2",
-						content: "drop-shadow shadow-black text-white",
-					}}
-					size="sm"
-					className="text-xs"
-				>
-					Coming Soon
-				</Chip>
-			),
-		},
+		}
 	];
 
 	const dms = [
@@ -143,7 +124,7 @@ const DmNavBar = ({
 		<div className="flex flex-row w-full h-screen m-0 overflow-hidden">
 			<div
 				className={twMerge(
-					"fixed w-52 h-screen m-0 overflow-hidden bg-accent",
+					"fixed w-52 h-screen m-0 overflow-hidden bg-lightAccent dark:bg-darkAccent",
 					isSideBarOpen ? (navBarLocation === NavBarLocation.Left ? "ml-16" : "") : "hidden",
 				)}
 			>
@@ -169,7 +150,6 @@ const DmNavBar = ({
 								setSelectedChannel(null);
 							}}
 							icon={tab.icon}
-							endContent={tab.endContent}
 							isDisabled={tab.disabled}
 							textSize="sm"
 						/>
@@ -243,8 +223,6 @@ const DmNavBar = ({
 				<div className="ml-2 ">
 					{selectedTab === null && children ? (
 						children
-					) : selectedTab === "game-library" ? (
-						<Library />
 					) : selectedTab === "friends" ? (
 						<Friends />
 					) : (

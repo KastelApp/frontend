@@ -49,7 +49,7 @@ const Friends = () => {
 						key="friends"
 						title={
 							<div className="flex items-center space-x-2">
-								<span>Friends</span>
+								<span className="transition-colors duration-100 group-data-[selected=true]:text-foreground-50 font-medium">Friends</span>
 								{friendCount > 0 && <Chip size="sm" variant="faded" color="success">
 									{friendCount}
 								</Chip>}
@@ -62,7 +62,7 @@ const Friends = () => {
 						key="pending-friends"
 						title={
 							<div className="flex items-center space-x-2">
-								<span>Pending</span>
+								<span className="transition-colors duration-100 group-data-[selected=true]:text-foreground-50 font-medium">Pending</span>
 								{pendingFriends > 0 && <Chip size="sm" variant="faded" color="warning">
 									{pendingFriends}
 								</Chip>}
@@ -75,7 +75,7 @@ const Friends = () => {
 						key="blocked"
 						title={
 							<div className="flex items-center space-x-2">
-								<span>Blocked</span>
+								<span className="transition-colors duration-100 group-data-[selected=true]:text-foreground-50 font-medium">Blocked</span>
 								{blockedFriends > 0 && <Chip size="sm" variant="faded" color="danger">
 									{blockedFriends}
 								</Chip>}
@@ -84,7 +84,7 @@ const Friends = () => {
 					>
 						<BlockedFriends />
 					</Tab>
-					<Tab key="add-new-friend" title={<span>Add a Friend</span>}>
+					<Tab key="add-new-friend" title={<span className="transition-colors duration-100 group-data-[selected=true]:text-foreground-50 font-medium">Add a Friend</span>}>
 						<AddFriend />
 					</Tab>
 				</Tabs>

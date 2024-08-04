@@ -178,8 +178,8 @@ const BlockedFriends = () => {
 			isHeaderSticky
 			bottomContentPlacement="outside"
 			classNames={{
-				wrapper: "max-h-[382px] bg-accent",
-				th: "bg-background"
+				wrapper: "max-h-[382px] bg-lightAccent dark:bg-darkAccent",
+				th: "bg-lightBackground dark:bg-darkBackground"
 			}}
 			selectedKeys={selectedKeys}
 			selectionMode="none"

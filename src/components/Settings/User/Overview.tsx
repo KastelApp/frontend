@@ -52,7 +52,7 @@ const OverView = () => {
 	return (
 		<div>
 			<EditUser isOpen={isOpen} onClose={onClose} onOpenChange={onOpenChange} />
-			<Card className="rounded-lg p-0 w-full min-w-full bg-accent">
+			<Card className="rounded-lg p-0 w-full min-w-full bg-lightAccent dark:bg-darkAccent">
 				<CardBody>
 					<div>
 						<div className="flex items-end justify-between p-2">
@@ -92,7 +92,7 @@ const OverView = () => {
 								<Button
 									color="primary"
 									variant="flat"
-									className="max-h-8 min-h-8 min-w-28 max-w-28 rounded-md"
+									className="max-h-8 min-h-8 min-w-28 max-w-28 rounded-md "
 									radius="none"
 								>
 									View Profile
@@ -106,7 +106,7 @@ const OverView = () => {
 										onOpenChange();
 									}}
 								>
-									<Pencil size={24} className="cursor-pointer text-primary" />
+									<Pencil size={24} className="cursor-pointer " />
 								</Button>
 							</div>
 						</div>
@@ -118,7 +118,7 @@ const OverView = () => {
 										<TriangleAlert className="text-warning" size={24} />
 										<p className="text-warning text-sm mt-0.5 ml-2">Your email is not verified, please check your email to verify it.</p>
 									</div>
-									<Button color="primary" variant="flat" className="ml-auto text-sm h-6 mt-2 w-32 mr-2 rounded-md" radius="none">
+									<Button color="primary" variant="flat" className="ml-auto text-sm h-6 mt-2 w-32 mr-2 rounded-md " radius="none">
 										Resend
 									</Button>
 								</div>
@@ -178,20 +178,20 @@ const OverView = () => {
                     <p className="text-md">Multi-factor authentication (MFA) provides an extra layer of security for your account. When enabled, you will need to provide a verification code in addition to your password during login.</p>
                 </div> */}
 				<div>
-					<p className="text-lg font-semibold mb-2">Account Status</p>
-					<ul className="list-disc ml-6 mb-2">
+					<p className="text-lg font-semibold mb-2 text-color-base">Account Status</p>
+					<ul className="list-disc ml-6 mb-2 text-color-base">
 						<li>Disable Account: Temporarily locks your account. Contact support to unlock.</li>
 						<li>
 							Delete account: Removes all Personally Identifiable Information from our servers excluding messages, You
 							can choose to delete messages as well.
 						</li>
 					</ul>
-					<p>
+					<p className="text-color-base">
 						Please note that deleting your account may take 14–30 days to complete. If you opt to delete your messages,
 						it may take longer. Once finished, here's how your messages will be displayed:
 					</p>
 					<Card>
-						<CardBody className="bg-accent select-none mt-4">
+						<CardBody className="bg-lightAccent dark:bg-darkAccent select-none mt-4">
 							<p className="mb-2 mt-2 text-lg">Before:</p>
 							<div className="flex items-center bg-charcoal-700 rounded-lg">
 								<div className="mt-2 w-full">

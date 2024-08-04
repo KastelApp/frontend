@@ -336,7 +336,7 @@ const BiDirectionalInfiniteScroller = <T,>({
                             height: turnThresholdIntoVh(topThreshold)
                         }} ref={theTopHiddenOne} />}
                         {data.map((item, index) => (
-                            <li key={index}>
+                            <li key={index} id={`item-${index}`}>
                                 {renderItem(item, index, data)}
                             </li>
                         ))}

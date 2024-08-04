@@ -8,6 +8,7 @@ import { NavBarIcon } from "./NavBarIcon.tsx";
 import { Compass, Home, TriangleAlert } from "lucide-react";
 import AddGuildButton from "../AddGuildButton.tsx";
 import UserOptions from "../Dropdowns/UserOptions.tsx";
+import { snowflake } from "@/utils/Constants.ts";
 
 const BottomNavBar = () => {
     const { guilds } = useGuildStore();
@@ -35,7 +36,11 @@ const BottomNavBar = () => {
     }, []);
 
     const mappedGuilds = useCallback(() => {
-        return <Draggables items={guilds.filter((guild) => !guild.unavailable && !guild.partial)} onDrop={console.log} orientation="horizontal"
+        return <Draggables
+            disableGhostElement
+            items={guilds.filter((guild) => !guild.unavailable && !guild.partial)}
+            onDrop={console.log}
+            orientation="horizontal"
             className="horizontal-scroll-content flex gap-3"
             render={(item, index) => {
                 let hasUnread = false;
@@ -43,9 +48,14 @@ const BottomNavBar = () => {
                 const gotChannels = getChannelsWithValidPermissions(item.id);
 
                 for (const channel of gotChannels) {
-                    if (item.channelProperties.find((channelProperty) => channelProperty.channelId === channel.id)?.lastMessageAckId !== channel.lastMessageId) {
+                    const foundChannel = item.channelProperties.find((channelProperty) => channelProperty.channelId === channel.id);
+                    if (foundChannel?.lastMessageAckId !== channel.lastMessageId) {
+                        if (foundChannel?.lastMessageAckId && channel.lastMessageId && snowflake.timeStamp(foundChannel.lastMessageAckId) > snowflake.timeStamp(channel.lastMessageId)) {
+                            continue
+                        }
+    
                         hasUnread = true;
-
+    
                         break;
                     }
                 }
@@ -68,17 +78,31 @@ const BottomNavBar = () => {
                             />
                         }
                         description={item.name}
-                        contextMenuItemsProps={{
-                            values: [
-                                {
-                                    label: "Test",
-                                },
-                            ],
-                            placement: "right",
-                        }}
+                        contextMenuItemsProps={[
+                            {
+                                label: "Test",
+                            },
+                            {
+                                label: "Test 2",
+                            },
+                            {
+                                label: "Test 3",
+                            },
+                            {
+                                label: "Test 4",
+                                endContent: <>HI</>,
+                                startContent: <>BYE</>,
+                                subValues: [
+                                    {
+                                        label: "Cats"
+                                    }
+                                ]
+                            }
+                        ]}
                         hasUnReadMessages={hasUnread}
                         isActive={item.id === guildId}
                         orientation="horizontal"
+                        contextMenuClassName="mb-16"
                     />
                 );
             }} />;
@@ -131,7 +155,7 @@ const BottomNavBar = () => {
                         badgeContent="9+"
                         badgePosition="bottom-right"
                         badgeColor="danger"
-                        InContent={UserOptions}
+                        InContent={UserOptions as React.FC}
                         delay={1000}
                         isNormalIcon
                         orientation="horizontal"

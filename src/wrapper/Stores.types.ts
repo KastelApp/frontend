@@ -46,7 +46,11 @@ export interface SettingsStore {
 	setNavBarLocation: (navBarLocation: NavBarLocation) => void;
 	setEmojiPack: (emojiPack: EmojiPack) => void;
 	setIsSideBarOpen: (isSideBarOpen: boolean) => void;
-	getThemeColor: (darkColor: string, lightColor: string) => string;
+}
+
+export interface StoredSettingsStore {
+	mobilePopupIgnored: boolean;
+	setMobilePopupIgnored: (mobilePopupIgnored: boolean) => void;
 }
 
 export interface GuildSettings {

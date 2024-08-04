@@ -8,15 +8,18 @@ import { useRoleStore } from "@/wrapper/Stores/RoleStore.ts";
 import { useChannelStore, usePerChannelStore } from "@/wrapper/Stores/ChannelStore.ts";
 import Logger from "@/utils/Logger.ts";
 import PermissionHandler from "@/wrapper/PermissionHandler.ts";
-import { type Message as MessageType, useMessageStore } from "@/wrapper/Stores/MessageStore.ts";
+import { MessageStates, type Message as MessageType, useMessageStore } from "@/wrapper/Stores/MessageStore.ts";
 import SkellyMessage from "../Message/SkellyMessage.tsx";
 import diff from "@/utils/diff.ts";
 import ChannelIcon from "../ChannelIcon.tsx";
-import { channelTypes } from "@/utils/Constants.ts";
+import { channelTypes, messageFlags } from "@/utils/Constants.ts";
 import fastDeepEqual from "fast-deep-equal";
 import BiDirectionalInfiniteScroller from "@/components/BiDirectionalInfiniteScroller.tsx";
 import { useInviteStore } from "@/wrapper/Stores/InviteStore.ts";
 import { useGuildStore } from "@/wrapper/Stores/GuildStore.ts";
+import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuTrigger } from "@/components/ui/context-menu.tsx";
+import { Copy, Pen, Pin, Reply, Trash2 } from "lucide-react";
+import { Divider } from "@nextui-org/react";
 
 const skelliedMessages = Array.from({ length: 30 }, (_, i) => <SkellyMessage key={i} />);
 
@@ -50,6 +53,8 @@ const TextBasedChannel = () => {
 	const [channelName, setChannelName] = useState("");
 	const fetchingRef = useRef(false);
 	const [isInViewOfBottom] = useState(true);
+	const [shouldScrollToBottom, setShouldScrollToBottom] = useState(false);
+	const scrollerRef = useRef<HTMLDivElement | null>(null);
 
 	useEffect(() => {
 		fetchingRef.current = fetching;
@@ -77,6 +82,15 @@ const TextBasedChannel = () => {
 
 				if (diffed.added.length > 0 && isInViewOfBottom) {
 					updatedMessages = [...updatedMessages, ...diffed.added];
+
+					if (scrollerRef.current) {
+						const { scrollHeight, scrollTop, clientHeight } = scrollerRef.current;
+
+						// ? theres around 30px of leeway
+						if (scrollHeight - scrollTop <= clientHeight + 30) {
+							setShouldScrollToBottom(true);
+						}
+					}
 				}
 
 				if (diffed.changed.length > 0) {
@@ -230,14 +244,14 @@ const TextBasedChannel = () => {
 
 			const fetchedAuthor = getUser(msg.authorId);
 			const fetchedMember = guildId ? getMember(guildId, msg.authorId) ?? null : null;
+			const roles = getRoles(guildId ?? "");
 
 			let roleData: { color: string; id: string; } | null = null;
 
 			if (fetchedMember) {
-				const roles = useRoleStore.getState().getRoles(guildId ?? "");
 				const topColorRole = fetchedMember.roles
 					.map((roleId) => roles.find((role) => role.id === roleId))
-					.filter((role) => role !== undefined)
+					.filter((role) => role !== undefined && role.color !== 0)
 					.sort((a, b) => a!.position - b!.position)
 					.reverse()[0];
 
@@ -260,7 +274,7 @@ const TextBasedChannel = () => {
 					const roles = useRoleStore.getState().getRoles(guildId ?? "");
 					const topColorRole = fetchedReplyMember.roles
 						.map((roleId) => roles.find((role) => role.id === roleId))
-						.filter((role) => role !== undefined)
+						.filter((role) => role !== undefined && role.color !== 0)
 						.sort((a, b) => a!.position - b!.position)
 						.reverse()[0];
 
@@ -275,7 +289,7 @@ const TextBasedChannel = () => {
 					member: fetchedReplyMember,
 					roleColor: roleData,
 					user: fetchedReplyAuthor!
-				}
+				};
 			}
 
 			finishedMsgs.push({
@@ -286,7 +300,10 @@ const TextBasedChannel = () => {
 					...msg,
 					author: {
 						user: fetchedAuthor!,
-						member: fetchedMember,
+						member: fetchedMember ? {
+							...fetchedMember,
+							roles: fetchedMember.roles.map((roleId) => roles.find((role) => role.id === roleId)).filter((rol) => rol !== undefined)
+						} : null,
 						roleColor: roleData
 					},
 					invites: msg.invites.map((msg) => {
@@ -305,6 +322,7 @@ const TextBasedChannel = () => {
 				replyMessage: replyData,
 				editable: msg.authorId === currentUser.id,
 				deleteable: msg.authorId === currentUser.id, // ? temp until I do the perms
+				replyable: msg.state === MessageStates.Sent,
 			});
 		}
 
@@ -312,9 +330,48 @@ const TextBasedChannel = () => {
 
 		if (!fastDeepEqual(finishedMsgs, renderedMessages)) {
 			setRenderedMessages(finishedMsgs);
+
+			if (shouldScrollToBottom) {
+				setTimeout(() => bottomRef.current?.scrollIntoView({
+					behavior: "instant",
+					block: "nearest",
+					inline: "start"
+				}), 50);
+			}
 		}
 
 	}, [fetchedMessages, changeSignal]);
+
+	const jumpTo = (messageId: string) => {
+		const index = renderedMessages.findIndex((msg) => msg.message.id === messageId);
+
+		if (index === -1) return;
+
+		const msg = document.getElementById(`item-${index}`);
+
+		if (!msg) return;
+
+		updateChannel(channelId, {
+			currentStates: [...getChannel(channelId).currentStates, "jumped"],
+			jumpingStateId: messageId
+		});
+
+		setTimeout(() => {
+			msg.scrollIntoView({
+				behavior: "smooth",
+				block: "center",
+				inline: "start"
+			});
+
+			setTimeout(() => {
+				updateChannel(channelId, {
+					currentStates: getChannel(channelId).currentStates.filter((state) => state !== "jumped"),
+					jumpingStateId: null
+				});
+			}, 1000);
+		}, 50);
+	};
+
 
 	return (
 		<MessageContainer
@@ -339,19 +396,180 @@ const TextBasedChannel = () => {
 					inline: "start"
 				}), 50);
 
+				if (content === "embed" && process.env.NODE_ENV === "development") {
+					useMessageStore.getState().addMessage({
+						embeds: [{
+							"title": "GitHub - KastelApp/frontend: A Frontend for Kastel.",
+							"description": "A Frontend for Kastel. Contribute to KastelApp/frontend development by creating an account on GitHub.",
+							"color": 1975079,
+							"url": "https://github.com/KastelApp/frontend",
+							"author": {
+								"name": "GitHub",
+								// "iconUrl": "https://opengraph.githubassets.com/7e0878100669d3723ea934e23f9f95dc09995af79d4d100569dcdbf93b2a8bed/KastelApp/frontend",
+								"url": "https://github.com/KastelApp/frontend"
+							},
+							"type": "Rich",
+							files: [{
+								url: "https://opengraph.githubassets.com/7e0878100669d3723ea934e23f9f95dc09995af79d4d100569dcdbf93b2a8bed/KastelApp/frontend",
+								rawUrl: "https://opengraph.githubassets.com/7e0878100669d3723ea934e23f9f95dc09995af79d4d100569dcdbf93b2a8bed/KastelApp/frontend",
+								type: "image"
+							}]
+						}, {
+							"title": "GitHub - KastelApp/frontend: A Frontend for Kastel.",
+							"description": "A Frontend for Kastel. Contribute to KastelApp/frontend development by creating an account on GitHub.",
+							"color": 1975079,
+							"url": "https://github.com/KastelApp/frontend",
+							"author": {
+								"name": "GitHub",
+								// "iconUrl": "https://opengraph.githubassets.com/7e0878100669d3723ea934e23f9f95dc09995af79d4d100569dcdbf93b2a8bed/KastelApp/frontend",
+								"url": "https://github.com/KastelApp/frontend"
+							},
+							"type": "Rich",
+							files: [{
+								url: "https://opengraph.githubassets.com/7e0878100669d3723ea934e23f9f95dc09995af79d4d100569dcdbf93b2a8bed/KastelApp/frontend",
+								rawUrl: "https://opengraph.githubassets.com/7e0878100669d3723ea934e23f9f95dc09995af79d4d100569dcdbf93b2a8bed/KastelApp/frontend",
+								type: "image"
+							}, {
+								url: "https://opengraph.githubassets.com/7e0878100669d3723ea934e23f9f95dc09995af79d4d100569dcdbf93b2a8bed/KastelApp/frontend",
+								rawUrl: "https://opengraph.githubassets.com/7e0878100669d3723ea934e23f9f95dc09995af79d4d100569dcdbf93b2a8bed/KastelApp/frontend",
+								type: "image"
+							}]
+						}, {
+							"title": "GitHub - KastelApp/frontend: A Frontend for Kastel.",
+							"description": "A Frontend for Kastel. Contribute to KastelApp/frontend development by creating an account on GitHub.",
+							"color": 1975079,
+							"url": "https://github.com/KastelApp/frontend",
+							"author": {
+								"name": "GitHub",
+								// "iconUrl": "https://opengraph.githubassets.com/7e0878100669d3723ea934e23f9f95dc09995af79d4d100569dcdbf93b2a8bed/KastelApp/frontend",
+								"url": "https://github.com/KastelApp/frontend"
+							},
+							"type": "Rich",
+							files: [{
+								url: "https://opengraph.githubassets.com/7e0878100669d3723ea934e23f9f95dc09995af79d4d100569dcdbf93b2a8bed/KastelApp/frontend",
+								rawUrl: "https://opengraph.githubassets.com/7e0878100669d3723ea934e23f9f95dc09995af79d4d100569dcdbf93b2a8bed/KastelApp/frontend",
+								type: "image"
+							}, {
+								url: "https://opengraph.githubassets.com/7e0878100669d3723ea934e23f9f95dc09995af79d4d100569dcdbf93b2a8bed/KastelApp/frontend",
+								rawUrl: "https://opengraph.githubassets.com/7e0878100669d3723ea934e23f9f95dc09995af79d4d100569dcdbf93b2a8bed/KastelApp/frontend",
+								type: "image"
+							}, {
+								url: "https://opengraph.githubassets.com/7e0878100669d3723ea934e23f9f95dc09995af79d4d100569dcdbf93b2a8bed/KastelApp/frontend",
+								rawUrl: "https://opengraph.githubassets.com/7e0878100669d3723ea934e23f9f95dc09995af79d4d100569dcdbf93b2a8bed/KastelApp/frontend",
+								type: "image"
+							}]
+						}, {
+							"title": "GitHub - KastelApp/frontend: A Frontend for Kastel.",
+							"description": "A Frontend for Kastel. Contribute to KastelApp/frontend development by creating an account on GitHub.",
+							"color": 1975079,
+							"url": "https://github.com/KastelApp/frontend",
+							"author": {
+								"name": "GitHub",
+								// "iconUrl": "https://opengraph.githubassets.com/7e0878100669d3723ea934e23f9f95dc09995af79d4d100569dcdbf93b2a8bed/KastelApp/frontend",
+								"url": "https://github.com/KastelApp/frontend"
+							},
+							"type": "Rich",
+							files: [{
+								url: "https://opengraph.githubassets.com/7e0878100669d3723ea934e23f9f95dc09995af79d4d100569dcdbf93b2a8bed/KastelApp/frontend",
+								rawUrl: "https://opengraph.githubassets.com/7e0878100669d3723ea934e23f9f95dc09995af79d4d100569dcdbf93b2a8bed/KastelApp/frontend",
+								type: "image"
+							}, {
+								url: "https://opengraph.githubassets.com/7e0878100669d3723ea934e23f9f95dc09995af79d4d100569dcdbf93b2a8bed/KastelApp/frontend",
+								rawUrl: "https://opengraph.githubassets.com/7e0878100669d3723ea934e23f9f95dc09995af79d4d100569dcdbf93b2a8bed/KastelApp/frontend",
+								type: "image"
+							}, {
+								url: "https://opengraph.githubassets.com/7e0878100669d3723ea934e23f9f95dc09995af79d4d100569dcdbf93b2a8bed/KastelApp/frontend",
+								rawUrl: "https://opengraph.githubassets.com/7e0878100669d3723ea934e23f9f95dc09995af79d4d100569dcdbf93b2a8bed/KastelApp/frontend",
+								type: "image"
+							}, {
+								url: "https://opengraph.githubassets.com/7e0878100669d3723ea934e23f9f95dc09995af79d4d100569dcdbf93b2a8bed/KastelApp/frontend",
+								rawUrl: "https://opengraph.githubassets.com/7e0878100669d3723ea934e23f9f95dc09995af79d4d100569dcdbf93b2a8bed/KastelApp/frontend",
+								type: "image"
+							}]
+						}],
+						authorId: "102652169335591636",
+						creationDate: new Date(),
+						editedDate: null,
+						nonce: null,
+						replyingTo: null,
+						attachments: [],
+						flags: messageFlags.Normal,
+						allowedMentions: 0,
+						mentions: {
+							channels: [],
+							roles: [],
+							users: []
+						},
+						pinned: false,
+						deletable: true,
+						invites: [],
+						discordInvites: [],
+						channelId,
+						state: MessageStates.Sent,
+						content: "https://github.com/KastelApp/frontend",
+						id: "123" + Date.now()
+					});
+				}
 			}}
 			channelId={channelId}
 			guildId={guildId}
 		>
-			<div className="mt-auto overflow-y-auto ml-2" id="inf-scroller-msg-container">
+			<div className="mt-auto overflow-y-auto mb-4" id="inf-scroller-msg-container" ref={scrollerRef}>
 				{!initialFetch && skelliedMessages}
 				<BiDirectionalInfiniteScroller
 					data={renderedMessages}
 					renderItem={(message) => (
-						<Message
-							{...message}
-							key={message.message.id}
-						/>
+						<ContextMenu>
+							<ContextMenuTrigger>
+								<Message
+									{...message}
+									key={message.message.id}
+									jumpToMessage={jumpTo}
+									highlighted={message.message.id === getChannel(channelId).jumpingStateId}
+								/>
+							</ContextMenuTrigger>
+							<ContextMenuContent className="w-40">
+								{message.replyable && (
+									<ContextMenuItem onClick={() => {
+										updateChannel(channelId, {
+											currentStates: [...getChannel(channelId).currentStates, "replying"],
+											replyingStateId: message.message.id
+										});
+									}}>
+										Reply
+										<Reply size={18} color="#acaebf" className="cursor-pointer ml-auto" />
+									</ContextMenuItem>
+								)}
+								{message.editable && (
+									<ContextMenuItem>
+										Edit
+										<Pen size={18} color="#acaebf" className={"cursor-pointer ml-auto"} />
+									</ContextMenuItem>
+								)}
+								<ContextMenuItem>
+									Pin Message
+									<Pin size={18} color="#acaebf" className="cursor-pointer ml-auto" />
+								</ContextMenuItem>
+								<ContextMenuItem onClick={() => {
+									navigator.clipboard.writeText(message.message.content);
+								}}>
+									Copy Text
+									<Copy size={18} color="#acaebf" className="cursor-pointer ml-auto" />
+								</ContextMenuItem>
+								{message.deleteable && (
+									<ContextMenuItem className="text-danger">
+										Delete Message
+										<Trash2 size={18} className={"text-danger cursor-pointer ml-auto"} />
+									</ContextMenuItem>
+								)}
+								<Divider className="mt-1 mb-1" />
+								<ContextMenuItem className="text-danger">Report Message</ContextMenuItem>
+								<ContextMenuItem>Copy Message Link</ContextMenuItem>
+								<ContextMenuItem onClick={() => {
+									navigator.clipboard.writeText(message.message.id);
+								}}>Copy Message ID</ContextMenuItem>
+							</ContextMenuContent>
+						</ContextMenu>
 					)}
 					onBottomReached={async () => {
 						console.log("bottom reached");
@@ -365,7 +583,7 @@ const TextBasedChannel = () => {
 					loading={fetching}
 					topContent={
 						!false &&
-						<div className="mb-4 mr-16 ml-2 flex border-b-1 border-gray-800 select-none">
+						<div className="mt-8 mb-4 mr-16 ml-2 flex border-b-1 border-gray-800 select-none">
 							<div className="flex mb-2">
 								<div className="bg-slate-700 p-2 rounded-full flex items-center">
 									<ChannelIcon type={channelTypes.GuildText} size={48} />

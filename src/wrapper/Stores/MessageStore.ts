@@ -9,6 +9,7 @@ import { useUserStore } from "./UserStore.ts";
 import fastDeepEqual from "fast-deep-equal";
 import { fakeUserIds, messageFlags, snowflake } from "@/utils/Constants.ts";
 import safePromise from "@/utils/safePromise.ts";
+import { isErrorResponse } from "@/types/http/error.ts";
 
 export enum MessageStates {
     /**
@@ -77,7 +78,7 @@ export interface MessageStore {
     removeMessage(id: string): void;
     getMessage(id: string): Message | undefined;
     getMessages(channelId: string): Message[];
-    deleteMessage(id: string): void;
+    deleteMessage(id: string): Promise<void>;
     createMessage(channelId: string, options: Partial<Message>): Promise<void>;
     editMessage(messageId: string, options: Partial<Message>): void;
     replyToMessage(channelId: string, messageId: string, options: Partial<Message>): void;
@@ -116,16 +117,32 @@ export const useMessageStore = create<MessageStore>((set, get) => ({
     },
     getMessage: (id) => get().messages.find((message) => message.id === id),
     getMessages: (channelId) => get().messages.filter((message) => message.channelId === channelId),
-    deleteMessage: (id) => {
+    deleteMessage: async (id) => {
         const message = get().messages.find((message) => message.id === id);
 
         if (!message) return;
 
-        message.deletable = false;
+        const api = useAPIStore.getState().api;
 
-        set({
-            messages: get().messages.map((message) => message.id === id ? { ...message, deletable: false } : message)
-        });
+        if (!api) {
+            Logger.warn("API not ready", "MessageStore");
+
+            return;
+        }
+
+        const [res, error] = await safePromise(api.del<unknown, unknown>({
+            url: `/channels/${message.channelId}/messages/${message.id}`
+        }));
+
+        if (error || !res || res.status !== 204) {
+            Logger.warn("Failed to delete message", "MessageStore");
+
+            return;
+        }
+
+        get().removeMessage(id);
+
+        return;
     },
     createMessage: async (channelId, options) => {
         const message: Message = {
@@ -186,6 +203,44 @@ export const useMessageStore = create<MessageStore>((set, get) => ({
             get().editMessage(message.id, {
                 state: MessageStates.Failed
             });
+
+            if (
+                isErrorResponse<{
+                    message: {
+                        code: "PhishingDetected";
+                        message: string;
+                    };
+                }>(res?.body)
+            ) {
+                if (res.body.errors.message.code === "PhishingDetected") {
+                    get().addMessage({
+                        id: snowflake.generate(),
+                        authorId: fakeUserIds.kiki,
+                        embeds: [],
+                        content: "I'm sorry, but it seems like your message contained a phishing link. I've blocked it from being sent, please try again without the link.",
+                        creationDate: new Date(),
+                        editedDate: null,
+                        nonce: null,
+                        replyingTo: null,
+                        attachments: [],
+                        flags: messageFlags.System,
+                        allowedMentions: 0,
+                        mentions: {
+                            channels: [],
+                            roles: [],
+                            users: []
+                        },
+                        pinned: false,
+                        deletable: true,
+                        invites: [],
+                        discordInvites: [],
+                        channelId,
+                        state: MessageStates.SystemMessage
+                    });
+
+                    return;
+                }
+            }
 
             get().addMessage({
                 id: snowflake.generate(),

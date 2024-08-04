@@ -56,7 +56,7 @@ const TopNavBar = ({
 	};
 
 	return (
-		<div className="flex flex-row items-center justify-evenly bg-accent bg-opacity-90 w-full h-10 m-0 shadow-lg">
+		<div className="flex flex-row items-center justify-evenly bg-lightAccent dark:bg-darkAccent bg-opacity-90 w-full h-10 m-0 shadow-lg">
 			<motion.div
 				className="ml-2 my-auto cursor-pointer flex md:hidden"
 				onClick={() => setIsOpen(!isOpen)}

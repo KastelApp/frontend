@@ -1,9 +1,8 @@
-import { Badge } from "@nextui-org/react";
+import ContextMenuHandler, { ContextMenuProps } from "@/components/ContextMenuHandler.tsx";
+import { Badge, Tooltip } from "@nextui-org/react";
 import Link from "next/link";
 import { memo } from "react";
 import { twMerge } from "tailwind-merge";
-import { BaseContextMenuProps } from "../Dropdowns/BaseContextMenu.tsx";
-import Tooltip from "../Tooltip.tsx";
 
 const NavBarIcon = memo(({
     icon,
@@ -22,10 +21,11 @@ const NavBarIcon = memo(({
     isActive,
     orientation = "vertical",
     isNormalIcon,
-    type
-    // contextMenuItemsProps
+    type,
+    contextMenuItemsProps,
+    contextMenuClassName
 }: {
-    icon: React.ReactElement | React.ReactElement[];
+    icon: React.ReactNode;
     description?: string;
     isDisabled?: boolean;
     size?: number;
@@ -34,10 +34,10 @@ const NavBarIcon = memo(({
     badgeColor?: "default" | "primary" | "secondary" | "success" | "warning" | "danger";
     badgePosition?: "top-right" | "top-left" | "bottom-right" | "bottom-left";
     href?: string;
-    InContent?: React.FC<{ children: React.ReactElement | React.ReactElement[]; }>;
+    InContent?: React.FC<{ children: React.ReactNode; }>;
     onClick?: () => void;
     delay?: number;
-    contextMenuItemsProps?: BaseContextMenuProps;
+    contextMenuItemsProps?: ContextMenuProps[];
     hasUnReadMessages?: boolean;
     isActive?: boolean;
     /**
@@ -46,6 +46,7 @@ const NavBarIcon = memo(({
     orientation?: "vertical" | "horizontal";
     type?: "normal" | "context";
     isNormalIcon?: boolean;
+    contextMenuClassName?: string;
 }) => {
     const width = `w-${size}`;
     const height = `h-${size}`;
@@ -55,41 +56,32 @@ const NavBarIcon = memo(({
         href,
     }: {
         href?: string;
-        children: React.ReactElement | React.ReactElement[];
-    }): React.ReactElement =>
+        children: React.ReactNode;
+    }): React.ReactNode =>
         href ? (
             <Link href={href} passHref className="item-drag">
                 {children}
             </Link>
         ) : (
-            (children as React.ReactElement)
+            (children)
         );
 
     const InContentWrapper = ({
         children,
     }: {
-        children: React.ReactElement | React.ReactElement[];
+        children: React.ReactNode;
         // @ts-expect-error -- Its fine
-    }): React.ReactElement => (InContent ? <InContent type={type} orientation={orientation}>{children}</InContent> : (children as React.ReactElement));
+    }): React.ReactNode => (InContent ? <InContent type={type} orientation={orientation}>{children}</InContent> : (children));
 
-    const TooltipOrNot = ({ children }: { children: React.ReactElement | React.ReactElement[]; }): React.ReactElement =>
+    const TooltipOrNot = ({ children }: { children: React.ReactNode; }): React.ReactNode =>
         description ? (
             <Tooltip content={description} showArrow className="select-none" placement={orientation === "vertical" ? "right" : "top"} delay={delay}>
                 {children}
             </Tooltip>
         ) : (
-            (children as React.ReactElement)
+            (children)
         );
-
-    // const RightClickMenuOrNot = ({ children }: {
-    //     children: React.ReactElement | React.ReactElement[];
-    // }): React.ReactElement => contextMenuItemsProps ? <BaseContextMenu {...contextMenuItemsProps}>{children}</BaseContextMenu> : children as React.ReactElement;
-
-    const RightClickMenuOrNot = ({
-        children,
-    }: {
-        children: React.ReactElement | React.ReactElement[];
-    }): React.ReactElement => children as React.ReactElement;
+   
 
     return (
         <TooltipOrNot>
@@ -120,7 +112,7 @@ const NavBarIcon = memo(({
                     hasUnReadMessages ? orientation === "vertical" ? "h-2" : "w-2" : "",
                     isActive ? orientation === "vertical" ? "!h-6" : "!w-6" : "",
                 )} />}
-                <RightClickMenuOrNot>
+                <ContextMenuHandler items={contextMenuItemsProps} className={contextMenuClassName}>
                     <div onClick={onClick}>
                         <InContentWrapper>
                             <LinkWrapper href={href}>
@@ -137,7 +129,7 @@ const NavBarIcon = memo(({
                             </LinkWrapper>
                         </InContentWrapper>
                     </div>
-                </RightClickMenuOrNot>
+                </ContextMenuHandler>
             </div>
         </TooltipOrNot>
     );

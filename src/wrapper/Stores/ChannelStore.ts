@@ -42,7 +42,8 @@ export interface ChannelStore {
     channels: Channel[];
     addChannel(channel: Partial<Channel>): void;
     removeChannel(id: string): void;
-    getChannel(id: string): Promise<Channel | undefined>;
+    fetchChannel(id: string): Promise<Channel | undefined>;
+    getChannel(id: string): Channel | undefined;
     getChannels(guildId: string): Channel[];
     getChannelsWithValidPermissions(guildId: string): Channel[];
     getTopChannel(guildId: string): Channel | undefined;
@@ -149,7 +150,7 @@ export const useChannelStore = create<ChannelStore>((set, get) => ({
         });
     },
     removeChannel: (id) => set({ channels: get().channels.filter(channel => channel.id !== id) }),
-    getChannel: async (id) => {
+    fetchChannel: async (id) => {
         const channel = get().channels.find(channel => channel.id === id);
 
         if (channel) return channel;
@@ -269,7 +270,8 @@ export const useChannelStore = create<ChannelStore>((set, get) => ({
         const channel = get().channels.find(channel => channel.id === channelId);
 
         return channel?.guildId;
-    }
+    },
+    getChannel: (id) => get().channels.find(channel => channel.id === id)
 }));
 
 export const usePerChannelStore = create<PerChannelStore>(

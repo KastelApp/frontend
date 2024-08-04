@@ -35,12 +35,13 @@ import Roles from "../Settings/Guild/Roles.tsx";
 import { useGuildStore } from "@/wrapper/Stores/GuildStore.ts";
 import { useChannelStore } from "@/wrapper/Stores/ChannelStore.ts";
 // import { useUserStore } from "@/wrapper/Stores/UserStore.ts";
-import { channelTypes } from "@/utils/Constants.ts";
+import { channelTypes, snowflake } from "@/utils/Constants.ts";
 import ChannelIcon from "../ChannelIcon.tsx";
 import GuildIcon from "../GuildIcon.tsx";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import Draggables from "../DraggableComponent.tsx";
+import CreateChannelModal from "@/components/Modals/CreateChannel.tsx";
 
 const Channel = ({
 	startContent,
@@ -100,29 +101,6 @@ interface Channel {
 	type?: number;
 }
 
-const HandleChannels = ({ channel, onClick, currentChannelId, onDrop }: {
-	channel: Channel,
-	onClick?: (e: React.MouseEvent) => void;
-	currentChannelId: string;
-	onDrop: (items: Channel[]) => void;
-}) => {
-	return (
-		<div>
-			<Channel
-				text={channel.name}
-				endContent={channel.type === channelTypes.GuildCategory ? <ChevronDown size={20} color="#acaebf" /> : <Settings size={16} onClick={onClick} />}
-				startContent={channel.icon}
-				shouldHideHover={channel.type === channelTypes.GuildCategory}
-				onlyShowOnHover={channel.type !== channelTypes.GuildCategory}
-				hasUnreadMessages={channel.hasUnread}
-				isActive={channel.id === currentChannelId}
-				link={channel.link}
-				no-drag={channel.type === channelTypes.GuildCategory}
-			/>
-		</div>
-	);
-};
-
 const ChannelNavBar = ({ children, isChannelHeaderHidden, isMemberBarHidden }: {
 	children?: React.ReactElement | React.ReactElement[];
 	isMemberBarHidden?: boolean;
@@ -148,14 +126,20 @@ const ChannelNavBar = ({ children, isChannelHeaderHidden, isMemberBarHidden }: {
 		onOpenChange: onOpenChangeChannelSettings,
 		onClose: onCloseChannelSettings,
 	} = useDisclosure();
+	const {
+		isOpen: isChannelOpen,
+		onOpenChange: channelonOpenChange,
+		onClose: channelonClose
+	} = useDisclosure();
 
 	const { getGuild } = useGuildStore();
-	const { getSortedChannels } = useChannelStore();
+	const { getSortedChannels, getChannel } = useChannelStore();
 	const currentGuildId = router.query.guildId as string;
 	const currentChannelId = router.query.channelId as string;
 
 	const guildSettings = rawGuildSettings[currentGuildId ?? ""] ?? { memberBarHidden: false };
 	const foundGuild = getGuild(currentGuildId ?? "")!;
+	const foundChannel = getChannel(currentChannelId ?? "")!;
 
 	const dropdownItems = [
 		{
@@ -175,7 +159,9 @@ const ChannelNavBar = ({ children, isChannelHeaderHidden, isMemberBarHidden }: {
 		{
 			name: "Create Channel",
 			icon: <Hash size={20} color="#acaebf" />,
-			onClick: () => { },
+			onClick: () => {
+				channelonOpenChange();
+			},
 			end: false,
 		},
 		{
@@ -255,13 +241,22 @@ const ChannelNavBar = ({ children, isChannelHeaderHidden, isMemberBarHidden }: {
 				case channelTypes.GuildNewMember:
 				case channelTypes.GuildNews:
 				case channelTypes.GuildRules: {
+
+					const foundChannel = foundGuild.channelProperties.find((p) => p.channelId === channel.id);
+
+					let hasUnread = false;
+
+					if (foundChannel?.lastMessageAckId !== channel.lastMessageId && snowflake.timeStamp(foundChannel?.lastMessageAckId ?? "0") < snowflake.timeStamp(channel.lastMessageId ?? "0")) {
+						hasUnread = true;
+					}
+
 					handledChannels.push({
 						name: channel.name,
 						id: channel.id,
 						link: `/app/guilds/${currentGuildId}/channels/${channel.id}`,
 						icon: <ChannelIcon type={channel.type} />,
 						description: channel.description,
-						hasUnread: foundGuild.channelProperties.find((p) => p.channelId === channel.id)?.lastMessageAckId !== channel.lastMessageId,
+						hasUnread,
 						type: channel.type,
 					});
 				}
@@ -289,6 +284,7 @@ const ChannelNavBar = ({ children, isChannelHeaderHidden, isMemberBarHidden }: {
 			{/* the modals we use for the buttons */}
 			<ChangeNickname isOpen={isNicknameOpen} onOpenChange={onOpenChange} onClose={onClose} />
 			<ConfirmLeave isOpen={isConfirmLeaveOpen} onOpenChange={onOpenChangeConfirmLeave} onClose={onCloseConfirmLeave} />
+			<CreateChannelModal isOpen={isChannelOpen} onOpenChange={channelonOpenChange} onClose={channelonClose} />
 			<BaseSettings
 				title="Channel Settings"
 				isOpen={isChannelSettingsOpen}
@@ -426,7 +422,7 @@ const ChannelNavBar = ({ children, isChannelHeaderHidden, isMemberBarHidden }: {
 			<div className="flex flex-row w-full h-screen m-0 overflow-x-auto">
 				<div
 					className={twMerge(
-						"fixed w-52 h-screen m-0 bg-accent overflow-y-auto",
+						"fixed w-52 h-screen m-0 bg-lightAccent dark:bg-darkAccent overflow-y-auto",
 						isSideBarOpen ? (navBarLocation === NavBarLocation.Left ? "ml-16" : "") : "hidden",
 					)}
 				>
@@ -479,7 +475,7 @@ const ChannelNavBar = ({ children, isChannelHeaderHidden, isMemberBarHidden }: {
 						))}
 						<Draggables
 							items={normalChannels}
-							onDrop={(items) => {
+							onDrop={() => {
 								// ? we now need to resort them like the custom channels
 							}}
 							render={(channel) => (
@@ -512,9 +508,13 @@ const ChannelNavBar = ({ children, isChannelHeaderHidden, isMemberBarHidden }: {
 							startContent={
 								<div className="flex items-center gap-1 select-none">
 									<Hash size={20} color="#acaebf" />
-									<p className="text-gray-300 font-semibold">Test</p>
-									<Divider orientation="vertical" className="h-6 ml-2 mr-2 w-[3px]" />
-									<p className="text-gray-400 text-sm cursor-pointer truncate w-96">Welcome</p>
+									<p className="text-gray-300 font-semibold">{foundChannel.name}</p>
+									{foundChannel.description && (
+										<>
+											<Divider orientation="vertical" className="h-6 ml-2 mr-2 w-[3px]" />
+											<p className="text-gray-400 text-sm cursor-pointer truncate w-96">{foundChannel.description}</p>
+										</>
+									)}
 								</div>
 							}
 							isOpen={isSideBarOpen}

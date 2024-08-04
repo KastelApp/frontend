@@ -149,9 +149,8 @@ const permissions = {
 			ManageRoleColor: 1n << 1n,
 			ManageRolePosition: 1n << 2n,
 			ManageRolePermissions: 1n << 3n,
-			ManageUsersRoles: 1n << 4n, // ? If you can give other users roles
-			CreateRole: 1n << 5n,
-			DeleteRole: 1n << 6n,
+			CreateRole: 1n << 4n,
+			DeleteRole: 1n << 5n,
 		}
 	},
 	Channels: {

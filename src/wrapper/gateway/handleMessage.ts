@@ -93,7 +93,8 @@ const handleMessage = async (ws: Websocket, data: unknown) => {
                 publicFlags: String(Constants.publicFlags.GhostBadge),
                 flags: String(Constants.privateFlags.Ghost),
                 id: Constants.fakeUserIds.ghost,
-                bio: "Boo! 👻 did I scare you?"
+                bio: "Boo! 👻 did I scare you?",
+                isGhost: true,
             });
 
             for (const guild of data.guilds) {

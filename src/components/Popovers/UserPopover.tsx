@@ -7,10 +7,7 @@ import { X } from "lucide-react";
 
 const UserPopover = ({ member, onClick }: {
 	member: {
-		member: {
-			roles: Role[];
-			member: Member;
-		} | null;
+		member: Omit<Member, "roles"> & { roles: Role[] } | null;
 		user: User;
 	}; onClick?: () => void;
 }) => {
@@ -58,7 +55,7 @@ const UserPopover = ({ member, onClick }: {
 						<CardBody className="p-0">
 							<div className="overflow-y-auto p-3 max-h-[85vh]">
 								<div>
-									<p className="text-white text-lg font-semibold">{member.user.username}</p>
+									<p className="text-white text-lg font-semibold">{member.member?.nickname ?? member.user.globalNickname ?? member.user.username}</p>
 									<p className="text-gray-300 text-sm">
 										{member.user.username}#{member.user.tag}
 									</p>
@@ -77,13 +74,13 @@ const UserPopover = ({ member, onClick }: {
 										<div className="flex flex-wrap select-none">
 											{member.member.roles.map((role) => (
 										<div
-											className="flex flex-wrap bg-accent border-gray-400 border rounded-md px-2 py-0 mt-2 mr-1 group"
+											className="flex items-center flex-wrap bg-lightAccent dark:bg-darkAccent border-gray-400 border rounded-md px-2 mt-2 mr-1 group"
 											key={role.id}
 										>
-											<span className="flex box-border rounded-full border-background w-3.5 h-3.5 min-w-3.5 min-h-3.5 px-1 mt-[0.1rem] mr-1" style={{
-												backgroundColor: "green",
+											<span className="flex items-center box-border rounded-full border-background w-3 h-3 min-w-3 min-h-3 mr-1" style={{
+												backgroundColor: role.color ? `#${role.color.toString(16).padStart(6, "0")}` : "gray",
 											}}>
-												<X size={14} className="hidden group-hover:block" strokeWidth={8} color="gray" />
+												<X size={14} className="hidden group-hover:block" strokeWidth={3} color="white" />
 											</span>
 											<span className="text-white text-xs">{role.name}</span>
 										</div>
@@ -92,7 +89,7 @@ const UserPopover = ({ member, onClick }: {
 									</div>
 								)}
 							</div>
-							{!member.user.isClient && (
+							{!member.user.isClient && !member.user.isSystem && !member.user.isGhost && (
 								<Input
 									placeholder={`Message @${member.user.username}`}
 									className="mt-2 p-1.5"

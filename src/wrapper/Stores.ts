@@ -3,12 +3,12 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { createTrackedSelector } from "react-tracked";
 import Translation from "@/utils/Translation.ts";
-import { APIStore, ClientStore, GuildSettings, GuildSettingsStore, IsReadyStore, SelectedTabStore, SettingsStore, TokenStore, TranslationStore } from "./Stores.types.ts";
+import { APIStore, ClientStore, GuildSettings, GuildSettingsStore, IsReadyStore, SelectedTabStore, SettingsStore, StoredSettingsStore, TokenStore, TranslationStore } from "./Stores.types.ts";
 import API from "./API.ts";
 import Client from "./Client.ts";
 
 // todo: migrate this to @wrapper/Stores
-export const useSettingsStore = create<SettingsStore>((set, get) => ({
+export const useSettingsStore = create<SettingsStore>((set) => ({
 	emojiPack: EmojiPack.Twemoji,
 	language: "en-US",
 	navBarLocation: NavBarLocation.Bottom,
@@ -28,9 +28,19 @@ export const useSettingsStore = create<SettingsStore>((set, get) => ({
 	setPrivacy: (privacy: number) => set({ privacy }),
 	setTheme: (theme: Theme) => set({ theme }),
 	setIsSideBarOpen: (isSideBarOpen: boolean) => set({ isSideBarOpen }),
-	getThemeColor: (darkColor: string, lightColor: string) =>
-		get().theme === Theme.Dark ? darkColor : lightColor,
 }));
+
+export const useStoredSettingsStore = create(
+	persist<StoredSettingsStore>(
+		(set) => ({
+			mobilePopupIgnored: false,
+			setMobilePopupIgnored: (mobilePopupIgnored: boolean) => set({ mobilePopupIgnored }),
+		}),
+		{
+			name: "stored-settings",
+		},
+	),
+)
 
 export const useGuildSettingsStore = createTrackedSelector(
 	create(
@@ -54,7 +64,7 @@ export const useGuildSettingsStore = createTrackedSelector(
 
 export const useSelectedTab = createTrackedSelector(
 	create<SelectedTabStore>((set) => ({
-		selectedTab: null,
+		selectedTab: "friends",
 		setSelectedTab: (selectedTab: string | null) => set({ selectedTab }),
 	})),
 );

@@ -1,4 +1,5 @@
 import { Button, Input, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from "@nextui-org/react";
+import { useState } from "react";
 
 const ChangeNickname = ({
 	isOpen,
@@ -9,6 +10,8 @@ const ChangeNickname = ({
 	onOpenChange: () => void;
 	onClose: () => void;
 }) => {
+	const [nickname, setNickname] = useState("");
+
 	return (
 		<Modal isOpen={isOpen} onOpenChange={onOpenChange} placement="top-center" size="lg">
 			<ModalContent>
@@ -16,11 +19,13 @@ const ChangeNickname = ({
 				<ModalBody>
 					<Input
 						autoFocus
-						placeholder="DarkerInk"
+						placeholder="Kiki"
 						variant="bordered"
-						description="Max of 32 characters - 5 remaining"
 						maxLength={32}
 						className="w-full min-w-64"
+						description={`Max of 32 characters - ${32 - nickname.length} remaining`}
+						value={nickname}
+						onChange={(e) => setNickname(e.target.value)}
 					/>
 				</ModalBody>
 				<ModalFooter>

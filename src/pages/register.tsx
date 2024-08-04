@@ -182,7 +182,7 @@ const Register = () => {
 			<SEO title={"Register"} />
 			<HomeLayout>
 				<div className="flex justify-center items-center">
-					<Card className="flex items-center justify-center mt-32 w-full max-w-md p-8 bg-accent">
+					<Card className="flex items-center justify-center mt-32 w-full max-w-md p-8 bg-lightAccent dark:bg-darkAccent">
 						<div className="w-full max-w-md">
 							<div className="text-center">
 								<h1 className="text-3xl font-bold">{t("register.title")}</h1>

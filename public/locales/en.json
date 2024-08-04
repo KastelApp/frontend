@@ -106,5 +106,35 @@
 		"system": "System",
 		"bot": "Bot",
 		"server": "Server"
+	},
+	"channelTypes": {
+		"guildCategory": {
+			"name": "Category",
+			"description": "A category that contains channels."
+		},
+		"guildText": {
+			"name": "Text Channel",
+			"description": "A channel for text messages."
+		},
+		"guildNews": {
+			"name": "Announcement Channel",
+			"description": "A channel for announcements."
+		},
+		"guildRules": {
+			"name": "Rules Channel",
+			"description": "A channel for rules."
+		},
+		"guildVoice": {
+			"name": "Voice Channel",
+			"description": "A channel for voice communication."
+		},
+		"guildNewMember": {
+			"name": "New Member Channel",
+			"description": "A channel that shows for recently joined members"
+		},
+		"guildMarkdown": {
+			"name": "Markdown Channel",
+			"description": "A channel that is a single markdown document"
+		}
 	}
 }

@@ -16,7 +16,7 @@ import useTypingIndicator from "@/hooks/useTypingIndicator.ts";
 
 const FileComponent = ({ fileName, imageUrl }: { fileName?: string; imageUrl?: string; }) => {
 	return (
-		<div className="w-44 h-44 bg-accent mt-2 rounded-md flex flex-col justify-center relative">
+		<div className="w-44 h-44 bg-lightAccent dark:bg-darkAccent mt-2 rounded-md flex flex-col justify-center relative">
 			<div className="relative w-[90%] ml-2.5 max-h-[75%] flex flex-col justify-center items-center bg-gray-500 mb-4">
 				<div className="w-full h-full flex justify-center items-center relative overflow-hidden cursor-pointer">
 					<Image src={imageUrl} alt={fileName} className="object-cover w-full h-full rounded-md" />
@@ -186,7 +186,7 @@ const MessageContainer = ({ placeholder, children, isReadOnly, sendMessage, chan
 				const roles = useRoleStore.getState().getRoles(guildId ?? "");
 				const topColorRole = fetchedMember.roles
 					.map((roleId) => roles.find((role) => role.id === roleId))
-					.filter((role) => role !== undefined)
+					.filter((role) => role !== undefined && role.color !== 0)
 					.sort((a, b) => a!.position - b!.position)
 					.reverse()[0];
 
@@ -211,7 +211,7 @@ const MessageContainer = ({ placeholder, children, isReadOnly, sendMessage, chan
 			{children}
 			<div className="mb-12 w-[98%] ml-2">
 				{replying && (
-					<div className="ml-1 w-full bg-accent rounded-md rounded-b-none flex select-none">
+					<div className="ml-1 w-full bg-lightAccent dark:bg-darkAccent rounded-md rounded-b-none flex select-none">
 						<div className="p-2">
 							Replying to <span className="font-semibold text-white" style={{
 								color: guildId ?

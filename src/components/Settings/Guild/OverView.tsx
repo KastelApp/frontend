@@ -3,7 +3,6 @@ import {
 	Input,
 	Avatar,
 	Badge,
-	Switch,
 	Select,
 	SelectSection,
 	SelectItem,
@@ -17,18 +16,7 @@ import { useChannelStore } from "@/wrapper/Stores/ChannelStore.ts";
 import SaveChanges from "@/components/SaveChanges.tsx";
 import useStateHistory from "@/hooks/useStateHistory.ts";
 import Tooltip from "@/components/Tooltip.tsx";
-
-const SwitchOption = ({ title, description, value, setValue }: { title: string; description?: string; value: boolean; setValue: (value: boolean) => void; }) => {
-	return (
-		<div className="flex justify-between items-center cursor-pointer select-none first:mt-0 mt-2" onClick={() => setValue(!value)}>
-			<div className="flex flex-col">
-				<p>{title}</p>
-				{description && <p className="text-sm text-gray-400">{description}</p>}
-			</div>
-			<Switch isSelected={value} onValueChange={setValue} />
-		</div>
-	);
-};
+import SwitchOption from "@/components/SwitchOption.tsx";
 
 const Overview = () => {
 	const [maintenanceMode, setMaintenanceMode] = useStateHistory<boolean>(false);
@@ -47,7 +35,7 @@ const Overview = () => {
 	const { } = useChannelStore();
 
 	return (
-		<div className="mr-2 bg-accent rounded-lg">
+		<div className="mr-2 bg-lightAccent dark:bg-darkAccent rounded-lg">
 			<div className="flex flex-col p-4">
 				<h1 className="text-2xl font-semibold">Guild Overview</h1>
 				<div className="grid grid-cols-1 sm:grid-cols-5 gap-4 mt-4">

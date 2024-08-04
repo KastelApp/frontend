@@ -4,7 +4,6 @@ import { useCallback } from "react";
 import { Compass } from "lucide-react";
 import { twMerge } from "tailwind-merge";
 import { Avatar } from "@nextui-org/react";
-import Divider from "../Divider.tsx";
 import UserOptions from "../Dropdowns/UserOptions.tsx";
 import { useSettingsStore } from "@/wrapper/Stores.ts";
 import { useGuildStore } from "@/wrapper/Stores/GuildStore.ts";
@@ -13,6 +12,9 @@ import { useRouter } from "next/router";
 import Draggables from "../DraggableComponent.tsx";
 import { NavBarIcon } from "./NavBarIcon.tsx";
 import AddGuildButton from "../AddGuildButton.tsx";
+// import { Copy, Pen, Pin, Reply, Trash2 } from "lucide-react";
+import { Divider } from "@nextui-org/react";
+import { snowflake } from "@/utils/Constants.ts";
 
 const LeftNavBar = () => {
 	const { isSideBarOpen } = useSettingsStore();
@@ -29,7 +31,12 @@ const LeftNavBar = () => {
 			const gotChannels = getChannelsWithValidPermissions(item.id);
 
 			for (const channel of gotChannels) {
-				if (item.channelProperties.find((channelProperty) => channelProperty.channelId === channel.id)?.lastMessageAckId !== channel.lastMessageId) {
+				const foundChannel = item.channelProperties.find((channelProperty) => channelProperty.channelId === channel.id);
+				if (foundChannel?.lastMessageAckId !== channel.lastMessageId) {
+					if (foundChannel?.lastMessageAckId && channel.lastMessageId && snowflake.timeStamp(foundChannel.lastMessageAckId) > snowflake.timeStamp(channel.lastMessageId)) {
+						continue
+					}
+
 					hasUnread = true;
 
 					break;
@@ -54,14 +61,9 @@ const LeftNavBar = () => {
 						/>
 					}
 					description={item.name}
-					contextMenuItemsProps={{
-						values: [
-							{
-								label: "Test",
-							},
-						],
-						placement: "right",
-					}}
+					contextMenuItemsProps={[{
+						label: "Test",
+					}]}
 					hasUnReadMessages={hasUnread}
 					isActive={item.id === guildId}
 				/>
@@ -72,7 +74,7 @@ const LeftNavBar = () => {
 	return (
 		<>
 			<div className={twMerge("block", isSideBarOpen ? "" : "hidden")}>
-				<div className="fixed left-0 top-0 h-full w-16 flex flex-col shadow-lg z-10 overflow-y-auto overflow-x-hidden scrollbar-hide">
+				<div className="fixed left-0 top-0 h-full w-16 flex flex-col shadow-lg z-[5] overflow-y-auto overflow-x-hidden scrollbar-hide">
 					<NavBarIcon
 						icon={
 							<div className="min-w-9 min-h-9 max-h-9 max-w-9">
@@ -87,13 +89,13 @@ const LeftNavBar = () => {
 						badgeContent="9+"
 						badgePosition="bottom-right"
 						badgeColor="danger"
-						InContent={UserOptions}
+						InContent={UserOptions as React.FC}
 						href="/app"
 						description="Right click to open context menu"
 						delay={1000}
 						isNormalIcon
 					/>
-					<Divider size={"[2px]"} />
+					<Divider className="h-1" />
 					{mappedGuilds()}
 					<AddGuildButton />
 					<NavBarIcon

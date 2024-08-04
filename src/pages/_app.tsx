@@ -13,6 +13,7 @@ import { DefaultSeo } from "next-seo";
 import Init from "@/components/Init.tsx";
 
 import { NextPage } from "next";
+import { useEffect } from "react";
 
 type NextPageWithLayout = NextPage & {
 	shouldHaveLayout?: boolean;
@@ -29,6 +30,18 @@ const App = ({ Component, pageProps }: AppPropsWithLayout) => {
 	// eslint-disable-next-line @typescript-eslint/naming-convention
 	const { _hasHydrated } = useTranslationStore();
 
+	useEffect(() => {
+		window.addEventListener("contextmenu", (e) => {
+			e.preventDefault();
+		})
+
+		return () => {
+			window.removeEventListener("contextmenu", (e) => {
+				e.preventDefault();
+			})
+		}
+	}, [])
+
 	if (!_hasHydrated) return null;
 
 	const shouldHaveLayout = Component.shouldHaveLayout || false;
@@ -37,8 +50,8 @@ const App = ({ Component, pageProps }: AppPropsWithLayout) => {
 		<>
 			<DefaultSeo {...SEO} />
 			<ErrorBoundary>
-				<NextUIProvider navigate={router.push}>
-					<NextThemesProvider>
+				<NextUIProvider navigate={router.push} >
+					<NextThemesProvider attribute="class">
 						<Init shouldHaveLayout={shouldHaveLayout}>
 							<Component {...pageProps} />
 						</Init>

@@ -47,6 +47,14 @@ const nextConfig = {
 	},
 	typescript: {
 		ignoreBuildErrors: true
+	},
+	images: {
+		remotePatterns: [{
+			protocol: "https",
+			hostname: "opengraph.githubassets.com",
+			port: "",
+			pathname: "/**"
+		}]
 	}
 };
 

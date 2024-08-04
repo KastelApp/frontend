@@ -1,6 +1,6 @@
-import { useAPIStore, useClientStore, useIsReady, useTokenStore } from "@/wrapper/Stores.ts";
+import { useAPIStore, useClientStore, useIsReady, useStoredSettingsStore, useTokenStore } from "@/wrapper/Stores.ts";
 import { useRouter } from "next/router";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Loading from "./Loading.tsx";
 import AppLayout from "@/layouts/AppLayout.tsx";
 import { useRelationshipsStore, Relationship as RelationshipState } from "@/wrapper/Stores/RelationshipsStore.ts";
@@ -8,6 +8,7 @@ import Logger from "@/utils/Logger.ts";
 import { Relationship } from "@/types/http/user/relationships.ts";
 import { useUserStore } from "@/wrapper/Stores/UserStore.ts";
 import { usePerChannelStore } from "@/wrapper/Stores/ChannelStore.ts";
+import { Button } from "@nextui-org/react";
 
 const Init = ({
     children,
@@ -23,6 +24,8 @@ const Init = ({
     const { setIsReady, isReady } = useIsReady();
     const { addRelationship } = useRelationshipsStore();
     const { channels } = usePerChannelStore();
+    const { mobilePopupIgnored, setMobilePopupIgnored } = useStoredSettingsStore();
+    const [isMobile, setIsMobile] = useState(false);
 
     useEffect(() => {
         api.token = token;
@@ -38,6 +41,26 @@ const Init = ({
         "/login",
         "/register",
     ];
+
+    useEffect(() => {
+        // ? We have a few methods of detecting if the user is on a mobile device
+        // ? First is if the user agent is a mobile device
+        // ? Second is if the screen width is less than 768
+
+        if (navigator.userAgent.includes("Android") || navigator.userAgent.includes("iPhone")) {
+            setIsMobile(true);
+
+            return;
+        }
+
+        if (window.innerWidth < 768) {
+            setIsMobile(true);
+
+            return;
+        }
+
+        setIsMobile(false);
+    }, []);
 
     useEffect(() => {
         const int = setInterval(() => {
@@ -56,7 +79,7 @@ const Init = ({
         }, 1000);
 
         return () => clearInterval(int);
-    }, [channels])
+    }, [channels]);
 
     useEffect(() => {
         if (blacklistedTokenPaths.some((path) => router.pathname.match(path) || path === router.pathname) && token) {
@@ -79,7 +102,11 @@ const Init = ({
             return;
         }
 
-        if (client.isConnected) return; // ? This is to prevent an infinite loop
+        if (client.isConnected) {
+            if (!isReady) setIsReady(true);
+
+            return; // ? This is to prevent an infinite loop
+        }
 
         setIsReady(false);
 
@@ -126,12 +153,20 @@ const Init = ({
         client.on("close", () => {
             setIsReady(false);
 
+            console.log("close?")
+
             client.isConnected = false;
         });
     }, [router.pathname]);
 
     return (
         <>
+            {isMobile && !mobilePopupIgnored && (
+                <div className="fixed bottom-0 left-0 right-0 bg-black bg-opacity-50 p-2 flex flex-col items-center justify-between z-[5000]">
+                    <p className="text-white">You're on a mobile device, this site is not optimized for mobile yet. Please use a desktop device or download our mobile app.</p>
+                    <Button size="sm" variant="bordered" color="primary" onClick={() => setMobilePopupIgnored(true)}>I understand</Button>
+                </div>
+            )}
             {!isReady ? <Loading /> :
                 <>
                     {shouldHaveLayout ? <AppLayout>{children}</AppLayout> : children}
