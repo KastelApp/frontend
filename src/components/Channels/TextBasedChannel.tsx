@@ -515,7 +515,6 @@ const TextBasedChannel = () => {
 			guildId={guildId}
 		>
 			<div className="mt-auto overflow-y-auto mb-4" id="inf-scroller-msg-container" ref={scrollerRef}>
-				{!initialFetch && skelliedMessages}
 				<BiDirectionalInfiniteScroller
 					data={renderedMessages}
 					renderItem={(message) => (
@@ -596,7 +595,11 @@ const TextBasedChannel = () => {
 						</div>
 					}
 					hasMoreTop={false}
+					classNames={{
+						dataDiv: "overflow-x-hidden"
+					}}
 				/>
+				{!initialFetch && skelliedMessages}
 				<div ref={bottomRef} />
 			</div>
 		</MessageContainer>

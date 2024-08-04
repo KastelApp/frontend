@@ -108,7 +108,7 @@ const Message = ({
 	return (
 		<div
 			className={twMerge(
-				"group w-full hover:bg-msg-hover mb-2 relative transition-all duration-300 ease-in",
+				"group w-full hover:bg-msg-hover mb-2 relative transition-all duration-300 ease-in max-w-full",
 				className,
 				mentionsUser && "bg-mention hover:bg-mention-hover",
 				highlighted && "bg-msg-jumped",
@@ -157,11 +157,11 @@ const Message = ({
 					}} >{replyMessage.message.content}</p>
 				</div>
 			)}
-			<div className="flex">
+			<div className="flex w-full max-w-full">
 				<PopOverData>
 					<Avatar src={message.author.user.avatar ?? useUserStore.getState().getDefaultAvatar(message.author.user.id ?? "")} alt="User Avatar" className="ml-2 mt-1 min-w-9 max-w-9 max-h-9 min-h-9 rounded-full cursor-pointer" imgProps={{ className: "transition-none" }} />
 				</PopOverData>
-				<div className="relative flex flex-col ml-2">
+				<div className="relative flex flex-col ml-2 w-full">
 					<div>
 						<PopOverData>
 							<span className="inline cursor-pointer text-white" style={{
@@ -184,7 +184,7 @@ const Message = ({
 					</div>
 					<p
 						className={
-							twMerge("text-white whitespace-pre-line overflow-hidden break-words",
+							twMerge("text-white whitespace-pre-line overflow-hidden break-words word-break break-word text-wrap max-w-[calc(100%-5rem)]",
 								message.state === MessageStates.Failed
 									|| message.state === MessageStates.Unknown ? "text-red-500" : "",
 								message.state === MessageStates.Sending ? "text-gray-400" : "",
