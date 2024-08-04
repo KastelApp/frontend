@@ -150,7 +150,7 @@ const Message = ({
 							}}>{message.mentions.users.includes(replyMessage.message.authorId) ? "@" : ""}{replyMessage.user.globalNickname ?? replyMessage.user.username}</span>
 						</div>
 					</PopOverData>
-					<p className="text-white text-2xs ml-2 select-none cursor-pointer" onClick={() => {
+					<p className="text-white text-2xs ml-2 select-none cursor-pointer w-full max-w-[calc(100%-32rem)] truncate" onClick={() => {
 						if (jumpToMessage) {
 							jumpToMessage(replyMessage.message.id);
 						}
