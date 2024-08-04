@@ -136,5 +136,27 @@
 			"name": "Markdown Channel",
 			"description": "A channel that is a single markdown document"
 		}
+	},
+	"badges": {
+		"staff": {
+			"name": "Staff",
+			"tooltip": "Staff"
+		},
+		"bug1": {
+			"name": "Minor Bug Hunter",
+			"tooltip": "Minor Bug Hunter"
+		},
+		"bug2": {
+			"name": "Intermediate Bug Hunter",
+			"tooltip": "Intermediate Bug Hunter"
+		},
+		"bug3": {
+			"name": "Major Bug Hunter",
+			"tooltip": "Major Bug Hunter"
+		},
+		"sponsor": {
+			"name": "Sponsor",
+			"tooltip": "Has sponsored Kastel"
+		}
 	}
 }

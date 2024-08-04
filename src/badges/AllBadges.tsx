@@ -11,6 +11,7 @@ import Moderator from "@/badges/Moderator.tsx";
 import Contributor from "@/badges/Contributor.tsx";
 import Partner from "@/badges/Partner.tsx";
 import BotBadge from "@/badges/BotBadge.tsx";
+import { useTranslationStore } from "@/wrapper/Stores.ts";
 
 /**
  * Just a small helper component to display all badges a user has.
@@ -24,6 +25,8 @@ const AllBadges = ({
 	privateFlags: string;
 	size?: number;
 }) => {
+	const { t } = useTranslationStore();
+
 	const flags = new FlagFields(privateFlags, publicFlags);
 
 	const badges = Object.entries(flags.PublicFlags.toJSON())
