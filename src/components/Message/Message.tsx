@@ -150,7 +150,7 @@ const Message = ({
 							}}>{message.mentions.users.includes(replyMessage.message.authorId) ? "@" : ""}{replyMessage.user.globalNickname ?? replyMessage.user.username}</span>
 						</div>
 					</PopOverData>
-					<p className="text-white text-2xs ml-2 select-none cursor-pointer w-full max-w-[calc(100%-32rem)] truncate" onClick={() => {
+					<p className="text-white text-2xs ml-2 select-none cursor-pointer w-full max-w-[calc(100%-16rem)] truncate" onClick={() => {
 						if (jumpToMessage) {
 							jumpToMessage(replyMessage.message.id);
 						}
@@ -184,7 +184,8 @@ const Message = ({
 					</div>
 					<p
 						className={
-							twMerge("text-white whitespace-pre-line overflow-hidden break-words word-break break-word text-wrap max-w-[calc(100%-5rem)]",
+							twMerge(
+								"text-white whitespace-pre-line overflow-hidden break-words word-break max-w-[calc(100%-5rem)]",
 								message.state === MessageStates.Failed
 									|| message.state === MessageStates.Unknown ? "text-red-500" : "",
 								message.state === MessageStates.Sending ? "text-gray-400" : "",
