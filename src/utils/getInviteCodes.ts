@@ -12,6 +12,8 @@ const getInviteCodes = (message: string, discordOnly = false) => {
     const patterns = [
         /https:\/\/kastelapp\.com\/invite\/([\w-]+)/g,
         /(^|\s)kastelapp\.com\/invite\/([\w-]+)/g,
+        /https:\/\/development\.kastelapp\.com\/invite\/([\w-]+)/g,
+        /(^|\s)development\.kastelapp\.com\/invite\/([\w-]+)/g,
         /https:\/\/kastel\.dev\/([\w-]+)/g,
         /(^|\s)kastel\.dev\/([\w-]+)/g,
         new RegExp(`https://${currentDomain.replace(".", "\\.")}/invite/([\\w-]+)`, "g"),
