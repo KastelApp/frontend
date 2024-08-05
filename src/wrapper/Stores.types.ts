@@ -97,3 +97,10 @@ export interface ClientStore {
 	client: Client;
 	setClient: (client: Client) => void;
 }
+
+export interface TrustedDomainsStore {
+	trustedDomains: string[];
+	setTrustedDomains: (trustedDomains: string[]) => void;
+	isTrusted: (url: string) => boolean;
+	addTrustedDomain: (url: string) => void;
+}

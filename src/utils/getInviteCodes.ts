@@ -7,7 +7,7 @@
 const getInviteCodes = (message: string, discordOnly = false) => {
     const inviteCodes: string[] = [];
 
-    const currentDomain = window.location.hostname;
+    const currentDomain = window.location.host;
 
     const patterns = [
         /https:\/\/kastelapp\.com\/invite\/([\w-]+)/g,

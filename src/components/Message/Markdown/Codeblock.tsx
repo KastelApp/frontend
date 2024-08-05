@@ -1,8 +1,8 @@
+import oneDark from "@/components/Message/Markdown/style.ts";
 import { getLanguageFromExtension } from "@/utils/getLanguageFromExtension.ts";
 import { Tooltip } from "@nextui-org/react";
 import { Copy } from "lucide-react";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
-import { oneDark } from "react-syntax-highlighter/dist/cjs/styles/prism";
 
 interface CodeblockProps {
 	language: string;
@@ -11,8 +11,8 @@ interface CodeblockProps {
 
 const Codeblock = ({ language, code }: CodeblockProps) => {
 	return (
-		<div className="relative group">
-			<SyntaxHighlighter language={getLanguageFromExtension(language)} style={oneDark}>
+		<div className="relative group w-full">
+			<SyntaxHighlighter language={getLanguageFromExtension(language)} style={oneDark as never}>
 				{code}
 			</SyntaxHighlighter>
 			<Tooltip content={"Copy"}>

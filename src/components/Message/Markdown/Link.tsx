@@ -1,13 +1,17 @@
+import { useTrustedDomainStore } from "@/wrapper/Stores.ts";
 import NextLink from "next/link";
 
 
 const Link = (props: React.JSX.IntrinsicElements["a"]) => {
 	let href = props.href;
-	
+	const currentDomain = window.location.host;
+
 	const kastelPathPatterns = [
-		/https:\/\/kastelapp\.com\/([\w-]+)/g,
-		/https:\/\/development\.kastelapp\.com\/([\w-]+)/g,
-	]
+		/https:\/\/kastelapp\.com\/(.+)/g,
+		/https:\/\/development\.kastelapp\.com\/(.+)/g,
+		// ? also get the current domain
+		new RegExp(`https://${currentDomain.replace(".", "\\.")}/(.+)`, "g")
+	];
 
 	// ? if the href matches any of those paths, we set href to be just the path so we don't need to reload the page
 	for (const pattern of kastelPathPatterns) {
@@ -22,8 +26,20 @@ const Link = (props: React.JSX.IntrinsicElements["a"]) => {
 		<NextLink
 			href={href ?? ""}
 			passHref
-			className="text-blue-500 font-semibold hover:underline"
+			className="text-blue-500 hover:underline"
 			target={href?.startsWith("http") ? "_blank" : ""}
+			onClick={() => {
+				if (href?.startsWith("http")) {
+					const isTrusted = useTrustedDomainStore.getState().isTrusted(href);
+
+					if (!isTrusted) {
+						// e.preventDefault();
+						// e.stopPropagation();
+
+						console.log("not trusted");
+					}
+				}
+			}}
 		>
 			{props.children}
 		</NextLink>

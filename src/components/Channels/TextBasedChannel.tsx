@@ -396,6 +396,33 @@ const TextBasedChannel = () => {
 					inline: "start"
 				}), 50);
 
+				if (content === "phishing" && process.env.NODE_ENV === "development") {
+					useMessageStore.getState().addMessage({
+						embeds: [],
+						allowedMentions: 0,
+						attachments: [],
+						authorId: "102652169335591636",
+						channelId,
+						content: "This is a phishing message",
+						creationDate: new Date(),
+						deletable: true,
+						discordInvites: [],
+						editedDate: null,
+						flags: messageFlags.Normal | messageFlags.Phishing,
+						id: "123" + Date.now(),
+						invites: [],
+						mentions: {
+							channels: [],
+							roles: [],
+							users: []
+						},
+						nonce: null,
+						pinned: false,
+						replyingTo: null,
+						state: MessageStates.Sent,
+					})
+				}
+
 				if (content === "embed" && process.env.NODE_ENV === "development") {
 					useMessageStore.getState().addMessage({
 						embeds: [{

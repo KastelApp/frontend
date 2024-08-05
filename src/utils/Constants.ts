@@ -76,6 +76,7 @@ const statusTypes = {
 const messageFlags = {
 	System: 1 << 0,
 	Normal: 1 << 1,
+	Phishing: 1 << 5, // ? when a domain is detected as phishing, (This is only for link shortnered links)
 };
 
 const inviteFlags = {

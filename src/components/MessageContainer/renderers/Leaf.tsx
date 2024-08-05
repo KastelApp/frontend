@@ -9,7 +9,7 @@ const shouldBeUnderlined = (text: string): boolean => {
 };
 
 const Leaf = ({ attributes, children, leaf }: LeafProps) => {
-    const { list, italic, blockquote, code } = leaf;
+    const { list, italic, code } = leaf;
     let tailwindStyles = "";
 
     // ? Check for bold styling first to handle nested cases correctly

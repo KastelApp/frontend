@@ -158,5 +158,10 @@
 			"name": "Sponsor",
 			"tooltip": "Has sponsored Kastel"
 		}
+	},
+	"messages": {
+		"phishing": "Phishing likely",
+		"showMessage": "Show Message",
+		"hideMessage": "Hide Message"
 	}
 }
