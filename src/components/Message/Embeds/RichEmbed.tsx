@@ -1,4 +1,4 @@
-import ImageGrid from "@/pages/playground/imagegrid.tsx";
+import ImageGrid from "@/components/ImageGrid.tsx";
 import { Avatar, Card, CardBody, CardFooter, CardHeader, Image } from "@nextui-org/react";
 import Link from "next/link";
 import { twMerge } from "tailwind-merge";
