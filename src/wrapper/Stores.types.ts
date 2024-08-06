@@ -70,7 +70,7 @@ export interface SelectedTabStore {
 export interface TranslationStore {
 	rawTranslation: Translation;
 	setLanguage: (language: string) => void;
-	t: (key: TranslationKeys, ...anything: never[]) => string;
+	t: (key: TranslationKeys, ...anything: unknown[]) => string;
 	fetchLanguages: () => MetaData["languages"];
 	currentLanguage: string;
 	_hasHydrated: boolean;

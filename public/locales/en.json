@@ -24,6 +24,11 @@
 		},
 		"internalServerError": "You caught a rare error, please try again later."
 	},
+	"common": {
+		"cancel": "Cancel",
+		"save": "Save",
+		"delete": "Delete"
+	},
 	"home": {
 		"title": "Ditch those platforms who just don't care!",
 		"subtitle": "Why settle for less when you can have a platform that cares about you? Join Kastel, the platform that cares about you!",
@@ -157,11 +162,81 @@
 		"sponsor": {
 			"name": "Sponsor",
 			"tooltip": "Has sponsored Kastel"
+		},
+		"moderator": {
+			"name": "Moderator Program",
+			"tooltip": "In Moderator Program"
+		},
+		"contributor": {
+			"name": "Contributor",
+			"tooltip": "Contributed to Kastel"
+		},
+		"partner": {
+			"name": "Partner",
+			"tooltip": "Partnered with Kastel"
+		},
+		"trustedBotDeveloper": {
+			"name": "Trusted Bot Developer",
+			"tooltip": "Owns a Trusted Bot"
 		}
 	},
 	"messages": {
 		"phishing": "Phishing likely",
 		"showMessage": "Show Message",
 		"hideMessage": "Hide Message"
+	},
+	"statusTypes": {
+		"online": "Online",
+		"idle": "Idle",
+		"dnd": "Do Not Disturb",
+		"offline": "Offline",
+		"invisible": "Invisible"
+	},
+	"settings": {
+		"settings": "Settings",
+		"user": {
+			"title": "User Settings",
+			"overview": "Overview"
+		},
+		"developer": {
+			"title": "Developer",
+			"experiments": "Experiments"
+		}
+	},
+	"customStatus": "Custom Status",
+	"logout": "Logout",
+	"guilds": {
+		"members": "Members",
+		"online": "Online",
+		"invites": {
+			"join": "Join",
+			"validInvite": "You recived an invite to join a guild!",
+			"invalidInvite": "The invite you tried to use is invalid or expired."
+		},
+		"nickname": {
+			"header": "Change Your Nickname",
+			"description": "Max of {{max}} characters - {{remaining}} remaining"
+		},
+		"delete": {
+			"header": "Are you sure you want to delete your guild?",
+			"loose": "If you delete your guild you will loose these:",
+			"messages": "Messages",
+			"channels": "Channels",
+			"roles": "Roles",
+			"members": "Members",
+			"banned": "Banned Members",
+			"sureWait": "If you are sure please wait {{time}} more seconds.",
+			"sureReady": "If you are sure please click the delete button below",
+			"delete": "Delete in {{time}} seconds"
+		}
+	},
+	"messageContainer": {
+		"replying": "Replying to",
+		"readOnly": "You do not have permission to send messages in this channel.",
+		"typing": {
+			"singular": "{{user}} is typing",
+			"double": "{{user1}} and {{user2}} are typing",
+			"multiple": "{{users}} and {{count}} others are typing"
+		}
 	}
 }

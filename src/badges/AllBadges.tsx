@@ -41,7 +41,7 @@ const AllBadges = ({
 					case "StaffBadge":
 						return (
 							<div key={index} className="relative flex-none w-1/5 p-1">
-								<Tooltip content="Staff" color="secondary">
+								<Tooltip content={t("badges.sponsor.tooltip")} color="secondary">
 									<span className="text-lg text-warning cursor-pointer hover:opacity-75">
 										<StaffBadge size={size} />
 									</span>
@@ -51,7 +51,7 @@ const AllBadges = ({
 					case "BugHunterLevel1":
 						return (
 							<div key={index} className="relative flex-none w-1/5 p-1">
-								<Tooltip content="Minor Bug Hunter" color="success">
+								<Tooltip content={t("badges.bug1.tooltip")} color="success">
 									<span className="text-lg text-success cursor-pointer hover:opacity-75">
 										<BugHunterLevel1 size={size} />
 									</span>
@@ -61,7 +61,7 @@ const AllBadges = ({
 					case "BugHunterLevel2":
 						return (
 							<div key={index} className="relative flex-none w-1/5 p-1">
-								<Tooltip content="Intermediate Bug Hunter" color="warning">
+								<Tooltip content={t("badges.bug2.tooltip")} color="warning">
 									<span className="text-lg text-success cursor-pointer hover:opacity-75">
 										<BugHunterLevel2 size={size} />
 									</span>
@@ -71,7 +71,7 @@ const AllBadges = ({
 					case "BugHunterLevel3":
 						return (
 							<div key={index} className="relative flex-none w-1/5 p-1">
-								<Tooltip showArrow content="Major Bug Hunter" color="secondary">
+								<Tooltip showArrow content={t("badges.bug3.tooltip")} color="secondary">
 									<span className="text-lg text-success cursor-pointer hover:opacity-75">
 										<BugHunterLevel3 size={size} />
 									</span>
@@ -81,7 +81,7 @@ const AllBadges = ({
 					case "SponsorBadge":
 						return (
 							<div key={index} className="relative flex-none w-1/5 p-1">
-								<Tooltip content="Has Sponsored Kastel" color="secondary">
+								<Tooltip content={t("badges.sponsor.tooltip")} color="secondary">
 									<span className="text-lg text-secondary cursor-pointer hover:opacity-75">
 										<Sponsor size={size} />
 									</span>
@@ -91,7 +91,7 @@ const AllBadges = ({
 					case "ModeratorBadge":
 						return (
 							<div key={index} className="relative flex-none w-1/5 p-1">
-								<Tooltip content="Moderator Program" color="primary">
+								<Tooltip content={t("badges.moderator.tooltip")} color="primary">
 									<span className="text-lg text-info cursor-pointer hover:opacity-75">
 										<Moderator size={size} />
 									</span>
@@ -101,7 +101,7 @@ const AllBadges = ({
 					case "DeveloperBadge":
 						return (
 							<div key={index} className="relative flex-none w-1/5 p-1">
-								<Tooltip content="Developer" color="danger">
+								<Tooltip content={t("badges.contributor.tooltip")} color="danger">
 									<span className="text-lg text-danger cursor-pointer hover:opacity-75">
 										<Contributor size={size} />
 									</span>
@@ -111,7 +111,7 @@ const AllBadges = ({
 					case "PartnerBadge":
 						return (
 							<div key={index} className="relative flex-none w-1/5 p-1">
-								<Tooltip content="Partner" color="success">
+								<Tooltip content={t("badges.partner.tooltip")} color="success">
 									<span className="text-lg text-success cursor-pointer hover:opacity-75">
 										<Partner size={size} />
 									</span>
@@ -121,7 +121,7 @@ const AllBadges = ({
 					case "VerifiedBotDeveloperBadge":
 						return (
 							<div key={index} className="relative flex-none w-1/5 p-1">
-								<Tooltip content="Verified Bot Developer" color="danger">
+								<Tooltip content={t("badges.trustedBotDeveloper.tooltip")} color="danger">
 									<span className="text-lg text-danger cursor-pointer hover:opacity-75">
 										<BotBadge size={size} />
 									</span>

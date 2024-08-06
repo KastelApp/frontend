@@ -1,3 +1,4 @@
+import { useTranslationStore } from "@/wrapper/Stores.ts";
 import { Button, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from "@nextui-org/react";
 import { useEffect, useState } from "react";
 
@@ -11,6 +12,7 @@ const ConfirmDelete = ({
 	onOpenChange: () => void;
 	onClose: () => void;
 }) => {
+	const { t } = useTranslationStore();
 	const [timer, setTimer] = useState(10);
 
 	useEffect(() => {
@@ -44,25 +46,30 @@ const ConfirmDelete = ({
 			key={"confirm-delete-modal"}
 		>
 			<ModalContent>
-				<ModalHeader className="flex flex-col gap-1">Are you sure you want to delete your server?</ModalHeader>
+				<ModalHeader className="flex flex-col gap-1">{t("guilds.delete.header")}</ModalHeader>
 				<ModalBody>
-					<p className="text-lg">If you delete your server you will loose these:</p>
+					<p className="text-lg">{t("guilds.delete.loose")}</p>
 					<ul className="list-disc ml-6">
-						<li>Messages</li>
-						<li>Channels</li>
-						<li>Roles</li>
-						<li>Members</li>
-						<li>Banned Members</li>
+						<li>{t("guilds.delete.messages")}</li>
+						<li>{t("guilds.delete.channels")}</li>
+						<li>{t("guilds.delete.roles")}</li>
+						<li>{t("guilds.delete.members")}</li>
+						<li>{t("guilds.delete.banned")}</li>
 					</ul>
 
-					<p>If you are sure, please {timer > 0 ? `wait ${timer} seconds more seconds.` : "click the delete button below."}</p>
+					{/* <p>If you are sure, please {timer > 0 ? `wait ${timer} seconds more seconds.` : "click the delete button below."}</p> */}
+					<p>{timer > 0 ? t("guilds.delete.sureWait", {
+						time: timer
+					}) : t("guilds.delete.sureReady")}</p>
 				</ModalBody>
 				<ModalFooter>
 					<Button color="success" variant="flat" onPress={onClose}>
-						Cancel
+						{t("common.cancel")}
 					</Button>
 					<Button color="danger" variant="flat" onPress={onClose}>
-						{timer <= 0 ? "Delete" : `Delete in ${timer} seconds`}
+						{timer <= 0 ? t("common.delete") : t("guilds.delete.delete", {
+							time: timer
+						})}
 					</Button>
 				</ModalFooter>
 			</ModalContent>

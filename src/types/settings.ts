@@ -1,5 +1,6 @@
 export interface Section {
 	title: string | null;
+	id?: string;
 	children: {
 		title: string;
 		id: string;

@@ -8,7 +8,7 @@ import OverView from "../Settings/User/Overview.tsx";
 import BaseSettings from "../Modals/BaseSettings.tsx";
 import { Section } from "@/types/settings.ts";
 import { useRouter } from "next/router";
-import { useTokenStore } from "@/wrapper/Stores.ts";
+import { useTokenStore, useTranslationStore } from "@/wrapper/Stores.ts";
 import { useUserStore } from "@/wrapper/Stores/UserStore.ts";
 import DifferentTesting from "../Settings/User/DifferentTesting.tsx";
 
@@ -18,6 +18,7 @@ const UserOptions = ({ children, type = "context", orientation = "vertical" }: {
 	const { getCurrentUser, isStaff } = useUserStore();
 	const [statusOpen, setStatusOpen] = useState(false);
 	const [status, setStatus] = useState<"Online" | "Invisible" | "DND" | "Idle">("Invisible");
+	const { t } = useTranslationStore();
 
 	const color =
 		status === "Online" ? "success" : status === "Idle" ? "warning" : status === "DND" ? "danger" : "gray-500";
@@ -73,9 +74,10 @@ const UserOptions = ({ children, type = "context", orientation = "vertical" }: {
 
 	const [sections, setSections] = useState<Section[]>([{
 		title: null,
+		id: "user",
 		children: [
 			{
-				title: "Overview",
+				title: t("settings.user.overview"),
 				id: "overview",
 				section: <OverView />,
 				disabled: false,
@@ -87,10 +89,11 @@ const UserOptions = ({ children, type = "context", orientation = "vertical" }: {
 		const gotUser = getCurrentUser();
 
 		const developerSections = { // t! If the user does not have developer mode enabled, do not show these
-			title: "Developer",
+			title: t("settings.developer.title"),
+			id: "developer",
 			children: [
 				{
-					title: "Experiments",
+					title: t("settings.developer.experiments"),
 					id: "experiments",
 					// t! Users should have access to "public" experiments, but not "private" ones
 					// t! private ones are something that are still in the works but may break or may need access for a certian api endpoint
@@ -118,8 +121,8 @@ const UserOptions = ({ children, type = "context", orientation = "vertical" }: {
 			const newCurrentUser = state.getCurrentUser();
 
 			if (!state.isStaff(newCurrentUser?.id ?? "")) {
-				setSections((prev) => prev.filter((section) => section.title !== "Developer"));
-			} else if (state.isStaff(newCurrentUser?.id ?? "") && !sections.some((section) => section.title === "Developer")) {
+				setSections((prev) => prev.filter((section) => section.id !== "developer"));
+			} else if (state.isStaff(newCurrentUser?.id ?? "") && !sections.some((section) => section.id === "developer")) {
 				setSections((prev) => ([
 					...prev,
 					developerSections
@@ -131,7 +134,7 @@ const UserOptions = ({ children, type = "context", orientation = "vertical" }: {
 	return (
 		<>
 			<BaseSettings
-				title="User Settings"
+				title={t("settings.user.title")}
 				isOpen={isSettingsOpen}
 				onOpenChange={onSettingsOpenChange}
 				onClose={onSettingsClose}
@@ -204,7 +207,7 @@ const UserOptions = ({ children, type = "context", orientation = "vertical" }: {
 									size="sm"
 									color="success"
 								>
-									Online
+									{t("statusTypes.offline")}
 								</Chip>
 								<Chip
 									onClick={() => handleStatus("Idle")}
@@ -214,7 +217,7 @@ const UserOptions = ({ children, type = "context", orientation = "vertical" }: {
 									size="sm"
 									color="warning"
 								>
-									Idle
+									{t("statusTypes.idle")}
 								</Chip>
 								<Chip
 									onClick={() => handleStatus("DND")}
@@ -224,7 +227,7 @@ const UserOptions = ({ children, type = "context", orientation = "vertical" }: {
 									size="sm"
 									color="danger"
 								>
-									DND
+									{t("statusTypes.dnd")}
 								</Chip>
 								<Chip
 									onClick={() => handleStatus("Invisible")}
@@ -234,17 +237,17 @@ const UserOptions = ({ children, type = "context", orientation = "vertical" }: {
 									size="sm"
 									color="default"
 								>
-									Invisible
+									{t("statusTypes.invisible")}
 								</Chip>
 							</motion.div>
 						</DropdownItem>
 
 						<DropdownItem closeOnSelect={true} key="customStatus" variant="flat">
-							<p>Custom Status</p>
+							<p>{t("customStatus")}</p>
 							<p className="text-xs text-gray-500">My Custom Status</p>
 						</DropdownItem>
 						<DropdownItem key="settings" variant="flat" endContent={<Settings size={20} />}>
-							Settings
+							{t("settings.settings")}
 						</DropdownItem>
 						<DropdownItem
 							key="logout"
@@ -253,7 +256,7 @@ const UserOptions = ({ children, type = "context", orientation = "vertical" }: {
 							color="danger"
 							endContent={<LogOut size={20} />}
 						>
-							Logout
+							{t("logout")}
 						</DropdownItem>
 					</DropdownMenu>
 				</Dropdown>

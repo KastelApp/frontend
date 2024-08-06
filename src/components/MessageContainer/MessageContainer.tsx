@@ -9,7 +9,7 @@ import { User, useUserStore } from "@/wrapper/Stores/UserStore.ts";
 import { Member, useMemberStore } from "@/wrapper/Stores/Members.ts";
 import { useMessageStore } from "@/wrapper/Stores/MessageStore.ts";
 import { useRoleStore } from "@/wrapper/Stores/RoleStore.ts";
-import { useAPIStore, useSettingsStore } from "@/wrapper/Stores.ts";
+import { useAPIStore, useSettingsStore, useTranslationStore } from "@/wrapper/Stores.ts";
 import { NavBarLocation } from "@/types/payloads/ready.ts";
 import Tooltip from "../Tooltip.tsx";
 import useTypingIndicator from "@/hooks/useTypingIndicator.ts";
@@ -47,6 +47,7 @@ const MessageContainer = ({ placeholder, children, isReadOnly, sendMessage, chan
 	channelId: string;
 	guildId: string | null;
 }) => {
+	const { t } = useTranslationStore();
 	const { navBarLocation } = useSettingsStore();
 
 	const [files] = useState<{ name: string; url: string; }[]>([]);
@@ -213,7 +214,7 @@ const MessageContainer = ({ placeholder, children, isReadOnly, sendMessage, chan
 				{replying && (
 					<div className="ml-1 w-full bg-lightAccent dark:bg-darkAccent rounded-md rounded-b-none flex select-none">
 						<div className="p-2">
-							Replying to <span className="font-semibold text-white" style={{
+							{t("messageContainer.replying")} <span className="font-semibold text-white" style={{
 								color: guildId ?
 									replyingAuthor.member ?
 										replyingAuthor.roleColor?.color ? `#${replyingAuthor.roleColor.color}` : "#CFDBFF"
@@ -287,7 +288,7 @@ const MessageContainer = ({ placeholder, children, isReadOnly, sendMessage, chan
 								placeholder={placeholder}
 								isReadOnly={isReadOnly}
 								initialText={content}
-								readOnlyMessage="You do not have permission to send messages in this channel"
+								readOnlyMessage={t("messageContainer.readOnly")}
 								onType={(text) => {
 									if (isReadOnly) return;
 
@@ -308,11 +309,16 @@ const MessageContainer = ({ placeholder, children, isReadOnly, sendMessage, chan
 					{typingUsers.length > 0 && (
 						<>
 							<TypingDots />
-							{/* <span className="text-xs font-semibold text-gray-300">Testing is typing</span> */}
 							{/*//? we show "is typing" when one person is typing, and then "User and User are typing" when its two */}
 							{/*//? else we just show "User, User, User are typing" */}
 							<span className="text-xs font-semibold text-gray-300">
-								{typingUsers.length === 1 ? `${typingUsers[0]} is typing` : typingUsers.length === 2 ? `${typingUsers[0]} and ${typingUsers[1]} are typing` : `${typingUsers.slice(0, 2).join(", ")} and ${typingUsers.length - 2} others are typing`}
+								{typingUsers.length === 1 ? t("messageContainer.typing.singular", { user: typingUsers[0] }) : typingUsers.length === 2 ? t("messageContainer.typing.double", {
+									user1: typingUsers[0],
+									user2: typingUsers[1]
+								}) : t("messageContainer.typing.multiple", {
+									users: typingUsers.slice(0, 2).join(", "),
+									count: typingUsers.length - 2
+								})}
 							</span>
 						</>
 					)}

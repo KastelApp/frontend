@@ -3,6 +3,7 @@ import { Avatar, Button, Chip } from "@nextui-org/react";
 // import { BadgeCheck } from "lucide-react";
 import { twMerge } from "tailwind-merge";
 import { Skeleton } from "@nextui-org/react";
+import { useTranslationStore } from "@/wrapper/Stores.ts";
 
 const InviteEmbed = ({
     invite,
@@ -21,6 +22,7 @@ const InviteEmbed = ({
     } | null;
     skeleton?: boolean;
 }) => {
+    const { t } = useTranslationStore();
 
     // const currentGuild = {
     //     name: "Kastel Development",
@@ -33,7 +35,7 @@ const InviteEmbed = ({
 
     return (
         <div className="rounded-md inline-block bg-lightAccent dark:bg-darkAccent select-none min-w-[28rem] max-w-[28rem]">
-            {!skeleton && <p className={twMerge("pl-3 pr-3 pt-3", !invite ? "text-danger" : "text-white")}>{invite ? "You received an invite to join a guild!" : "Sorry, this invite is invalid or expired."}</p>}
+            {!skeleton && <p className={twMerge("pl-3 pr-3 pt-3", !invite ? "text-danger" : "text-white")}>{invite ? t("guilds.invites.validInvite") : t("guilds.invites.invalidInvite")}</p>}
             {skeleton && <Skeleton className="rounded-lg cursor-pointer max-h-4 min-h-4 pt-3 pl-3 pr-3 max-w-64 mt-3 ml-3" />}
             <div className="flex items-center p-3">
                 {!skeleton && <Avatar
@@ -55,12 +57,12 @@ const InviteEmbed = ({
                     </div>
                     {invite && (
                         <div className="flex">
-                            {/* <Chip variant="dot" color="success" className="border-0 p-0 text-white">{invite.guild.members.online} Online</Chip> */}
-                            <Chip variant="dot" color="secondary" className="border-0 p-0 text-white">{invite.guild.members.total} Members</Chip>
+                            {/* <Chip variant="dot" color="success" className="border-0 p-0 text-white">{invite.guild.members.online} {t("guilds.online")}</Chip> */}
+                            <Chip variant="dot" color="secondary" className="border-0 p-0 text-white">{invite.guild.members.total} {t("guilds.members")}</Chip>
                         </div>
                     )}
                 </div>
-                <Button className="rounded-md h-8 ml-auto" color="success" isDisabled={!invite}>Join</Button>
+                <Button className="rounded-md h-8 ml-auto" color="success" isDisabled={!invite}>{t("guilds.invites.join")}</Button>
             </div>
         </div>
     );

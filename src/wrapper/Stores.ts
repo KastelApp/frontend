@@ -84,7 +84,7 @@ export const useTranslationStore =
 
 					set({ currentLanguage: language });
 				},
-				t: (key: string, ...anything: never[]) => get().rawTranslation.t(get().currentLanguage, key, ...anything),
+				t: (key: string, ...anything: unknown[]) => get().rawTranslation.t(get().currentLanguage, key, ...anything),
 				fetchLanguages: () => get().rawTranslation.metaData.languages,
 			}),
 			{

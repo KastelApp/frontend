@@ -203,7 +203,7 @@ class Translation {
 		return response;
 	}
 
-	public t(lang: string, key: string, ...anything: never[]): string {
+	public t(lang: string, key: string, ...anything: unknown[]): string {
 		const translation = this.cachedTranslations.get(lang) ?? this.cachedTranslations.get("en");
 		const foundEnglish = this.cachedTranslations.get("en");
 
@@ -244,9 +244,10 @@ class Translation {
 		return key;
 	}
 
-	private parse(str: string, ...anything: never[]) {
+	private parse(str: string, ...anything: unknown[]) {
 		const functions = {
 			...this.defaultFunctions,
+			// @ts-expect-error -- could not care less
 			...anything.reduce((acc, cur) => ({ ...acc, ...(cur as object) }), {}),
 		};
 
