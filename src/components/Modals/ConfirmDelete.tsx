@@ -56,8 +56,6 @@ const ConfirmDelete = ({
 						<li>{t("guilds.delete.members")}</li>
 						<li>{t("guilds.delete.banned")}</li>
 					</ul>
-
-					{/* <p>If you are sure, please {timer > 0 ? `wait ${timer} seconds more seconds.` : "click the delete button below."}</p> */}
 					<p>{timer > 0 ? t("guilds.delete.sureWait", {
 						time: timer
 					}) : t("guilds.delete.sureReady")}</p>

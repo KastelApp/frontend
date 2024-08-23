@@ -129,7 +129,7 @@ const BottomNavBar = () => {
                     />
                 </div>
                 <Divider orientation="vertical" className="ml-2 h-10 w-0.5" />
-                <div className="h-full py-2 ml-3 overflow-x-auto overflow-y-hidden horizontal-scroll-container scrollbar-hide gap-3" ref={scrollContainerRef}>
+                <div className="h-full py-2 ml-3 overflow-x-auto overflow-y-hidden horizontal-scroll-container gap-3" ref={scrollContainerRef}>
                     {mappedGuilds()}
                     <div className="horizontal-scroll-content flex gap-2">
                         <AddGuildButton orientation="horizontal" />
@@ -145,7 +145,7 @@ const BottomNavBar = () => {
                         icon={
                             <div className="min-w-9 min-h-9 max-h-9 max-w-9">
                                 <Avatar
-                                    src="https://development.kastelapp.com/icon-1.png"
+                                    src="/icon-1.png"
                                     className="min-w-9 min-h-9 max-h-9 max-w-9 hover:scale-95 transition-all duration-300 ease-in-out transform"
                                     imgProps={{ className: "transition-none" }}
                                 />

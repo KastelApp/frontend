@@ -34,14 +34,14 @@ import ConfirmDelete from "../Modals/ConfirmDelete.tsx";
 import Roles from "../Settings/Guild/Roles.tsx";
 import { useGuildStore } from "@/wrapper/Stores/GuildStore.ts";
 import { useChannelStore } from "@/wrapper/Stores/ChannelStore.ts";
-// import { useUserStore } from "@/wrapper/Stores/UserStore.ts";
-import { channelTypes, snowflake } from "@/utils/Constants.ts";
+import Constants, { channelTypes, snowflake } from "@/utils/Constants.ts";
 import ChannelIcon from "../ChannelIcon.tsx";
 import GuildIcon from "../GuildIcon.tsx";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import Draggables from "../DraggableComponent.tsx";
 import CreateChannelModal from "@/components/Modals/CreateChannel.tsx";
+import { modalStore } from "@/wrapper/Stores/GlobalModalStore.ts";
 
 const Channel = ({
 	startContent,
@@ -279,6 +279,12 @@ const ChannelNavBar = ({ children, isChannelHeaderHidden, isMemberBarHidden }: {
 		onClose: onCloseConfirmDelete,
 	} = useDisclosure();
 
+	const [draggableOptions, setDraggableOptions] = useState<{
+		disabledIndexes?: number[];
+		noDropAboveIndexes?: number[];
+		noDropBelowIndexes?: number[];
+	}>({});
+
 	return (
 		<>
 			{/* the modals we use for the buttons */}
@@ -476,8 +482,21 @@ const ChannelNavBar = ({ children, isChannelHeaderHidden, isMemberBarHidden }: {
 						<Draggables
 							items={normalChannels}
 							onDrop={() => {
-								// ? we now need to resort them like the custom channels
+								console.log("drop");
 							}}
+							onDrag={(item, items) => {
+								const nonCategoryIndexes = items.map((item, index) => item.type !== Constants.channelTypes.GuildCategory ? index : null).filter((type) => type !== null);
+
+								if (item.type === Constants.channelTypes.GuildCategory) {
+									setDraggableOptions({
+										disabledIndexes: nonCategoryIndexes,
+									})
+								}
+							}}
+							onDragStop={() => {
+								setDraggableOptions({})
+							}}
+							{...draggableOptions}
 							render={(channel) => (
 								<Channel
 									text={channel.name}
@@ -502,7 +521,7 @@ const ChannelNavBar = ({ children, isChannelHeaderHidden, isMemberBarHidden }: {
 						/>
 					</div>
 				</div>
-				<div className={twMerge("w-full overflow-hidden", navBarLocation === NavBarLocation.Left ? isSideBarOpen ? "ml-[17rem]" : "" : "ml-[13rem]")}>
+				<div className={twMerge("w-full overflow-x-hidden", navBarLocation === NavBarLocation.Left ? isSideBarOpen ? "ml-[17rem]" : "" : "ml-[13rem]")}>
 					{!isChannelHeaderHidden &&
 						<TopNavBar
 							startContent={
@@ -512,7 +531,21 @@ const ChannelNavBar = ({ children, isChannelHeaderHidden, isMemberBarHidden }: {
 									{foundChannel.description && (
 										<>
 											<Divider orientation="vertical" className="h-6 ml-2 mr-2 w-[3px]" />
-											<p className="text-gray-400 text-sm cursor-pointer truncate w-96">{foundChannel.description}</p>
+											<p className="text-gray-400 text-sm cursor-pointer truncate w-96" onClick={() => {
+												modalStore.getState().createModal({
+													id: `channel-topic-${foundChannel.id}`,
+													title: `${foundChannel.name}'s Topic`,
+													closable: true,
+													props: {
+														modalSize: "md"
+													},
+													body: (
+														<div className="flex flex-col">
+															{foundChannel.description}
+														</div>
+													),
+												});
+											}}>{foundChannel.description}</p>
 										</>
 									)}
 								</div>
@@ -531,7 +564,7 @@ const ChannelNavBar = ({ children, isChannelHeaderHidden, isMemberBarHidden }: {
 								},
 							]}
 						/>}
-					<div className="flex flex-row overflow-y-auto w-full">
+					<div className="flex flex-row overflow-y-auto w-full max-h-[calc(100vh-4rem)]">
 						<div className="flex-grow overflow-y-auto">{children}</div>
 						{!isMemberBarHidden && <div className={twMerge(guildSettings.memberBarHidden ? "ml-1" : "ml-[13.2rem]")}>
 							<MemberBar />

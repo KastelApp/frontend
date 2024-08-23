@@ -1,6 +1,8 @@
 import Logger from "@/utils/Logger.ts";
 import handleMessage from "./handleMessage.ts";
 import { opCodes } from "@/utils/Constants.ts";
+import pako from "pako";
+import { encoding } from "@/types/ws.ts";
 
 class Websocket {
     #token: string | null;
@@ -9,7 +11,7 @@ class Websocket {
 
     public VERSION: string = process.env.API_VERSION || "1";
 
-    public ENCODING = "json";
+    public ENCODING: encoding = "zlib";
 
     private ws: WebSocket | null = null;
 
@@ -153,9 +155,20 @@ class Websocket {
      * @param data The data to decompress
      * @returns The decompressed data
      */
-    public decompress(data: unknown): string {
-        // t! At some point we are going to use zstd for compression, for now we just return the data since its a string
-        return data as string;
+    public async decompress(data: unknown): Promise<string | null> {
+        if (typeof data === "string") {
+            return data;
+        }
+
+        if (data instanceof Blob) {
+            const arrayBuffer = await data.arrayBuffer();
+
+            const decompressed = pako.inflate(arrayBuffer, { to: "string" });
+
+            return decompressed;
+        }
+
+        return null
     }
 
     /**
@@ -169,7 +182,9 @@ class Websocket {
             return;
         }
 
-        if (typeof data === "string" || data instanceof ArrayBuffer || data instanceof Blob) {
+        data = this.ENCODING === "json" ? data : pako.deflate(JSON.stringify(data));
+
+        if (typeof data === "string" || data instanceof ArrayBuffer || data instanceof Blob || data instanceof Uint8Array) {
             this.ws.send(data);
 
             return;

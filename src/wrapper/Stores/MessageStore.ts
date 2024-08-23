@@ -80,7 +80,7 @@ export interface MessageStore {
     getMessages(channelId: string): Message[];
     deleteMessage(id: string): Promise<void>;
     createMessage(channelId: string, options: Partial<Message>): Promise<void>;
-    editMessage(messageId: string, options: Partial<Message>): void;
+    editMessage(messageId: string, options: Partial<Message>, noApi?: boolean): void;
     replyToMessage(channelId: string, messageId: string, options: Partial<Message>): void;
     fetchMessages(channelId: string, options?: {
         limit: number;
@@ -212,7 +212,7 @@ export const useMessageStore = create<MessageStore>((set, get) => ({
                     };
                 }>(res?.body)
             ) {
-                if (res.body.errors.message.code === "PhishingDetected") {
+                if (res.body.errors.message?.code === "PhishingDetected") {
                     get().addMessage({
                         id: snowflake.generate(),
                         authorId: fakeUserIds.kiki,
@@ -337,8 +337,7 @@ export const useMessageStore = create<MessageStore>((set, get) => ({
             get().addMessage({
                 id: message.id,
                 authorId: message.author.id,
-                // embeds: message.embeds,
-                embeds: [],
+                embeds: message.embeds,
                 content: message.content,
                 creationDate: new Date(message.creationDate),
                 editedDate: message.editedDate ? new Date(message.editedDate) : null,

@@ -20,6 +20,8 @@ import { User, useUserStore } from "@/wrapper/Stores/UserStore.ts";
 import deepEqual from "fast-deep-equal";
 import TypingDots from "../MessageContainer/TypingDats.tsx";
 import { usePerChannelStore } from "@/wrapper/Stores/ChannelStore.ts";
+import ContextMenuHandler from "@/components/ContextMenuHandler.tsx";
+import { Hammer, Wine } from "lucide-react";
 
 interface Section {
 	name: string; // ? two defaults, "offline" and "online"
@@ -467,7 +469,27 @@ const MemberBar = () => {
 								{section.name} — {section.members.length}
 							</p>
 							{section.members.map((member, index) => (
-								<MemberItem key={index} member={member.member} color={member.color} channelId={channelId} />
+								<ContextMenuHandler key={index} items={[{
+									label: "Profile"
+								}, {
+									label: "Mention",
+								}, {
+									label: "Message",
+									divider: true
+								}, {
+									label: <p className="text-danger">Ban</p>,
+									endContent: <Hammer  className="text-danger" size={18} />
+								}, {
+									label: <p className="text-danger">Kick</p>,
+									endContent: <Wine className="text-danger" size={18} />
+								}, {
+									label: "Copy User ID",
+									onClick: () => {
+										navigator.clipboard.writeText(member.member.user.id)
+									}
+								}]}>
+									<MemberItem key={index} member={member.member} color={member.color} channelId={channelId} />
+								</ContextMenuHandler>
 							))}
 						</div>
 					))}

@@ -8,8 +8,9 @@ interface EmbedFiles {
     url: string;
     height?: number;
     width?: number;
-    type: "image" | "video";
+	type: "Image" | "Video";
     rawUrl: string;
+    thumbHash?: string | null;
 }
 
 interface EmbedFooter {
@@ -37,8 +38,13 @@ interface EmbedThumbnail {
 }
 
 interface EmbedIframeSource {
-    provider: "Youtube";
+    provider: "Youtube" | "Spotify";
     url: string; // ? i.e https://www.youtube.com/embed/cMg8KaMdDYo
+}
+
+interface EmbedProvider {
+    name: string;
+    url: string;
 }
 
 interface Embed {
@@ -46,14 +52,23 @@ interface Embed {
     description?: string;
     url?: string;
     color?: number;
-    type: "Rich" | "Iframe";
+    // ? Rich = Bot made embed
+    // ? Iframe = Special embed which has an iframe (i.e Youtube)
+    // ? Video = Embed with a video (Should not render an embed, just the video)
+    // ? Image = Embed with an image (Should not render an embed, just the image)
+    // ? Site = Embed from scraping a site
+    type: "Rich" | "Iframe" | "Video" | "Image" | "Site";
     files?: EmbedFiles[];
     footer?: EmbedFooter;
     fields?: EmbedField[];
     author?: EmbedAuthor;
     thumbnail?: EmbedThumbnail;
+    // ? PLEASE NOTE: EmbedProvider and iframeSource.provider are NOT the same. iframeSource.provider is used for the type of iframe (i.e Youtube, Spotify) since these may need different handling
+    // ? EmbedProvider is shown at the top (i.e "FxTwitter / FixupX")
     iframeSource?: EmbedIframeSource;
+    provider?: EmbedProvider;
 }
+
 
 const RichEmbed = ({
     embed
@@ -93,7 +108,7 @@ const RichEmbed = ({
     return (
         <div style={{
             borderLeft: `4px solid #${embed.color?.toString(16) ?? "000000"}`
-        }} className="rounded-md inline-block w-auto ">
+        }} className="rounded-md inline-block w-auto">
             <Card shadow="sm" radius="none" className="rounded-md min-w-0 min-h-0 bg-lightAccent dark:bg-darkAccent max-w-[430px]">
                 {(embed.title || embed.author?.name || embed.thumbnail?.url) && (
                     <CardHeader className="p-0 pl-3 pt-3 mr-3">
@@ -115,8 +130,8 @@ const RichEmbed = ({
                         )}
                     </CardHeader>
                 )}
-                <CardBody className="p-0 pl-3 mr-3">
-                    {embed.description && <p className="text-sm text-white max-w-lg whitespace-pre-line overflow-hidden break-words">{embed.description}</p>}
+                <CardBody className="p-0 pl-4 mr-3 pr-2 ">
+                    {embed.description && <p className="text-sm text-white max-w-xl whitespace-pre-line overflow-hidden break-words">{embed.description}</p>}
                     <div className="mt-2">
                         {groupedFields.map((group, groupIndex) => (
                             <div key={groupIndex} className="flex flex-wrap mb-2">
@@ -129,7 +144,11 @@ const RichEmbed = ({
                             </div>
                         ))}
                     </div>
-                    {embed.files && <ImageGrid length={embed.files.length} />}
+                    {embed.files && <ImageGrid images={embed.files.map((file) => ({
+                        url: file.url,
+                        name: file.name,
+                        thumbHash: file.thumbHash
+                    }))} />}
                 </CardBody>
                 {(embed.footer?.text || embed.footer?.timestamp) && (
                     <CardFooter className="mr-3">
@@ -163,5 +182,7 @@ export type {
     EmbedField,
     EmbedAuthor,
     EmbedThumbnail,
-    Embed
+    Embed,
+    EmbedIframeSource,
+    EmbedProvider
 };

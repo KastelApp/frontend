@@ -33,8 +33,7 @@ const messageCreate = async (ws: Websocket, payload: unknown) => {
     useMessageStore.getState().addMessage({
         id: payload.id,
         authorId: payload.author.id,
-        // embeds: message.embeds,
-        embeds: [],
+        embeds: payload.embeds,
         content: payload.content,
         creationDate: new Date(payload.creationDate),
         editedDate: payload.editedDate ? new Date(payload.editedDate) : null,

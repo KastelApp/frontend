@@ -4,7 +4,7 @@ import { Divider } from "@nextui-org/react";
 export interface ContextMenuProps {
     startContent?: React.ReactNode;
     endContent?: React.ReactNode;
-    label: string;
+    label: React.ReactNode;
     subValues?: Omit<ContextMenuProps, "subValues">[];
     divider?: boolean;
     onClick?: () => void;
@@ -30,7 +30,7 @@ const ContextMenuHandler = ({
                     if (!item.subValues || item.subValues.length === 0) {
                         return (
                             <>
-                                <ContextMenuItem key={index} onClick={item.onClick} className="flex">
+                                <ContextMenuItem key={index} onClick={item.onClick} className="flex cursor-pointer">
                                     {item.startContent}
                                     <p>{item.label}</p>
                                     <div className="ml-auto">
@@ -49,9 +49,9 @@ const ContextMenuHandler = ({
                                 <ContextMenuSubContent>
                                     {item.subValues.map((subItem, subIndex) => (
                                         <>
-                                            <ContextMenuItem key={subIndex} onClick={subItem.onClick} className="flex">
+                                            <ContextMenuItem key={subIndex} onClick={subItem.onClick} className="flex cursor-pointer">
                                                 {subItem.startContent}
-                                                <p>{subItem.label}</p>
+                                                {subItem.label}
                                                 <div className="ml-auto">
                                                     {subItem.endContent}
                                                 </div>

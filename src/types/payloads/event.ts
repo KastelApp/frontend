@@ -8,6 +8,7 @@ export interface EventPayload {
 	event?:
 	| "Typing"
 	| "MessageCreate"
+	| "MessageUpdate"
 	| "PresencesUpdate"
 	| "GuildCreate"
 	| "GuildMemberAdd"

@@ -1,11 +1,7 @@
-import { Avatar, Chip, Popover, PopoverContent, PopoverTrigger, Tooltip, useDisclosure } from "@nextui-org/react";
-import UserPopover from "@/components/Popovers/UserPopover.tsx";
+import { Avatar, Chip, Tooltip } from "@nextui-org/react";
 import { memo, useState } from "react";
 import { Pen, Reply, Trash2, Ellipsis } from "lucide-react";
 import { twMerge } from "tailwind-merge";
-import UserModal from "@/components/Modals/UserModal.tsx";
-// import RichEmbed, { Embed } from "./Embeds/RichEmbed.tsx";
-// import IFrameEmbed from "./Embeds/IFrameEmbed.tsx";
 import InviteEmbed from "./Embeds/InviteEmbed.tsx";
 import { MessageStates, Message as MessageType, useMessageStore } from "@/wrapper/Stores/MessageStore.ts";
 import { User, useUserStore } from "@/wrapper/Stores/UserStore.ts";
@@ -23,18 +19,23 @@ import IFrameEmbed from "@/components/Message/Embeds/IFrameEmbed.tsx";
 import MessageMarkDown from "@/components/Message/Markdown/MarkDown.tsx";
 import Constants from "@/utils/Constants.ts";
 import cn from "@/utils/cn.ts";
+import ImageEmbed from "@/components/Message/Embeds/Image.tsx";
+import VideoEmbed from "@/components/Message/Embeds/Video.tsx";
+import PopOverData from "@/components/Popovers/PopoverData.tsx";
+
+export type CustomizedMessage = Omit<MessageType, "invites"> & {
+	invites: (Invite & {
+		guild: Guild;
+	} | null)[];
+	author: {
+		user: User;
+		member: Omit<Member, "roles"> & { roles: Role[]; } | null;
+		roleColor: { color: string | null; id: string; } | null;
+	};
+}
 
 export interface MessageProps {
-	message: Omit<MessageType, "invites"> & {
-		invites: (Invite & {
-			guild: Guild;
-		} | null)[];
-		author: {
-			user: User;
-			member: Omit<Member, "roles"> & { roles: Role[]; } | null;
-			roleColor: { color: string | null; id: string; } | null;
-		};
-	};
+	message: CustomizedMessage;
 	className?: string;
 	disableButtons?: boolean;
 	id?: string;
@@ -68,47 +69,9 @@ const Message = ({
 	jumpToMessage,
 }: MessageProps) => {
 	const { t } = useTranslationStore();
-
-	const PopOverData = ({ children }: { children: React.ReactElement | React.ReactElement[]; }) => {
-		const [isOpen, setIsOpen] = useState(false);
-
-		const { isOpen: isModalOpen, onOpen, onClose } = useDisclosure();
-
-		if (disableButtons) return children as React.ReactElement;
-
-		return (
-			<>
-				<UserModal isOpen={isModalOpen} onClose={onClose} user={message.author.user} />
-				<Popover
-					placement="right"
-					isOpen={isOpen}
-					onOpenChange={setIsOpen}
-					shouldCloseOnInteractOutside={() => {
-						setIsOpen(false);
-						return false;
-					}}
-				>
-					<PopoverTrigger>{children}</PopoverTrigger>
-					<PopoverContent>
-						<UserPopover
-							member={{
-								user: message.author.user,
-								member: message.author.member ?? null
-							}}
-							onClick={() => {
-								onOpen();
-								setIsOpen(false);
-							}}
-						/>
-					</PopoverContent>
-				</Popover>
-			</>
-		);
-	};
-
 	const formattedDate = formatDate(message.creationDate);
 	const phishing = ((message.flags & Constants.messageFlags.Phishing) === Constants.messageFlags.Phishing);
-	const [open, setOpen] = useState(phishing ? false : true);
+	const [open, setOpen] = useState(false);
 
 	return (
 		<>
@@ -122,7 +85,7 @@ const Message = ({
 					</div>
 				</div>
 			)}
-			{open && (
+			{(!phishing || open) && (
 				<div
 					className={twMerge(
 						"group w-full hover:bg-msg-hover mb-2 relative transition-all duration-300 ease-in max-w-full",
@@ -146,7 +109,7 @@ const Message = ({
 									transform: "rotate(180deg) scale(1, -1)",
 								}}
 							/>
-							<PopOverData>
+							<PopOverData user={message.author.user} member={message.author.member} onlyChildren={disableButtons}>
 								<div className="flex items-center cursor-pointer">
 									<Image
 										src={replyMessage.user.avatar ?? useUserStore.getState().getDefaultAvatar(replyMessage.user.id ?? "")}
@@ -176,12 +139,12 @@ const Message = ({
 						</div>
 					)}
 					<div className="flex w-full max-w-full">
-						<PopOverData>
+						<PopOverData user={message.author.user} member={message.author.member} onlyChildren={disableButtons}>
 							<Avatar src={message.author.user.avatar ?? useUserStore.getState().getDefaultAvatar(message.author.user.id ?? "")} alt="User Avatar" className="ml-2 mt-1 min-w-9 max-w-9 max-h-9 min-h-9 rounded-full cursor-pointer" imgProps={{ className: "transition-none" }} />
 						</PopOverData>
 						<div className="relative flex flex-col ml-2 w-full">
 							<div>
-								<PopOverData>
+								<PopOverData user={message.author.user} member={message.author.member} onlyChildren={disableButtons}>
 									<span className="inline cursor-pointer text-white" style={{
 										// ? same as above
 										color: inGuild ?
@@ -210,7 +173,7 @@ const Message = ({
 									)
 								}
 							>
-								<MessageMarkDown>
+								<MessageMarkDown message={message}>
 									{message.content}
 								</MessageMarkDown>
 							</div>
@@ -241,8 +204,23 @@ const Message = ({
 							})}
 							{message.embeds && message.embeds.map((embed, index) => (
 								<div key={index} className="mt-2 inline-block max-w-full overflow-hidden">
-									{embed.type === "Rich" ?
-										<RichEmbed embed={embed} /> : embed.type === "Iframe" ? <IFrameEmbed embed={embed} /> : null}
+									{/* {["Rich", "Site"].includes(embed.type) ?
+										<RichEmbed embed={embed} /> : embed.type === "Iframe" ? <IFrameEmbed embed={embed} /> : null} */}
+									{embed.type === "Image" && (
+										<ImageEmbed embed={embed} />
+									)}
+
+									{embed.type === "Rich" || embed.type === "Site" && (
+										<RichEmbed embed={embed} />
+									)}
+
+									{embed.type === "Iframe" && (
+										<IFrameEmbed embed={embed} />
+									)}
+
+									{embed.type === "Video" && (
+										<VideoEmbed embed={embed} />
+									)}
 								</div>
 							))}
 						</div>

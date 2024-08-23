@@ -188,7 +188,7 @@
 	"statusTypes": {
 		"online": "Online",
 		"idle": "Idle",
-		"dnd": "Do Not Disturb",
+		"dnd": "DND",
 		"offline": "Offline",
 		"invisible": "Invisible"
 	},

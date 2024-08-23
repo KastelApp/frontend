@@ -1,5 +1,4 @@
 import type { AppProps } from "next/app";
-
 import { NextUIProvider } from "@nextui-org/react";
 import { ThemeProvider as NextThemesProvider } from "next-themes";
 import { fontSans, fontMono } from "@/config/fonts";
@@ -11,7 +10,6 @@ import { useTranslationStore } from "@/wrapper/Stores.ts";
 import SEO from "@/components/SEO.tsx";
 import { DefaultSeo } from "next-seo";
 import Init from "@/components/Init.tsx";
-
 import { NextPage } from "next";
 import { useEffect } from "react";
 

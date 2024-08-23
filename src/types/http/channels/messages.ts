@@ -1,10 +1,12 @@
+import type { Embed } from "@/components/Message/Embeds/RichEmbed.tsx";
+
 export interface Message {
 	id: string;
 	author: Author;
 	content: string;
 	creationDate: string;
 	editedDate: string | null;
-	embeds: unknown[];
+	embeds: Embed[];
 	nonce: string | null;
 	replyingTo: MessageReply;
 	attachments: unknown[];

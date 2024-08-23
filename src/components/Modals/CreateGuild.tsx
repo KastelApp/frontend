@@ -88,7 +88,7 @@ const CreateGuild = ({ setSection }: { setSection: (section: "join" | "create" |
 					<div className="flex flex-col items-center">
 						<div className="cursor-pointer hover:scale-95 transition-all duration-300 ease-in-out transform hover:opacity-50">
 							<Badge content="+" color="primary" size="lg">
-								<Avatar src="https://development.kastelapp.com/icon-1.png" size="lg" />
+								<Avatar src="/icon-1.png" size="lg" />
 							</Badge>
 						</div>
 						<p className="text-sm text-gray-500 mt-2">Upload a guild icon</p>

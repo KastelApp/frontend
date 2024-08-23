@@ -1,7 +1,8 @@
 import { Divider } from "@nextui-org/react";
-import { CircleHelp, Inbox, Menu, X } from "lucide-react";
+import { CircleHelp, Inbox as InboxIcon, Menu, X } from "lucide-react";
 import { motion } from "framer-motion";
 import Tooltip from "../Tooltip.tsx";
+import Inbox from "@/components/Popovers/Inbox.tsx";
 
 interface Icon {
 	icon: React.ReactElement | React.ReactElement[];
@@ -41,7 +42,11 @@ const TopNavBar = ({
 
 	const baseIcons: Icon[] = [
 		{
-			icon: <Inbox color="#acaebf" size={22} strokeWidth={3} />,
+			icon: (
+				<Inbox>
+					<InboxIcon color="#acaebf" size={22} strokeWidth={3} />
+				</Inbox>
+			),
 			tooltip: "Inbox",
 		},
 		{

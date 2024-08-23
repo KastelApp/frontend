@@ -1,6 +1,6 @@
 import { X, Pen, CirclePlus, SendHorizontal, SmilePlus } from "lucide-react";
 import SlateEditor from "./SlateEditor.tsx";
-import { Divider, Image } from "@nextui-org/react";
+import { Avatar, Divider, Image } from "@nextui-org/react";
 import TypingDots from "./TypingDats.tsx";
 import { useEffect, useRef, useState } from "react";
 import { twMerge } from "tailwind-merge";
@@ -9,10 +9,12 @@ import { User, useUserStore } from "@/wrapper/Stores/UserStore.ts";
 import { Member, useMemberStore } from "@/wrapper/Stores/Members.ts";
 import { useMessageStore } from "@/wrapper/Stores/MessageStore.ts";
 import { useRoleStore } from "@/wrapper/Stores/RoleStore.ts";
-import { useAPIStore, useSettingsStore, useTranslationStore } from "@/wrapper/Stores.ts";
+import { useAPIStore, useGuildSettingsStore, useSettingsStore, useTranslationStore } from "@/wrapper/Stores.ts";
 import { NavBarLocation } from "@/types/payloads/ready.ts";
 import Tooltip from "../Tooltip.tsx";
 import useTypingIndicator from "@/hooks/useTypingIndicator.ts";
+import hexOpacity from "@/utils/hexOpacity.ts";
+import cn from "@/utils/cn.ts";
 
 const FileComponent = ({ fileName, imageUrl }: { fileName?: string; imageUrl?: string; }) => {
 	return (
@@ -49,9 +51,12 @@ const MessageContainer = ({ placeholder, children, isReadOnly, sendMessage, chan
 }) => {
 	const { t } = useTranslationStore();
 	const { navBarLocation } = useSettingsStore();
+	const { guildSettings } = useGuildSettingsStore();
+
+	const membersBarOpen = guildId ? !guildSettings[guildId].memberBarHidden : false;
 
 	const [files] = useState<{ name: string; url: string; }[]>([]);
-	const [replying, setReplying] = useState<boolean>(false);
+	const [state, setState] = useState<("replying" | "mentioning")[]>([]);
 
 	const { getChannel, updateChannel } = usePerChannelStore();
 	const { getMessage } = useMessageStore();
@@ -168,12 +173,12 @@ const MessageContainer = ({ placeholder, children, isReadOnly, sendMessage, chan
 		setTypingUsers(typingUsers);
 
 		if (!channel.currentStates.includes("replying")) {
-			setReplying(false);
+			setState((prev) => prev.filter((v) => v !== "replying"));
 
 			return;
 		}
 
-		setReplying(true);
+		setState((prev) => [...prev.filter((v) => v !== "replying"), "replying"]);
 
 		const foundReply = getMessage(channel.replyingStateId ?? "");
 
@@ -205,13 +210,52 @@ const MessageContainer = ({ placeholder, children, isReadOnly, sendMessage, chan
 		}
 	}, [channelId, guildId, signal]);
 
+	const [mentionTypes] = useState([{
+		type: "role",
+		name: "test",
+		color: 16753920,
+		id: "123"
+	}, {
+		type: "user",
+		name: "DarkerInk",
+		color: 16753920,
+		id: "456",
+		avatar: "/icon-1.png",
+	}]);
+
 	return (
 		<div className="flex flex-col h-screen overflow-x-hidden" style={{
-			maxHeight: navBarLocation === NavBarLocation.Bottom ? "calc(100vh - 4rem)" : ""
+			maxHeight: navBarLocation === NavBarLocation.Bottom ? "calc(100vh - 8rem)" : "calc(100vh - 4rem)"
 		}}>
 			{children}
-			<div className="mb-12 w-[98%] ml-2">
-				{replying && (
+			<div className={cn("mb-0 w-full ml-2",
+				membersBarOpen ? "max-w-[calc(100vw-32rem)]" : "max-w-[calc(100vw-19rem)]"
+			)}>
+				{mentionTypes.length > 0 && (
+					<div className="ml-1 w-full bg-lightAccent dark:bg-darkAccent rounded-md rounded-b-none flex select-none cursor-pointer flex-col p-2 gap-1">
+						{
+							mentionTypes.map((item) => {
+								const hex = `#${item.color?.toString(16)}`;
+
+								return (
+									<div key={item.id} style={{
+										color: item.color ? hex : ""
+									}} className="hover:bg-darkBackground w-full transition-all duration-150 ease-in active:scale-[99%] flex items-center">
+										{item.type === "role" ? "@" : (
+											<Avatar src={item.avatar} className="w-5 h-5 mr-1" />
+										)}
+										<span>{item.name}</span>
+										<span className="ml-auto text-sm mr-2" style={{
+											color: item.color ? hexOpacity(hex, 0.75) : hexOpacity("#CFDBFF", 0.75)
+										}}>Mention everyone with this role</span>
+									</div>
+								);
+							})
+						}
+
+					</div>
+				)}
+				{state.includes("replying") && (
 					<div className="ml-1 w-full bg-lightAccent dark:bg-darkAccent rounded-md rounded-b-none flex select-none">
 						<div className="p-2">
 							{t("messageContainer.replying")} <span className="font-semibold text-white" style={{
@@ -225,7 +269,8 @@ const MessageContainer = ({ placeholder, children, isReadOnly, sendMessage, chan
 						<div className="flex items-center gap-2 ml-auto mr-2">
 							<Tooltip content="Close Reply">
 								<X size={22} color="#acaebf" className="cursor-pointer" onClick={() => {
-									setReplying(false);
+									setState((prev) => prev.filter((v) => v !== "replying"));
+
 									setReplyingAuthor({
 										member: null,
 										user: null,
@@ -243,10 +288,11 @@ const MessageContainer = ({ placeholder, children, isReadOnly, sendMessage, chan
 						</div>
 					</div>
 				)}
+
 				<div
 					className={twMerge(
 						"w-full ml-1 py-1 px-4 bg-gray-800 rounded-lg max-h-96 overflow-y-auto overflow-x-hidden",
-						replying ? "rounded-t-none" : "",
+						state ? "rounded-t-none" : "",
 					)}
 				>
 					<div className="mb-3 mt-2">
@@ -259,12 +305,12 @@ const MessageContainer = ({ placeholder, children, isReadOnly, sendMessage, chan
 							</div>
 						)}
 						<div className={twMerge("flex", isReadOnly ? "opacity-45 cursor-not-allowed" : "")}>
-							<div className="mr-4">
+							<div className="mr-4 relative cursor-pointer">
 								{/*// todo: File select */}
 								<CirclePlus
 									size={22}
 									color="#acaebf"
-									className={twMerge(isReadOnly ? "" : "cursor-pointer")}
+									className={twMerge(isReadOnly ? "" : "cursor-pointer ")}
 									onClick={() => {
 										if (isReadOnly) return;
 
@@ -272,11 +318,14 @@ const MessageContainer = ({ placeholder, children, isReadOnly, sendMessage, chan
 										// 	...old,
 										// 	{
 										// 		name: "test.png",
-										// 		url: "https://development.kastelapp.com/icon-1.png",
+										// 		url: "/icon-1.png",
 										// 	},
 										// ]);
 									}}
 								/>
+								{!isReadOnly && (
+									<input type="file" title="Files" className="!cursor-pointer absolute inset-0 w-full h-full opacity-0" />
+								)}
 							</div>
 							<SlateEditor
 								sendMessage={(msg) => {
@@ -294,7 +343,7 @@ const MessageContainer = ({ placeholder, children, isReadOnly, sendMessage, chan
 
 									setContent(text);
 									setMsgContent(channelId, text);
-									
+
 									sendUserIsTyping();
 								}}
 							/>

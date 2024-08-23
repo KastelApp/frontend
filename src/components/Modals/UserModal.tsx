@@ -16,6 +16,8 @@ import BaseContextMenu from "../Dropdowns/BaseContextMenu.tsx";
 import { User, useUserStore } from "@/wrapper/Stores/UserStore.ts";
 
 const UserModal = ({ isOpen, onClose, user }: { isOpen: boolean; onClose: () => void; user: User; }) => {
+	const userId = useUserStore((s) => s.getCurrentUser()?.id);
+
 	if (!user) return null;
 
 	return (
@@ -57,31 +59,33 @@ const UserModal = ({ isOpen, onClose, user }: { isOpen: boolean; onClose: () => 
 											<AllBadges privateFlags={user.flags} publicFlags={user.publicFlags} size={20} />
 										</div>
 									</div>
-									<div className="flex items-start justify-start">
-										<Button
-											color="success"
-											className="max-h-8 min-h-8 min-w-36 max-w-36 rounded-md text-charcoal-600"
-											radius="none"
-										>
-											Send Friend Request
-										</Button>
-										<BaseContextMenu
-											inverse
-											values={[
-												{
-													label: "Block",
-													props: {
-														color: "danger",
-														variant: "flat",
-														className: "text-danger",
+									{userId !== user.id && (
+										<div className="flex items-start justify-start">
+											<Button
+												color="success"
+												className="max-h-8 min-h-8 min-w-36 max-w-36 rounded-md text-charcoal-600"
+												radius="none"
+											>
+												Send Friend Request
+											</Button>
+											<BaseContextMenu
+												inverse
+												values={[
+													{
+														label: "Block",
+														props: {
+															color: "danger",
+															variant: "flat",
+															className: "text-danger",
+														},
 													},
-												},
-											]}
-											placement="right"
-										>
-											<EllipsisVertical size={24} className="cursor-pointer mt-1" />
-										</BaseContextMenu>
-									</div>
+												]}
+												placement="right"
+											>
+												<EllipsisVertical size={24} className="cursor-pointer mt-1" />
+											</BaseContextMenu>
+										</div>
+									)}
 								</div>
 								<Divider className="mt-2 mb-4" />
 								<div>

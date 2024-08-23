@@ -10,7 +10,7 @@ const DmChannel = () => {
 		<DmNavBar
 			title={
 				<div className="font-normal flex">
-					<Avatar src="https://development.kastelapp.com/icon-1.png" className="mr-2 h-6 w-6" />
+					<Avatar src="/icon-1.png" className="mr-2 h-6 w-6" />
 					<p className="">{router.query.channelId}</p>
 				</div>
 			}

@@ -3,7 +3,7 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { createTrackedSelector } from "react-tracked";
 import Translation from "@/utils/Translation.ts";
-import { APIStore, ClientStore, GuildSettings, GuildSettingsStore, IsReadyStore, SelectedTabStore, SettingsStore, StoredSettingsStore, TokenStore, TranslationStore, TrustedDomainsStore } from "./Stores.types.ts";
+import { APIStore, ClientStore, GuildSettings, GuildSettingsStore, IsReadyStore, SelectedTabStore, SettingsStore, StoredSettingsStore, TokenStore, TranslationStore } from "./Stores.types.ts";
 import API from "./API.ts";
 import Client from "./Client.ts";
 
@@ -131,29 +131,3 @@ export const useClientStore = create<ClientStore>((set) => ({
 	setClient: (client: Client) => set({ client })
 }));
 
-export const useTrustedDomainStore = create(
-	persist<TrustedDomainsStore>(
-		(set, get) => ({
-			trustedDomains: [],
-			setTrustedDomains: (trustedDomains: string[]) => set({ trustedDomains }),
-			isTrusted: (url: string) => {
-				// ? we accept https://domain.com, http://domain.com, domain.com
-				const domain = url.replace(/https?:\/\//, "").replace(/\/.*/, "");
-
-				if (domain === "localhost") return true;
-
-				return get().trustedDomains.includes(domain);
-			},
-			addTrustedDomain: (url: string) => {
-				const domain = url.replace(/https?:\/\//, "").replace(/\/.*/, "");
-
-				set((state) => ({
-					trustedDomains: [...state.trustedDomains, domain],
-				}));
-			}
-		}),
-		{
-			name: "trusted-domains",
-		},
-	)
-);

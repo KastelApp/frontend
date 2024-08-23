@@ -11,6 +11,17 @@ interface DraggableProps<T> {
      * Runs when the items are dropped, returns the new items array
      */
     onDrop: (items: T[], prev: T[]) => void;
+
+    /**
+     * Runs when the user starts dragging an item
+     */
+    onDrag?: (item: T, items: T[]) => void;
+
+    /**
+     * Runs when the user stops dragging but didn't drop the item anywhere (also gets called when onDrop gets called)
+     */
+    onDragStop?: (items: T[]) => void;
+
     /**
      * Orientation of the draggables i.e vertical or horizontal
      */
@@ -46,7 +57,9 @@ const Draggables = <T,>({
     noDropAboveIndexes = [],
     noDropBelowIndexes = [],
     className,
-    disableGhostElement
+    disableGhostElement,
+    onDrag,
+    onDragStop
 }: DraggableProps<T>) => {
     const [draggingIndex, setDraggingIndex] = useState<number | null>(null);
     const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
@@ -61,6 +74,8 @@ const Draggables = <T,>({
         if (!disabledIndexes.includes(index)) {
             setDraggingIndex(index);
         }
+
+        if (onDrag) onDrag(items[index], items)
     };
 
     const handleDragOver = (e: React.DragEvent<HTMLDivElement>, index: number) => {
@@ -106,6 +121,8 @@ const Draggables = <T,>({
         setDraggingIndex(null);
         setDragOverIndex(null);
         setDragOverPosition(null);
+
+        if (onDragStop) onDragStop(items);
     };
 
     const handleGhostDragOver = (e: React.DragEvent<HTMLDivElement>) => {

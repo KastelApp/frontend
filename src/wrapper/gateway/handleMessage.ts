@@ -14,7 +14,7 @@ import { useRoleStore } from "../Stores/RoleStore.ts";
 import { useSettingsStore } from "@/wrapper/Stores.ts";
 
 const handleMessage = async (ws: Websocket, data: unknown) => {
-    const decompressed = safeParse<EventPayload>(ws.decompress(data));
+    const decompressed = safeParse<EventPayload>(await ws.decompress(data));
 
     if (!decompressed) {
         Logger.warn("Failed to decompress message", "Gateway | HandleMessage");
@@ -22,6 +22,12 @@ const handleMessage = async (ws: Websocket, data: unknown) => {
         console.log(data);
 
         return;
+    }
+
+    if (process.env.NODE_ENV === "development") {
+        Logger.info("Received Payload", "Gateway | HandleMessage");
+
+        console.log(typeof decompressed === "string" ? JSON.parse(decompressed) : decompressed);
     }
 
     if (decompressed.seq && decompressed.seq > ws.sequence) ws.sequence = decompressed.seq;

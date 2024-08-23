@@ -9,6 +9,9 @@ import { Relationship } from "@/types/http/user/relationships.ts";
 import { useUserStore } from "@/wrapper/Stores/UserStore.ts";
 import { usePerChannelStore } from "@/wrapper/Stores/ChannelStore.ts";
 import { Button } from "@nextui-org/react";
+import ModalQueue from "@/components/Modals/ModalQueue.tsx";
+import { modalStore } from "@/wrapper/Stores/GlobalModalStore.ts";
+import { useTrustedDomainStore } from "@/wrapper/Stores/TrustedDomainStore.ts";
 
 const Init = ({
     children,
@@ -46,6 +49,15 @@ const Init = ({
         // ? We have a few methods of detecting if the user is on a mobile device
         // ? First is if the user agent is a mobile device
         // ? Second is if the screen width is less than 768
+
+        globalThis.forceReady = () => setIsReady(true);
+
+        globalThis.addModal = (id: string, title: string) => {
+            modalStore.getState().createModal({
+                id,
+                title
+            })
+        }
 
         if (navigator.userAgent.includes("Android") || navigator.userAgent.includes("iPhone")) {
             setIsMobile(true);
@@ -120,6 +132,9 @@ const Init = ({
                 url: "/users/@me/relationships?includeUser=true"
             });
 
+            // ? continues in the background (since its a HUGE payload)
+            useTrustedDomainStore.getState().fetchPhishingDomains();
+
             // ? If it fails we just set is ready to true and log out the failure
             if (!relationships || relationships.status !== 200) {
                 Logger.error("Failed to fetch relationships", "Init | ready event");
@@ -153,7 +168,7 @@ const Init = ({
         client.on("close", () => {
             setIsReady(false);
 
-            console.log("close?")
+            console.log("close?");
 
             client.isConnected = false;
         });
@@ -172,6 +187,7 @@ const Init = ({
                     {shouldHaveLayout ? <AppLayout>{children}</AppLayout> : children}
                 </>
             }
+            <ModalQueue />
         </>
     );
 };

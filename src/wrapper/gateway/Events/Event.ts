@@ -3,6 +3,7 @@ import { EventPayload } from "@/types/payloads/event.ts";
 import Logger from "@/utils/Logger.ts";
 import messageCreate from "@/wrapper/gateway/Events/messageCreate.ts";
 import messageDelete from "@/wrapper/gateway/Events/messageDelete.ts";
+import messageUpdate from "@/wrapper/gateway/Events/messageUpdate.ts";
 import typing from "@/wrapper/gateway/Events/typing.ts";
 
 const isEventPayload = (data: unknown): data is EventPayload => {
@@ -39,6 +40,12 @@ const event = (ws: Websocket, data: unknown) => {
 
         case "MessageDelete": {
             messageDelete(ws, data.data);
+
+            break;
+        }
+
+        case "MessageUpdate": {
+            messageUpdate(ws, data.data);
 
             break;
         }

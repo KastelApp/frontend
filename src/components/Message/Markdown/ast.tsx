@@ -1,3 +1,4 @@
+import { channelMention } from "@/components/Message/Markdown/ChannelMention.tsx";
 import { userMention } from "@/components/Message/Markdown/UserMention.tsx";
 import { defaultRules, inlineRegex } from "simple-markdown";
 
@@ -76,7 +77,7 @@ export const customRules = {
       }),
     },
     userMention,
-    // channelMention,
+    channelMention,
     // roleMention,
     // defaultEmoji: {
     //   order: defaultRules.text.order,

@@ -12,7 +12,7 @@ import { MessageStates, type Message as MessageType, useMessageStore } from "@/w
 import SkellyMessage from "../Message/SkellyMessage.tsx";
 import diff from "@/utils/diff.ts";
 import ChannelIcon from "../ChannelIcon.tsx";
-import { channelTypes, messageFlags } from "@/utils/Constants.ts";
+import { channelTypes } from "@/utils/Constants.ts";
 import fastDeepEqual from "fast-deep-equal";
 import BiDirectionalInfiniteScroller from "@/components/BiDirectionalInfiniteScroller.tsx";
 import { useInviteStore } from "@/wrapper/Stores/InviteStore.ts";
@@ -171,6 +171,8 @@ const TextBasedChannel = () => {
 
 			return;
 		}
+
+		console.log(messageCache)
 
 		setFetchedMessages(messageCache.toSorted((a, b) => a.creationDate.getTime() - b.creationDate.getTime()));
 	};
@@ -395,148 +397,6 @@ const TextBasedChannel = () => {
 					block: "nearest",
 					inline: "start"
 				}), 50);
-
-				if (content === "phishing" && process.env.NODE_ENV === "development") {
-					useMessageStore.getState().addMessage({
-						embeds: [],
-						allowedMentions: 0,
-						attachments: [],
-						authorId: "102652169335591636",
-						channelId,
-						content: "This is a phishing message",
-						creationDate: new Date(),
-						deletable: true,
-						discordInvites: [],
-						editedDate: null,
-						flags: messageFlags.Normal | messageFlags.Phishing,
-						id: "123" + Date.now(),
-						invites: [],
-						mentions: {
-							channels: [],
-							roles: [],
-							users: []
-						},
-						nonce: null,
-						pinned: false,
-						replyingTo: null,
-						state: MessageStates.Sent,
-					})
-				}
-
-				if (content === "embed" && process.env.NODE_ENV === "development") {
-					useMessageStore.getState().addMessage({
-						embeds: [{
-							"title": "GitHub - KastelApp/frontend: A Frontend for Kastel.",
-							"description": "A Frontend for Kastel. Contribute to KastelApp/frontend development by creating an account on GitHub.",
-							"color": 1975079,
-							"url": "https://github.com/KastelApp/frontend",
-							"author": {
-								"name": "GitHub",
-								// "iconUrl": "https://opengraph.githubassets.com/7e0878100669d3723ea934e23f9f95dc09995af79d4d100569dcdbf93b2a8bed/KastelApp/frontend",
-								"url": "https://github.com/KastelApp/frontend"
-							},
-							"type": "Rich",
-							files: [{
-								url: "https://opengraph.githubassets.com/7e0878100669d3723ea934e23f9f95dc09995af79d4d100569dcdbf93b2a8bed/KastelApp/frontend",
-								rawUrl: "https://opengraph.githubassets.com/7e0878100669d3723ea934e23f9f95dc09995af79d4d100569dcdbf93b2a8bed/KastelApp/frontend",
-								type: "image"
-							}]
-						}, {
-							"title": "GitHub - KastelApp/frontend: A Frontend for Kastel.",
-							"description": "A Frontend for Kastel. Contribute to KastelApp/frontend development by creating an account on GitHub.",
-							"color": 1975079,
-							"url": "https://github.com/KastelApp/frontend",
-							"author": {
-								"name": "GitHub",
-								// "iconUrl": "https://opengraph.githubassets.com/7e0878100669d3723ea934e23f9f95dc09995af79d4d100569dcdbf93b2a8bed/KastelApp/frontend",
-								"url": "https://github.com/KastelApp/frontend"
-							},
-							"type": "Rich",
-							files: [{
-								url: "https://opengraph.githubassets.com/7e0878100669d3723ea934e23f9f95dc09995af79d4d100569dcdbf93b2a8bed/KastelApp/frontend",
-								rawUrl: "https://opengraph.githubassets.com/7e0878100669d3723ea934e23f9f95dc09995af79d4d100569dcdbf93b2a8bed/KastelApp/frontend",
-								type: "image"
-							}, {
-								url: "https://opengraph.githubassets.com/7e0878100669d3723ea934e23f9f95dc09995af79d4d100569dcdbf93b2a8bed/KastelApp/frontend",
-								rawUrl: "https://opengraph.githubassets.com/7e0878100669d3723ea934e23f9f95dc09995af79d4d100569dcdbf93b2a8bed/KastelApp/frontend",
-								type: "image"
-							}]
-						}, {
-							"title": "GitHub - KastelApp/frontend: A Frontend for Kastel.",
-							"description": "A Frontend for Kastel. Contribute to KastelApp/frontend development by creating an account on GitHub.",
-							"color": 1975079,
-							"url": "https://github.com/KastelApp/frontend",
-							"author": {
-								"name": "GitHub",
-								// "iconUrl": "https://opengraph.githubassets.com/7e0878100669d3723ea934e23f9f95dc09995af79d4d100569dcdbf93b2a8bed/KastelApp/frontend",
-								"url": "https://github.com/KastelApp/frontend"
-							},
-							"type": "Rich",
-							files: [{
-								url: "https://opengraph.githubassets.com/7e0878100669d3723ea934e23f9f95dc09995af79d4d100569dcdbf93b2a8bed/KastelApp/frontend",
-								rawUrl: "https://opengraph.githubassets.com/7e0878100669d3723ea934e23f9f95dc09995af79d4d100569dcdbf93b2a8bed/KastelApp/frontend",
-								type: "image"
-							}, {
-								url: "https://opengraph.githubassets.com/7e0878100669d3723ea934e23f9f95dc09995af79d4d100569dcdbf93b2a8bed/KastelApp/frontend",
-								rawUrl: "https://opengraph.githubassets.com/7e0878100669d3723ea934e23f9f95dc09995af79d4d100569dcdbf93b2a8bed/KastelApp/frontend",
-								type: "image"
-							}, {
-								url: "https://opengraph.githubassets.com/7e0878100669d3723ea934e23f9f95dc09995af79d4d100569dcdbf93b2a8bed/KastelApp/frontend",
-								rawUrl: "https://opengraph.githubassets.com/7e0878100669d3723ea934e23f9f95dc09995af79d4d100569dcdbf93b2a8bed/KastelApp/frontend",
-								type: "image"
-							}]
-						}, {
-							"title": "GitHub - KastelApp/frontend: A Frontend for Kastel.",
-							"description": "A Frontend for Kastel. Contribute to KastelApp/frontend development by creating an account on GitHub.",
-							"color": 1975079,
-							"url": "https://github.com/KastelApp/frontend",
-							"author": {
-								"name": "GitHub",
-								// "iconUrl": "https://opengraph.githubassets.com/7e0878100669d3723ea934e23f9f95dc09995af79d4d100569dcdbf93b2a8bed/KastelApp/frontend",
-								"url": "https://github.com/KastelApp/frontend"
-							},
-							"type": "Rich",
-							files: [{
-								url: "https://opengraph.githubassets.com/7e0878100669d3723ea934e23f9f95dc09995af79d4d100569dcdbf93b2a8bed/KastelApp/frontend",
-								rawUrl: "https://opengraph.githubassets.com/7e0878100669d3723ea934e23f9f95dc09995af79d4d100569dcdbf93b2a8bed/KastelApp/frontend",
-								type: "image"
-							}, {
-								url: "https://opengraph.githubassets.com/7e0878100669d3723ea934e23f9f95dc09995af79d4d100569dcdbf93b2a8bed/KastelApp/frontend",
-								rawUrl: "https://opengraph.githubassets.com/7e0878100669d3723ea934e23f9f95dc09995af79d4d100569dcdbf93b2a8bed/KastelApp/frontend",
-								type: "image"
-							}, {
-								url: "https://opengraph.githubassets.com/7e0878100669d3723ea934e23f9f95dc09995af79d4d100569dcdbf93b2a8bed/KastelApp/frontend",
-								rawUrl: "https://opengraph.githubassets.com/7e0878100669d3723ea934e23f9f95dc09995af79d4d100569dcdbf93b2a8bed/KastelApp/frontend",
-								type: "image"
-							}, {
-								url: "https://opengraph.githubassets.com/7e0878100669d3723ea934e23f9f95dc09995af79d4d100569dcdbf93b2a8bed/KastelApp/frontend",
-								rawUrl: "https://opengraph.githubassets.com/7e0878100669d3723ea934e23f9f95dc09995af79d4d100569dcdbf93b2a8bed/KastelApp/frontend",
-								type: "image"
-							}]
-						}],
-						authorId: "102652169335591636",
-						creationDate: new Date(),
-						editedDate: null,
-						nonce: null,
-						replyingTo: null,
-						attachments: [],
-						flags: messageFlags.Normal,
-						allowedMentions: 0,
-						mentions: {
-							channels: [],
-							roles: [],
-							users: []
-						},
-						pinned: false,
-						deletable: true,
-						invites: [],
-						discordInvites: [],
-						channelId,
-						state: MessageStates.Sent,
-						content: "https://github.com/KastelApp/frontend",
-						id: "123" + Date.now()
-					});
-				}
 			}}
 			channelId={channelId}
 			guildId={guildId}

@@ -8,6 +8,8 @@ import UnOrderedList from "@/components/Message/Markdown/UnOrderedList.tsx";
 import ListItem from "@/components/Message/Markdown/ListItem.tsx";
 import Codeblock from "@/components/Message/Markdown/Codeblock.tsx";
 import { Code } from "@nextui-org/react";
+import type { CustomizedMessage } from "@/components/Message/Message.tsx";
+import Constants from "@/utils/Constants.ts";
 
 const parseFor = (rules: SimpleMarkdown.ReactRules, source: string) => {
     const parser = SimpleMarkdown.parserFor(rules);
@@ -16,7 +18,7 @@ const parseFor = (rules: SimpleMarkdown.ReactRules, source: string) => {
     return renderer(parser(source), parser);
 }
 
-const createRules = (rule: SimpleMarkdown.ReactRules) => {
+const createRules = (rule: SimpleMarkdown.ReactRules, message?: CustomizedMessage) => {
     const {
         paragraph,
         // url,
@@ -57,6 +59,7 @@ const createRules = (rule: SimpleMarkdown.ReactRules) => {
                     target="_blank"
                     rel="noreferrer"
                     key={state.key}
+                    phishingMessage={message && ((message.flags & Constants.messageFlags.Phishing) === Constants.messageFlags.Phishing)}
                 >
                     {recurseOutput(node.content, state)}
                 </Link>
@@ -107,8 +110,8 @@ const createRules = (rule: SimpleMarkdown.ReactRules) => {
     }
 }
 
-const MessageMarkDown = ({ children }: { children: string; }) => {
-    const renderer = parseFor(createRules(customRules as never) as never, children);
+const MessageMarkDown = ({ children, message }: { children: string; message?: CustomizedMessage }) => {
+    const renderer = parseFor(createRules(customRules as never, message) as never, children);
 
     return <>{renderer}</>;
 }

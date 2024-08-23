@@ -1,4 +1,4 @@
-export type encoding = "json";
+export type encoding = "json" | "zlib";
 
 export type status =
 	| "Connected"

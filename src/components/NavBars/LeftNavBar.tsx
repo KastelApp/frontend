@@ -74,12 +74,12 @@ const LeftNavBar = () => {
 	return (
 		<>
 			<div className={twMerge("block", isSideBarOpen ? "" : "hidden")}>
-				<div className="fixed left-0 top-0 h-full w-16 flex flex-col shadow-lg z-[5] overflow-y-auto overflow-x-hidden scrollbar-hide">
+				<div className="fixed left-0 top-0 h-full w-16 flex flex-col shadow-lg z-[5] overflow-y-auto overflow-x-hidden">
 					<NavBarIcon
 						icon={
 							<div className="min-w-9 min-h-9 max-h-9 max-w-9">
 								<Avatar
-									src="https://development.kastelapp.com/icon-1.png"
+									src="/icon-1.png"
 									className="min-w-9 min-h-9 max-h-9 max-w-9 hover:scale-95 transition-all duration-300 ease-in-out transform"
 									imgProps={{ className: "transition-none" }}
 								/>

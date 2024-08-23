@@ -40,7 +40,7 @@ const InviteEmbed = ({
             <div className="flex items-center p-3">
                 {!skeleton && <Avatar
                     name={invite?.guild.name ?? "Invalid Invite"}
-                    src={"https://development.kastelapp.com/icon-1.png"}
+                    src={"/icon-1.png"}
                     className="min-w-10 max-w-10 max-h-10 min-h-10 rounded-xl"
                     imgProps={{ className: "transition-none" }}
                 />}
