@@ -229,7 +229,10 @@ const MessageContainer = ({ placeholder, children, isReadOnly, sendMessage, chan
 		}}>
 			{children}
 			<div className={cn("mb-0 w-full ml-2",
-				membersBarOpen ? "max-w-[calc(100vw-32rem)]" : "max-w-[calc(100vw-19rem)]"
+				// membersBarOpen ? "max-w-[calc(100vw-28rem)]" : "max-w-[calc(100vw-19rem)]"
+				membersBarOpen ?
+					navBarLocation === NavBarLocation.Bottom ? "max-w-[calc(100vw-28rem)]" : "max-w-[calc(100vw-32rem)]"
+					: navBarLocation === NavBarLocation.Bottom ? "max-w-[calc(100vw-15rem)]" : "max-w-[calc(100vw-19rem)]"
 			)}>
 				{mentionTypes.length > 0 && (
 					<div className="ml-1 w-full bg-lightAccent dark:bg-darkAccent rounded-md rounded-b-none flex select-none cursor-pointer flex-col p-2 gap-1">
