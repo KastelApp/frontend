@@ -53,7 +53,7 @@ const MessageContainer = ({ placeholder, children, isReadOnly, sendMessage, chan
 	const { navBarLocation } = useSettingsStore();
 	const { guildSettings } = useGuildSettingsStore();
 
-	const membersBarOpen = guildId ? !guildSettings[guildId].memberBarHidden : false;
+	const membersBarOpen = guildId ? !guildSettings[guildId]?.memberBarHidden : false;
 
 	const [files] = useState<{ name: string; url: string; }[]>([]);
 	const [state, setState] = useState<("replying" | "mentioning")[]>([]);

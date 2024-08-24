@@ -204,13 +204,11 @@ const Message = ({
 							})}
 							{message.embeds && message.embeds.map((embed, index) => (
 								<div key={index} className="mt-2 inline-block max-w-full overflow-hidden">
-									{/* {["Rich", "Site"].includes(embed.type) ?
-										<RichEmbed embed={embed} /> : embed.type === "Iframe" ? <IFrameEmbed embed={embed} /> : null} */}
 									{embed.type === "Image" && (
 										<ImageEmbed embed={embed} />
 									)}
 
-									{embed.type === "Rich" || embed.type === "Site" && (
+									{(embed.type === "Rich" || embed.type === "Site") && (
 										<RichEmbed embed={embed} />
 									)}
 

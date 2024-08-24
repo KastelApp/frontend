@@ -75,7 +75,6 @@ const RichEmbed = ({
 }: {
     embed: Embed;
 }) => {
-
     const HyperLinkPossibly = ({ url, children, noColor }: { url?: string; children: React.ReactNode; noColor?: boolean; }) => {
         return url ? (
             <Link href={url} passHref className={!noColor ? "text-blue-500" : ""} target="_blank">
