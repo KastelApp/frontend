@@ -62,7 +62,7 @@ const Footer = () => {
 							<ul className="text-gray-400 font-medium">
 								<li className="mb-1">
 									<Link href="https://github.com/KastelApp" target="_blank" className="hover:text-blue-500 hover:underline" as={NextLink}>
-										Github
+										GitHub
 									</Link>
 								</li>
 								<li className="mb-1">
