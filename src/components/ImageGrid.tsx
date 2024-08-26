@@ -7,7 +7,7 @@ interface Image {
     name?: string;
 }
 
-const ImageGrid = ({ images, onClick }: { images: Image[]; onClick?: () => void; }) => {
+const ImageGrid = ({ images, onClick, style }: { images: Image[]; onClick?: () => void; style?: React.CSSProperties }) => {
     return (
         <div className="grid gap-2 mb-2">
             {images.length === 1 && (
@@ -18,6 +18,7 @@ const ImageGrid = ({ images, onClick }: { images: Image[]; onClick?: () => void;
                         thumbhash={images[0].thumbHash ?? undefined}
                         className={cn("rounded-none max-w-96 max-h-56", onClick && "cursor-pointer")}
                         onClick={onClick}
+                        style={style} // ? only takes affect on the first one for now
                     />
                 </div>
             )}

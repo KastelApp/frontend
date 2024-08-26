@@ -1,6 +1,5 @@
 import { Embed } from "@/components/Message/Embeds/RichEmbed.tsx";
 import PopUpImage from "@/components/PopUpImage.tsx";
-import { UnLazyImage } from "@unlazy/react"
 
 const ImageEmbed = ({
     embed
@@ -18,7 +17,7 @@ const ImageEmbed = ({
 
     return (
         <div className="rounded-md inline-block w-auto">
-            <PopUpImage url={fixedUrl.toString()} alt={firstFile.name ?? "Image"} thumbhash={firstFile.thumbHash ?? undefined} style={{
+            <PopUpImage url={fixedUrl.toString()} alt={firstFile.name ?? "Image"} thumbHash={firstFile.thumbHash ?? undefined} style={{
                 minWidth: "400px",
                 minHeight: "215px",
                 maxWidth: "400px",

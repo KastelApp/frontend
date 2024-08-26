@@ -31,14 +31,14 @@ const App = ({ Component, pageProps }: AppPropsWithLayout) => {
 	useEffect(() => {
 		window.addEventListener("contextmenu", (e) => {
 			e.preventDefault();
-		})
+		});
 
 		return () => {
 			window.removeEventListener("contextmenu", (e) => {
 				e.preventDefault();
-			})
-		}
-	}, [])
+			});
+		};
+	}, []);
 
 	if (!_hasHydrated) return null;
 

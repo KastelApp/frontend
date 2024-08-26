@@ -22,12 +22,18 @@
 				"back": "Go Back"
 			}
 		},
-		"internalServerError": "You caught a rare error, please try again later."
+		"internalServerError": "You caught a rare error, please try again later.",
+		"title": "Uh oh, something went wrong!",
+		"dismiss": "Try Again?"
 	},
 	"common": {
 		"cancel": "Cancel",
 		"save": "Save",
-		"delete": "Delete"
+		"delete": "Delete",
+		"dismiss": {
+			"boring": "Dismiss",
+			"exciting": "Got it!"
+		}
 	},
 	"home": {
 		"title": "Ditch those platforms who just don't care!",
@@ -74,7 +80,13 @@
 			"error": "Please enter a valid password."
 		},
 		"register": "Don't have an account? Register",
-		"forgot": "Forgot password?",
+		"forgot": {
+			"button": "Forgot password?",
+			"modal": {
+				"title": "Email sent!",
+				"message": "If the email you entered is associated with an account, you will receive an email with instructions on how to reset your password."
+			}
+		},
 		"button": "Login"
 	},
 	"register": {
@@ -106,6 +118,25 @@
 		},
 		"button": "Register",
 		"login": "Got an account? Login"
+	},
+	"reset": {
+		"title": "Reset your password",
+		"subtitle": "Please enter your new password.",
+		"button": "Reset Password",
+		"remembered": "Don't mind me, I remembered my password!",
+		"error": "Something went wrong, please try again later.",
+		"newPassword": {
+			"placeholder": "Enter your new password",
+			"label": "New Password",
+			"description": "The new password you want to use",
+			"error": "Please enter a valid password."
+		},
+		"confirm": {
+			"placeholder": "Confirm your password",
+			"label": "Confirm Password",
+			"description": "Please confirm your password",
+			"error": "Passwords do not match."
+		}
 	},
 	"tags": {
 		"system": "System",

@@ -7,7 +7,7 @@ import { X } from "lucide-react";
 
 const UserPopover = ({ member, onClick }: {
 	member: {
-		member: Omit<Member, "roles"> & { roles: Role[] } | null;
+		member: Omit<Member, "roles"> & { roles: Role[]; } | null;
 		user: User;
 	}; onClick?: () => void;
 }) => {
@@ -73,18 +73,18 @@ const UserPopover = ({ member, onClick }: {
 										<span className="text-white font-bold">Roles</span>
 										<div className="flex flex-wrap select-none">
 											{member.member.roles.map((role) => (
-										<div
-											className="flex items-center flex-wrap bg-lightAccent dark:bg-darkAccent border-gray-400 border rounded-md px-2 mt-2 mr-1 group"
-											key={role.id}
-										>
-											<span className="flex items-center box-border rounded-full border-background w-3 h-3 min-w-3 min-h-3 mr-1" style={{
-												backgroundColor: role.color ? `#${role.color.toString(16).padStart(6, "0")}` : "gray",
-											}}>
-												<X size={14} className="hidden group-hover:block" strokeWidth={3} color="white" />
-											</span>
-											<span className="text-white text-xs">{role.name}</span>
-										</div>
-									))}
+												<div
+													className="flex items-center flex-wrap bg-lightAccent dark:bg-darkAccent border-gray-400 border rounded-md px-2 mt-2 mr-1 group"
+													key={role.id}
+												>
+													<span className="flex items-center box-border rounded-full border-background w-3 h-3 min-w-3 min-h-3 mr-1" style={{
+														backgroundColor: role.color ? `#${role.color.toString(16).padStart(6, "0")}` : "gray",
+													}}>
+														<X size={14} className="hidden group-hover:block" strokeWidth={3} color="white" />
+													</span>
+													<span className="text-white text-xs">{role.name}</span>
+												</div>
+											))}
 										</div>
 									</div>
 								)}

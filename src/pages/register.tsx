@@ -175,7 +175,7 @@ const Register = () => {
 		setTimeout(() => {
 			router.push("/app");
 		}, 1000);
-	}
+	};
 
 	return (
 		<>

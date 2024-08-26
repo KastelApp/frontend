@@ -67,7 +67,7 @@ const UserOptions = ({ children, type = "context", orientation = "vertical" }: {
 
 	const handleStatus = (status: "Online" | "Idle" | "DND" | "Invisible") => {
 		setStatus(status);
-		setTimeout(() => setStatusOpen(true), 25)
+		setTimeout(() => setStatusOpen(true), 25);
 
 		// todo: handle other logic
 	};
@@ -108,13 +108,13 @@ const UserOptions = ({ children, type = "context", orientation = "vertical" }: {
 					disabled: false,
 				}
 			],
-		}
+		};
 
 		if (isStaff(gotUser?.id ?? "")) {
 			setSections((prev) => ([
 				...prev,
 				developerSections
-			]))
+			]));
 		}
 
 		useUserStore.subscribe((state) => {
@@ -126,10 +126,10 @@ const UserOptions = ({ children, type = "context", orientation = "vertical" }: {
 				setSections((prev) => ([
 					...prev,
 					developerSections
-				]))
+				]));
 			}
-		})
-	}, [])
+		});
+	}, []);
 
 	return (
 		<>
@@ -142,7 +142,7 @@ const UserOptions = ({ children, type = "context", orientation = "vertical" }: {
 				initialSection={"overview"}
 			/>
 			<div
-			// ? yeah yeah, it add's useless code but I do not care
+				// ? yeah yeah, it add's useless code but I do not care
 				onContextMenu={(e) => {
 					if (type !== "context") return;
 
@@ -197,7 +197,7 @@ const UserOptions = ({ children, type = "context", orientation = "vertical" }: {
 									expanded: { height: "auto", opacity: 1 },
 								}}
 								transition={{ duration: 0.3, delay: 0.05 }}
-								
+
 							>
 								<Chip
 									onClick={() => handleStatus("Online")}

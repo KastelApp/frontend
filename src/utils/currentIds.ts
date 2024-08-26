@@ -6,7 +6,7 @@ const getCurrentGuildId = () => {
     if (!match) return null;
 
     return match[1];
-}
+};
 
 const getCurrentChannelId = () => {
     if (typeof window === "undefined") return null;
@@ -16,6 +16,6 @@ const getCurrentChannelId = () => {
     if (!match) return null;
 
     return match[1];
-}
+};
 
 export { getCurrentGuildId, getCurrentChannelId };

@@ -10,6 +10,6 @@ const hexOpacity = (hex: string, opacity: number) => {
     const b = parseInt(hex.slice(5, 7), 16);
 
     return `rgba(${r}, ${g}, ${b}, ${opacity})`;
-}
+};
 
 export default hexOpacity;

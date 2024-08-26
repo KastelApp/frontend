@@ -45,7 +45,7 @@ const useStateHistory = <T = unknown>(
 	const clearHistory = () => {
 		history.current = [state];
 		historyIndex.current = 0;
-	}
+	};
 
 	return [state, set, prevState, undo, redo, clearHistory];
 };

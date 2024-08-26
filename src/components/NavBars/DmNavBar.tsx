@@ -1,7 +1,7 @@
 import { NavBarLocation } from "@/types/payloads/ready.ts";
 import { useSelectedTab, useSettingsStore } from "@/wrapper/Stores.ts";
 import { Avatar, Badge } from "@nextui-org/react";
-import {  Home, UserRound, X } from "lucide-react";
+import { Home, UserRound, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { twMerge } from "tailwind-merge";
 import HomeContent from "./DmContent/Home.tsx";

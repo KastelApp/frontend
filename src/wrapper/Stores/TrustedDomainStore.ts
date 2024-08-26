@@ -12,7 +12,7 @@ export interface TrustedDomainsStore {
     setTrustedDomains: (trustedDomains: string[]) => void;
     isTrusted: (url: string) => boolean;
     addTrustedDomain: (url: string) => void;
-    isPhishingDomain: (url: string) => boolean
+    isPhishingDomain: (url: string) => boolean;
 }
 
 export const useTrustedDomainStore = create(
@@ -39,13 +39,13 @@ export const useTrustedDomainStore = create(
 
                 set({
                     hashedPhishingDomains: fetched.body
-                })
+                });
             },
             isPhishingDomain: (url) => {
                 const domain = url.replace(/https?:\/\//, "").replace(/\/.*/, "");
 
                 // todo: better way of doing this (its temp)
-                return get().hashedPhishingDomains.includes(crypto.createHash("sha512").update(domain).digest("hex"))
+                return get().hashedPhishingDomains.includes(crypto.createHash("sha512").update(domain).digest("hex"));
             },
             setTrustedDomains: (trustedDomains: string[]) => set({ trustedDomains }),
             isTrusted: (url: string) => {

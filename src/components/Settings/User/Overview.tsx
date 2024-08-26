@@ -196,40 +196,40 @@ const OverView = () => {
 							<div className="flex items-center bg-charcoal-700 rounded-lg">
 								<div className="mt-2 w-full">
 									<Message
-									message={{
-										content: "I'm a super cool person!",
-										authorId: getCurrentUser()!.id,
-										state: MessageStates.Sent,
-										mentions: {
-											channels: [],
-											roles: [],
-											users: []
-										},
-										creationDate: new Date(),
-										allowedMentions: 0,
-										attachments: [],
-										channelId: "",
-										deletable: false,
-										editedDate: null,
-										embeds: [],
-										flags: 0,
-										id: "",
-										invites: [],
-										pinned: false,
-										nonce: null,
-										replyingTo: null,
-										discordInvites: [],
-										author: {
-											user: getCurrentUser()!,
-											member: null,
-											roleColor: null
-										}
-									}}
-									highlighted={false}
-									inGuild={false}
-									mentionsUser={false}
-									replyMessage={null}
-									disableButtons
+										message={{
+											content: "I'm a super cool person!",
+											authorId: getCurrentUser()!.id,
+											state: MessageStates.Sent,
+											mentions: {
+												channels: [],
+												roles: [],
+												users: []
+											},
+											creationDate: new Date(),
+											allowedMentions: 0,
+											attachments: [],
+											channelId: "",
+											deletable: false,
+											editedDate: null,
+											embeds: [],
+											flags: 0,
+											id: "",
+											invites: [],
+											pinned: false,
+											nonce: null,
+											replyingTo: null,
+											discordInvites: [],
+											author: {
+												user: getCurrentUser()!,
+												member: null,
+												roleColor: null
+											}
+										}}
+										highlighted={false}
+										inGuild={false}
+										mentionsUser={false}
+										replyMessage={null}
+										disableButtons
 									/>
 								</div>
 							</div>
@@ -265,11 +265,11 @@ const OverView = () => {
 											roleColor: null
 										}
 									}}
-									disableButtons
-									highlighted={false}
-									inGuild={false}
-									mentionsUser={false}
-									replyMessage={null}
+										disableButtons
+										highlighted={false}
+										inGuild={false}
+										mentionsUser={false}
+										replyMessage={null}
 									/>
 								</div>
 							</div>

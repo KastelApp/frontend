@@ -1,5 +1,5 @@
 const useCustomScrollIntoView = (options = { duration: 1000, smooth: true }) => {
-  const scrollIntoView = (id: string, containerId: string, overrides?: { duration?: number; smooth?: boolean }) => {
+  const scrollIntoView = (id: string, containerId: string, overrides?: { duration?: number; smooth?: boolean; }) => {
     const element = document.getElementById(id);
     const containerElement = document.getElementById(containerId);
 
@@ -25,7 +25,7 @@ const useCustomScrollIntoView = (options = { duration: 1000, smooth: true }) => 
         start,
         end - start,
         duration
-      )
+      );
 
       console.log(-nextScrollPosition);
 

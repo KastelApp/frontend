@@ -8,7 +8,7 @@ const ChannelIcon = ({
 }: {
     type: number;
     size?: number;
-    className?: string
+    className?: string;
 }) => {
     if (type === channelTypes.GuildText) return <Hash size={size} color="#acaebf" className={className} />;
 

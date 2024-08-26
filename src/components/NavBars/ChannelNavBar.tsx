@@ -490,11 +490,11 @@ const ChannelNavBar = ({ children, isChannelHeaderHidden, isMemberBarHidden }: {
 								if (item.type === Constants.channelTypes.GuildCategory) {
 									setDraggableOptions({
 										disabledIndexes: nonCategoryIndexes,
-									})
+									});
 								}
 							}}
 							onDragStop={() => {
-								setDraggableOptions({})
+								setDraggableOptions({});
 							}}
 							{...draggableOptions}
 							render={(channel) => (

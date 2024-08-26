@@ -172,7 +172,7 @@ const TextBasedChannel = () => {
 			return;
 		}
 
-		console.log(messageCache)
+		console.log(messageCache);
 
 		setFetchedMessages(messageCache.toSorted((a, b) => a.creationDate.getTime() - b.creationDate.getTime()));
 	};

@@ -34,7 +34,7 @@ const LeftNavBar = () => {
 				const foundChannel = item.channelProperties.find((channelProperty) => channelProperty.channelId === channel.id);
 				if (foundChannel?.lastMessageAckId !== channel.lastMessageId) {
 					if (foundChannel?.lastMessageAckId && channel.lastMessageId && snowflake.timeStamp(foundChannel.lastMessageAckId) > snowflake.timeStamp(channel.lastMessageId)) {
-						continue
+						continue;
 					}
 
 					hasUnread = true;

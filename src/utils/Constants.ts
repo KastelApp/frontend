@@ -110,7 +110,7 @@ const badgeOrder = [
 	publicFlags.DeveloperBadge,
 	publicFlags.VerifiedBotDeveloperBadge,
 	publicFlags.SponsorBadge,
-]
+];
 
 const privateFlags = {
 	Ghost: 1n << 0n,
@@ -291,7 +291,7 @@ const userSendCodes = [
 const fakeUserIds = {
 	kiki: "102652169335591636",
 	ghost: "122652169335591636"
-}
+};
 
 const snowflake = new Snowflake(snowflakeOptions.Epoch, snowflakeOptions.WorkerId, snowflakeOptions.ProcessId, snowflakeOptions.TimeShift, snowflakeOptions.WorkerIdBytes, snowflakeOptions.ProcessIdBytes);
 

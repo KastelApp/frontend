@@ -70,7 +70,7 @@ const useTypingIndicator = ({
     if (startedTypingAtRef.current > 0 && Date.now() - startedTypingAtRef.current > 3000) {
       setIsTyping(true);
     }
-  }
+  };
 
   const resetShouldSendTypingEvent = useRef<NodeJS.Timeout | null>(null);
 
@@ -89,7 +89,7 @@ const useTypingIndicator = ({
         setShouldSendTypingEvent(true);
       }
     }, 7000);
-  }
+  };
 
   useEffect(() => {
     const checkinterval = setInterval(() => {
@@ -106,7 +106,7 @@ const useTypingIndicator = ({
 
     return () => {
       clearInterval(checkinterval);
-    
+
       if (resetStartedTypingAtRef.current) {
         clearTimeout(resetStartedTypingAtRef.current);
       }
@@ -114,10 +114,10 @@ const useTypingIndicator = ({
       if (resetShouldSendTypingEvent.current) {
         clearTimeout(resetShouldSendTypingEvent.current);
       }
-    }
+    };
   }, []);
 
   return { isTyping, sendUserIsTyping, sentTypingEvent, shouldSendTypingEvent };
-}
+};
 
 export default useTypingIndicator;

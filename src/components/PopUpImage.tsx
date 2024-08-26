@@ -9,6 +9,7 @@ interface Image {
     url: string;
     thumbHash?: string | null;
     name?: string;
+    alt?: string;
 }
 
 interface PopUpImageProps {
@@ -22,6 +23,8 @@ interface PopUpImageProps {
         container?: string;
         modal?: string;
     };
+    style?: React.CSSProperties;
+    alt?: string;
 }
 
 const repairUrl = (url: string) => {
@@ -61,7 +64,7 @@ const PopUpImage = ({
                         <div className="flex flex-col justify-center items-center w-[98%] h-[98%]">
                             <UnLazyImage
                                 src={repairUrl(images?.[currentImage].url ?? "")}
-                                alt={images?.[currentImage].name ?? "Image"}
+                                alt={images?.[currentImage].alt ?? "Image"}
                                 thumbhash={images?.[currentImage].thumbHash ?? undefined}
                                 className="max-w-[80vw] max-h-[80vh]"
                                 style={{

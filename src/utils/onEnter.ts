@@ -6,7 +6,7 @@ const onEnter = (callback: (...args: never) => void, passEvent?: boolean) => {
                 callback(event);
             } else {
                 event.preventDefault();
-                
+
                 // @ts-expect-error -- I forgot how to do this correctly
                 callback();
             }

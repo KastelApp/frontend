@@ -49,7 +49,7 @@ const EditUser = ({
 	const save = async () => {
 		const correctedBio = bio || null;
 		const correctedGlobalNickname = globalNickname || null;
-		
+
 		const globalNicknameUpdate = correctedGlobalNickname === user?.globalNickname ? undefined : correctedGlobalNickname;
 		const usernameUpdate = username ? username === user?.username ? null : username : null;
 		const tagUpdate = tag ? tag === user?.tag ? null : tag : null;

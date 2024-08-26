@@ -256,7 +256,7 @@ const Roles = () => {
 												<div className="flex">
 													<p className="text-white font-semibold">{permission.label}</p>
 													<Switch className="ml-auto" size="sm"
-													isSelected={permissions.has(permission.permissions, true)}
+														isSelected={permissions.has(permission.permissions, true)}
 													/>
 												</div>
 												<p className="text-gray-300 text-sm select-none mt-2">{permission.description}</p>

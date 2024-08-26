@@ -30,6 +30,6 @@ const formatDate = (date: string | Date) => {
         hour: "2-digit",
         minute: "2-digit"
     });
-}
+};
 
 export default formatDate;

@@ -18,6 +18,8 @@ import NextLink from "next/link";
 import { useRouter } from "next/router";
 import onEnter from "@/utils/onEnter.ts";
 import TwoFa from "@/components/Modals/TwoFa.tsx";
+import safePromise from "@/utils/safePromise.ts";
+import { modalStore } from "@/wrapper/Stores/GlobalModalStore.ts";
 
 const Login = () => {
 	const [isVisible, setIsVisible] = useState(false);
@@ -39,7 +41,7 @@ const Login = () => {
 
 	// ? Model specific state (e.g. 2FA code)
 	// t! 2FA stuff
-	const [twoFaCode, setTwoFaCode] = useState("");
+	const [,] = useState("");
 	// const [requiresTwoFa, setRequiresTwoFa] = useState(false);
 	// const [twoFaError, setTwoFaError] = useState("");
 	const { onClose, isOpen, onOpenChange } = useDisclosure();
@@ -214,18 +216,81 @@ const Login = () => {
 									<Link href="/register" color="primary" className="text-sm" as={NextLink} tabIndex={4}>
 										{t("login.register")}
 									</Link>
-									<Button disableAnimation variant="light" color="primary" className="hover:bg-transparent bg-transparent hover:opacity-80 transition-opacity text-sm" tabIndex={5} onClick={() => {
-										if (loading) return;
+									<Button
+										disableAnimation
+										variant="light"
+										color="primary"
+										className="hover:bg-transparent bg-transparent hover:opacity-80 transition-opacity text-sm"
+										tabIndex={5}
+										onClick={async () => {
+											if (loading) return;
 
-										if (!email || !email.includes("@") || !email.includes(".")) {
-											setEmailError(t("login.email.error"));
+											if (!email || !email.includes("@") || !email.includes(".")) {
+												setEmailError(t("login.email.error"));
 
-											return;
-										}
+												return;
+											}
 
-										onOpenChange()
-									}}>
-										{t("login.forgot")}
+											const [req, error] = await safePromise(client.api.post({
+												url: "/auth/forgot",
+												data: {
+													email
+												},
+												noAuth: true,
+												noVersion: true
+											}));
+
+											if (!req || error || req.status !== 204) {
+												modalStore.getState().createModal({
+													id: "super-rare-error-[forgot]",
+													closable: true,
+													priority: 2,
+													title: t("error.title"),
+													body: (
+														<div className="flex flex-col">
+															<p className="text-lg">{t("error.internalServerError")}</p>
+
+															<Button
+																onClick={() => {
+																	modalStore.getState().closeModal("super-rare-error-[forgot]");
+																}}
+																className="mt-4 mb-4"
+																variant="flat"
+																color="danger"
+															>
+																{t("error.dismiss")}
+															</Button>
+														</div>
+													)
+												});
+
+												return;
+											}
+
+											modalStore.getState().createModal({
+												id: "forgot-success",
+												closable: true,
+												priority: 2,
+												title: t("login.forgot.modal.title"),
+												body: (
+													<div className="flex flex-col">
+														<p className="text-lg">{t("login.forgot.modal.message")}</p>
+
+														<Button
+															onClick={() => {
+																modalStore.getState().closeModal("forgot-success");
+															}}
+															className="mt-4 mb-4"
+															variant="flat"
+															color="success"
+														>
+															{t("common.dismiss.exciting")}
+														</Button>
+													</div>
+												)
+											});
+										}}>
+										{t("login.forgot.button")}
 									</Button>
 								</div>
 							</form>

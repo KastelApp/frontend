@@ -16,7 +16,7 @@ const parseFor = (rules: SimpleMarkdown.ReactRules, source: string) => {
     const renderer = SimpleMarkdown.outputFor(rules, "react");
 
     return renderer(parser(source), parser);
-}
+};
 
 const createRules = (rule: SimpleMarkdown.ReactRules, message?: CustomizedMessage) => {
     const {
@@ -73,7 +73,7 @@ const createRules = (rule: SimpleMarkdown.ReactRules, message?: CustomizedMessag
         },
         list: {
             ...defaultRules.list,
-            react: (node: SimpleMarkdown.RefNode & { ordered: boolean; items: unknown[] }, recurseOutput: (content: unknown, state: unknown) => React.ReactElement, state: { key: string; }) => {
+            react: (node: SimpleMarkdown.RefNode & { ordered: boolean; items: unknown[]; }, recurseOutput: (content: unknown, state: unknown) => React.ReactElement, state: { key: string; }) => {
                 const Tag = node.ordered ? OrderedList : UnOrderedList;
 
                 const mapped = recurseOutput(node.items, state) as unknown as string[];
@@ -84,7 +84,7 @@ const createRules = (rule: SimpleMarkdown.ReactRules, message?: CustomizedMessag
                             <ListItem key={index}>{item}</ListItem>
                         ))}
                     </Tag>
-                )
+                );
             }
         },
         codeBlock: {
@@ -92,7 +92,7 @@ const createRules = (rule: SimpleMarkdown.ReactRules, message?: CustomizedMessag
             react: (node: SimpleMarkdown.RefNode & { lang: string; }, _: (content: unknown, state: unknown) => React.ReactElement, state: { key: string; }) => {
                 return (
                     <Codeblock language={node.lang} code={node.content as unknown as string ?? ""} key={state.key} />
-                )
+                );
             }
         },
         inlineCode: {
@@ -107,13 +107,13 @@ const createRules = (rule: SimpleMarkdown.ReactRules, message?: CustomizedMessag
                 <p key={state.key}>{recurseOutput(node.content, state)}</p>
             )
         }
-    }
-}
+    };
+};
 
-const MessageMarkDown = ({ children, message }: { children: string; message?: CustomizedMessage }) => {
+const MessageMarkDown = ({ children, message }: { children: string; message?: CustomizedMessage; }) => {
     const renderer = parseFor(createRules(customRules as never, message) as never, children);
 
     return <>{renderer}</>;
-}
+};
 
 export default MessageMarkDown;

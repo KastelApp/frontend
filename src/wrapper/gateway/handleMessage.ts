@@ -155,14 +155,14 @@ const handleMessage = async (ws: Websocket, data: unknown) => {
             }
 
             // useSettingsStore.setState((state) => {
-                useSettingsStore.getState().setEmojiPack(data.settings.emojiPack as EmojiPack);
-                useSettingsStore.getState().setLanguage(data.settings.language);
-                useSettingsStore.getState().setGuildOrder(data.settings.guildOrder);
-                useSettingsStore.getState().setPrivacy(data.settings.privacy);
-                useSettingsStore.getState().setTheme(data.settings.theme as Theme);
-                useSettingsStore.getState().setNavBarLocation(data.settings.navBarLocation as NavBarLocation);
+            useSettingsStore.getState().setEmojiPack(data.settings.emojiPack as EmojiPack);
+            useSettingsStore.getState().setLanguage(data.settings.language);
+            useSettingsStore.getState().setGuildOrder(data.settings.guildOrder);
+            useSettingsStore.getState().setPrivacy(data.settings.privacy);
+            useSettingsStore.getState().setTheme(data.settings.theme as Theme);
+            useSettingsStore.getState().setNavBarLocation(data.settings.navBarLocation as NavBarLocation);
 
-                // return state;
+            // return state;
             // })
 
             setTimeout(() => ws.emit("ready"), 500);

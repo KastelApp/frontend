@@ -5,7 +5,7 @@ import { confettiDark } from "@/components/confetti.tsx";
 const HomeLayout = ({
 	children,
 }: {
-	children?: React.ReactElement | React.ReactElement[] | React.ReactElement | React.ReactElement[][];
+	children?: React.ReactNode;
 }) => {
 	return (
 		<div style={{

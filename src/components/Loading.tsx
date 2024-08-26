@@ -38,7 +38,7 @@ const quotes: Quote[] = [
     {
         quote: "Someone on the staff team is obsessed with Dr. Pepper",
         type: "FACT"
-    }, 
+    },
     {
         quote: "You look so handsome/pretty today!! :3",
         type: "FACT"

@@ -5,9 +5,9 @@ import { Plus } from "lucide-react";
 import GuildModal from "./Modals/CreateGuild.tsx";
 
 const AddGuildButton = memo(({
-    orientation = "vertical"
+	orientation = "vertical"
 }: {
-    orientation?: "vertical" | "horizontal";
+	orientation?: "vertical" | "horizontal";
 }) => {
 	const { isOpen, onOpenChange, onClose } = useDisclosure();
 
@@ -20,8 +20,8 @@ const AddGuildButton = memo(({
 				}}
 				icon={<Plus className="mt-1.5" color="#acaebf" absoluteStrokeWidth />}
 				description="Add Guild"
-                isNormalIcon
-                orientation={orientation}
+				isNormalIcon
+				orientation={orientation}
 			/>
 		</>
 	);

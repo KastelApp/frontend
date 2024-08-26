@@ -89,12 +89,12 @@ export const useInviteStore = create<InviteStore>((set, get) => ({
         const [res, error] = await safePromise(api.post<unknown, ErrorResponseData<BaseInvite, {
             guild: {
                 code: "MaxGuildsReached" | "Banned" | "AlreadyIn",
-                message: string
+                message: string;
             },
             invite: {
                 code: "InvalidInvite",
-                message: string
-            }
+                message: string;
+            };
         }>>({
             url: `/invites/${code}`
         }));
@@ -116,7 +116,7 @@ export const useInviteStore = create<InviteStore>((set, get) => ({
                 return "Banned";
             }
 
-            return res.body.errors?.guild?.code ?? res.body.errors?.invite?.code ?? "InvalidInvite"; 
+            return res.body.errors?.guild?.code ?? res.body.errors?.invite?.code ?? "InvalidInvite";
         }
 
         // ? we add the partials
@@ -157,12 +157,12 @@ export const useInviteStore = create<InviteStore>((set, get) => ({
         const [res, error] = await safePromise(api.get<unknown, ErrorResponseData<BaseInvite, {
             guild: {
                 code: "MaxGuildsReached" | "Banned" | "AlreadyIn",
-                message: string
+                message: string;
             },
             invite: {
                 code: "InvalidInvite",
-                message: string
-            }
+                message: string;
+            };
         }>>({
             url: `/invites/${code}`
         }));

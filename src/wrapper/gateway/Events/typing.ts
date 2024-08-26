@@ -42,7 +42,7 @@ const typing = (ws: Websocket, payload: unknown) => {
 
     usePerChannelStore.getState().updateChannel(payload.channelId, {
         typingUsers: channel.typingUsers
-    })
+    });
 };
 
 export default typing;

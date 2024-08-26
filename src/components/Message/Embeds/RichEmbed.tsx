@@ -8,7 +8,7 @@ interface EmbedFiles {
     url: string;
     height?: number;
     width?: number;
-	type: "Image" | "Video";
+    type: "Image" | "Video";
     rawUrl: string;
     thumbHash?: string | null;
 }

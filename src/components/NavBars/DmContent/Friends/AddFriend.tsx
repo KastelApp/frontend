@@ -22,7 +22,7 @@ const AddFriend = () => {
 		console.log("Add friend", userNameAndTag);
 
 		setErrorMessage("This isn't complete yet!");
-	}
+	};
 
 	return (
 		<div className="flex flex-col gap-2 justify-center items-center">

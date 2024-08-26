@@ -8,10 +8,10 @@ import { useState } from "react";
 
 const PopOverData = ({ children, member, user, onlyChildren }: {
     children: React.ReactElement | React.ReactElement[];
-    user: User
+    user: User;
     member: (Omit<Member, "roles"> & {
         roles: Role[];
-    }) | null
+    }) | null;
     onlyChildren?: boolean;
 }) => {
     const [isOpen, setIsOpen] = useState(false);

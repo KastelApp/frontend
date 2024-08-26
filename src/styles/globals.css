@@ -113,3 +113,13 @@
 		opacity: 0.3;
 	}
 }
+
+.custom-animate-spin {
+	animation: custom-spin 1s linear infinite;
+}
+
+@keyframes custom-spin {
+	to {
+		transform: rotate(360deg);
+	}
+}

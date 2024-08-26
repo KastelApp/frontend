@@ -18,7 +18,7 @@ export interface Guild {
         lastMessageAckId: string | null;
         timedoutUntil: string | null;
     }[];
-    memberCount: number
+    memberCount: number;
     partial?: boolean;
 }
 
@@ -46,7 +46,7 @@ export const useGuildStore = create<GuildStore>((set, get) => ({
             }
             return currentGuild;
         });
-    
+
         if (!guildUpdated) {
             if (partialIfNotFound) {
                 guild.partial = true;

@@ -168,7 +168,7 @@ class Websocket {
             return decompressed;
         }
 
-        return null
+        return null;
     }
 
     /**

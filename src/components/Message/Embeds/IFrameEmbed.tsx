@@ -20,7 +20,7 @@ const IFrameEmbed = ({
         );
     }
 
-    return <>You shouldn't see this. Please report this {"<"}3</>
+    return <>You shouldn't see this. Please report this {"<"}3</>;
 };
 
 export default IFrameEmbed;

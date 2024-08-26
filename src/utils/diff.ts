@@ -3,7 +3,7 @@ import fastDeepEqual from "fast-deep-equal";
 /**
  * Get the difference between two arrays
  */
-const diff = <A>(a: A[], b: A[]): { added: A[], removed: A[], changed: A[] } => {
+const diff = <A>(a: A[], b: A[]): { added: A[], removed: A[], changed: A[]; } => {
     const added: A[] = [];
     const removed: A[] = [];
     const changed: A[] = [];
@@ -35,6 +35,6 @@ const diff = <A>(a: A[], b: A[]): { added: A[], removed: A[], changed: A[] } => 
     }
 
     return { added, removed, changed };
-}
+};
 
 export default diff;

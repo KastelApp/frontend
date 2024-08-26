@@ -497,6 +497,6 @@ const oneDark = {
     ".prism-previewer-easing.prism-previewer-easing line": {
         "stroke": "hsl(220, 14%, 71%)"
     }
-}
+};
 
 export default oneDark;

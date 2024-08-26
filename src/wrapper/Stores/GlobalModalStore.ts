@@ -27,15 +27,15 @@ export interface GlobalModal {
     /**
      * The priority, defaults to -1, 1 would equal somewhat important but do not care and 10 would be like "PLEASE SHOW ME IN FRONT OF EVERYTHING!!!!"
      */
-    priority?: number
+    priority?: number;
     /**
      * Just identifies itself, do stuff like "guildChannelDescription" etc but we accept anything
      */
-    id: IDType
+    id: IDType;
     /**
      * If its possible to close the modal (If not )
      */
-    closable?: boolean
+    closable?: boolean;
 
     props?: {
         modalSize?: "xs" | "sm" | "md" | "lg" | "xl" | "2xl" | "3xl" | "4xl" | "5xl" | "full";
@@ -43,18 +43,18 @@ export interface GlobalModal {
             modal?: string;
             header?: string;
             body?: string;
-            footer?: string
+            footer?: string;
             content?: string;
-        }
-    }
+        };
+    };
 }
 
 export interface GlobalModalStore {
     modalQueue: GlobalModal[];
     currentModalIndex: number;
     createModal: (options: GlobalModal) => void;
-    closeModal: (id?: IDType) => void
-    setCurrentModalIndex: (index: number) => void
+    closeModal: (id?: IDType) => void;
+    setCurrentModalIndex: (index: number) => void;
 }
 
 export const modalStore = create<GlobalModalStore>((set, get) => ({
@@ -63,34 +63,34 @@ export const modalStore = create<GlobalModalStore>((set, get) => ({
         const foundModal = get().modalQueue.find((modal, index) => id ? modal.id === id : index === get().currentModalIndex);
 
         if (foundModal) {
-            foundModal.onClose?.()
+            foundModal.onClose?.();
         }
 
         set({
             modalQueue: get().modalQueue.filter((modal, index) => {
                 if (id) {
-                    return modal.id !== id
+                    return modal.id !== id;
                 }
 
-                return index !== get().currentModalIndex
+                return index !== get().currentModalIndex;
             })
-        })
+        });
     },
     createModal: (options) => {
         const foundModal = get().modalQueue.find((modal) => modal.id === options.id);
 
         if (foundModal) {
-            Logger.warn("Duplicate modal found :/", "Stores | GlobalModalStore.ts")
+            Logger.warn("Duplicate modal found :/", "Stores | GlobalModalStore.ts");
         }
 
         set({
             modalQueue: [...get().modalQueue, options]
-        })
+        });
     },
     currentModalIndex: 0,
     setCurrentModalIndex: (index) => {
         set({
             currentModalIndex: index
-        })
+        });
     },
-}))
+}));

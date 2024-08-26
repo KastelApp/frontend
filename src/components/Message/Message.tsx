@@ -32,7 +32,7 @@ export type CustomizedMessage = Omit<MessageType, "invites"> & {
 		member: Omit<Member, "roles"> & { roles: Role[]; } | null;
 		roleColor: { color: string | null; id: string; } | null;
 	};
-}
+};
 
 export interface MessageProps {
 	message: CustomizedMessage;

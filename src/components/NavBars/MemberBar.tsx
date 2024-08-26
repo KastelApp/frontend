@@ -27,7 +27,7 @@ interface Section {
 	name: string; // ? two defaults, "offline" and "online"
 	members: {
 		member: {
-			member: Omit<Member, "roles"> & { roles: Role[] };
+			member: Omit<Member, "roles"> & { roles: Role[]; };
 			user: User;
 		};
 		color: string | null;
@@ -37,7 +37,7 @@ interface Section {
 
 const MemberItem = memo(({ member, color, channelId }: {
 	member: {
-		member: Omit<Member, "roles"> & { roles: Role[] };
+		member: Omit<Member, "roles"> & { roles: Role[]; };
 		user: User;
 	};
 	color: string | null;
@@ -70,7 +70,7 @@ const MemberItem = memo(({ member, color, channelId }: {
 			} else {
 				setTyping(false);
 			}
-		})
+		});
 
 		return () => subscribed();
 	}, [channelId]);
@@ -217,7 +217,7 @@ const MemberBar = () => {
 
 	useEffect(() => {
 		sectionsRef.current = sections;
-	}, [sections])
+	}, [sections]);
 
 	useEffect(() => {
 		const roleSubscribe = useRoleStore.subscribe((s) => {
@@ -478,14 +478,14 @@ const MemberBar = () => {
 									divider: true
 								}, {
 									label: <p className="text-danger">Ban</p>,
-									endContent: <Hammer  className="text-danger" size={18} />
+									endContent: <Hammer className="text-danger" size={18} />
 								}, {
 									label: <p className="text-danger">Kick</p>,
 									endContent: <Wine className="text-danger" size={18} />
 								}, {
 									label: "Copy User ID",
 									onClick: () => {
-										navigator.clipboard.writeText(member.member.user.id)
+										navigator.clipboard.writeText(member.member.user.id);
 									}
 								}]}>
 									<MemberItem key={index} member={member.member} color={member.color} channelId={channelId} />

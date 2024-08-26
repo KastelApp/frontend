@@ -2,7 +2,7 @@ import { modalStore } from "@/wrapper/Stores/GlobalModalStore.ts";
 import { useTrustedDomainStore } from "@/wrapper/Stores/TrustedDomainStore.ts";
 import { Button, Checkbox } from "@nextui-org/react";
 import NextLink from "next/link";
-import { useRef, useState } from "react";
+import { useRef } from "react";
 
 
 const Link = (props: React.JSX.IntrinsicElements["a"] & { phishingMessage?: boolean; }) => {

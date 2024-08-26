@@ -75,7 +75,7 @@ const Draggables = <T,>({
             setDraggingIndex(index);
         }
 
-        if (onDrag) onDrag(items[index], items)
+        if (onDrag) onDrag(items[index], items);
     };
 
     const handleDragOver = (e: React.DragEvent<HTMLDivElement>, index: number) => {

@@ -36,6 +36,6 @@ const getInviteCodes = (message: string, discordOnly = false) => {
     }
 
     return inviteCodes;
-}
+};
 
 export default getInviteCodes;

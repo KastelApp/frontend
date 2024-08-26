@@ -28,8 +28,8 @@ export interface User {
         /**
          * The user has no bio, do not make a API request (only set after initial fetch)
          */
-        bioless: boolean
-    }
+        bioless: boolean;
+    };
 }
 
 export interface UpdateUser {
@@ -66,9 +66,9 @@ export interface UserStore {
             password: boolean;
             newPassword: boolean;
             unknown: {
-                [key: string]: BaseError
-            }
-        }
+                [key: string]: BaseError;
+            };
+        };
     }>;
     updateUser(user: Partial<User>): void;
 }
@@ -198,26 +198,26 @@ export const useUserStore = create<UserStore>((set, get) => ({
 
         if (
             isErrorResponse<{
-               user: {
-                code: "PasswordRequired" | "InvalidPassword" | "NothingToUpdate"
-                message: string
-               }
-               username: {
-                code: "MaxUsernames"
-                message: string
-               }
-               tag: {
-                code: "TagInUse"
-                message: string
-               }
-               email: {
-                code: "InvalidEmail"
-                message: string
-               }
-               bio: {
-                code: "InvalidType", // ? invalid type = too long of bio or wrong type (i.e boolean instead of string)
-                message: string
-               }
+                user: {
+                    code: "PasswordRequired" | "InvalidPassword" | "NothingToUpdate";
+                    message: string;
+                };
+                username: {
+                    code: "MaxUsernames";
+                    message: string;
+                };
+                tag: {
+                    code: "TagInUse";
+                    message: string;
+                };
+                email: {
+                    code: "InvalidEmail";
+                    message: string;
+                };
+                bio: {
+                    code: "InvalidType", // ? invalid type = too long of bio or wrong type (i.e boolean instead of string)
+                    message: string;
+                };
             }>(request.body)
         ) {
             return {
@@ -253,7 +253,7 @@ export const useUserStore = create<UserStore>((set, get) => ({
                 username: false,
                 unknown: {}
             }
-        }
+        };
     },
     updateUser: (user) => {
         const gotUser = get().getUser(user.id!);
@@ -273,6 +273,6 @@ export const useUserStore = create<UserStore>((set, get) => ({
                 ...get().users.filter((currentUser) => currentUser.id !== user.id),
                 newUser
             ]
-        })
+        });
     }
 }));

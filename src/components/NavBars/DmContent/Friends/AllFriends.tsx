@@ -96,8 +96,8 @@ const AllFriends = () => {
 				return sortDescriptor.direction === "descending" ? -cmp : cmp;
 			}
 
-			const first = BigInt(a.id)
-			const second = BigInt(b.id)
+			const first = BigInt(a.id);
+			const second = BigInt(b.id);
 			const cmp = first < second ? -1 : first > second ? 1 : 0;
 
 			return sortDescriptor.direction === "descending" ? -cmp : cmp;
@@ -179,7 +179,7 @@ const AllFriends = () => {
 	useEffect(() => {
 		const subscribed = useRelationshipsStore.subscribe((state) => {
 			setFriends(state.getFriendRelationships().map((x) => {
-				
+
 				const foundUser = useUserStore.getState().getUser(x.userId);
 
 				if (!foundUser) return null;
@@ -192,8 +192,8 @@ const AllFriends = () => {
 						...foundUser,
 						avatar: useUserStore.getState().getDefaultAvatar(foundUser.id),
 					}
-				}
-			}).filter((x) => x !== null))
+				};
+			}).filter((x) => x !== null));
 		});
 
 		const userSubscribed = useUserStore.subscribe((state) => {
@@ -209,11 +209,11 @@ const AllFriends = () => {
 						...user,
 						avatar: state.getDefaultAvatar(user.id),
 					}
-				}
+				};
 			});
 
 			setFriends(updatedFriends);
-		})
+		});
 
 		setFriends(getFriendRelationships().map((x) => {
 			const foundUser = useUserStore.getState().getUser(x.userId);
@@ -228,14 +228,14 @@ const AllFriends = () => {
 					...foundUser,
 					avatar: useUserStore.getState().getDefaultAvatar(foundUser.id),
 				}
-			}
-		}).filter((x) => x !== null))
+			};
+		}).filter((x) => x !== null));
 
 		return () => {
 			subscribed();
 			userSubscribed();
-		}
-	}, [])
+		};
+	}, []);
 
 	const topContent = useMemo(() => {
 		return (

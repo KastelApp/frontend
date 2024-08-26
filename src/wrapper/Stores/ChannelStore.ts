@@ -118,7 +118,7 @@ export interface PerChannelStore {
 
 export interface ContentStore {
     channels: {
-        [key: string]: string
+        [key: string]: string;
     };
     getContent(channelId: string): string;
     setContent(channelId: string, content: string): void;

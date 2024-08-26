@@ -27,16 +27,16 @@ const Guild = () => {
 	}, [guildId]);
 
 	return (
-			<ChannelNavBar isChannelHeaderHidden isMemberBarHidden>
-				<>
-					{ready && <div className="flex justify-center items-center h-screen">
-						<div className="text-center -mt-[20%] space-y-2">
-							<h1 className="text-white font-semibold text-lg">No Text Channels</h1>
-							<p className="text-gray-500 w-96">There's seems to be no text channels in this guild, or you do not have access to any</p>
-						</div>
-					</div>}
-				</>
-			</ChannelNavBar>
+		<ChannelNavBar isChannelHeaderHidden isMemberBarHidden>
+			<>
+				{ready && <div className="flex justify-center items-center h-screen">
+					<div className="text-center -mt-[20%] space-y-2">
+						<h1 className="text-white font-semibold text-lg">No Text Channels</h1>
+						<p className="text-gray-500 w-96">There's seems to be no text channels in this guild, or you do not have access to any</p>
+					</div>
+				</div>}
+			</>
+		</ChannelNavBar>
 	);
 };
 

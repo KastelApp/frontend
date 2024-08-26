@@ -57,12 +57,12 @@ const PendingFriends = () => {
 		return [...friends].sort((a: Friend, b: Friend) => {
 			if (sortDescriptor.column === "type") {
 				const cmp = a.pending ? -1 : b.pending ? 1 : 0;
-				
+
 				return sortDescriptor.direction === "descending" ? -cmp : cmp;
 			}
 
-			const first = BigInt(a.id)
-			const second = BigInt(b.id)
+			const first = BigInt(a.id);
+			const second = BigInt(b.id);
 			const cmp = first < second ? -1 : first > second ? 1 : 0;
 
 			return sortDescriptor.direction === "descending" ? -cmp : cmp;
@@ -183,8 +183,8 @@ const PendingFriends = () => {
 						...foundUser,
 						avatar: getDefaultAvatar(foundUser.id),
 					}
-				}
-			}).filter((x) => x !== null))
+				};
+			}).filter((x) => x !== null));
 		});
 
 		const userSubscribed = useUserStore.subscribe((state) => {
@@ -200,11 +200,11 @@ const PendingFriends = () => {
 						...user,
 						avatar: state.getDefaultAvatar(user.id),
 					}
-				}
+				};
 			});
 
 			setFriends(updatedFriends);
-		})
+		});
 
 		setFriends(getPendingRelationships().map((x) => {
 			const foundUser = getUser(x.userId);
@@ -219,14 +219,14 @@ const PendingFriends = () => {
 					...foundUser,
 					avatar: getDefaultAvatar(foundUser.id),
 				}
-			}
-		}).filter((x) => x !== null))
+			};
+		}).filter((x) => x !== null));
 
 		return () => {
 			subscribed();
 			userSubscribed();
-		}
-	}, [])
+		};
+	}, []);
 
 	return (
 		<Table

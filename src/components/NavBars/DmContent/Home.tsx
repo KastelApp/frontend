@@ -28,7 +28,7 @@ const Home = () => {
 		title: "New Channel Type",
 		releaseDate: "3/9/2024",
 		shortDescription: "We've added a announcement channel type! You can now make announcements in your guild!",
-	}]
+	}];
 
 	const guildAnnouncements = [{
 		guildName: "DarkerInk - Kastel Development",
@@ -36,7 +36,7 @@ const Home = () => {
 	}, {
 		guildName: "Lightning - Lightnings Server",
 		announcement: "@everyone hi friends"
-	}]
+	}];
 
 	return (
 		<div className="min-h-screen text-white p-4">

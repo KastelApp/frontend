@@ -10,7 +10,7 @@ const isMessageDelete = (payload: unknown): payload is MessageDeletePayload => {
     if (!("messageId" in payload)) return false;
 
     return true;
-}
+};
 
 const messageDelete = (ws: Websocket, payload: unknown) => {
     if (!isMessageDelete(payload)) {

@@ -2,7 +2,7 @@ import type { Embed } from "@/components/Message/Embeds/RichEmbed.tsx";
 import { create } from "zustand";
 import { useAPIStore } from "../Stores.ts";
 import Logger from "@/utils/Logger.ts";
-import { CreateMessageOptions, Message as MessageData } from "@/types/http/channels/messages.ts"
+import { CreateMessageOptions, Message as MessageData } from "@/types/http/channels/messages.ts";
 import { usePerChannelStore } from "./ChannelStore.ts";
 import getInviteCodes from "@/utils/getInviteCodes.ts";
 import { useUserStore } from "./UserStore.ts";
@@ -107,7 +107,7 @@ export const useMessageStore = create<MessageStore>((set, get) => ({
                         ...message
                     }
                 ]
-            })
+            });
         }
     },
     removeMessage: (id) => {
@@ -177,7 +177,7 @@ export const useMessageStore = create<MessageStore>((set, get) => ({
 
         if (!api) {
             Logger.warn("API not ready", "MessageStore");
-            
+
             get().editMessage(message.id, {
                 state: MessageStates.Failed
             });
@@ -265,7 +265,7 @@ export const useMessageStore = create<MessageStore>((set, get) => ({
                 discordInvites: [],
                 channelId,
                 state: MessageStates.SystemMessage
-            })
+            });
 
             return;
         }
@@ -289,7 +289,7 @@ export const useMessageStore = create<MessageStore>((set, get) => ({
             discordInvites: getInviteCodes(res.body.content, true),
             pinned: res.body.pinned,
             state: MessageStates.Sent
-        }, true)
+        }, true);
     },
     editMessage: (messageId, options) => {
         const message = get().messages.find((message) => message.id === messageId);
@@ -331,7 +331,7 @@ export const useMessageStore = create<MessageStore>((set, get) => ({
         for (const message of messages.body) {
             // ? invites are like this: https://kastelapp.com/invite/inviteCode or https://kastel.dev/invitecode (or they may not have https:// so just kastel.dev/invitecode)
             // ? we need to get all the codes
-            const invites = getInviteCodes(message.content)
+            const invites = getInviteCodes(message.content);
             const discordInvites = getInviteCodes(message.content, true);
 
             get().addMessage({
@@ -353,14 +353,14 @@ export const useMessageStore = create<MessageStore>((set, get) => ({
                 discordInvites,
                 pinned: message.pinned,
                 state: MessageStates.Sent
-            })
+            });
         }
 
         if (messages.body.length === 0) {
             usePerChannelStore.getState().updateChannel(channelId, {
                 ...(options?.after ? { hasMoreAfter: false } : {}),
                 ...(options?.before ? { hasMoreBefore: false } : {})
-            })
+            });
         }
 
         if (messages.body.length < (options?.limit ?? 50)) {
@@ -368,7 +368,7 @@ export const useMessageStore = create<MessageStore>((set, get) => ({
                 ...(options?.after ? { hasMoreAfter: false } : {}),
                 ...(options?.before ? { hasMoreBefore: false } : {}),
                 ...(!options?.after && !options?.before ? { hasMoreAfter: false, hasMoreBefore: false } : {})
-            })
+            });
         }
 
         return true;

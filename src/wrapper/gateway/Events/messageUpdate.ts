@@ -36,7 +36,7 @@ const messageUpdate = async (ws: Websocket, payload: unknown) => {
             ...foundMessage,
             ...payload,
             creationDate: new Date(payload.creationDate),
-            editedDate: payload.editedDate ? new Date(payload.editedDate) : null,    
+            editedDate: payload.editedDate ? new Date(payload.editedDate) : null,
             invites,
             discordInvites,
         } as never, true);

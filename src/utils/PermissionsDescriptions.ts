@@ -466,7 +466,7 @@ const permissionsDescriptions = {
                 label: string;
                 description: string;
             };
-        }
+        };
     },
     advanced: {
         groups: {
@@ -475,8 +475,8 @@ const permissionsDescriptions = {
                 label: string;
                 description: string;
             };
-        }
-    }
-}
+        };
+    };
+};
 
 export default permissionsDescriptions;

@@ -116,7 +116,7 @@ const CreateChannelModal = ({ isOpen, onOpenChange }: { isOpen: boolean; onOpenC
 
                                     if (value === "") {
                                         setForm((prev) => ({ ...prev, name: value }));
-                                        
+
                                         return;
                                     }
 
@@ -142,7 +142,7 @@ const CreateChannelModal = ({ isOpen, onOpenChange }: { isOpen: boolean; onOpenC
                                     setDescriptionError(null);
                                 }}
                                 errorMessage={descriptionError}
-                                isInvalid={descriptionError !== null}                                
+                                isInvalid={descriptionError !== null}
                             />
                         </div>
                     )}

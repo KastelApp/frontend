@@ -2,7 +2,7 @@ import DmNavBar from "@/components/NavBars/DmNavBar.tsx";
 
 const App = () => {
 	return (
-			<DmNavBar />
+		<DmNavBar />
 	);
 };
 
