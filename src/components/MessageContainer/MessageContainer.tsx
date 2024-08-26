@@ -210,18 +210,20 @@ const MessageContainer = ({ placeholder, children, isReadOnly, sendMessage, chan
 		}
 	}, [channelId, guildId, signal]);
 
-	const [mentionTypes] = useState([{
-		type: "role",
-		name: "test",
-		color: 16753920,
-		id: "123"
-	}, {
-		type: "user",
-		name: "DarkerInk",
-		color: 16753920,
-		id: "456",
-		avatar: "/icon-1.png",
-	}]);
+	const [mentionTypes] = useState([
+	// 	{
+	// 	type: "role",
+	// 	name: "test",
+	// 	color: 16753920,
+	// 	id: "123"
+	// }, {
+	// 	type: "user",
+	// 	name: "DarkerInk",
+	// 	color: 16753920,
+	// 	id: "456",
+	// 	avatar: "/icon-1.png",
+	// }
+]);
 
 	return (
 		<div className="flex flex-col h-screen overflow-x-hidden" style={{
