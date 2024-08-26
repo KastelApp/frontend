@@ -20,9 +20,21 @@ with the changed things, In the Pull request explain what you changed and why yo
 then one change please do it in one pull request unless they are big things (Like changing Packages, Completely
 refactoring code, etc)
 
+## Translating
+
+If you want to help with translating the app, please let me say first of all thank you! We appreciate all the help we can get! Second we got a few ground rules for translating:
+
+- Do not use Google Translate or any other translating software, We want the translations to be as accurate as possible
+- Do not use any slang or any other language that is not professional
+- Do not use any offensive language
+- Do not translate these values: tags.\*, _debug.\*, login.email.placeholder, register.email.placeholder, register.username.placeholder
+  
+Before your pull request is merged, we will verify the translations to make sure they are accurate and professional. You may also add your username & id to the contributors array in said file.
+
 ## Maintainers
 
 - [Tea Cup](https://github.com/TheTeaCup)
+- [DarkerInk](https://github.com/Darker-Ink)
 
 # License
 

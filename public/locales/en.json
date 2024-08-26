@@ -1,13 +1,273 @@
 {
-  "_meta": {
-    "name": "English",
-    "code": "en",
-    "contributors": [
-      {
-        "name": "DarkerInk",
-        "id": "1234567890"
-      }
-    ]
-  },
-  "example": "Hello {{user.username}}!"
+	"_meta": {
+		"name": "English",
+		"code": "en",
+		"contributors": [
+			{
+				"name": "DarkerInk",
+				"id": "1234567890"
+			}
+		]
+	},
+	"_debug": {
+		"title": "This is always translated",
+		"test": "{{lorempsum.words:25}}"
+	},
+	"error": {
+		"forohfor": {
+			"header": "404 - Page Not Found",
+			"message": "The page you are looking for does not exist.",
+			"buttons": {
+				"home": "Go Home",
+				"back": "Go Back"
+			}
+		},
+		"internalServerError": "You caught a rare error, please try again later.",
+		"title": "Uh oh, something went wrong!",
+		"dismiss": "Try Again?"
+	},
+	"common": {
+		"cancel": "Cancel",
+		"save": "Save",
+		"delete": "Delete",
+		"dismiss": {
+			"boring": "Dismiss",
+			"exciting": "Got it!"
+		}
+	},
+	"home": {
+		"title": "Ditch those platforms who just don't care!",
+		"subtitle": "Why settle for less when you can have a platform that cares about you? Join Kastel, the platform that cares about you!",
+		"subtitle2": "Kastel is free, secure, and works on your browser, desktop and mobile devices.",
+		"getStarted": "Get Started",
+		"download": "Download for",
+		"navbar": {
+			"login": "Login",
+			"signup": "Sign Up",
+			"blog": "Blog",
+			"support": "Support",
+			"docs": "Developer Portal",
+			"app": "Open App"
+		}
+	},
+	"acknowledgements": {
+		"staff": {
+			"title": "Meet the Staff",
+			"message": "The people who make Kastel possible."
+		},
+		"contributors": {
+			"title": "Contributors",
+			"message": "The people who help make Kastel better."
+		},
+		"libraries": {
+			"title": "Libraries",
+			"message": "The libraries that make Kastel possible."
+		}
+	},
+	"login": {
+		"title": "Welcome Back!",
+		"subtitle": "Login to your account to continue.",
+		"email": {
+			"placeholder": "kiki@kastelapp.com",
+			"label": "Email",
+			"description": "The email address you used to sign up",
+			"error": "Please enter a valid email address."
+		},
+		"password": {
+			"placeholder": "Enter your password",
+			"label": "Password",
+			"description": "The password to your account",
+			"error": "Please enter a valid password."
+		},
+		"register": "Don't have an account? Register",
+		"forgot": {
+			"button": "Forgot password?",
+			"modal": {
+				"title": "Email sent!",
+				"message": "If the email you entered is associated with an account, you will receive an email with instructions on how to reset your password."
+			}
+		},
+		"button": "Login"
+	},
+	"register": {
+		"title": "Welcome To Kastel",
+		"subtitle": "Create an account to get started.",
+		"username": {
+			"placeholder": "KiKi",
+			"label": "Username",
+			"description": "The username you want to use",
+			"error": "Please enter a valid username."
+		},
+		"email": {
+			"placeholder": "kiki@kastelapp.com",
+			"label": "Email",
+			"description": "The email address you want to use",
+			"error": "Please enter a valid email address."
+		},
+		"password": {
+			"placeholder": "Enter your password",
+			"label": "Password",
+			"description": "The password you want to use",
+			"error": "Please enter a valid password.",
+			"confirm": {
+				"placeholder": "Confirm your password",
+				"label": "Confirm Password",
+				"description": "Please confirm your password",
+				"error": "Passwords do not match."
+			}
+		},
+		"button": "Register",
+		"login": "Got an account? Login"
+	},
+	"reset": {
+		"title": "Reset your password",
+		"subtitle": "Please enter your new password.",
+		"button": "Reset Password",
+		"remembered": "Don't mind me, I remembered my password!",
+		"error": "Something went wrong, please try again later.",
+		"newPassword": {
+			"placeholder": "Enter your new password",
+			"label": "New Password",
+			"description": "The new password you want to use",
+			"error": "Please enter a valid password."
+		},
+		"confirm": {
+			"placeholder": "Confirm your password",
+			"label": "Confirm Password",
+			"description": "Please confirm your password",
+			"error": "Passwords do not match."
+		}
+	},
+	"tags": {
+		"system": "System",
+		"bot": "Bot",
+		"server": "Server"
+	},
+	"channelTypes": {
+		"guildCategory": {
+			"name": "Category",
+			"description": "A category that contains channels."
+		},
+		"guildText": {
+			"name": "Text Channel",
+			"description": "A channel for text messages."
+		},
+		"guildNews": {
+			"name": "Announcement Channel",
+			"description": "A channel for announcements."
+		},
+		"guildRules": {
+			"name": "Rules Channel",
+			"description": "A channel for rules."
+		},
+		"guildVoice": {
+			"name": "Voice Channel",
+			"description": "A channel for voice communication."
+		},
+		"guildNewMember": {
+			"name": "New Member Channel",
+			"description": "A channel that shows for recently joined members"
+		},
+		"guildMarkdown": {
+			"name": "Markdown Channel",
+			"description": "A channel that is a single markdown document"
+		}
+	},
+	"badges": {
+		"staff": {
+			"name": "Staff",
+			"tooltip": "Staff"
+		},
+		"bug1": {
+			"name": "Minor Bug Hunter",
+			"tooltip": "Minor Bug Hunter"
+		},
+		"bug2": {
+			"name": "Intermediate Bug Hunter",
+			"tooltip": "Intermediate Bug Hunter"
+		},
+		"bug3": {
+			"name": "Major Bug Hunter",
+			"tooltip": "Major Bug Hunter"
+		},
+		"sponsor": {
+			"name": "Sponsor",
+			"tooltip": "Has sponsored Kastel"
+		},
+		"moderator": {
+			"name": "Moderator Program",
+			"tooltip": "In Moderator Program"
+		},
+		"contributor": {
+			"name": "Contributor",
+			"tooltip": "Contributed to Kastel"
+		},
+		"partner": {
+			"name": "Partner",
+			"tooltip": "Partnered with Kastel"
+		},
+		"trustedBotDeveloper": {
+			"name": "Trusted Bot Developer",
+			"tooltip": "Owns a Trusted Bot"
+		}
+	},
+	"messages": {
+		"phishing": "Phishing likely",
+		"showMessage": "Show Message",
+		"hideMessage": "Hide Message"
+	},
+	"statusTypes": {
+		"online": "Online",
+		"idle": "Idle",
+		"dnd": "DND",
+		"offline": "Offline",
+		"invisible": "Invisible"
+	},
+	"settings": {
+		"settings": "Settings",
+		"user": {
+			"title": "User Settings",
+			"overview": "Overview"
+		},
+		"developer": {
+			"title": "Developer",
+			"experiments": "Experiments"
+		}
+	},
+	"customStatus": "Custom Status",
+	"logout": "Logout",
+	"guilds": {
+		"members": "Members",
+		"online": "Online",
+		"invites": {
+			"join": "Join",
+			"validInvite": "You recived an invite to join a guild!",
+			"invalidInvite": "The invite you tried to use is invalid or expired."
+		},
+		"nickname": {
+			"header": "Change Your Nickname",
+			"description": "Max of {{max}} characters - {{remaining}} remaining"
+		},
+		"delete": {
+			"header": "Are you sure you want to delete your guild?",
+			"loose": "If you delete your guild you will loose these:",
+			"messages": "Messages",
+			"channels": "Channels",
+			"roles": "Roles",
+			"members": "Members",
+			"banned": "Banned Members",
+			"sureWait": "If you are sure please wait {{time}} more seconds.",
+			"sureReady": "If you are sure please click the delete button below",
+			"delete": "Delete in {{time}} seconds"
+		}
+	},
+	"messageContainer": {
+		"replying": "Replying to",
+		"readOnly": "You do not have permission to send messages in this channel.",
+		"typing": {
+			"singular": "{{user}} is typing",
+			"double": "{{user1}} and {{user2}} are typing",
+			"multiple": "{{users}} and {{count}} others are typing"
+		}
+	}
 }

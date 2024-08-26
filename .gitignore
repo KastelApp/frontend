@@ -4,7 +4,6 @@
 /node_modules
 /.pnp
 .pnp.js
-.yarn/install-state.gz
 
 # testing
 /coverage
@@ -12,6 +11,9 @@
 # next.js
 /.next/
 /out/
+
+# million.js
+/.million/
 
 # production
 /build
@@ -35,14 +37,11 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
-
-.yarn
-.yarn/cache
 .idea
-package-lock.json
-yarn.lock
 
-# sitemaps
-public/sitemap.xml
-public/sitemap-*.xml
-public/robots.txt
+# misc
+dev/
+inf/
+infv2/
+inf3/
+docs.json

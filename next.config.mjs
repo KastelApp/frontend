@@ -1,40 +1,65 @@
-import { withSentryConfig } from "@sentry/nextjs";
-import fetchInfo from "./src/gitInfo.mjs";
+// import MillionLint from "@million/lint";
+import { next } from "@million/lint";
 
-const fetchedData = fetchInfo();
-
-const sha = (
-  process.env.CF_PAGES_COMMIT_SHA ?? fetchedData.gitCommitHash
-).slice(0, 7);
-
-/**
- * @type {import('next').NextConfig}
- */
+/** @type {import('next').NextConfig} */
 const nextConfig = {
-  reactStrictMode: false,
-  env: {
-    PUBLIC_API_URL: process.env.PUBLIC_API_URL,
-    PUBLIC_API_VERSION: process.env.PUBLIC_API_VERSION,
-    PUBLIC_API_WS_URL: process.env.PUBLIC_API_WS_URL,
-    PUBLIC_GIT_BRANCH: process.env.CF_PAGES_BRANCH ?? fetchedData.gitBranch,
-    PUBLIC_GIT_COMMIT: sha,
-    PUBLIC_MEDIA_CDN_URL: process.env.PUBLIC_MEDIA_CDN_URL,
-    PUBLIC_MEDIA_URL: process.env.PUBLIC_MEDIA_URL,
-    NEXT_PUBLIC_CLOUDFLARE_TURNSTILE_SITE_KEY:
-      process.env.NEXT_PUBLIC_CLOUDFLARE_TURNSTILE_SITE_KEY,
-    PUBLIC_DESKTOP_APP: process.env.KASTEL_DESKTOP_APP,
-    SENTRY_DSN: process.env.SENTRY_DSN,
-  },
-  sentry: {
-    disableServerWebpackPlugin: true,
-    disableClientWebpackPlugin: true,
-  },
-  ...(process.env.KASTEL_DESKTOP_APP === "true" && {
-    output: "export",
-    images: {
-      unoptimized: true, // ? can't have this in the desktop app (which sucks :()
-    },
-  }),
+	reactStrictMode: false,
+	rewrites: async () => {
+		// ? We are fine with users going to /app/guilds/*
+		// ? but if they access just /app/guilds we want to redirect them to /app
+		return [
+			{
+				source: "/app/guilds",
+				destination: "/app",
+			},
+		];
+	},
+	redirects: async () => {
+		// ? There's a few spots we want to redirect, depending on the environment
+		// ? For example, if we are in production we want to redirect /playground to /404 since its a dev only route
+		// ? same with /temp
+
+		/**
+		 * @type {import('next').Redirect[]}
+		 */
+		const redirects = [];
+
+		if (process.env.NODE_ENV === "production") {
+			redirects.push({
+				source: "/playground/:slug*",
+				destination: "/404",
+				permanent: true,
+			});
+		}
+
+		return redirects;
+	},
+	eslint: {
+		ignoreDuringBuilds: true, // todo: remove since this is temp
+	},
+	env: {
+		API_URL: process.env.PUBLIC_API_URL,
+		API_WS_URL: process.env.PUBLIC_API_WS_URL,
+		API_VERSION: process.env.PUBLIC_API_VERSION,
+		KASTEL_DESKTOP_APP: process.env.PUBLIC_KASTEL_DESKTOP_APP,
+		CLOUDFLARE_TURNSTILE_SITE_KEY: process.env.PUBLIC_CLOUDFLARE_TURNSTILE_SITE_KEY,
+		ICON_CDN: process.env.PUBLIC_ICON_CDN,
+	},
+	typescript: {
+		ignoreBuildErrors: true
+	},
+	images: {
+		remotePatterns: [{
+			protocol: "https",
+			hostname: "opengraph.githubassets.com",
+			port: "",
+			pathname: "/**"
+		}]
+	}
 };
 
-export default withSentryConfig(nextConfig);
+// ? Million lint disabled for now due to internal issues with nextui, tho I have a arg you can provide to enable it again (since it only affects the dropdown)
+// export default next({ rsc: true, optimizeDOM: true, telemetry: false })(nextConfig);
+// export default nextConfig;
+
+export default process.env.MILLION === "true" ? next({ rsc: true, optimizeDOM: true, telemetry: false })(nextConfig) : nextConfig;

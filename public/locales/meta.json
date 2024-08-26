@@ -1,14 +1,19 @@
 {
-  "languages": [
-    {
-      "code": "en",
-      "status": "complete",
-      "notes": []
-    },
-    {
-      "code": "fr",
-      "status": "planned",
-      "notes": ["missing everything"]
-    }
-  ]
+	"languages": [
+		{
+			"code": "en",
+			"status": "complete",
+			"notes": ["English is the baseline so in theory it should always be complete"]
+		},
+		{
+			"code": "fr",
+			"status": "incomplete",
+			"notes": ["Missing almost everything"]
+		},
+		{
+			"code": "de",
+			"status": "complete",
+			"notes": []
+		}
+	]
 }

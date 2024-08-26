@@ -1,313 +1,319 @@
-import SEO from "@/components/seo";
-import { useRouter } from "next/router";
-import { FormEvent, useEffect, useState } from "react";
+import HomeLayout from "@/layouts/HomeLayout.tsx";
 import {
-  Box,
-  Button,
-  Container,
-  Heading,
-  Input,
-  Stack,
-  Text,
-  useColorModeValue,
-  useDisclosure,
-} from "@chakra-ui/react";
-import Layout from "@/components/layout";
-import { useClientStore, useTokenStore } from "@/utils/stores";
-import Navbar from "@/components/navbar";
-import t from "$/utils/typeCheck.ts";
-import Robot from "@/components/Robot.tsx";
-import redirectCleaner from "../utils/redirectCleaner.ts";
-import Link from "next/link";
+	Card,
+	Input,
+	Link,
+	useDisclosure,
+	Modal,
+	ModalContent,
+	ModalHeader,
+	ModalBody,
+	Button,
+} from "@nextui-org/react";
+import { useEffect, useState } from "react";
+import { EyeIcon, EyeOffIcon, LoaderCircle } from "lucide-react";
+import { useClientStore, useTokenStore, useTranslationStore } from "@/wrapper/Stores.ts";
+import SEO from "@/components/SEO.tsx";
+import NextLink from "next/link";
+import { useRouter } from "next/router";
+import onEnter from "@/utils/onEnter.ts";
+import TwoFa from "@/components/Modals/TwoFa.tsx";
+import safePromise from "@/utils/safePromise.ts";
+import { modalStore } from "@/wrapper/Stores/GlobalModalStore.ts";
 
 const Login = () => {
-  const { isOpen, onOpen, onClose } = useDisclosure();
-  const router = useRouter();
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<
-    {
-      code: string;
-      message: string;
-    }[]
-  >([]);
-  const { client } = useClientStore();
-  const { token, setToken } = useTokenStore();
-  const [resolve, setResolve] = useState<(k: string) => void>(() => () => {});
+	const [isVisible, setIsVisible] = useState(false);
+	const toggleVisibility = () => setIsVisible(!isVisible);
+	const router = useRouter();
 
-  const bg = useColorModeValue("gray.200", "#1A202C");
-  const color = useColorModeValue("gray.900", "gray.100");
-  const hoverColor = useColorModeValue("#000b2e", "#d1dcff");
+	const { client } = useClientStore();
+	const { setToken } = useTokenStore();
 
-  useEffect(() => {
-    router.prefetch("/app");
-    router.prefetch("/reset-password");
-    router.prefetch("/register");
+	// ? General state
+	const [error, setError] = useState("");
+	const [loading, setLoading] = useState(false);
 
-    if (token) {
-      router.push("/app");
-    }
-  }, []);
+	// ? Base form state
+	const [email, setEmail] = useState("");
+	const [password, setPassword] = useState("");
+	const [emailError, setEmailError] = useState("");
+	const [passwordError, setPasswordError] = useState("");
 
-  const login = async (
-    event: FormEvent<HTMLFormElement> & {
-      target: {
-        email: {
-          value: string;
-        };
-        password: {
-          value: string;
-        };
-      };
-    },
-  ) => {
-    event.preventDefault();
-    setLoading(true);
-    setError([]);
+	// ? Model specific state (e.g. 2FA code)
+	// t! 2FA stuff
+	const [,] = useState("");
+	// const [requiresTwoFa, setRequiresTwoFa] = useState(false);
+	// const [twoFaError, setTwoFaError] = useState("");
+	const { onClose, isOpen, onOpenChange } = useDisclosure();
 
-    const email = event.target.email.value;
-    const password = event.target.password.value;
+	// ? Captcha Model specific state
+	const { isOpen: isOpenCaptcha, onOpenChange: onOpenChangeCaptcha } = useDisclosure();
 
-    if (!t(email, "email")) {
-      setError([{ code: "INVALID_EMAIL", message: "Invalid email." }]);
-      setLoading(false);
+	const { t } = useTranslationStore();
 
-      return;
-    }
+	useEffect(() => {
+		if (email.length > 1 && (!email || !email.includes("@") || !email.includes("."))) {
+			setEmailError(t("login.email.error"));
+		} else {
+			setEmailError("");
+		}
 
-    if (!t(password, "string") || password.length < 4 || password.length > 72) {
-      setError([{ code: "INVALID_PASSWORD", message: "Invalid password." }]);
-      setLoading(false);
+		if (password.length > 1 && (!password || password.length < 3)) {
+			setPasswordError(t("login.password.error"));
+		} else {
+			setPasswordError("");
+		}
+	}, [email, password]);
 
-      return;
-    }
+	const login = async () => {
+		if (loading) return;
 
-    const attempt = async (turnstile?: string) => {
-      const loggedInAccount = await client!.login({
-        email,
-        password,
-        resetClient: true,
-        turnstile,
-      });
+		let hasError = false;
 
-      if (loggedInAccount.success) {
-        setToken(loggedInAccount.token);
+		// ? Validate email
+		if (!email || !email.includes("@") || !email.includes(".")) {
+			setEmailError(t("login.email.error"));
 
-        client.connect(loggedInAccount.token);
+			hasError = true;
+		} else {
+			setEmailError("");
+		}
 
-        const redirect = router.query.redirect;
+		// ? Validate password
+		if (!password || password.length < 3) {
+			setPasswordError(t("login.password.error"));
 
-        if (typeof redirect === "string") {
-          router.push(redirectCleaner(redirect));
+			hasError = true;
+		} else {
+			setPasswordError("");
+		}
 
-          return;
-        } else {
-          router.push("/app");
-        }
+		if (emailError || passwordError || hasError) return;
 
-        return;
-      }
+		setLoading(true);
 
-      if (loggedInAccount.errors.email || loggedInAccount.errors.password) {
-        setError([
-          {
-            code: "INVALID_EMAIL_PASSWORD",
-            message: "Invalid Email and or Password",
-          },
-        ]);
-      } else if (Object.keys(loggedInAccount.errors.unknown).length > 0) {
-        const firstError = Object.entries(loggedInAccount.errors.unknown).map(
-          ([, obj]) => obj.message,
-        )[0];
+		const attemptLogin = await client.login({
+			email,
+			password,
+			resetClient: true
+		});
 
-        setError([
-          {
-            code: "UNKNOWN",
-            message: firstError,
-          },
-        ]);
-      } else if (loggedInAccount.errors.captchaRequired) {
-        onOpen();
+		if (!attemptLogin.success) {
+			if (attemptLogin.errors.captchaRequired) {
+				// todo: users should not be able to access this yet
+				onOpenChangeCaptcha();
+			}
 
-        attempt(
-          await new Promise((res) => {
-            setResolve(() => res);
-          }),
-        );
+			if (attemptLogin.errors.email) {
+				setEmailError(t("login.email.error"));
+			}
 
-        return;
-      } else {
-        setError([{ code: "UNKNOWN", message: "Unknown error occurred." }]);
-      }
+			if (attemptLogin.errors.password) {
+				setPasswordError(t("login.password.error"));
+			}
 
-      setLoading(false);
-    };
+			setLoading(false);
 
-    await attempt();
-  };
+			if (attemptLogin.errors.internalError) {
+				setError(t("error.internalServerError"));
 
-  return (
-    <>
-      <SEO title={"Login"} />
-      <Navbar />
-      <Layout>
-        <form onSubmit={login} id={"login"}>
-          {/* @ts-expect-error -- (no clue what the issue is here) */}
-          <Box align={"center"} justify={"center"} position={"relative"}>
-            {/* @ts-expect-error -- (no clue what the issue is here) */}
-            <Container maxW={"7xl"} columns={{ base: 1, md: 2 }}>
-              <>
-                <Heading
-                  lineHeight={1.1}
-                  fontSize={{ base: "3xl", sm: "4xl", md: "5xl", lg: "6xl" }}
-                >
-                  Login to{" "}
-                  <Text
-                    as={"span"}
-                    bgGradient="linear(to-r, red.400,pink.400)"
-                    bgClip="text"
-                  >
-                    Kastel!
-                  </Text>
-                </Heading>
+				return;
+			}
 
-                <br />
+			if (Object.keys(attemptLogin.errors.unknown).length > 0) {
+				// ? If for some reason there's an unknown error message, we just show the first one
+				// ? Which is why we return for the internal error above (since it would override this one)
+				setError(Object.values(attemptLogin.errors.unknown)[0].message);
+			}
 
-                <Box
-                  mt={5}
-                  bg={useColorModeValue("gray.100", "#2D3748")}
-                  rounded={"xl"}
-                  p={{ base: 4, sm: 6, md: 8 }}
-                  // @ts-expect-error -- (no clue what the issue is here)
-                  spacing={{ base: 8 }}
-                  maxW={{ lg: "lg" }}
-                >
-                  <Box mt={5}>
-                    <Stack spacing={4}>
-                      {error.length > 0 && (
-                        <Text
-                          mt={-3}
-                          as={"span"}
-                          bgGradient="linear(to-r, red.400,pink.400)"
-                          bgClip="text"
-                        >
-                          {error.map((err) => {
-                            return err.message;
-                          })}
-                        </Text>
-                      )}
+			return;
+		}
 
-                      <Input
-                        id={"email"}
-                        required={true}
-                        type={"email"}
-                        placeholder="hello@example.com"
-                        bg={bg}
-                        border={0}
-                        color={color}
-                        _placeholder={{
-                          color: hoverColor,
-                        }}
-                        autoComplete="email"
-                      />
-                      <Input
-                        id={"password"}
-                        required={true}
-                        type={"password"}
-                        placeholder="CoolPassword123!"
-                        bg={bg}
-                        border={0}
-                        color={color}
-                        _placeholder={{
-                          color: hoverColor,
-                        }}
-                        autoComplete="current-password"
-                      />
-                    </Stack>
+		setError("");
+		setEmailError("");
+		setPasswordError("");
 
-                    {loading ? (
-                      <Button
-                        isLoading
-                        fontFamily={"heading"}
-                        mt={8}
-                        w={"full"}
-                        _hover={{
-                          bgGradient: "linear(to-r, red.400,pink.400)",
-                          boxShadow: "xl",
-                        }}
-                        bgGradient="linear(to-r, red.400,pink.400)"
-                        color={"white"}
-                      >
-                        Submitting
-                      </Button>
-                    ) : (
-                      <Button
-                        type={"submit"}
-                        fontFamily={"heading"}
-                        mt={8}
-                        w={"full"}
-                        _hover={{
-                          bgGradient: "linear(to-r, red.400,pink.400)",
-                          boxShadow: "xl",
-                        }}
-                        bgGradient="linear(to-r, red.400,pink.400)"
-                        color={"white"}
-                      >
-                        Submit
-                      </Button>
-                    )}
+		// ? If we get here, the login was successful so now we can set the token in storage and redirect
 
-                    <Stack
-                      justify={"center"}
-                      mt={2}
-                      direction={["column", "row"]}
-                    >
-                      <Link href={"/register"}>
-                        <Button
-                          fontFamily={"heading"}
-                          w={"full"}
-                          bgGradient="linear(to-r, red.400,pink.400)"
-                          color={"white"}
-                          _hover={{
-                            bgGradient: "linear(to-r, red.400,pink.400)",
-                            boxShadow: "xl",
-                          }}
-                        >
-                          Create an Account
-                        </Button>
-                      </Link>
+		setToken(attemptLogin.token);
 
-                      <Link href={"/reset-password"}>
-                        <Button
-                          fontFamily={"heading"}
-                          w={"full"}
-                          bgGradient="linear(to-r, red.400,pink.400)"
-                          color={"white"}
-                          _hover={{
-                            bgGradient: "linear(to-r, red.400,pink.400)",
-                            boxShadow: "xl",
-                          }}
-                        >
-                          Forgot Password?
-                        </Button>
-                      </Link>
-                    </Stack>
-                  </Box>
-                </Box>
-              </>
-            </Container>
-          </Box>
-        </form>
-      </Layout>
-      <Robot
-        isOpen={isOpen}
-        onClose={onClose}
-        onVerify={(key) => {
-          onClose();
-          resolve(key);
-        }}
-      />
-    </>
-  );
+		router.push("/app");
+	};
+
+	return (
+		<>
+			<SEO title={"Login"} />
+
+			<HomeLayout>
+				<div className="flex justify-center items-center">
+					<Card className="flex items-center justify-center mt-32 w-full max-w-md p-8 bg-lightAccent dark:bg-darkAccent">
+						<div className="w-full max-w-md">
+							<div className="text-center">
+								<h1 className="text-3xl font-bold">{t("login.title")}</h1>
+								<p className="text-medium mt-4">{t("login.subtitle")}</p>
+							</div>
+							<div className="pl-4 pt-3 pb-0 text-danger text-error-500 text-sm text-center">
+								{error || "\u00A0"}
+							</div>
+							<form className="mt-4">
+								<div className="flex flex-col space-y-4 items-center">
+									<Input
+										isClearable
+										type="email"
+										label={t("login.email.label")}
+										variant="bordered"
+										placeholder={t("login.email.placeholder")}
+										onClear={() => setEmail("")}
+										className="max-w-xs"
+										description={t("login.email.description")}
+										onValueChange={setEmail}
+										value={email}
+										isRequired
+										errorMessage={emailError || t("login.email.error")}
+										isInvalid={!!emailError}
+										tabIndex={1}
+									/>
+									<Input
+										label={t("login.password.label")}
+										variant="bordered"
+										placeholder={t("login.password.placeholder")}
+										endContent={
+											<button className="focus:outline-none" type="button" onClick={toggleVisibility} tabIndex={-1}>
+												{isVisible ? (
+													<EyeIcon className="text-2xl text-default-400 pointer-events-none" />
+												) : (
+													<EyeOffIcon className="text-2xl text-default-400 pointer-events-none" />
+												)}
+											</button>
+										}
+										type={isVisible ? "text" : "password"}
+										className="max-w-xs"
+										description={t("login.password.description")}
+										onValueChange={setPassword}
+										value={password}
+										isRequired
+										errorMessage={passwordError || t("login.password.error")}
+										minLength={4}
+										maxLength={72}
+										isInvalid={!!passwordError}
+										onKeyUp={onEnter(login)}
+										tabIndex={2}
+									/>
+								</div>
+								<div className="mt-8">
+									<Button
+										onClick={login}
+										size="md"
+										color="primary"
+										variant="flat"
+										className="w-full"
+										tabIndex={3}
+									>
+										{loading ? <LoaderCircle className="text-white animate-spin" /> : t("login.button")}
+									</Button>
+								</div>
+								<div className="mt-4 flex justify-between">
+									<Link href="/register" color="primary" className="text-sm" as={NextLink} tabIndex={4}>
+										{t("login.register")}
+									</Link>
+									<Button
+										disableAnimation
+										variant="light"
+										color="primary"
+										className="hover:bg-transparent bg-transparent hover:opacity-80 transition-opacity text-sm"
+										tabIndex={5}
+										onClick={async () => {
+											if (loading) return;
+
+											if (!email || !email.includes("@") || !email.includes(".")) {
+												setEmailError(t("login.email.error"));
+
+												return;
+											}
+
+											const [req, error] = await safePromise(client.api.post({
+												url: "/auth/forgot",
+												data: {
+													email
+												},
+												noAuth: true,
+												noVersion: true
+											}));
+
+											if (!req || error || req.status !== 204) {
+												modalStore.getState().createModal({
+													id: "super-rare-error-[forgot]",
+													closable: true,
+													priority: 2,
+													title: t("error.title"),
+													body: (
+														<div className="flex flex-col">
+															<p className="text-lg">{t("error.internalServerError")}</p>
+
+															<Button
+																onClick={() => {
+																	modalStore.getState().closeModal("super-rare-error-[forgot]");
+																}}
+																className="mt-4 mb-4"
+																variant="flat"
+																color="danger"
+															>
+																{t("error.dismiss")}
+															</Button>
+														</div>
+													)
+												});
+
+												return;
+											}
+
+											modalStore.getState().createModal({
+												id: "forgot-success",
+												closable: true,
+												priority: 2,
+												title: t("login.forgot.modal.title"),
+												body: (
+													<div className="flex flex-col">
+														<p className="text-lg">{t("login.forgot.modal.message")}</p>
+
+														<Button
+															onClick={() => {
+																modalStore.getState().closeModal("forgot-success");
+															}}
+															className="mt-4 mb-4"
+															variant="flat"
+															color="success"
+														>
+															{t("common.dismiss.exciting")}
+														</Button>
+													</div>
+												)
+											});
+										}}>
+										{t("login.forgot.button")}
+									</Button>
+								</div>
+							</form>
+						</div>
+					</Card>
+				</div>
+
+				<Modal isOpen={isOpenCaptcha} onOpenChange={onOpenChangeCaptcha} placement="top-center">
+					<ModalContent>
+						<ModalHeader className="flex flex-col gap-1">Beep boop boop?</ModalHeader>
+						<ModalBody>
+							<div className="flex flex-col items-center">
+								<p className="text-md font-semibold text-center">Hmm, are you really human?</p>
+								<p className="text-md font-semibold text-center">Complete the captcha below to continue</p>
+							</div>
+							{/* todo: show captcha */}
+						</ModalBody>
+					</ModalContent>
+				</Modal>
+				<TwoFa isOpen={isOpen} onOpenChange={onOpenChange} onClose={onClose} />
+			</HomeLayout>
+		</>
+	);
 };
 
 export default Login;
