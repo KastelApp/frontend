@@ -112,7 +112,7 @@ const Message = ({
 							<PopOverData user={message.author.user} member={message.author.member} onlyChildren={disableButtons}>
 								<div className="flex items-center cursor-pointer">
 									<Image
-										src={replyMessage.user.avatar ?? useUserStore.getState().getDefaultAvatar(replyMessage.user.id ?? "")}
+										src={useUserStore.getState().getAvatarUrl(replyMessage.user.id, replyMessage.user.avatar) ?? useUserStore.getState().getDefaultAvatar(replyMessage.user.id ?? "")}
 										alt="User Avatar"
 										width={32}
 										height={32}
@@ -140,7 +140,7 @@ const Message = ({
 					)}
 					<div className="flex w-full max-w-full">
 						<PopOverData user={message.author.user} member={message.author.member} onlyChildren={disableButtons}>
-							<Avatar src={message.author.user.avatar ?? useUserStore.getState().getDefaultAvatar(message.author.user.id ?? "")} alt="User Avatar" className="ml-2 mt-1 min-w-9 max-w-9 max-h-9 min-h-9 rounded-full cursor-pointer" imgProps={{ className: "transition-none" }} />
+							<Avatar src={useUserStore.getState().getAvatarUrl(message.authorId, message.author.user.avatar) ?? useUserStore.getState().getDefaultAvatar(message.author.user.id ?? "")} alt="User Avatar" className="ml-2 mt-1 min-w-9 max-w-9 max-h-9 min-h-9 rounded-full cursor-pointer" imgProps={{ className: "transition-none" }} />
 						</PopOverData>
 						<div className="relative flex flex-col ml-2 w-full">
 							<div>

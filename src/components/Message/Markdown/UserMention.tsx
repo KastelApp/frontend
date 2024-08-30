@@ -14,7 +14,7 @@ const UserMention = ({
 }) => {
     const foundUser = useUserStore((state) => state.getUser(userId));
     const router = useRouter();
-    const guildId = router.query.guildId as string;
+    const [guildId] = router.query.slug as string[];
     const foundMember = useMemberStore((state) => guildId ? state.getMember(guildId, userId) : null);
     const name = foundUser ? `@${foundMember?.nickname ?? foundUser.globalNickname ?? foundUser.username}` : `<@${userId}>`;
     const roles = useRoleStore((state) => guildId ? state.getRoles(guildId) : null) ?? [];

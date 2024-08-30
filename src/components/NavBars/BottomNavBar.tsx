@@ -9,15 +9,20 @@ import { Compass, Home, TriangleAlert } from "lucide-react";
 import AddGuildButton from "../AddGuildButton.tsx";
 import UserOptions from "../Dropdowns/UserOptions.tsx";
 import { snowflake } from "@/utils/Constants.ts";
+import { useUserStore } from "@/wrapper/Stores/UserStore.ts";
+import { useGuildSettingsStore } from "@/wrapper/Stores.ts";
 
 const BottomNavBar = () => {
     const { guilds } = useGuildStore();
     const { getChannelsWithValidPermissions, getTopChannel } = useChannelStore();
     const router = useRouter();
 
-    const { guildId } = router.query as { guildId: string; };
+    const [guildId] = (router.query?.slug ?? []) as string[];
+    const { guildSettings } = useGuildSettingsStore();
 
     const scrollContainerRef = useRef<HTMLDivElement>(null);
+
+    const currentUser = useUserStore((s) => s.getCurrentUser());
 
     useEffect(() => {
         const scrollContainer = scrollContainerRef.current!;
@@ -46,6 +51,7 @@ const BottomNavBar = () => {
                 let hasUnread = false;
 
                 const gotChannels = getChannelsWithValidPermissions(item.id);
+                const foundGuildSettings = guildSettings[item.id];
 
                 for (const channel of gotChannels) {
                     const foundChannel = item.channelProperties.find((channelProperty) => channelProperty.channelId === channel.id);
@@ -64,7 +70,7 @@ const BottomNavBar = () => {
 
                 return (
                     <NavBarIcon
-                        href={`/app/guilds/${item.id}${topChannel ? `/channels/${topChannel.id}` : ""}`}
+                        href={`/app/guilds/${item.id}${foundGuildSettings?.lastChannelId ? `/channels/${foundGuildSettings.lastChannelId}` : topChannel ? `/channels/${topChannel.id}` : ""}`}
                         badgePosition="bottom-right"
                         badgeColor="danger"
                         // badgeContent={item.mentionCount === "0" ? undefined : item.mentionCount}
@@ -141,26 +147,26 @@ const BottomNavBar = () => {
                 </div>
                 <div className="min-w-12" />
                 <div className="flex gap-2 ml-auto">
-                    <NavBarIcon
-                        icon={
-                            <div className="min-w-9 min-h-9 max-h-9 max-w-9">
-                                <Avatar
-                                    src="/icon-1.png"
-                                    className="min-w-9 min-h-9 max-h-9 max-w-9 hover:scale-95 transition-all duration-300 ease-in-out transform"
-                                    imgProps={{ className: "transition-none" }}
-                                />
-                            </div>
-                        }
-                        isBackgroundDisabled
-                        badgeContent="9+"
-                        badgePosition="bottom-right"
-                        badgeColor="danger"
-                        InContent={UserOptions as React.FC}
-                        delay={1000}
-                        isNormalIcon
-                        orientation="horizontal"
-                        type="normal"
-                    />
+                    <UserOptions orientation="horizontal" type="normal">
+                        <NavBarIcon
+                            icon={
+                                <div className="min-w-9 min-h-9 max-h-9 max-w-9">
+                                    <Avatar
+                                        src={useUserStore.getState().getAvatarUrl(currentUser!.id, currentUser!.avatar) ?? useUserStore.getState().getDefaultAvatar(currentUser!.id)}
+                                        className="min-w-9 min-h-9 max-h-9 max-w-9 hover:scale-95 transition-all duration-300 ease-in-out transform"
+                                        imgProps={{ className: "transition-none" }}
+                                    />
+                                </div>
+                            }
+                            isBackgroundDisabled
+                            badgeContent="9+"
+                            badgePosition="bottom-right"
+                            badgeColor="danger"
+                            delay={1000}
+                            isNormalIcon
+                            orientation="horizontal"
+                        />
+                    </UserOptions>
                 </div>
             </div>
         </div>

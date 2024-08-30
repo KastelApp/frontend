@@ -14,14 +14,12 @@ const NavBarIcon = memo(({
     badgeContent,
     badgePosition,
     href,
-    InContent,
     onClick,
     delay,
     hasUnReadMessages,
     isActive,
     orientation = "vertical",
     isNormalIcon,
-    type,
     contextMenuItemsProps,
     contextMenuClassName
 }: {
@@ -34,7 +32,6 @@ const NavBarIcon = memo(({
     badgeColor?: "default" | "primary" | "secondary" | "success" | "warning" | "danger";
     badgePosition?: "top-right" | "top-left" | "bottom-right" | "bottom-left";
     href?: string;
-    InContent?: React.FC<{ children: React.ReactNode; }>;
     onClick?: () => void;
     delay?: number;
     contextMenuItemsProps?: ContextMenuProps[];
@@ -44,7 +41,6 @@ const NavBarIcon = memo(({
       * Orientation of the draggables i.e vertical or horizontal
       */
     orientation?: "vertical" | "horizontal";
-    type?: "normal" | "context";
     isNormalIcon?: boolean;
     contextMenuClassName?: string;
 }) => {
@@ -66,12 +62,6 @@ const NavBarIcon = memo(({
             (children)
         );
 
-    const InContentWrapper = ({
-        children,
-    }: {
-        children: React.ReactNode;
-        // @ts-expect-error -- Its fine
-    }): React.ReactNode => (InContent ? <InContent type={type} orientation={orientation}>{children}</InContent> : (children));
 
     const TooltipOrNot = ({ children }: { children: React.ReactNode; }): React.ReactNode =>
         description ? (
@@ -114,7 +104,6 @@ const NavBarIcon = memo(({
                 )} />}
                 <ContextMenuHandler items={contextMenuItemsProps} className={contextMenuClassName}>
                     <div onClick={onClick}>
-                        <InContentWrapper>
                             <LinkWrapper href={href}>
                                 <Badge
                                     content={badgeContent}
@@ -127,7 +116,6 @@ const NavBarIcon = memo(({
                                     {icon}
                                 </Badge>
                             </LinkWrapper>
-                        </InContentWrapper>
                     </div>
                 </ContextMenuHandler>
             </div>

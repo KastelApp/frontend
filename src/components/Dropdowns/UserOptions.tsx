@@ -11,6 +11,7 @@ import { useRouter } from "next/router";
 import { useTokenStore, useTranslationStore } from "@/wrapper/Stores.ts";
 import { useUserStore } from "@/wrapper/Stores/UserStore.ts";
 import DifferentTesting from "../Settings/User/DifferentTesting.tsx";
+import getClientVersion from "@/utils/getClientVersion.ts";
 
 const UserOptions = ({ children, type = "context", orientation = "vertical" }: { children: React.ReactElement | React.ReactElement[]; type?: "normal" | "context", orientation?: "vertical" | "horizontal"; }) => {
 	const router = useRouter();
@@ -19,7 +20,6 @@ const UserOptions = ({ children, type = "context", orientation = "vertical" }: {
 	const [statusOpen, setStatusOpen] = useState(false);
 	const [status, setStatus] = useState<"Online" | "Invisible" | "DND" | "Idle">("Invisible");
 	const { t } = useTranslationStore();
-
 	const color =
 		status === "Online" ? "success" : status === "Idle" ? "warning" : status === "DND" ? "danger" : "gray-500";
 
@@ -112,7 +112,7 @@ const UserOptions = ({ children, type = "context", orientation = "vertical" }: {
 
 		if (isStaff(gotUser?.id ?? "")) {
 			setSections((prev) => ([
-				...prev,
+				...prev.filter((section) => section.id !== "developer"),
 				developerSections
 			]));
 		}
@@ -122,14 +122,16 @@ const UserOptions = ({ children, type = "context", orientation = "vertical" }: {
 
 			if (!state.isStaff(newCurrentUser?.id ?? "")) {
 				setSections((prev) => prev.filter((section) => section.id !== "developer"));
-			} else if (state.isStaff(newCurrentUser?.id ?? "") && !sections.some((section) => section.id === "developer")) {
+			} else if (state.isStaff(newCurrentUser?.id ?? "")) {
 				setSections((prev) => ([
-					...prev,
+					...prev.filter((section) => section.id !== "developer"),
 					developerSections
 				]));
 			}
 		});
 	}, []);
+
+	const { channel, version, hash } = getClientVersion();
 
 	return (
 		<>
@@ -140,6 +142,13 @@ const UserOptions = ({ children, type = "context", orientation = "vertical" }: {
 				onClose={onSettingsClose}
 				sections={sections}
 				initialSection={"overview"}
+				metadata={
+					<div className="flex pl-3">
+						<p className="text-sm text-gray-400">
+							{channel} {version} ({hash})
+						</p>
+					</div>
+				}
 			/>
 			<div
 				// ? yeah yeah, it add's useless code but I do not care

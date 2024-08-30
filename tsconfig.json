@@ -1,7 +1,11 @@
 {
 	"compilerOptions": {
 		"target": "ES2022",
-		"lib": ["dom", "dom.iterable", "esnext"],
+		"lib": [
+			"dom",
+			"dom.iterable",
+			"esnext"
+		],
 		"allowJs": true,
 		"skipLibCheck": true,
 		"strict": true,
@@ -16,9 +20,21 @@
 		"incremental": true,
 		"allowImportingTsExtensions": true,
 		"paths": {
-			"@/*": ["./src/*"]
+			"@/*": [
+				"./src/*"
+			]
 		}
 	},
-	"include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "tailwind.config.js", "postcss.config.js", "next.config.mjs", "./public/workers/interval.worker.js", "./src/setupDocs.mjs"],
-	"exclude": ["node_modules"]
+	"include": [
+		"next-env.d.ts",
+		"**/*.ts",
+		"**/*.tsx",
+		"postcss.config.js",
+		"next.config.mjs",
+		"./public/workers/interval.worker.js",
+		"./src/gitInfo.mjs"
+	],
+	"exclude": [
+		"node_modules"
+	]
 }

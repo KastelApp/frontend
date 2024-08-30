@@ -37,7 +37,6 @@ import { useChannelStore } from "@/wrapper/Stores/ChannelStore.ts";
 import Constants, { channelTypes, snowflake } from "@/utils/Constants.ts";
 import ChannelIcon from "../ChannelIcon.tsx";
 import GuildIcon from "../GuildIcon.tsx";
-import { useRouter } from "next/router";
 import Link from "next/link";
 import Draggables from "../DraggableComponent.tsx";
 import CreateChannelModal from "@/components/Modals/CreateChannel.tsx";
@@ -55,8 +54,8 @@ const Channel = ({
 	link,
 }: {
 	text: string;
-	startContent?: React.ReactElement | React.ReactElement[];
-	endContent?: React.ReactElement | React.ReactElement[];
+	startContent?: React.ReactNode;
+	endContent?: React.ReactNode;
 	onlyShowOnHover?: boolean;
 	divider?: boolean;
 	shouldHideHover?: boolean;
@@ -64,7 +63,7 @@ const Channel = ({
 	isActive?: boolean;
 	link?: string;
 }) => {
-	const LinkMaybe = ({ children }: { children: React.ReactElement; }) => link ? <Link href={link} passHref className="item-drag">{children}</Link> : <>{children}</>;
+	const LinkMaybe = ({ children }: { children: React.ReactNode; }) => link ? <Link href={link} passHref className="item-drag">{children}</Link> : <>{children}</>;
 
 	return (
 		<div className="first:mt-2">
@@ -93,7 +92,7 @@ const Channel = ({
 
 interface Channel {
 	name: string;
-	icon?: React.ReactElement | React.ReactElement[];
+	icon?: React.ReactNode;
 	description?: string | null;
 	hasUnread?: boolean;
 	id: string;
@@ -101,13 +100,13 @@ interface Channel {
 	type?: number;
 }
 
-const ChannelNavBar = ({ children, isChannelHeaderHidden, isMemberBarHidden }: {
-	children?: React.ReactElement | React.ReactElement[];
+const ChannelNavBar = ({ children, isChannelHeaderHidden, isMemberBarHidden, currentGuildId, currentChannelId }: {
+	children?: React.ReactNode;
 	isMemberBarHidden?: boolean;
 	isChannelHeaderHidden?: boolean;
+	currentGuildId: string;
+	currentChannelId?: string
 }) => {
-	const router = useRouter();
-
 	const { navBarLocation, isSideBarOpen, setIsSideBarOpen } = useSettingsStore();
 	const { guildSettings: rawGuildSettings, setGuildSettings } = useGuildSettingsStore();
 	const { isOpen: isNicknameOpen, onOpenChange, onClose } = useDisclosure();
@@ -134,8 +133,6 @@ const ChannelNavBar = ({ children, isChannelHeaderHidden, isMemberBarHidden }: {
 
 	const { getGuild } = useGuildStore();
 	const { getSortedChannels, getChannel } = useChannelStore();
-	const currentGuildId = router.query.guildId as string;
-	const currentChannelId = router.query.channelId as string;
 
 	const guildSettings = rawGuildSettings[currentGuildId ?? ""] ?? { memberBarHidden: false };
 	const foundGuild = getGuild(currentGuildId ?? "")!;
@@ -527,8 +524,8 @@ const ChannelNavBar = ({ children, isChannelHeaderHidden, isMemberBarHidden }: {
 							startContent={
 								<div className="flex items-center gap-1 select-none">
 									<Hash size={20} color="#acaebf" />
-									<p className="text-gray-300 font-semibold">{foundChannel.name}</p>
-									{foundChannel.description && (
+									<p className="text-gray-300 font-semibold">{foundChannel?.name}</p>
+									{foundChannel?.description && (
 										<>
 											<Divider orientation="vertical" className="h-6 ml-2 mr-2 w-[3px]" />
 											<p className="text-gray-400 text-sm cursor-pointer truncate w-96" onClick={() => {
@@ -559,6 +556,7 @@ const ChannelNavBar = ({ children, isChannelHeaderHidden, isMemberBarHidden }: {
 									onClick: () => {
 										setGuildSettings(currentGuildId ?? "", {
 											memberBarHidden: !guildSettings.memberBarHidden,
+											lastChannelId: currentChannelId!,
 										});
 									},
 								},

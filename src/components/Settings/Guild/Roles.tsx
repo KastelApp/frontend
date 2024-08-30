@@ -126,7 +126,7 @@ const Roles = () => {
 
 	const router = useRouter();
 
-	const currentGuildId = router.query.guildId as string;
+	const [currentGuildId] = router.query.slug as string[];
 
 	const roleRef = useRef(useRoleStore.getState().getRoles(currentGuildId).sort((a, b) => a.position - b.position).reverse());
 

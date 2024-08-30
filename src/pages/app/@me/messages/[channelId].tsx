@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 
 const DmChannel = () => {
 	const router = useRouter();
-
+	
 	return (
 		<DmNavBar
 			title={

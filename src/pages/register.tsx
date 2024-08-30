@@ -287,7 +287,7 @@ const Register = () => {
 										className="w-full"
 										tabIndex={5}
 									>
-										{loading ? <LoaderCircle className="animate-spin" size={24} /> : t("register.button")}
+										{loading ? <LoaderCircle className="custom-animate-spin" size={24} /> : t("register.button")}
 									</Button>
 								</div>
 								<div className="mt-4 flex justify-between">

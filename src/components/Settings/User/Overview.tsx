@@ -1,34 +1,30 @@
 import AllBadges from "@/badges/AllBadges.tsx";
 import Message from "@/components/Message/Message.tsx";
 import EditUser from "@/components/Modals/EditUser.tsx";
+import SaveChanges from "@/components/SaveChanges.tsx";
 import Tooltip from "@/components/Tooltip.tsx";
 import Constants from "@/utils/Constants.ts";
+import { modalStore } from "@/wrapper/Stores/GlobalModalStore.ts";
 import { MessageStates } from "@/wrapper/Stores/MessageStore.ts";
-import { User, useUserStore } from "@/wrapper/Stores/UserStore.ts";
+import { useUserStore } from "@/wrapper/Stores/UserStore.ts";
 import { Avatar, Badge, Button, Card, CardBody, Divider, useDisclosure } from "@nextui-org/react";
 import { Pencil, TriangleAlert, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+import mime from "mime";
 
 const OverView = () => {
-	const [user, setUser] = useState<User | null>(null);
+	const { getCurrentUser, getUser, getAvatarUrl, patchUser } = useUserStore();
+	const user = getCurrentUser();
 
-	const { getCurrentUser, getUser } = useUserStore();
-
-	const [avatarUrl, setAvatarUrl] = useState<string | null>(user?.avatar ?? null);
+	const [avatarUrl, setAvatarUrl] = useState<string | null>(getAvatarUrl(user!.id, user!.avatar));
+	const [differentAvatar, setDifferentAvatar] = useState(false);
+	const [loading, setLoading] = useState(false);
 
 	useEffect(() => {
-		const gotUser = getCurrentUser();
-
-		setUser(gotUser);
-
-		setAvatarUrl(gotUser?.avatar ?? null);
-
 		useUserStore.subscribe((stat) => {
 			const newGotUser = stat.getCurrentUser();
 
-			setUser(newGotUser);
-
-			setAvatarUrl(newGotUser?.avatar ?? null);
+			setAvatarUrl(getAvatarUrl(newGotUser!.id, newGotUser!.avatar));
 		});
 	}, []);
 
@@ -36,12 +32,67 @@ const OverView = () => {
 
 	const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const file = e.target.files?.[0];
+
 		if (file) {
+			if (file.size > 1024 * 1024 * 8) {
+				modalStore.getState().createModal({
+					title: "File too large",
+					id: "avatar-too-large",
+					body: (
+						<div className="flex flex-col">
+							<p className="text-md">The file you uploaded is too large. Please upload a file under 8MB.</p>
+
+							<Button
+								color="primary"
+								className="mt-4"
+								onClick={() => {
+									modalStore.getState().closeModal("avatar-too-large");
+								}}>
+								Okay
+							</Button>
+						</div>
+					),
+					closable: true,
+				});
+
+				return;
+			}
+
+			const type = mime.getType(file.name);
+
+			if (!type?.startsWith("image")) {
+				modalStore.getState().createModal({
+					title: "Invalid file type",
+					id: "avatar-invalid-type",
+					body: (
+						<div className="flex flex-col">
+							<p className="text-md">The file you uploaded is not an image. Please upload an image.</p>
+
+							<Button
+								color="primary"
+								className="mt-4"
+								onClick={() => {
+									modalStore.getState().closeModal("avatar-invalid-type");
+								}}>
+								Okay
+							</Button>
+						</div>
+					),
+					closable: true,
+				});
+
+				return;
+			}
+
 			const reader = new FileReader();
+
 			reader.onload = () => {
 				setAvatarUrl(reader.result as string);
 			};
+
 			reader.readAsDataURL(file);
+
+			setDifferentAvatar(true);
 		}
 	};
 
@@ -64,7 +115,8 @@ const OverView = () => {
 										className="mb-2 mr-1 h-8 w-8 hover:scale-95 active:scale-85 cursor-pointer hover:opacity-95 z-50"
 										color={"danger"}
 										onClick={() => {
-											console.log("Remove Avatar");
+											setAvatarUrl(null);
+											setDifferentAvatar(true);
 										}}
 									>
 										<div className="relative transition-opacity duration-300 ease-in-out group">
@@ -283,6 +335,44 @@ const OverView = () => {
 					</Button>
 				</div>
 			</div>
+			<SaveChanges onCancel={() => {
+				setDifferentAvatar(false);
+				setAvatarUrl(getAvatarUrl(user.id, user.avatar));
+			}} onSave={async () => {
+				setLoading(true);
+
+				const patchedUser = await patchUser({
+					avatar: avatarUrl,
+				});
+
+				setLoading(false);
+
+				if (!patchedUser.success || patchedUser.errors.avatar) {
+					modalStore.getState().createModal({
+						title: "Failed to upload avatar",
+						id: "avatar-failed",
+						body: (
+							<div className="flex flex-col">
+								<p className="text-md">Failed to upload your avatar. Please try again later.</p>
+
+								<Button
+									color="primary"
+									className="mt-4"
+									onClick={() => {
+										modalStore.getState().closeModal("avatar-failed");
+									}}>
+									Try Again?
+								</Button>
+							</div>
+						),
+						closable: true,
+					});
+
+					return;
+				}
+
+				setDifferentAvatar(false);
+			}} isShowing={differentAvatar} isLoading={loading} />
 		</div>
 	);
 };

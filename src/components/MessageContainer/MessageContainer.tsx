@@ -329,7 +329,11 @@ const MessageContainer = ({ placeholder, children, isReadOnly, sendMessage, chan
 									}}
 								/>
 								{!isReadOnly && (
-									<input type="file" title="Files" className="!cursor-pointer absolute inset-0 w-full h-full opacity-0" />
+									<input type="file" title="Files" className="!cursor-pointer absolute inset-0 w-full h-full opacity-0" multiple onChange={(e) => {
+										for (const file of e.target.files ?? []) {
+											console.log(file.name, file.size);
+										}
+									}} />
 								)}
 							</div>
 							<SlateEditor
@@ -354,7 +358,13 @@ const MessageContainer = ({ placeholder, children, isReadOnly, sendMessage, chan
 							/>
 							<div className="flex ml-4 gap-2">
 								<SmilePlus size={22} color="#acaebf" className={twMerge(isReadOnly ? "" : "cursor-pointer")} />
-								<SendHorizontal size={22} color="#8c52ff" className={twMerge(isReadOnly ? "" : "cursor-pointer")} />
+								<SendHorizontal size={22} color="#8c52ff" className={twMerge("opacity-75", isReadOnly ? "" : "cursor-pointer")} onClick={async () => {
+									if (isReadOnly) return;
+
+									sendMessage(content);
+									setContent("");
+									setMsgContent(channelId, "");
+								}} />
 							</div>
 						</div>
 					</div>

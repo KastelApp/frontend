@@ -1,5 +1,12 @@
 // import MillionLint from "@million/lint";
+import gitInfo from "./src/gitinfo.mjs";
 import { next } from "@million/lint";
+
+const fetchedData = gitInfo();
+
+const sha = (
+  process.env.CF_PAGES_COMMIT_SHA ?? fetchedData.gitCommitHash
+).slice(0, 7);
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
@@ -44,6 +51,8 @@ const nextConfig = {
 		KASTEL_DESKTOP_APP: process.env.PUBLIC_KASTEL_DESKTOP_APP,
 		CLOUDFLARE_TURNSTILE_SITE_KEY: process.env.PUBLIC_CLOUDFLARE_TURNSTILE_SITE_KEY,
 		ICON_CDN: process.env.PUBLIC_ICON_CDN,
+		GIT_BRANCH: process.env.CF_PAGES_BRANCH ?? fetchedData.gitBranch,
+		GIT_COMMIT_SHA: sha,	
 	},
 	typescript: {
 		ignoreBuildErrors: true

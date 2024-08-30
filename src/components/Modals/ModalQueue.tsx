@@ -7,12 +7,10 @@ const ModalQueue = memo(() => {
 
     const sortedModalQueue = modalQueue.sort((a, b) => (a.priority ?? -1) - (b.priority ?? -1)).reverse();
 
-    console.log("SORTED", sortedModalQueue);
-
     return (
         <>
             {sortedModalQueue.length > 0 && (
-                <div className="z-50 bg-overlay/50 backdrop-opacity-disabled w-screen h-screen fixed inset-0" />
+                <div className="z-[100] bg-overlay/50 backdrop-opacity-disabled w-screen h-screen fixed inset-0" />
             )}
             {sortedModalQueue.map((item) => (
                 <Modal
@@ -31,6 +29,9 @@ const ModalQueue = memo(() => {
                     className={item.props?.classNames?.modal}
                     hideCloseButton={!(item.closable ?? true)}
                     backdrop={"transparent"}
+                    classNames={{
+                        wrapper: "z-[101]",
+                    }}
                 >
                     <ModalContent className={item.props?.classNames?.content}>
                         {item.title && (

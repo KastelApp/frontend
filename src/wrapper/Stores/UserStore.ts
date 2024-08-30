@@ -44,6 +44,11 @@ export interface UpdateUser {
     newPassword?: string;
 }
 
+interface ImageOptions {
+    size: number;
+    format: "webp" | "png" | "jpeg";
+}
+
 export interface UserStore {
     users: User[];
     addUser(user: Partial<User>): void;
@@ -71,6 +76,7 @@ export interface UserStore {
         };
     }>;
     updateUser(user: Partial<User>): void;
+    getAvatarUrl(userId: string, hash: string | null, options?: ImageOptions): string | null;
 }
 
 export const useUserStore = create<UserStore>((set, get) => ({
@@ -173,7 +179,7 @@ export const useUserStore = create<UserStore>((set, get) => ({
             throw new Error("Failed to get API");
         }
 
-        const [request, error] = await safePromise(api.patch({
+        const [request, error] = await safePromise(api.patch<UpdateUser, UpdateUser>({
             url: "/users/@me",
             data: user
         }));
@@ -218,12 +224,16 @@ export const useUserStore = create<UserStore>((set, get) => ({
                     code: "InvalidType", // ? invalid type = too long of bio or wrong type (i.e boolean instead of string)
                     message: string;
                 };
+                avatar: {
+                    code: "InvalidBase64" | "TooLarge";
+                    message: string;
+                };
             }>(request.body)
         ) {
             return {
                 success: false,
                 errors: {
-                    avatar: false,
+                    avatar: request.body.errors.avatar?.code === "InvalidBase64" || request.body.errors.avatar?.code === "TooLarge",
                     bio: request.body.errors.bio?.code === "InvalidType",
                     email: request.body.errors.email?.code === "InvalidEmail",
                     globalNickname: false,
@@ -233,11 +243,13 @@ export const useUserStore = create<UserStore>((set, get) => ({
                     tag: request.body.errors.tag?.code === "TagInUse",
                     username: request.body.errors.username?.code === "MaxUsernames",
                     unknown: Object.fromEntries(
-                        Object.entries(request.body.errors).filter(([, error]) => error.code !== "InvalidEmail" && error.code !== "InvalidPassword" && error.code !== "MaxUsernames" && error.code !== "TagInUse" && error.code !== "InvalidType")
+                        Object.entries(request.body.errors).filter(([, error]) => error.code !== "InvalidEmail" && error.code !== "InvalidPassword" && error.code !== "MaxUsernames" && error.code !== "TagInUse" && error.code !== "InvalidType" && error.code !== "InvalidBase64" && error.code !== "TooLarge")
                     )
                 }
             };
         }
+
+        get().updateUser(request.body);
 
         return {
             success: true,
@@ -274,5 +286,6 @@ export const useUserStore = create<UserStore>((set, get) => ({
                 newUser
             ]
         });
-    }
+    },
+    getAvatarUrl: (userId, hash, options = { format: "webp", size: 256 }) => hash ? `${process.env.ICON_CDN}/avatar/${userId}/${hash}?size=${options.size}&format=${options.format}` : null
 }));

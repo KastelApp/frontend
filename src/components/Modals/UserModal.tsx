@@ -51,7 +51,7 @@ const UserModal = ({ isOpen, onClose, user }: { isOpen: boolean; onClose: () => 
 											// }
 											color="success"
 										>
-											<Avatar src={user.avatar ?? useUserStore.getState().getDefaultAvatar(user.id)} alt="User Avatar" className="h-24 w-24 mt-4" imgProps={{
+											<Avatar src={useUserStore.getState().getAvatarUrl(user.id, user.avatar) ?? useUserStore.getState().getDefaultAvatar(user.id)} alt="User Avatar" className="h-24 w-24 mt-4" imgProps={{
 												className: "transition-none",
 											}} />
 										</Badge>

@@ -5,7 +5,7 @@ import { Compass } from "lucide-react";
 import { twMerge } from "tailwind-merge";
 import { Avatar } from "@nextui-org/react";
 import UserOptions from "../Dropdowns/UserOptions.tsx";
-import { useSettingsStore } from "@/wrapper/Stores.ts";
+import { useGuildSettingsStore, useSettingsStore } from "@/wrapper/Stores.ts";
 import { useGuildStore } from "@/wrapper/Stores/GuildStore.ts";
 import { useChannelStore } from "@/wrapper/Stores/ChannelStore.ts";
 import { useRouter } from "next/router";
@@ -15,20 +15,24 @@ import AddGuildButton from "../AddGuildButton.tsx";
 // import { Copy, Pen, Pin, Reply, Trash2 } from "lucide-react";
 import { Divider } from "@nextui-org/react";
 import { snowflake } from "@/utils/Constants.ts";
+import { useUserStore } from "@/wrapper/Stores/UserStore.ts";
 
 const LeftNavBar = () => {
 	const { isSideBarOpen } = useSettingsStore();
 	const { guilds } = useGuildStore();
+	const { guildSettings } = useGuildSettingsStore();
 	const { getChannelsWithValidPermissions, getTopChannel } = useChannelStore();
 	const router = useRouter();
 
-	const { guildId } = router.query as { guildId: string; };
+	const [guildId] = router.query.slug as string[];
+	const currentUser = useUserStore((s) => s.getCurrentUser());
 
 	const mappedGuilds = useCallback(() => {
 		return <Draggables disableGhostElement items={guilds.filter((guild) => !guild.unavailable && !guild.partial)} onDrop={console.log} render={(item, index) => {
 			let hasUnread = false;
 
 			const gotChannels = getChannelsWithValidPermissions(item.id);
+			const foundGuildSettings = guildSettings[item.id];
 
 			for (const channel of gotChannels) {
 				const foundChannel = item.channelProperties.find((channelProperty) => channelProperty.channelId === channel.id);
@@ -47,7 +51,7 @@ const LeftNavBar = () => {
 
 			return (
 				<NavBarIcon
-					href={`/app/guilds/${item.id}${topChannel ? `/channels/${topChannel.id}` : ""}`}
+					href={`/app/guilds/${item.id}${foundGuildSettings?.lastChannelId ? `/channels/${foundGuildSettings.lastChannelId}` : topChannel ? `/channels/${topChannel.id}` : ""}`}
 					badgePosition="bottom-right"
 					badgeColor="danger"
 					// badgeContent={item.mentionCount === "0" ? undefined : item.mentionCount}
@@ -75,26 +79,27 @@ const LeftNavBar = () => {
 		<>
 			<div className={twMerge("block", isSideBarOpen ? "" : "hidden")}>
 				<div className="fixed left-0 top-0 h-full w-16 flex flex-col shadow-lg z-[5] overflow-y-auto overflow-x-hidden">
-					<NavBarIcon
-						icon={
-							<div className="min-w-9 min-h-9 max-h-9 max-w-9">
-								<Avatar
-									src="/icon-1.png"
-									className="min-w-9 min-h-9 max-h-9 max-w-9 hover:scale-95 transition-all duration-300 ease-in-out transform"
-									imgProps={{ className: "transition-none" }}
-								/>
-							</div>
-						}
-						isBackgroundDisabled
-						badgeContent="9+"
-						badgePosition="bottom-right"
-						badgeColor="danger"
-						InContent={UserOptions as React.FC}
-						href="/app"
-						description="Right click to open context menu"
-						delay={1000}
-						isNormalIcon
-					/>
+					<UserOptions orientation="vertical" type="context">
+						<NavBarIcon
+							icon={
+								<div className="min-w-9 min-h-9 max-h-9 max-w-9">
+									<Avatar
+										src={useUserStore.getState().getAvatarUrl(currentUser!.id, currentUser!.avatar) ?? useUserStore.getState().getDefaultAvatar(currentUser!.id)}
+										className="min-w-9 min-h-9 max-h-9 max-w-9 hover:scale-95 transition-all duration-300 ease-in-out transform"
+										imgProps={{ className: "transition-none" }}
+									/>
+								</div>
+							}
+							isBackgroundDisabled
+							badgeContent="9+"
+							badgePosition="bottom-right"
+							badgeColor="danger"
+							href="/app"
+							description="Right click to open context menu"
+							delay={1000}
+							isNormalIcon
+						/>
+					</UserOptions>
 					<Divider className="h-1" />
 					{mappedGuilds()}
 					<AddGuildButton />

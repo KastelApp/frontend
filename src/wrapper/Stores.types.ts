@@ -55,6 +55,7 @@ export interface StoredSettingsStore {
 
 export interface GuildSettings {
 	memberBarHidden: boolean;
+	lastChannelId: string | null;
 }
 
 export interface GuildSettingsStore {

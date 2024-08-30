@@ -56,6 +56,7 @@ const BaseSettings = ({
 	sections,
 	initialSection,
 	title,
+	metadata
 }: {
 	isOpen: boolean;
 	onOpenChange: () => void;
@@ -63,6 +64,7 @@ const BaseSettings = ({
 	sections: Section[];
 	initialSection: string;
 	title: string;
+	metadata?: React.ReactNode;
 }) => {
 	const [selectedSection, setSelectedSection] = useState(initialSection);
 	const [open, setOpen] = useState(false);
@@ -107,7 +109,7 @@ const BaseSettings = ({
 											setSection={setSelectedSection}
 										/>
 									))}
-
+									{metadata}
 								</div>
 							</div>
 

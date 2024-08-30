@@ -30,7 +30,7 @@ const Overview = () => {
 	const [sendGuildChangelog, setSendGuildChangelog] = useStateHistory<boolean>(false);
 
 	const { isStaff, getCurrentUser } = useUserStore();
-	const { } = useGuildStore();
+	const {  } = useGuildStore();
 	const [user, setUser] = useStateHistory<User | null>(getCurrentUser());
 	const { } = useChannelStore();
 

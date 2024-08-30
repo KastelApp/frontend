@@ -20,6 +20,9 @@ declare global {
             API_VERSION: string;
             KASTEL_DESKTOP_APP: string;
             CLOUDFLARE_TURNSTILE_SITE_KEY: string;
+            ICON_CDN: string;
+            GIT_BRANCH: string;
+            GIT_COMMIT_SHA: string;
         }
     }
 }

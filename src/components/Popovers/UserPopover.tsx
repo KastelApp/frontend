@@ -36,7 +36,7 @@ const UserPopover = ({ member, onClick }: {
 								className="relative cursor-pointer transition-opacity duration-300 ease-in-out group"
 								onClick={onClick}
 							>
-								<Avatar src={member.user.avatar ?? useUserStore.getState().getDefaultAvatar(member.user.id)} alt="User Avatar" className="w-16 h-16 inset-0" imgProps={{ className: "transition-none" }} />
+								<Avatar src={useUserStore.getState().getAvatarUrl(member.user.id, member.user.avatar) ?? useUserStore.getState().getDefaultAvatar(member.user.id)} alt="User Avatar" className="w-16 h-16 inset-0" imgProps={{ className: "transition-none" }} />
 								<p className="hidden group-hover:block text-white font-bold text-2xs absolute inset-0 ml-1 mt-5 w-full min-w-full items-center justify-center !z-20">
 									View Profile
 								</p>

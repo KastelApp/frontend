@@ -209,7 +209,7 @@ const Login = () => {
 										className="w-full"
 										tabIndex={3}
 									>
-										{loading ? <LoaderCircle className="text-white animate-spin" /> : t("login.button")}
+										{loading ? <LoaderCircle className="text-white custom-animate-spin" /> : t("login.button")}
 									</Button>
 								</div>
 								<div className="mt-4 flex justify-between">

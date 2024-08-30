@@ -147,7 +147,7 @@ const MemberItem = memo(({ member, color, channelId }: {
 								color="success"
 								className={twMerge("mb-1 transition-all duration-300 ease-out", typing ? "h-4 w-8 mr-1" : "")}
 							>
-								<Avatar src={member.user.avatar ?? useUserStore.getState().getDefaultAvatar(member.user.id)} size="sm" imgProps={{ className: "transition-none" }} />
+								<Avatar src={useUserStore.getState().getAvatarUrl(member.user.id, member.user.avatar) ?? useUserStore.getState().getDefaultAvatar(member.user.id)} size="sm" imgProps={{ className: "transition-none" }} />
 							</Badge>
 							<div className="flex flex-col ml-1">
 								<div className={twMerge("flex items-center")}>
@@ -201,9 +201,7 @@ const MemberBar = () => {
 
 	const { guildSettings: rawGuildSettings } = useGuildSettingsStore();
 
-	const currentGuildId = router.query.guildId as string;
-	const channelId = router.query.channelId as string;
-
+	const [currentGuildId,, channelId] = router.query.slug as string[];
 	const guildSettings = rawGuildSettings[currentGuildId ?? ""] ?? { memberBarHidden: false };
 
 	const roleRef = useRef<Role[] | null>(null);
