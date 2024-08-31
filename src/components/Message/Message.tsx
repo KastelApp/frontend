@@ -189,50 +189,53 @@ const Message = ({
 									<MessageMarkDown message={message}>{message.content}</MessageMarkDown>
 								</div>
 							</div>
-							{message.invites.map((invite, index) => {
-								if (!invite) {
+							<div className={cn(isGrouped && "pl-11")}>
+								{message.invites.map((invite, index) => {
+									if (!invite) {
+										return (
+											<div key={index} className="mt-2 inline-block max-w-full overflow-hidden">
+												<InviteEmbed invite={null} skeleton />
+											</div>
+										);
+									}
+
 									return (
 										<div key={index} className="mt-2 inline-block max-w-full overflow-hidden">
-											<InviteEmbed invite={null} skeleton />
+											<InviteEmbed invite={invite ? {
+												code: invite.code,
+												guild: {
+													icon: invite.guild.icon,
+													name: invite.guild.name,
+													members: {
+														online: 0,
+														total: invite.guild?.memberCount ?? 0
+													}
+												}
+											} : null} />
 										</div>
 									);
-								}
-
-								return (
+								})}
+								{message.embeds && message.embeds.map((embed, index) => (
 									<div key={index} className="mt-2 inline-block max-w-full overflow-hidden">
-										<InviteEmbed invite={invite ? {
-											code: invite.code,
-											guild: {
-												icon: invite.guild.icon,
-												name: invite.guild.name,
-												members: {
-													online: 0,
-													total: invite.guild?.memberCount ?? 0
-												}
-											}
-										} : null} />
+										{embed.type === "Image" && (
+											<ImageEmbed embed={embed} />
+										)}
+
+										{(embed.type === "Rich" || embed.type === "Site") && (
+											<RichEmbed embed={embed} />
+										)}
+
+										{embed.type === "Iframe" && (
+											<IFrameEmbed embed={embed} />
+										)}
+
+										{embed.type === "Video" && (
+											<VideoEmbed embed={embed} />
+										)}
 									</div>
-								);
-							})}
-							{message.embeds && message.embeds.map((embed, index) => (
-								<div key={index} className="mt-2 inline-block max-w-full overflow-hidden">
-									{embed.type === "Image" && (
-										<ImageEmbed embed={embed} />
-									)}
+								))}
+							</div>
 
-									{(embed.type === "Rich" || embed.type === "Site") && (
-										<RichEmbed embed={embed} />
-									)}
-
-									{embed.type === "Iframe" && (
-										<IFrameEmbed embed={embed} />
-									)}
-
-									{embed.type === "Video" && (
-										<VideoEmbed embed={embed} />
-									)}
-								</div>
-							))}
 						</div>
 					</div>
 					{!isButtonDisabled && (
