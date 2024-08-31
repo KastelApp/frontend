@@ -9,7 +9,6 @@ import fastDeepEqual from "fast-deep-equal";
 import { Member } from "@/wrapper/Stores/Members.ts";
 import { usePerChannelStore } from "@/wrapper/Stores/ChannelStore.ts";
 import { useTranslationStore } from "@/wrapper/Stores.ts";
-import Image from "next/image";
 import formatDate from "@/utils/formatDate.ts";
 import { Invite } from "@/wrapper/Stores/InviteStore.ts";
 import { Guild } from "@/wrapper/Stores/GuildStore.ts";
@@ -37,9 +36,9 @@ export type CustomizedMessage = Omit<MessageType, "invites"> & {
 export interface MessageProps {
 	message: CustomizedMessage;
 	className?: string;
-	disableButtons?: boolean;
+	isButtonDisabled?: boolean;
 	id?: string;
-	highlighted: boolean;
+	isHighlighted: boolean;
 	mentionsUser: boolean;
 	replyMessage: {
 		user: User;
@@ -48,25 +47,29 @@ export interface MessageProps {
 		roleColor: { color: string | null; id: string; } | null;
 	} | null;
 	inGuild: boolean;
-	deleteable?: boolean;
-	replyable?: boolean;
-	editable?: boolean;
+	isDeleteable?: boolean;
+	isReplyable?: boolean;
+	isEditable?: boolean;
 	jumpToMessage?: (msgId: string) => void;
+	isGrouped?: boolean;
+	isParent?: boolean;
 }
 
 const Message = ({
 	className,
-	disableButtons,
+	isButtonDisabled,
 	message,
 	id,
-	highlighted,
+	isHighlighted: highlighted,
 	mentionsUser,
 	replyMessage,
 	inGuild,
-	deleteable = false,
-	editable = false,
-	replyable = false,
+	isDeleteable = false,
+	isEditable = false,
+	isReplyable = false,
 	jumpToMessage,
+	isGrouped = false,
+	isParent = false
 }: MessageProps) => {
 	const { t } = useTranslationStore();
 	const formattedDate = formatDate(message.creationDate);
@@ -88,8 +91,9 @@ const Message = ({
 			{(!phishing || open) && (
 				<div
 					className={twMerge(
-						"group w-full hover:bg-msg-hover mb-2 relative transition-all duration-300 ease-in max-w-full",
+						"group w-full hover:bg-msg-hover relative transition-all duration-300 ease-in max-w-full",
 						className,
+						isParent && "mt-2",
 						mentionsUser && "bg-mention hover:bg-mention-hover",
 						highlighted && "bg-msg-jumped",
 						message.state === MessageStates.SystemMessage && "bg-msg-system hover:bg-msg-system-hover",
@@ -109,13 +113,11 @@ const Message = ({
 									transform: "rotate(180deg) scale(1, -1)",
 								}}
 							/>
-							<PopOverData user={message.author.user} member={message.author.member} onlyChildren={disableButtons}>
+							<PopOverData user={message.author.user} member={message.author.member} onlyChildren={isButtonDisabled}>
 								<div className="flex items-center cursor-pointer">
-									<Image
+									<Avatar
 										src={useUserStore.getState().getAvatarUrl(replyMessage.user.id, replyMessage.user.avatar) ?? useUserStore.getState().getDefaultAvatar(replyMessage.user.id ?? "")}
 										alt="User Avatar"
-										width={32}
-										height={32}
 										className="rounded-full cursor-pointer w-4 h-4"
 									/>
 									<span className="text-xs ml-1 text-white" style={{
@@ -139,43 +141,53 @@ const Message = ({
 						</div>
 					)}
 					<div className="flex w-full max-w-full">
-						<PopOverData user={message.author.user} member={message.author.member} onlyChildren={disableButtons}>
-							<Avatar src={useUserStore.getState().getAvatarUrl(message.authorId, message.author.user.avatar) ?? useUserStore.getState().getDefaultAvatar(message.author.user.id ?? "")} alt="User Avatar" className="ml-2 mt-1 min-w-9 max-w-9 max-h-9 min-h-9 rounded-full cursor-pointer" imgProps={{ className: "transition-none" }} />
-						</PopOverData>
+						{!isGrouped && (
+							<PopOverData user={message.author.user} member={message.author.member} onlyChildren={isButtonDisabled}>
+								<Avatar src={useUserStore.getState().getAvatarUrl(message.authorId, message.author.user.avatar) ?? useUserStore.getState().getDefaultAvatar(message.author.user.id ?? "")} alt="User Avatar" className="ml-2 mt-1 min-w-9 max-w-9 max-h-9 min-h-9 rounded-full cursor-pointer" imgProps={{ className: "transition-none" }} />
+							</PopOverData>
+						)}
 						<div className="relative flex flex-col ml-2 w-full">
-							<div>
-								<PopOverData user={message.author.user} member={message.author.member} onlyChildren={disableButtons}>
-									<span className="inline cursor-pointer text-white" style={{
-										// ? same as above
-										color: inGuild ?
-											message.author.member ?
-												message.author.roleColor?.color ? `#${message.author.roleColor.color}` : "#CFDBFF"
-												: "#ACAEBF"
-											: "#CFDBFF"
-									}}>{message.author.user?.globalNickname ?? message.author.user?.username}</span>
-								</PopOverData>
-								{message.author.user && (message.author.user.isBot || message.author.user.isSystem) && (
-									<Chip color="success" variant="flat" className="ml-1 w-1 p-0 h-4 text-[10px] rounded-sm" radius="none">
-										{message.author.user.isBot ? t("tags.bot") : t("tags.system")}
-									</Chip>
+							{!isGrouped && (
+								<div>
+									<PopOverData user={message.author.user} member={message.author.member} onlyChildren={isButtonDisabled}>
+										<span className="inline cursor-pointer text-white" style={{
+											// ? same as above
+											color: inGuild ?
+												message.author.member ?
+													message.author.roleColor?.color ? `#${message.author.roleColor.color}` : "#CFDBFF"
+													: "#ACAEBF"
+												: "#CFDBFF"
+										}}>{message.author.user?.globalNickname ?? message.author.user?.username}</span>
+									</PopOverData>
+									{message.author.user && (message.author.user.isBot || message.author.user.isSystem) && (
+										<Chip color="success" variant="flat" className="ml-1 w-1 p-0 h-4 text-[10px] rounded-sm" radius="none">
+											{message.author.user.isBot ? t("tags.bot") : t("tags.system")}
+										</Chip>
+									)}
+									<Tooltip content={formatDate(message.creationDate, false, true)} placement="top" delay={500}>
+										<span className="text-gray-400 text-2xs mt-1 ml-1 select-none">{formattedDate}</span>
+									</Tooltip>
+								</div>
+							)}
+							<div className={cn("flex", isGrouped && "pl-0.5")}>
+								{isGrouped && (
+									<Tooltip content={formatDate(message.creationDate, false, true)} placement="top" delay={500}>
+										<div className="select-none flex text-gray-400 items-center group-hover:opacity-100 opacity-0 transition-opacity duration-300 ease-in-out text-3xs mr-2">
+											{formatDate(message.creationDate, true)}
+										</div>
+									</Tooltip>
 								)}
-								<Tooltip content="Saturday, May 11. 2024 12:00 PM" placement="top" delay={500}>
-									<span className="text-gray-400 text-2xs mt-1 ml-1 select-none">{formattedDate}</span>
-								</Tooltip>
-							</div>
-							<div
-								className={
-									twMerge(
-										"text-white whitespace-pre-line overflow-hidden break-words word-break max-w-[calc(100%-5rem)]",
-										message.state === MessageStates.Failed
-											|| message.state === MessageStates.Unknown ? "text-red-500" : "",
-										message.state === MessageStates.Sending ? "text-gray-400" : "",
-									)
-								}
-							>
-								<MessageMarkDown message={message}>
-									{message.content}
-								</MessageMarkDown>
+								<div
+									className={twMerge(
+										"text-white whitespace-pre-line overflow-hidden break-words max-w-[calc(100%-5rem)]",
+										message.state === MessageStates.Failed || message.state === MessageStates.Unknown
+											? "text-red-500"
+											: "",
+										message.state === MessageStates.Sending ? "text-gray-400" : ""
+									)}
+								>
+									<MessageMarkDown message={message}>{message.content}</MessageMarkDown>
+								</div>
 							</div>
 							{message.invites.map((invite, index) => {
 								if (!invite) {
@@ -223,10 +235,10 @@ const Message = ({
 							))}
 						</div>
 					</div>
-					{!disableButtons && (
+					{!isButtonDisabled && (
 						<div className="z-10 items-center gap-2 bg-gray-800 absolute top-[-1rem] right-0 hidden group-hover:flex hover:flex p-1 rounded-md mr-2">
 							<Tooltip content="Reply">
-								<Reply size={18} color="#acaebf" className={twMerge("cursor-pointer hidden", replyable && "block")} onClick={() => {
+								<Reply size={18} color="#acaebf" className={twMerge("cursor-pointer hidden", isReplyable && "block")} onClick={() => {
 									usePerChannelStore.getState().updateChannel(message.channelId, {
 										currentStates: [...usePerChannelStore.getState().getChannel(message.channelId).currentStates, "replying"],
 										replyingStateId: message.id
@@ -234,10 +246,10 @@ const Message = ({
 								}} />
 							</Tooltip>
 							<Tooltip content="Edit">
-								<Pen size={18} color="#acaebf" className={twMerge("cursor-pointer hidden", editable && "block")} />
+								<Pen size={18} color="#acaebf" className={twMerge("cursor-pointer hidden", isEditable && "block")} />
 							</Tooltip>
 							<Tooltip content="Delete">
-								<Trash2 size={18} className={twMerge("text-danger cursor-pointer hidden", deleteable && "block")} onClick={() => {
+								<Trash2 size={18} className={twMerge("text-danger cursor-pointer hidden", isDeleteable && "block")} onClick={() => {
 									useMessageStore.getState().deleteMessage(message.id);
 								}} />
 							</Tooltip>

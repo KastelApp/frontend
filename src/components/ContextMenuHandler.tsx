@@ -1,4 +1,5 @@
-import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuTrigger, ContextMenuSub, ContextMenuSubContent, ContextMenuSubTrigger } from "@/components/ui/context-menu.tsx";
+import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuTrigger, ContextMenuSub, ContextMenuSubContent, ContextMenuSubTrigger, ContextMenuCheckboxItem } from "@/components/ui/context-menu.tsx";
+import cn from "@/utils/cn.ts";
 import { Divider } from "@nextui-org/react";
 
 export interface ContextMenuProps {
@@ -7,8 +8,31 @@ export interface ContextMenuProps {
     label: React.ReactNode;
     subValues?: Omit<ContextMenuProps, "subValues">[];
     divider?: boolean;
-    onClick?: () => void;
+    onClick?: (e: Event) => void;
+    checkBox?: boolean;
+    checked?: boolean;
+    preventCloseOnClick?: boolean;
 }
+
+const ContextItemHandler = ({
+    children,
+    isCheckBox,
+    isChecked,
+    className,
+    onClick
+}: {
+    isCheckBox?: boolean;
+    isChecked?: boolean;
+    children: React.ReactNode;
+    className?: string;
+    onClick?: (e: Event) => void;
+}) => {
+    if (isCheckBox) {
+        return <ContextMenuCheckboxItem checked={isChecked} className={cn("text-white", className)} onSelect={onClick}>{children}</ContextMenuCheckboxItem>;
+    }
+
+    return <ContextMenuItem className={className} onSelect={onClick}>{children}</ContextMenuItem>;
+};
 
 const ContextMenuHandler = ({
     children,
@@ -30,13 +54,25 @@ const ContextMenuHandler = ({
                     if (!item.subValues || item.subValues.length === 0) {
                         return (
                             <>
-                                <ContextMenuItem key={index} onClick={item.onClick} className="flex cursor-pointer">
+                                <ContextItemHandler
+                                    isCheckBox={item.checkBox}
+                                    isChecked={item.checked}
+                                    key={index}
+                                    onClick={(event) => {
+                                        if (item.preventCloseOnClick) {
+                                            event.preventDefault();
+                                        }
+
+                                        item.onClick?.(event);
+                                    }} className="flex cursor-pointer">
                                     {item.startContent}
-                                    <p>{item.label}</p>
+                                    <p className="text-white">
+                                        {item.label}
+                                    </p>
                                     <div className="ml-auto">
                                         {item.endContent}
                                     </div>
-                                </ContextMenuItem>
+                                </ContextItemHandler>
                                 {item.divider && <Divider className="mt-1 mb-1" />}
                             </>
                         );
@@ -45,17 +81,29 @@ const ContextMenuHandler = ({
                     return (
                         <>
                             <ContextMenuSub key={index}>
-                                <ContextMenuSubTrigger>{item.label}</ContextMenuSubTrigger>
+                                <ContextMenuSubTrigger className="text-white">{item.label}</ContextMenuSubTrigger>
                                 <ContextMenuSubContent>
                                     {item.subValues.map((subItem, subIndex) => (
                                         <>
-                                            <ContextMenuItem key={subIndex} onClick={subItem.onClick} className="flex cursor-pointer">
+                                            <ContextItemHandler
+                                                isCheckBox={subItem.checkBox}
+                                                isChecked={subItem.checked}
+                                                key={subIndex}
+                                                onClick={(event) => {
+                                                    if (subItem.preventCloseOnClick) {
+                                                        event.preventDefault();
+                                                    }
+
+                                                    subItem.onClick?.(event);
+                                                }} className="flex cursor-pointer">
                                                 {subItem.startContent}
-                                                {subItem.label}
+                                                <p>
+                                                    {subItem.label}
+                                                </p>
                                                 <div className="ml-auto">
                                                     {subItem.endContent}
                                                 </div>
-                                            </ContextMenuItem>
+                                            </ContextItemHandler>
                                             {subItem.divider && <Divider className="mt-1 mb-1" />}
                                         </>
                                     ))}

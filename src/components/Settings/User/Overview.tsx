@@ -277,11 +277,11 @@ const OverView = () => {
 												roleColor: null
 											}
 										}}
-										highlighted={false}
+										isHighlighted={false}
 										inGuild={false}
 										mentionsUser={false}
 										replyMessage={null}
-										disableButtons
+										isButtonDisabled
 									/>
 								</div>
 							</div>
@@ -317,8 +317,8 @@ const OverView = () => {
 											roleColor: null
 										}
 									}}
-										disableButtons
-										highlighted={false}
+										isButtonDisabled
+										isHighlighted={false}
 										inGuild={false}
 										mentionsUser={false}
 										replyMessage={null}

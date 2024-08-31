@@ -2,6 +2,7 @@ import { useAPIStore, useGuildSettingsStore, useTranslationStore } from "@/wrapp
 import {
 	Avatar,
 	Badge,
+	Checkbox,
 	Chip,
 	Popover,
 	PopoverContent,
@@ -475,11 +476,19 @@ const MemberBar = () => {
 									label: "Message",
 									divider: true
 								}, {
+									label: "Roles",
+									subValues: [{
+										label: "role 1",
+										endContent: <Checkbox />,
+										preventCloseOnClick: true
+									}]
+								}, {
 									label: <p className="text-danger">Ban</p>,
 									endContent: <Hammer className="text-danger" size={18} />
 								}, {
 									label: <p className="text-danger">Kick</p>,
-									endContent: <Wine className="text-danger" size={18} />
+									endContent: <Wine className="text-danger" size={18} />,
+									divider: true
 								}, {
 									label: "Copy User ID",
 									onClick: () => {

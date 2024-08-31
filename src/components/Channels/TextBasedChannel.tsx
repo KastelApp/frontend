@@ -294,10 +294,31 @@ const TextBasedChannel = () => {
 				};
 			}
 
+			// ? here's the rules for message grouping
+			// ? 1) If its replying to a message, it should not be grouped
+			// ? 2) The message before it must not be grouped and it must be from the same author
+			// ? 3) If the prev message is the same as the author it must been within 10 minutes of the current message
+			// ? (i.e if you send 3 messages those should be grouped) but then if you wait 15 minutes and send another message it should not be grouped
+			// todo: maybe in the future let users customize this?
+
+			const prevMessage = finishedMsgs[finishedMsgs.length - 1];
+
+			let shouldGroup = false;
+
+			if (prevMessage) {
+				const timeDiff = msg.creationDate.getTime() - prevMessage.message.creationDate.getTime();
+
+				shouldGroup = prevMessage.message.author.user.id === msg.authorId && timeDiff <= 10 * 60 * 1000; // ? 10 minutes
+			}
+
+			if (msg.replyingTo) shouldGroup = false;
+
+			
+
 			finishedMsgs.push({
 				inGuild: !!guildId || false,
 				mentionsUser: msg.mentions.users.includes(currentUser.id),
-				highlighted: false,
+				isHighlighted: false,
 				message: {
 					...msg,
 					author: {
@@ -322,9 +343,11 @@ const TextBasedChannel = () => {
 					})
 				},
 				replyMessage: replyData,
-				editable: msg.authorId === currentUser.id,
-				deleteable: msg.authorId === currentUser.id, // ? temp until I do the perms
-				replyable: msg.state === MessageStates.Sent,
+				isEditable: msg.authorId === currentUser.id,
+				isDeleteable: msg.authorId === currentUser.id, // ? temp until I do the perms
+				isReplyable: msg.state === MessageStates.Sent,
+				isGrouped: shouldGroup,
+				isParent: !shouldGroup,
 			});
 		}
 
@@ -411,11 +434,11 @@ const TextBasedChannel = () => {
 									{...message}
 									key={message.message.id}
 									jumpToMessage={jumpTo}
-									highlighted={message.message.id === getChannel(channelId).jumpingStateId}
+									isHighlighted={message.message.id === getChannel(channelId).jumpingStateId}
 								/>
 							</ContextMenuTrigger>
 							<ContextMenuContent className="w-40">
-								{message.replyable && (
+								{message.isReplyable && (
 									<ContextMenuItem onClick={() => {
 										updateChannel(channelId, {
 											currentStates: [...getChannel(channelId).currentStates, "replying"],
@@ -426,7 +449,7 @@ const TextBasedChannel = () => {
 										<Reply size={18} color="#acaebf" className="cursor-pointer ml-auto" />
 									</ContextMenuItem>
 								)}
-								{message.editable && (
+								{message.isEditable && (
 									<ContextMenuItem>
 										Edit
 										<Pen size={18} color="#acaebf" className={"cursor-pointer ml-auto"} />
@@ -442,7 +465,7 @@ const TextBasedChannel = () => {
 									Copy Text
 									<Copy size={18} color="#acaebf" className="cursor-pointer ml-auto" />
 								</ContextMenuItem>
-								{message.deleteable && (
+								{message.isDeleteable && (
 									<ContextMenuItem className="text-danger">
 										Delete Message
 										<Trash2 size={18} className={"text-danger cursor-pointer ml-auto"} />
