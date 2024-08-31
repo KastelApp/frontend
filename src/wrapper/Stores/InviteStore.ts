@@ -5,6 +5,7 @@ import { ErrorResponseData } from "@/types/http/error.ts";
 import { useGuildStore } from "@/wrapper/Stores/GuildStore.ts";
 import { useChannelStore } from "@/wrapper/Stores/ChannelStore.ts";
 import { useUserStore } from "@/wrapper/Stores/UserStore.ts";
+import { inviteFlags } from "@/utils/Constants.ts";
 
 export interface BaseInvite {
     type: number;
@@ -36,18 +37,20 @@ export interface BaseInvite {
     uses: number;
     maxUses: number;
     expiresAt: Date | null;
+    valid: boolean;
 }
 
 export interface Invite {
     type: number;
     code: string;
-    guildId: string;
+    guildId: string  | null;
     channelId: string | null;
-    creatorId: string;
+    creatorId: string | null;
     uses: number;
     maxUses: number;
     expiresAt: Date | null;
     banned: boolean;
+    valid: boolean;
 }
 
 export interface InviteStore {
@@ -137,7 +140,8 @@ export const useInviteStore = create<InviteStore>((set, get) => ({
             uses: res.body.uses,
             maxUses: res.body.maxUses,
             expiresAt: res.body.expiresAt ? new Date(res.body.expiresAt) : null,
-            banned: false
+            banned: false,
+            valid: true
         });
 
         return "Success";
@@ -167,7 +171,33 @@ export const useInviteStore = create<InviteStore>((set, get) => ({
             url: `/invites/${code}`
         }));
 
-        if (!res?.body || error || "errors" in res.body) return null;
+        if (!res?.body || error || "errors" in res.body) {
+            get().addInvite({
+                type: inviteFlags.Normal,
+                banned: false,
+                channelId: null,
+                code,
+                creatorId: null,
+                expiresAt: null,
+                guildId: null,
+                maxUses: 0,
+                uses: 0,
+                valid: false
+            })
+
+            return {
+                type: inviteFlags.Normal,
+                banned: false,
+                channelId: null,
+                code,
+                creatorId: null,
+                expiresAt: null,
+                guildId: null,
+                maxUses: 0,
+                uses: 0,
+                valid: false
+            };
+        }
 
         // ? we add the partials
 
@@ -189,7 +219,8 @@ export const useInviteStore = create<InviteStore>((set, get) => ({
             uses: res.body.uses,
             maxUses: res.body.maxUses,
             expiresAt: res.body.expiresAt ? new Date(res.body.expiresAt) : null,
-            banned: false
+            banned: false,
+            valid: true
         });
 
         return {
@@ -201,7 +232,8 @@ export const useInviteStore = create<InviteStore>((set, get) => ({
             uses: res.body.uses,
             maxUses: res.body.maxUses,
             expiresAt: res.body.expiresAt ? new Date(res.body.expiresAt) : null,
-            banned: false
+            banned: false,
+            valid: true
         };
     }
 }));

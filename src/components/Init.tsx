@@ -76,8 +76,6 @@ const Init = ({
                 usePerChannelStore.getState().updateChannel(channelId, {
                     typingUsers: channel.typingUsers
                 });
-
-                console.log("Removing", channel.typingUsers);
             }
         }, 1000);
 
@@ -158,8 +156,6 @@ const Init = ({
 
         client.on("close", () => {
             setIsReady(false);
-
-            console.log("close?");
 
             client.isConnected = false;
         });

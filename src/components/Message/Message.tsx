@@ -24,7 +24,7 @@ import PopOverData from "@/components/Popovers/PopoverData.tsx";
 
 export type CustomizedMessage = Omit<MessageType, "invites"> & {
 	invites: (Invite & {
-		guild: Guild;
+		guild: Guild | null;
 	} | null)[];
 	author: {
 		user: User;
@@ -116,7 +116,10 @@ const Message = ({
 							<PopOverData user={message.author.user} member={message.author.member} onlyChildren={isButtonDisabled}>
 								<div className="flex items-center cursor-pointer">
 									<Avatar
-										src={useUserStore.getState().getAvatarUrl(replyMessage.user.id, replyMessage.user.avatar) ?? useUserStore.getState().getDefaultAvatar(replyMessage.user.id ?? "")}
+										src={useUserStore.getState().getAvatarUrl(replyMessage.user.id, replyMessage.user.avatar, {
+											format: "webp",
+											size: 32
+										}) ?? useUserStore.getState().getDefaultAvatar(replyMessage.user.id ?? "")}
 										alt="User Avatar"
 										className="rounded-full cursor-pointer w-4 h-4"
 									/>
@@ -201,17 +204,7 @@ const Message = ({
 
 									return (
 										<div key={index} className="mt-2 inline-block max-w-full overflow-hidden">
-											<InviteEmbed invite={invite ? {
-												code: invite.code,
-												guild: {
-													icon: invite.guild.icon,
-													name: invite.guild.name,
-													members: {
-														online: 0,
-														total: invite.guild?.memberCount ?? 0
-													}
-												}
-											} : null} />
+											<InviteEmbed invite={invite} />
 										</div>
 									);
 								})}

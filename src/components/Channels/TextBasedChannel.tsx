@@ -172,8 +172,6 @@ const TextBasedChannel = () => {
 			return;
 		}
 
-		console.log(messageCache);
-
 		setFetchedMessages(messageCache.toSorted((a, b) => a.creationDate.getTime() - b.creationDate.getTime()));
 	};
 
@@ -334,7 +332,7 @@ const TextBasedChannel = () => {
 
 						if (!gotInvite) return null;
 
-						const guild = getGuild(gotInvite.guildId)!;
+						const guild = gotInvite.valid ? getGuild(gotInvite.guildId!)! : null;
 
 						return {
 							...gotInvite,

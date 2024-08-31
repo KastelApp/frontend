@@ -13,10 +13,7 @@ const getClientVersion = (): {
     hash?: string;
 } => {
     const channel = process.env.GIT_BRANCH === "development" ? "development" : process.env.GIT_BRANCH === "canary" ? "canary" : process.env.GIT_BRANCH === "ptb" ? "ptb" : "stable";
-
     const clean = channel === "stable" && process.env.NODE_ENV === "production";
-
-    console.log(process.env.GIT_BRANCH)
 
     return {
         clean,
