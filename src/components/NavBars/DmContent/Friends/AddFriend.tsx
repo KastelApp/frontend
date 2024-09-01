@@ -9,7 +9,10 @@ const AddFriend = () => {
 
 	const submit = () => {
 		// ? If there's no tag and its not a number thats longer then 16 digits then return an error
-		if ((!userNameAndTag.includes("#") || isNaN(parseInt(userNameAndTag.split("#")[1]))) && !(userNameAndTag.length > 16 && !isNaN(Number(userNameAndTag)))) {
+		if (
+			(!userNameAndTag.includes("#") || isNaN(parseInt(userNameAndTag.split("#")[1]))) &&
+			!(userNameAndTag.length > 16 && !isNaN(Number(userNameAndTag)))
+		) {
 			setErrorMessage("Invalid username and tag");
 
 			setTimeout(() => {
@@ -25,7 +28,7 @@ const AddFriend = () => {
 	};
 
 	return (
-		<div className="flex flex-col gap-2 justify-center items-center">
+		<div className="flex flex-col items-center justify-center gap-2">
 			<h1 className="text-xl">Add a Friend</h1>
 			<p className="text-gray-400">Enter your friend's username and tag below.</p>
 			<Input

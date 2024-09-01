@@ -7,92 +7,91 @@ import messageUpdate from "@/wrapper/gateway/Events/messageUpdate.ts";
 import typing from "@/wrapper/gateway/Events/typing.ts";
 
 const isEventPayload = (data: unknown): data is EventPayload => {
-    if (typeof data !== "object" || data === null || data === undefined)
-        return false;
+	if (typeof data !== "object" || data === null || data === undefined) return false;
 
-    if (!("event" in data)) return false;
-    if (!("op" in data)) return false;
-    if (!("data" in data)) return false;
+	if (!("event" in data)) return false;
+	if (!("op" in data)) return false;
+	if (!("data" in data)) return false;
 
-    return true;
+	return true;
 };
 
 const event = (ws: Websocket, data: unknown) => {
-    if (!isEventPayload(data)) {
-        Logger.warn("Invalid Event Payload", "Wrapper | WebSocket");
-        console.log(data);
+	if (!isEventPayload(data)) {
+		Logger.warn("Invalid Event Payload", "Wrapper | WebSocket");
+		console.log(data);
 
-        return;
-    }
+		return;
+	}
 
-    switch (data.event) {
-        case "Typing": {
-            typing(ws, data.data);
+	switch (data.event) {
+		case "Typing": {
+			typing(ws, data.data);
 
-            break;
-        }
+			break;
+		}
 
-        case "MessageCreate": {
-            messageCreate(ws, data.data);
+		case "MessageCreate": {
+			messageCreate(ws, data.data);
 
-            break;
-        }
+			break;
+		}
 
-        case "MessageDelete": {
-            messageDelete(ws, data.data);
+		case "MessageDelete": {
+			messageDelete(ws, data.data);
 
-            break;
-        }
+			break;
+		}
 
-        case "MessageUpdate": {
-            messageUpdate(ws, data.data);
+		case "MessageUpdate": {
+			messageUpdate(ws, data.data);
 
-            break;
-        }
+			break;
+		}
 
-        case "GuildCreate": {
-            console.log(ws, data.data);
+		case "GuildCreate": {
+			console.log(ws, data.data);
 
-            break;
-        }
+			break;
+		}
 
-        case "GuildDelete": {
-            console.log(ws, data.data);
+		case "GuildDelete": {
+			console.log(ws, data.data);
 
-            break;
-        }
+			break;
+		}
 
-        case "GuildMemberAdd": {
-            console.log(ws, data.data);
+		case "GuildMemberAdd": {
+			console.log(ws, data.data);
 
-            break;
-        }
+			break;
+		}
 
-        case "GuildMemberChunk": {
-            console.log(ws, data.data);
+		case "GuildMemberChunk": {
+			console.log(ws, data.data);
 
-            break;
-        }
+			break;
+		}
 
-        case "PresencesUpdate": {
-            console.log(ws, data.data);
+		case "PresencesUpdate": {
+			console.log(ws, data.data);
 
-            break;
-        }
+			break;
+		}
 
-        case "GuildMemberRemove": {
-            console.log(ws, data.data);
+		case "GuildMemberRemove": {
+			console.log(ws, data.data);
 
-            break;
-        }
+			break;
+		}
 
-        default: {
-            Logger.warn(`Unknown Event ${data.event}`, "Wrapper | WebSocket");
-            console.log(data);
+		default: {
+			Logger.warn(`Unknown Event ${data.event}`, "Wrapper | WebSocket");
+			console.log(data);
 
-            break;
-        }
-    }
+			break;
+		}
+	}
 };
 
 export default event;

@@ -31,7 +31,7 @@ const TextBasedChannel = () => {
 	const [readOnly, setReadOnly] = useState(true); // ? This is just so we know if the user can send messages or not (we prevent any changes / letting them type if so)
 	const [changeSignal, setChangeSignal] = useState(0); // ? every time we want a re-render, we increment this value
 
-    const [guildId,, channelId] = router.query.slug as string[];
+	const [guildId, , channelId] = router.query.slug as string[];
 
 	const bottomRef = useRef<HTMLDivElement>(null);
 	const channelIdRef = useRef(channelId);
@@ -46,7 +46,9 @@ const TextBasedChannel = () => {
 	const { getGuild } = useGuildStore();
 
 	const [fetchedMessages, setFetchedMessages] = useState<MessageType[]>([]);
-	const [renderedMessages, setRenderedMessages] = useState<Omit<MessageProps, "className" | "disableButtons" | "id">[]>([]);
+	const [renderedMessages, setRenderedMessages] = useState<Omit<MessageProps, "className" | "disableButtons" | "id">[]>(
+		[],
+	);
 	const hadErrorRef = useRef(false);
 	const [fetching, setFetching] = useState(false);
 	const [initialFetch, setInitialFetch] = useState(false);
@@ -137,7 +139,7 @@ const TextBasedChannel = () => {
 				hadErrorRef.current = true;
 
 				updateChannel(channelId, {
-					fetchingError: true
+					fetchingError: true,
 				});
 
 				return;
@@ -149,11 +151,15 @@ const TextBasedChannel = () => {
 			setInitialFetch(true);
 
 			//?  we assume this is the first load so we scroll to the bottom
-			setTimeout(() => bottomRef.current?.scrollIntoView({
-				behavior: "instant",
-				block: "nearest",
-				inline: "start"
-			}), 50);
+			setTimeout(
+				() =>
+					bottomRef.current?.scrollIntoView({
+						behavior: "instant",
+						block: "nearest",
+						inline: "start",
+					}),
+				50,
+			);
 
 			for (const msg of newMessages) {
 				for (const invite of msg.invites) {
@@ -167,7 +173,9 @@ const TextBasedChannel = () => {
 		setInitialFetch(true);
 
 		if (messageCache.length > 250) {
-			setFetchedMessages(messageCache.slice(0, 250).toSorted((a, b) => a.creationDate.getTime() - b.creationDate.getTime()));
+			setFetchedMessages(
+				messageCache.slice(0, 250).toSorted((a, b) => a.creationDate.getTime() - b.creationDate.getTime()),
+			);
 
 			return;
 		}
@@ -210,8 +218,8 @@ const TextBasedChannel = () => {
 		const permissionHandler = new PermissionHandler(
 			clientUser.id,
 			guildMember.owner,
-			guildMember.roles.map(roleId => roles.find(role => role.id === roleId)!).filter(Boolean),
-			channels
+			guildMember.roles.map((roleId) => roles.find((role) => role.id === roleId)!).filter(Boolean),
+			channels,
 		);
 
 		if (!permissionHandler.hasChannelPermission(channelId, ["ViewChannels"])) {
@@ -241,12 +249,11 @@ const TextBasedChannel = () => {
 		const currentUser = getCurrentUser()!;
 
 		for (const msg of fetchedMessages) {
-
 			const fetchedAuthor = getUser(msg.authorId);
 			const fetchedMember = guildId ? getMember(guildId, msg.authorId) ?? null : null;
 			const roles = getRoles(guildId ?? "");
 
-			let roleData: { color: string; id: string; } | null = null;
+			let roleData: { color: string; id: string } | null = null;
 
 			if (fetchedMember) {
 				const topColorRole = fetchedMember.roles
@@ -257,7 +264,7 @@ const TextBasedChannel = () => {
 
 				roleData = {
 					color: topColorRole ? topColorRole.color.toString(16) : "",
-					id: topColorRole ? topColorRole.id : ""
+					id: topColorRole ? topColorRole.id : "",
 				};
 			}
 
@@ -268,7 +275,7 @@ const TextBasedChannel = () => {
 				const fetchedReplyAuthor = getUser(foundReplyMessage.authorId);
 				const fetchedReplyMember = guildId ? getMember(guildId, foundReplyMessage.authorId) ?? null : null;
 
-				let roleData: { color: string; id: string; } | null = null;
+				let roleData: { color: string; id: string } | null = null;
 
 				if (fetchedReplyMember) {
 					const roles = useRoleStore.getState().getRoles(guildId ?? "");
@@ -280,7 +287,7 @@ const TextBasedChannel = () => {
 
 					roleData = {
 						color: topColorRole ? topColorRole.color.toString(16) : "",
-						id: topColorRole ? topColorRole.id : ""
+						id: topColorRole ? topColorRole.id : "",
 					};
 				}
 
@@ -288,7 +295,7 @@ const TextBasedChannel = () => {
 					message: foundReplyMessage,
 					member: fetchedReplyMember,
 					roleColor: roleData,
-					user: fetchedReplyAuthor!
+					user: fetchedReplyAuthor!,
 				};
 			}
 
@@ -311,8 +318,6 @@ const TextBasedChannel = () => {
 
 			if (msg.replyingTo) shouldGroup = false;
 
-			
-
 			finishedMsgs.push({
 				inGuild: !!guildId || false,
 				mentionsUser: msg.mentions.users.includes(currentUser.id),
@@ -321,11 +326,15 @@ const TextBasedChannel = () => {
 					...msg,
 					author: {
 						user: fetchedAuthor!,
-						member: fetchedMember ? {
-							...fetchedMember,
-							roles: fetchedMember.roles.map((roleId) => roles.find((role) => role.id === roleId)).filter((rol) => rol !== undefined)
-						} : null,
-						roleColor: roleData
+						member: fetchedMember
+							? {
+									...fetchedMember,
+									roles: fetchedMember.roles
+										.map((roleId) => roles.find((role) => role.id === roleId))
+										.filter((rol) => rol !== undefined),
+								}
+							: null,
+						roleColor: roleData,
 					},
 					invites: msg.invites.map((msg) => {
 						const gotInvite = getInvite(msg);
@@ -336,9 +345,9 @@ const TextBasedChannel = () => {
 
 						return {
 							...gotInvite,
-							guild
+							guild,
 						};
-					})
+					}),
 				},
 				replyMessage: replyData,
 				isEditable: msg.authorId === currentUser.id,
@@ -355,14 +364,17 @@ const TextBasedChannel = () => {
 			setRenderedMessages(finishedMsgs);
 
 			if (shouldScrollToBottom) {
-				setTimeout(() => bottomRef.current?.scrollIntoView({
-					behavior: "instant",
-					block: "nearest",
-					inline: "start"
-				}), 50);
+				setTimeout(
+					() =>
+						bottomRef.current?.scrollIntoView({
+							behavior: "instant",
+							block: "nearest",
+							inline: "start",
+						}),
+					50,
+				);
 			}
 		}
-
 	}, [fetchedMessages, changeSignal]);
 
 	const jumpTo = (messageId: string) => {
@@ -376,25 +388,24 @@ const TextBasedChannel = () => {
 
 		updateChannel(channelId, {
 			currentStates: [...getChannel(channelId).currentStates, "jumped"],
-			jumpingStateId: messageId
+			jumpingStateId: messageId,
 		});
 
 		setTimeout(() => {
 			msg.scrollIntoView({
 				behavior: "smooth",
 				block: "center",
-				inline: "start"
+				inline: "start",
 			});
 
 			setTimeout(() => {
 				updateChannel(channelId, {
 					currentStates: getChannel(channelId).currentStates.filter((state) => state !== "jumped"),
-					jumpingStateId: null
+					jumpingStateId: null,
 				});
 			}, 1000);
 		}, 50);
 	};
-
 
 	return (
 		<MessageContainer
@@ -405,24 +416,28 @@ const TextBasedChannel = () => {
 
 				createMessage(channelId, {
 					content: content,
-					replyingTo: perChannel.replyingStateId
+					replyingTo: perChannel.replyingStateId,
 				});
 
 				updateChannel(channelId, {
 					replyingStateId: null,
-					currentStates: perChannel.currentStates.filter((state) => state !== "replying")
+					currentStates: perChannel.currentStates.filter((state) => state !== "replying"),
 				});
 
-				setTimeout(() => bottomRef.current?.scrollIntoView({
-					behavior: "instant",
-					block: "nearest",
-					inline: "start"
-				}), 50);
+				setTimeout(
+					() =>
+						bottomRef.current?.scrollIntoView({
+							behavior: "instant",
+							block: "nearest",
+							inline: "start",
+						}),
+					50,
+				);
 			}}
 			channelId={channelId}
 			guildId={guildId}
 		>
-			<div className="mt-auto overflow-y-auto mb-4" id="inf-scroller-msg-container" ref={scrollerRef}>
+			<div className="mb-4 mt-auto overflow-y-auto" id="inf-scroller-msg-container" ref={scrollerRef}>
 				<BiDirectionalInfiniteScroller
 					data={renderedMessages}
 					renderItem={(message) => (
@@ -437,44 +452,52 @@ const TextBasedChannel = () => {
 							</ContextMenuTrigger>
 							<ContextMenuContent className="w-40">
 								{message.isReplyable && (
-									<ContextMenuItem onClick={() => {
-										updateChannel(channelId, {
-											currentStates: [...getChannel(channelId).currentStates, "replying"],
-											replyingStateId: message.message.id
-										});
-									}}>
+									<ContextMenuItem
+										onClick={() => {
+											updateChannel(channelId, {
+												currentStates: [...getChannel(channelId).currentStates, "replying"],
+												replyingStateId: message.message.id,
+											});
+										}}
+									>
 										Reply
-										<Reply size={18} color="#acaebf" className="cursor-pointer ml-auto" />
+										<Reply size={18} color="#acaebf" className="ml-auto cursor-pointer" />
 									</ContextMenuItem>
 								)}
 								{message.isEditable && (
 									<ContextMenuItem>
 										Edit
-										<Pen size={18} color="#acaebf" className={"cursor-pointer ml-auto"} />
+										<Pen size={18} color="#acaebf" className={"ml-auto cursor-pointer"} />
 									</ContextMenuItem>
 								)}
 								<ContextMenuItem>
 									Pin Message
-									<Pin size={18} color="#acaebf" className="cursor-pointer ml-auto" />
+									<Pin size={18} color="#acaebf" className="ml-auto cursor-pointer" />
 								</ContextMenuItem>
-								<ContextMenuItem onClick={() => {
-									navigator.clipboard.writeText(message.message.content);
-								}}>
+								<ContextMenuItem
+									onClick={() => {
+										navigator.clipboard.writeText(message.message.content);
+									}}
+								>
 									Copy Text
-									<Copy size={18} color="#acaebf" className="cursor-pointer ml-auto" />
+									<Copy size={18} color="#acaebf" className="ml-auto cursor-pointer" />
 								</ContextMenuItem>
 								{message.isDeleteable && (
 									<ContextMenuItem className="text-danger">
 										Delete Message
-										<Trash2 size={18} className={"text-danger cursor-pointer ml-auto"} />
+										<Trash2 size={18} className={"ml-auto cursor-pointer text-danger"} />
 									</ContextMenuItem>
 								)}
-								<Divider className="mt-1 mb-1" />
+								<Divider className="mb-1 mt-1" />
 								<ContextMenuItem className="text-danger">Report Message</ContextMenuItem>
 								<ContextMenuItem>Copy Message Link</ContextMenuItem>
-								<ContextMenuItem onClick={() => {
-									navigator.clipboard.writeText(message.message.id);
-								}}>Copy Message ID</ContextMenuItem>
+								<ContextMenuItem
+									onClick={() => {
+										navigator.clipboard.writeText(message.message.id);
+									}}
+								>
+									Copy Message ID
+								</ContextMenuItem>
 							</ContextMenuContent>
 						</ContextMenu>
 					)}
@@ -489,22 +512,23 @@ const TextBasedChannel = () => {
 					initialScrollTop={-1}
 					loading={fetching}
 					topContent={
-						!false &&
-						<div className="mt-8 mb-4 mr-16 ml-2 flex border-b-1 border-gray-800 select-none">
-							<div className="flex mb-2">
-								<div className="bg-slate-700 p-2 rounded-full flex items-center">
-									<ChannelIcon type={channelTypes.GuildText} size={48} />
-								</div>
-								<div className="ml-2 mt-2">
-									<h1 className="font-bold text-xl">Welcome to the #{channelName} channel</h1>
-									<h2 className="text-gray-400">This is the beginning of the channel</h2>
+						!false && (
+							<div className="mb-4 ml-2 mr-16 mt-8 flex select-none border-b-1 border-gray-800">
+								<div className="mb-2 flex">
+									<div className="flex items-center rounded-full bg-slate-700 p-2">
+										<ChannelIcon type={channelTypes.GuildText} size={48} />
+									</div>
+									<div className="ml-2 mt-2">
+										<h1 className="text-xl font-bold">Welcome to the #{channelName} channel</h1>
+										<h2 className="text-gray-400">This is the beginning of the channel</h2>
+									</div>
 								</div>
 							</div>
-						</div>
+						)
 					}
 					hasMoreTop={false}
 					classNames={{
-						dataDiv: "overflow-x-hidden"
+						dataDiv: "overflow-x-hidden",
 					}}
 				/>
 				{!initialFetch && skelliedMessages}

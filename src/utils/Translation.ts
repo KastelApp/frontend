@@ -11,13 +11,13 @@ interface RawTranslation {
 		contributors: Contributor[];
 	};
 	[key: string]:
-	| string
-	| RawTranslation
-	| {
-		name: string;
-		code: string;
-		contributors: Contributor[];
-	};
+		| string
+		| RawTranslation
+		| {
+				name: string;
+				code: string;
+				contributors: Contributor[];
+		  };
 }
 
 type TranslationType = {

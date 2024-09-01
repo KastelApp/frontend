@@ -95,7 +95,7 @@ const Login = () => {
 		const attemptLogin = await client.login({
 			email,
 			password,
-			resetClient: true
+			resetClient: true,
 		});
 
 		if (!attemptLogin.success) {
@@ -145,18 +145,16 @@ const Login = () => {
 			<SEO title={"Login"} />
 
 			<HomeLayout>
-				<div className="flex justify-center items-center">
-					<Card className="flex items-center justify-center mt-32 w-full max-w-md p-8 bg-lightAccent dark:bg-darkAccent">
+				<div className="flex items-center justify-center">
+					<Card className="mt-32 flex w-full max-w-md items-center justify-center bg-lightAccent p-8 dark:bg-darkAccent">
 						<div className="w-full max-w-md">
 							<div className="text-center">
 								<h1 className="text-3xl font-bold">{t("login.title")}</h1>
-								<p className="text-medium mt-4">{t("login.subtitle")}</p>
+								<p className="mt-4 text-medium">{t("login.subtitle")}</p>
 							</div>
-							<div className="pl-4 pt-3 pb-0 text-danger text-error-500 text-sm text-center">
-								{error || "\u00A0"}
-							</div>
+							<div className="text-error-500 pb-0 pl-4 pt-3 text-center text-sm text-danger">{error || "\u00A0"}</div>
 							<form className="mt-4">
-								<div className="flex flex-col space-y-4 items-center">
+								<div className="flex flex-col items-center space-y-4">
 									<Input
 										isClearable
 										type="email"
@@ -180,9 +178,9 @@ const Login = () => {
 										endContent={
 											<button className="focus:outline-none" type="button" onClick={toggleVisibility} tabIndex={-1}>
 												{isVisible ? (
-													<EyeIcon className="text-2xl text-default-400 pointer-events-none" />
+													<EyeIcon className="pointer-events-none text-2xl text-default-400" />
 												) : (
-													<EyeOffIcon className="text-2xl text-default-400 pointer-events-none" />
+													<EyeOffIcon className="pointer-events-none text-2xl text-default-400" />
 												)}
 											</button>
 										}
@@ -201,15 +199,8 @@ const Login = () => {
 									/>
 								</div>
 								<div className="mt-8">
-									<Button
-										onClick={login}
-										size="md"
-										color="primary"
-										variant="flat"
-										className="w-full"
-										tabIndex={3}
-									>
-										{loading ? <LoaderCircle className="text-white custom-animate-spin" /> : t("login.button")}
+									<Button onClick={login} size="md" color="primary" variant="flat" className="w-full" tabIndex={3}>
+										{loading ? <LoaderCircle className="custom-animate-spin text-white" /> : t("login.button")}
 									</Button>
 								</div>
 								<div className="mt-4 flex justify-between">
@@ -220,7 +211,7 @@ const Login = () => {
 										disableAnimation
 										variant="light"
 										color="primary"
-										className="hover:bg-transparent bg-transparent hover:opacity-80 transition-opacity text-sm"
+										className="bg-transparent text-sm transition-opacity hover:bg-transparent hover:opacity-80"
 										tabIndex={5}
 										onClick={async () => {
 											if (loading) return;
@@ -231,14 +222,16 @@ const Login = () => {
 												return;
 											}
 
-											const [req, error] = await safePromise(client.api.post({
-												url: "/auth/forgot",
-												data: {
-													email
-												},
-												noAuth: true,
-												noVersion: true
-											}));
+											const [req, error] = await safePromise(
+												client.api.post({
+													url: "/auth/forgot",
+													data: {
+														email,
+													},
+													noAuth: true,
+													noVersion: true,
+												}),
+											);
 
 											if (!req || error || req.status !== 204) {
 												modalStore.getState().createModal({
@@ -254,14 +247,14 @@ const Login = () => {
 																onClick={() => {
 																	modalStore.getState().closeModal("super-rare-error-[forgot]");
 																}}
-																className="mt-4 mb-4"
+																className="mb-4 mt-4"
 																variant="flat"
 																color="danger"
 															>
 																{t("error.dismiss")}
 															</Button>
 														</div>
-													)
+													),
 												});
 
 												return;
@@ -280,16 +273,17 @@ const Login = () => {
 															onClick={() => {
 																modalStore.getState().closeModal("forgot-success");
 															}}
-															className="mt-4 mb-4"
+															className="mb-4 mt-4"
 															variant="flat"
 															color="success"
 														>
 															{t("common.dismiss.exciting")}
 														</Button>
 													</div>
-												)
+												),
 											});
-										}}>
+										}}
+									>
 										{t("login.forgot.button")}
 									</Button>
 								</div>
@@ -303,8 +297,8 @@ const Login = () => {
 						<ModalHeader className="flex flex-col gap-1">Beep boop boop?</ModalHeader>
 						<ModalBody>
 							<div className="flex flex-col items-center">
-								<p className="text-md font-semibold text-center">Hmm, are you really human?</p>
-								<p className="text-md font-semibold text-center">Complete the captcha below to continue</p>
+								<p className="text-md text-center font-semibold">Hmm, are you really human?</p>
+								<p className="text-md text-center font-semibold">Complete the captcha below to continue</p>
 							</div>
 							{/* todo: show captcha */}
 						</ModalBody>

@@ -27,8 +27,8 @@ If you want to help with translating the app, please let me say first of all tha
 - Do not use Google Translate or any other translating software, We want the translations to be as accurate as possible
 - Do not use any slang or any other language that is not professional
 - Do not use any offensive language
-- Do not translate these values: tags.\*, _debug.\*, login.email.placeholder, register.email.placeholder, register.username.placeholder
-  
+- Do not translate these values: tags.\*, \_debug.\*, login.email.placeholder, register.email.placeholder, register.username.placeholder
+
 Before your pull request is merged, we will verify the translations to make sure they are accurate and professional. You may also add your username & id to the contributors array in said file.
 
 ## Maintainers

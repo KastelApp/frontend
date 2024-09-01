@@ -4,8 +4,7 @@ import { Button, Checkbox } from "@nextui-org/react";
 import NextLink from "next/link";
 import { useRef } from "react";
 
-
-const Link = (props: React.JSX.IntrinsicElements["a"] & { phishingMessage?: boolean; }) => {
+const Link = (props: React.JSX.IntrinsicElements["a"] & { phishingMessage?: boolean }) => {
 	let href = props.href;
 	const currentDomain = window.location.host;
 
@@ -13,7 +12,7 @@ const Link = (props: React.JSX.IntrinsicElements["a"] & { phishingMessage?: bool
 		/https:\/\/kastelapp\.com\/(.+)/g,
 		/https:\/\/development\.kastelapp\.com\/(.+)/g,
 		// ? also get the current domain
-		new RegExp(`https://${currentDomain.replace(".", "\\.")}/(.+)`, "g")
+		new RegExp(`https://${currentDomain.replace(".", "\\.")}/(.+)`, "g"),
 	];
 
 	// ? if the href matches any of those paths, we set href to be just the path so we don't need to reload the page
@@ -53,15 +52,13 @@ const Link = (props: React.JSX.IntrinsicElements["a"] & { phishingMessage?: bool
 							title: "Do you want to trust this link?",
 							closable: true,
 							props: {
-								modalSize: "lg"
+								modalSize: "lg",
 							},
 							body: (
 								<div className="flex flex-col">
-									<span className="text-white">
-										{message}
-									</span>
+									<span className="text-white">{message}</span>
 
-									<div className="text-white cursor-pointer border-2 shadow-lg bg-slate-600/25 border-slate-700 rounded-lg mt-4 p-2 break-all">
+									<div className="mt-4 cursor-pointer break-all rounded-lg border-2 border-slate-700 bg-slate-600/25 p-2 text-white shadow-lg">
 										{href}
 									</div>
 									<Checkbox ref={checkboxRef} className="mt-2 text-white">
@@ -71,26 +68,33 @@ const Link = (props: React.JSX.IntrinsicElements["a"] & { phishingMessage?: bool
 							),
 							footer: (
 								<>
-									<Button variant="flat" onClick={() => {
-										modalStore.getState().closeModal(`nontrusted-link-${href}`);
-									}}>
+									<Button
+										variant="flat"
+										onClick={() => {
+											modalStore.getState().closeModal(`nontrusted-link-${href}`);
+										}}
+									>
 										Cancel
 									</Button>
 									{!isPhishingDomain && !props.phishingMessage && (
-										<Button color="primary" variant="flat" onClick={() => {
-											if (checkboxRef.current?.checked) {
-												useTrustedDomainStore.getState().addTrustedDomain(href);
-											}
+										<Button
+											color="primary"
+											variant="flat"
+											onClick={() => {
+												if (checkboxRef.current?.checked) {
+													useTrustedDomainStore.getState().addTrustedDomain(href);
+												}
 
-											open(href);
+												open(href);
 
-											modalStore.getState().closeModal(`nontrusted-link-${href}`);
-										}}>
+												modalStore.getState().closeModal(`nontrusted-link-${href}`);
+											}}
+										>
 											Follow
 										</Button>
 									)}
 								</>
-							)
+							),
 						});
 					}
 				}

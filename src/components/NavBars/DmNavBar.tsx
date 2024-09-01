@@ -3,7 +3,7 @@ import { useSelectedTab, useSettingsStore } from "@/wrapper/Stores.ts";
 import { Avatar, Badge } from "@nextui-org/react";
 import { Home, UserRound, X } from "lucide-react";
 import { useEffect, useState } from "react";
-import { twMerge } from "tailwind-merge";
+import cn from "@/utils/cn.ts";
 import HomeContent from "./DmContent/Home.tsx";
 import Friends from "./DmContent/Friends.tsx";
 import TopNavBar from "./TopNavBar.tsx";
@@ -33,7 +33,7 @@ const DmNavBarItem = ({
 	className?: string;
 	href?: string;
 }) => {
-	const LinkMaybe = ({ children }: { children: React.ReactNode; }) =>
+	const LinkMaybe = ({ children }: { children: React.ReactNode }) =>
 		href ? (
 			<Link href={href} passHref>
 				{children}
@@ -44,28 +44,28 @@ const DmNavBarItem = ({
 
 	return (
 		<div
-			className={twMerge(
-				"transition-all duration-300 ease-in-out transform group select-none flex items-center justify-start w-[12rem] ml-2 mt-2 h-10 cursor-pointer rounded-lg",
+			className={cn(
+				"group ml-2 mt-2 flex h-10 w-[12rem] transform cursor-pointer select-none items-center justify-start rounded-lg transition-all duration-300 ease-in-out",
 				isActive ? "bg-slate-700" : "hover:bg-slate-800",
 				isDisabled ? "cursor-not-allowed" : "",
 			)}
 			onClick={!isDisabled ? onClick : undefined}
 		>
 			<LinkMaybe>
-				<div className="flex items-center justify-between w-full">
+				<div className="flex w-full items-center justify-between">
 					<div className="flex items-center">
 						{icon}
-						<div className={twMerge("flex flex-col ml-2", className)}>
+						<div className={cn("ml-2 flex flex-col", className)}>
 							<p
-								className={twMerge(
-									"text-white truncate",
+								className={cn(
+									"truncate text-white",
 									isDisabled ? "text-gray-500" : "",
 									textSize ? `text-${textSize}` : "",
 								)}
 							>
 								{name}
 							</p>
-							{underName && <p className="text-xs text-gray-500 truncate">{underName}</p>}
+							{underName && <p className="truncate text-xs text-gray-500">{underName}</p>}
 						</div>
 					</div>
 					{endContent}
@@ -101,15 +101,13 @@ const DmNavBar = ({
 			id: "friends",
 			disabled: false,
 			icon: <UserRound color="#acaebf" size={20} className="ml-2" />,
-		}
+		},
 	];
 
-	const dms = [
-
-	];
+	const dms = [];
 
 	const [selectedChannel, setSelectedChannel] = useState<string | null>(null);
-	const [,, channelId] = router.query?.slug ?? [] as string[];
+	const [, , channelId] = router.query?.slug ?? ([] as string[]);
 
 	useEffect(() => {
 		if (!router.isReady) return;
@@ -122,10 +120,10 @@ const DmNavBar = ({
 	}, [router]);
 
 	return (
-		<div className="flex flex-row w-full h-screen m-0 overflow-hidden">
+		<div className="m-0 flex h-screen w-full flex-row overflow-hidden">
 			<div
-				className={twMerge(
-					"fixed w-52 h-screen m-0 overflow-hidden bg-lightAccent dark:bg-darkAccent",
+				className={cn(
+					"fixed m-0 h-screen w-52 overflow-hidden bg-lightAccent dark:bg-darkAccent",
 					isSideBarOpen ? (navBarLocation === NavBarLocation.Left ? "ml-16" : "") : "hidden",
 				)}
 			>
@@ -157,9 +155,9 @@ const DmNavBar = ({
 					))}
 				</div>
 				<div className="flex flex-col">
-					<p className="text-white text-xs ml-2 mt-2">Direct Messages</p>
+					<p className="ml-2 mt-2 text-xs text-white">Direct Messages</p>
 					{dms.length === 0 && (
-						<p className="text-gray-500 text-sm ml-2 mt-4">It's pretty lonely here...why not DM someone?</p>
+						<p className="ml-2 mt-4 text-sm text-gray-500">It's pretty lonely here...why not DM someone?</p>
 					)}
 					{dms.map((dm, index) => (
 						<DmNavBarItem
@@ -197,10 +195,10 @@ const DmNavBar = ({
 								<X
 									color="#c7c7c7"
 									size={20}
-									className="scale-0 group-hover:scale-100 transition-transform duration-300 ease-in-out mr-2"
+									className="mr-2 scale-0 transition-transform duration-300 ease-in-out group-hover:scale-100"
 								/>
 							}
-							className="truncate w-28"
+							className="w-28 truncate"
 							href={`/app/@me/messages/${dm.username}`}
 							isActive={selectedChannel === dm.username}
 							onClick={() => {
@@ -210,10 +208,15 @@ const DmNavBar = ({
 					))}
 				</div>
 			</div>
-			<div className={twMerge("w-full", navBarLocation === NavBarLocation.Left ? isSideBarOpen ? "ml-[17rem]" : "" : "ml-[13rem]")}>
+			<div
+				className={cn(
+					"w-full",
+					navBarLocation === NavBarLocation.Left ? (isSideBarOpen ? "ml-[17rem]" : "") : "ml-[13rem]",
+				)}
+			>
 				<TopNavBar
 					startContent={
-						<div className="text-gray-300 font-semibold">
+						<div className="font-semibold text-gray-300">
 							{selectedTab === null && title ? title : tabs.find((tab) => tab.id === selectedTab)?.name}
 						</div>
 					}
@@ -221,14 +224,8 @@ const DmNavBar = ({
 					setIsOpen={setIsSideBarOpen}
 					endContent={topNavBarEndContent}
 				/>
-				<div className="ml-2 ">
-					{selectedTab === null && children ? (
-						children
-					) : selectedTab === "friends" ? (
-						<Friends />
-					) : (
-						<HomeContent />
-					)}
+				<div className="ml-2">
+					{selectedTab === null && children ? children : selectedTab === "friends" ? <Friends /> : <HomeContent />}
 				</div>
 			</div>
 		</div>

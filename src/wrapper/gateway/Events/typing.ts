@@ -4,45 +4,45 @@ import Websocket from "@/wrapper/gateway/Websocket.ts";
 import { usePerChannelStore } from "@/wrapper/Stores/ChannelStore.ts";
 
 const isTypingEvent = (payload: unknown): payload is TypingPayload => {
-    if (payload === null || typeof payload !== "object") return false;
+	if (payload === null || typeof payload !== "object") return false;
 
-    if (!("channelId" in payload)) return false;
-    if (!("userId" in payload)) return false;
+	if (!("channelId" in payload)) return false;
+	if (!("userId" in payload)) return false;
 
-    return true;
+	return true;
 };
 
 const typing = (ws: Websocket, payload: unknown) => {
-    if (!isTypingEvent(payload)) {
-        Logger.warn("Invalid Typing Payload", "Wrapper | WebSocket");
+	if (!isTypingEvent(payload)) {
+		Logger.warn("Invalid Typing Payload", "Wrapper | WebSocket");
 
-        return;
-    }
+		return;
+	}
 
-    const channel = usePerChannelStore.getState().getChannel(payload.channelId);
+	const channel = usePerChannelStore.getState().getChannel(payload.channelId);
 
-    if (!channel) {
-        Logger.warn("Channel not found", "Wrapper | WebSocket");
+	if (!channel) {
+		Logger.warn("Channel not found", "Wrapper | WebSocket");
 
-        return;
-    }
+		return;
+	}
 
-    const foundUser = channel.typingUsers.find((user) => user.id === payload.userId);
+	const foundUser = channel.typingUsers.find((user) => user.id === payload.userId);
 
-    if (foundUser) {
-        foundUser.started = Date.now();
-    } else {
-        channel.typingUsers.push({
-            id: payload.userId,
-            started: Date.now()
-        });
-    }
+	if (foundUser) {
+		foundUser.started = Date.now();
+	} else {
+		channel.typingUsers.push({
+			id: payload.userId,
+			started: Date.now(),
+		});
+	}
 
-    channel.typingUsers = channel.typingUsers.filter((user) => Date.now() - user.started < 7000);
+	channel.typingUsers = channel.typingUsers.filter((user) => Date.now() - user.started < 7000);
 
-    usePerChannelStore.getState().updateChannel(payload.channelId, {
-        typingUsers: channel.typingUsers
-    });
+	usePerChannelStore.getState().updateChannel(payload.channelId, {
+		typingUsers: channel.typingUsers,
+	});
 };
 
 export default typing;

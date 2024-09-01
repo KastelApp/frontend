@@ -124,7 +124,6 @@ const Register = () => {
 			resetClient: true,
 		});
 
-
 		if (!attemptRegister.success) {
 			if (attemptRegister.errors.captchaRequired) {
 				onOpenChangeCaptcha();
@@ -181,18 +180,16 @@ const Register = () => {
 		<>
 			<SEO title={"Register"} />
 			<HomeLayout>
-				<div className="flex justify-center items-center">
-					<Card className="flex items-center justify-center mt-32 w-full max-w-md p-8 bg-lightAccent dark:bg-darkAccent">
+				<div className="flex items-center justify-center">
+					<Card className="mt-32 flex w-full max-w-md items-center justify-center bg-lightAccent p-8 dark:bg-darkAccent">
 						<div className="w-full max-w-md">
 							<div className="text-center">
 								<h1 className="text-3xl font-bold">{t("register.title")}</h1>
-								<p className="text-medium mt-4">{t("register.subtitle")}</p>
+								<p className="mt-4 text-medium">{t("register.subtitle")}</p>
 							</div>
-							<div className="pl-4 pt-3 pb-0 text-danger text-error-500 text-sm text-center">
-								{error || "\u00A0"}
-							</div>
+							<div className="text-error-500 pb-0 pl-4 pt-3 text-center text-sm text-danger">{error || "\u00A0"}</div>
 							<form className="mt-4">
-								<div className="flex flex-col space-y-4 items-center">
+								<div className="flex flex-col items-center space-y-4">
 									<Input
 										isClearable
 										type="text"
@@ -233,9 +230,9 @@ const Register = () => {
 										endContent={
 											<button className="focus:outline-none" type="button" onClick={toggleVisibility} tabIndex={-1}>
 												{isVisible ? (
-													<EyeIcon className="text-2xl text-default-400 pointer-events-none" />
+													<EyeIcon className="pointer-events-none text-2xl text-default-400" />
 												) : (
-													<EyeOffIcon className="text-2xl text-default-400 pointer-events-none" />
+													<EyeOffIcon className="pointer-events-none text-2xl text-default-400" />
 												)}
 											</button>
 										}
@@ -256,11 +253,16 @@ const Register = () => {
 										variant="bordered"
 										placeholder={t("register.password.confirm.placeholder")}
 										endContent={
-											<button className="focus:outline-none" type="button" onClick={toggleConfirmVisibility} tabIndex={-1}>
+											<button
+												className="focus:outline-none"
+												type="button"
+												onClick={toggleConfirmVisibility}
+												tabIndex={-1}
+											>
 												{isConfirmVisible ? (
-													<EyeIcon className="text-2xl text-default-400 pointer-events-none" />
+													<EyeIcon className="pointer-events-none text-2xl text-default-400" />
 												) : (
-													<EyeOffIcon className="text-2xl text-default-400 pointer-events-none" />
+													<EyeOffIcon className="pointer-events-none text-2xl text-default-400" />
 												)}
 											</button>
 										}
@@ -279,14 +281,7 @@ const Register = () => {
 									/>
 								</div>
 								<div className="mt-8">
-									<Button
-										onClick={register}
-										size="md"
-										color="primary"
-										variant="flat"
-										className="w-full"
-										tabIndex={5}
-									>
+									<Button onClick={register} size="md" color="primary" variant="flat" className="w-full" tabIndex={5}>
 										{loading ? <LoaderCircle className="custom-animate-spin" size={24} /> : t("register.button")}
 									</Button>
 								</div>
@@ -305,8 +300,8 @@ const Register = () => {
 						<ModalHeader className="flex flex-col gap-1">Beep boop boop?</ModalHeader>
 						<ModalBody>
 							<div className="flex flex-col items-center">
-								<p className="text-md font-semibold text-center">Hmm, are you really human?</p>
-								<p className="text-md font-semibold text-center">Complete the captcha below to continue</p>
+								<p className="text-md text-center font-semibold">Hmm, are you really human?</p>
+								<p className="text-md text-center font-semibold">Complete the captcha below to continue</p>
 							</div>
 							{/* todo: show captcha */}
 						</ModalBody>

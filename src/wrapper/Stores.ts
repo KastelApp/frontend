@@ -3,7 +3,18 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { createTrackedSelector } from "react-tracked";
 import Translation from "@/utils/Translation.ts";
-import { APIStore, ClientStore, GuildSettings, GuildSettingsStore, IsReadyStore, SelectedTabStore, SettingsStore, StoredSettingsStore, TokenStore, TranslationStore } from "./Stores.types.ts";
+import {
+	APIStore,
+	ClientStore,
+	GuildSettings,
+	GuildSettingsStore,
+	IsReadyStore,
+	SelectedTabStore,
+	SettingsStore,
+	StoredSettingsStore,
+	TokenStore,
+	TranslationStore,
+} from "./Stores.types.ts";
 import API from "./API.ts";
 import Client from "./Client.ts";
 
@@ -71,38 +82,37 @@ export const useSelectedTab = createTrackedSelector(
 
 // ? The reason we don't use "createTrackedSelector" here is we still want to update components when something like the current language changes, without requiring it in the component
 // ? There's a few other things we want to do that as well (i.e settings etc)
-export const useTranslationStore =
-	create(
-		persist<TranslationStore>(
-			(set, get) => ({
-				rawTranslation: new Translation(),
-				currentLanguage: "en",
-				_hasHydrated: false,
-				setHasHydrated: (hasHydrated) => set({ _hasHydrated: hasHydrated }),
-				setLanguage: async (language: string) => {
-					await get().rawTranslation.fetchTranslation(language);
+export const useTranslationStore = create(
+	persist<TranslationStore>(
+		(set, get) => ({
+			rawTranslation: new Translation(),
+			currentLanguage: "en",
+			_hasHydrated: false,
+			setHasHydrated: (hasHydrated) => set({ _hasHydrated: hasHydrated }),
+			setLanguage: async (language: string) => {
+				await get().rawTranslation.fetchTranslation(language);
 
-					set({ currentLanguage: language });
-				},
-				t: (key: string, ...anything: unknown[]) => get().rawTranslation.t(get().currentLanguage, key, ...anything),
-				fetchLanguages: () => get().rawTranslation.metaData.languages,
-			}),
-			{
-				name: "translation",
-				partialize: (state) =>
-					Object.fromEntries(
-						Object.entries(state).filter(([key]) => key === "currentLanguage"),
-					) as unknown as TranslationStore,
-				onRehydrateStorage: () => async (state) => {
-					await state?.rawTranslation.fetchMetaData();
-
-					await state?.rawTranslation.fetchTranslation(state?.currentLanguage);
-
-					state!.setHasHydrated(true);
-				},
+				set({ currentLanguage: language });
 			},
-		),
-	);
+			t: (key: string, ...anything: unknown[]) => get().rawTranslation.t(get().currentLanguage, key, ...anything),
+			fetchLanguages: () => get().rawTranslation.metaData.languages,
+		}),
+		{
+			name: "translation",
+			partialize: (state) =>
+				Object.fromEntries(
+					Object.entries(state).filter(([key]) => key === "currentLanguage"),
+				) as unknown as TranslationStore,
+			onRehydrateStorage: () => async (state) => {
+				await state?.rawTranslation.fetchMetaData();
+
+				await state?.rawTranslation.fetchTranslation(state?.currentLanguage);
+
+				state!.setHasHydrated(true);
+			},
+		},
+	),
+);
 
 export const useAPIStore = create<APIStore>((set) => ({
 	api: new API(null),
@@ -128,6 +138,5 @@ export const useIsReady = create<IsReadyStore>((set) => ({
 
 export const useClientStore = create<ClientStore>((set) => ({
 	client: new Client(),
-	setClient: (client: Client) => set({ client })
+	setClient: (client: Client) => set({ client }),
 }));
-

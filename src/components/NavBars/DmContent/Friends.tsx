@@ -22,16 +22,15 @@ const Friends = () => {
 		setBlockedFriends(blocked.length);
 		setFriendCount(friends.length);
 
-		const subscription = useRelationshipsStore.subscribe(
-			(state) => {
-				const pending = state.getPendingRelationships();
-				const blocked = state.getBlockedRelationships();
-				const friends = state.getFriendRelationships();
+		const subscription = useRelationshipsStore.subscribe((state) => {
+			const pending = state.getPendingRelationships();
+			const blocked = state.getBlockedRelationships();
+			const friends = state.getFriendRelationships();
 
-				setPendingFriends(pending.length);
-				setBlockedFriends(blocked.length);
-				setFriendCount(friends.length);
-			});
+			setPendingFriends(pending.length);
+			setBlockedFriends(blocked.length);
+			setFriendCount(friends.length);
+		});
 
 		return () => subscription();
 	}, []);
@@ -49,10 +48,14 @@ const Friends = () => {
 						key="friends"
 						title={
 							<div className="flex items-center space-x-2">
-								<span className="transition-colors duration-100 group-data-[selected=true]:text-foreground-50 font-medium">Friends</span>
-								{friendCount > 0 && <Chip size="sm" variant="faded" color="success">
-									{friendCount}
-								</Chip>}
+								<span className="font-medium transition-colors duration-100 group-data-[selected=true]:text-foreground-50">
+									Friends
+								</span>
+								{friendCount > 0 && (
+									<Chip size="sm" variant="faded" color="success">
+										{friendCount}
+									</Chip>
+								)}
 							</div>
 						}
 					>
@@ -62,10 +65,14 @@ const Friends = () => {
 						key="pending-friends"
 						title={
 							<div className="flex items-center space-x-2">
-								<span className="transition-colors duration-100 group-data-[selected=true]:text-foreground-50 font-medium">Pending</span>
-								{pendingFriends > 0 && <Chip size="sm" variant="faded" color="warning">
-									{pendingFriends}
-								</Chip>}
+								<span className="font-medium transition-colors duration-100 group-data-[selected=true]:text-foreground-50">
+									Pending
+								</span>
+								{pendingFriends > 0 && (
+									<Chip size="sm" variant="faded" color="warning">
+										{pendingFriends}
+									</Chip>
+								)}
 							</div>
 						}
 					>
@@ -75,16 +82,27 @@ const Friends = () => {
 						key="blocked"
 						title={
 							<div className="flex items-center space-x-2">
-								<span className="transition-colors duration-100 group-data-[selected=true]:text-foreground-50 font-medium">Blocked</span>
-								{blockedFriends > 0 && <Chip size="sm" variant="faded" color="danger">
-									{blockedFriends}
-								</Chip>}
+								<span className="font-medium transition-colors duration-100 group-data-[selected=true]:text-foreground-50">
+									Blocked
+								</span>
+								{blockedFriends > 0 && (
+									<Chip size="sm" variant="faded" color="danger">
+										{blockedFriends}
+									</Chip>
+								)}
 							</div>
 						}
 					>
 						<BlockedFriends />
 					</Tab>
-					<Tab key="add-new-friend" title={<span className="transition-colors duration-100 group-data-[selected=true]:text-foreground-50 font-medium">Add a Friend</span>}>
+					<Tab
+						key="add-new-friend"
+						title={
+							<span className="font-medium transition-colors duration-100 group-data-[selected=true]:text-foreground-50">
+								Add a Friend
+							</span>
+						}
+					>
 						<AddFriend />
 					</Tab>
 				</Tabs>

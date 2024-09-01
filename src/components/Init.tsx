@@ -12,171 +12,172 @@ import { Button } from "@nextui-org/react";
 import ModalQueue from "@/components/Modals/ModalQueue.tsx";
 
 const Init = ({
-    children,
-    shouldHaveLayout = false,
+	children,
+	shouldHaveLayout = false,
 }: {
-    children?: React.ReactElement | React.ReactElement[];
-    shouldHaveLayout?: boolean;
+	children?: React.ReactElement | React.ReactElement[];
+	shouldHaveLayout?: boolean;
 }) => {
-    const { token } = useTokenStore();
-    const { client } = useClientStore();
-    const { api } = useAPIStore();
-    const router = useRouter();
-    const { setIsReady, isReady } = useIsReady();
-    const { addRelationship } = useRelationshipsStore();
-    const { channels } = usePerChannelStore();
-    const { mobilePopupIgnored, setMobilePopupIgnored } = useStoredSettingsStore();
-    const [isMobile, setIsMobile] = useState(false);
+	const { token } = useTokenStore();
+	const { client } = useClientStore();
+	const { api } = useAPIStore();
+	const router = useRouter();
+	const { setIsReady, isReady } = useIsReady();
+	const { addRelationship } = useRelationshipsStore();
+	const { channels } = usePerChannelStore();
+	const { mobilePopupIgnored, setMobilePopupIgnored } = useStoredSettingsStore();
+	const [isMobile, setIsMobile] = useState(false);
 
-    useEffect(() => {
-        api.token = token;
+	useEffect(() => {
+		api.token = token;
 
-        setIsReady(false);
-    }, [token]);
+		setIsReady(false);
+	}, [token]);
 
-    const whitelistedPaths: (string | RegExp)[] = [
-        /^\/app(\/.*)?/,
-    ];
+	const whitelistedPaths: (string | RegExp)[] = [/^\/app(\/.*)?/];
 
-    const blacklistedTokenPaths: (string | RegExp)[] = [
-        "/login",
-        "/register",
-    ];
+	const blacklistedTokenPaths: (string | RegExp)[] = ["/login", "/register"];
 
-    useEffect(() => {
-        // ? We have a few methods of detecting if the user is on a mobile device
-        // ? First is if the user agent is a mobile device
-        // ? Second is if the screen width is less than 768
+	useEffect(() => {
+		// ? We have a few methods of detecting if the user is on a mobile device
+		// ? First is if the user agent is a mobile device
+		// ? Second is if the screen width is less than 768
 
-        globalThis.forceReady = () => setIsReady(true);
+		globalThis.forceReady = () => setIsReady(true);
 
-        if (navigator.userAgent.includes("Android") || navigator.userAgent.includes("iPhone")) {
-            setIsMobile(true);
+		if (navigator.userAgent.includes("Android") || navigator.userAgent.includes("iPhone")) {
+			setIsMobile(true);
 
-            return;
-        }
+			return;
+		}
 
-        if (window.innerWidth < 768) {
-            setIsMobile(true);
+		if (window.innerWidth < 768) {
+			setIsMobile(true);
 
-            return;
-        }
+			return;
+		}
 
-        setIsMobile(false);
-    }, []);
+		setIsMobile(false);
+	}, []);
 
-    useEffect(() => {
-        const int = setInterval(() => {
-            // ? we go thru all channels if they have a typing user, we check if the time is greater than 7 seconds, if so we remove them
-            for (const [channelId, channel] of Object.entries(channels)) {
-                if (!channel.typingUsers || channel.typingUsers.length === 0 || !channel.typingUsers.some((user) => Date.now() - user.started > 7000)) continue;
+	useEffect(() => {
+		const int = setInterval(() => {
+			// ? we go thru all channels if they have a typing user, we check if the time is greater than 7 seconds, if so we remove them
+			for (const [channelId, channel] of Object.entries(channels)) {
+				if (
+					!channel.typingUsers ||
+					channel.typingUsers.length === 0 ||
+					!channel.typingUsers.some((user) => Date.now() - user.started > 7000)
+				)
+					continue;
 
-                channel.typingUsers = channel.typingUsers.filter((user) => Date.now() - user.started < 7000);
+				channel.typingUsers = channel.typingUsers.filter((user) => Date.now() - user.started < 7000);
 
-                usePerChannelStore.getState().updateChannel(channelId, {
-                    typingUsers: channel.typingUsers
-                });
-            }
-        }, 1000);
+				usePerChannelStore.getState().updateChannel(channelId, {
+					typingUsers: channel.typingUsers,
+				});
+			}
+		}, 1000);
 
-        return () => clearInterval(int);
-    }, [channels]);
+		return () => clearInterval(int);
+	}, [channels]);
 
-    useEffect(() => {
-        if (blacklistedTokenPaths.some((path) => router.pathname.match(path) || path === router.pathname) && token) {
-            router.push("/app");
+	useEffect(() => {
+		if (blacklistedTokenPaths.some((path) => router.pathname.match(path) || path === router.pathname) && token) {
+			router.push("/app");
 
-            setIsReady(false);
+			setIsReady(false);
 
-            return;
-        }
+			return;
+		}
 
-        if (!whitelistedPaths.some((path) => router.pathname.match(path) || path === router.pathname)) {
-            setIsReady(true);
+		if (!whitelistedPaths.some((path) => router.pathname.match(path) || path === router.pathname)) {
+			setIsReady(true);
 
-            return;
-        }
+			return;
+		}
 
-        if (!token) {
-            router.push("/login");
+		if (!token) {
+			router.push("/login");
 
-            return;
-        }
+			return;
+		}
 
-        if (client.isConnected) {
-            if (!isReady) setIsReady(true);
+		if (client.isConnected) {
+			if (!isReady) setIsReady(true);
 
-            return; // ? This is to prevent an infinite loop
-        }
+			return; // ? This is to prevent an infinite loop
+		}
 
-        setIsReady(false);
+		setIsReady(false);
 
-        client.connect(token);
+		client.connect(token);
 
-        client.on("ready", async () => {
-            // @ts-expect-error -- For now exposing the api to global so I can mess with stuff
-            globalThis.api = api;
+		client.on("ready", async () => {
+			// @ts-expect-error -- For now exposing the api to global so I can mess with stuff
+			globalThis.api = api;
 
-            const relationships = await api.get<unknown, Relationship[]>({
-                url: "/users/@me/relationships?includeUser=true"
-            });
+			const relationships = await api.get<unknown, Relationship[]>({
+				url: "/users/@me/relationships?includeUser=true",
+			});
 
-            // ? continues in the background (since its a HUGE payload)
-            // useTrustedDomainStore.getState().fetchPhishingDomains();
+			// ? continues in the background (since its a HUGE payload)
+			// useTrustedDomainStore.getState().fetchPhishingDomains();
 
-            // ? If it fails we just set is ready to true and log out the failure
-            if (!relationships || relationships.status !== 200) {
-                Logger.error("Failed to fetch relationships", "Init | ready event");
+			// ? If it fails we just set is ready to true and log out the failure
+			if (!relationships || relationships.status !== 200) {
+				Logger.error("Failed to fetch relationships", "Init | ready event");
 
-                setIsReady(true);
+				setIsReady(true);
 
-                return;
-            }
+				return;
+			}
 
-            if (!Array.isArray(relationships.body)) {
-                setIsReady(true);
+			if (!Array.isArray(relationships.body)) {
+				setIsReady(true);
 
-                return;
-            }
+				return;
+			}
 
-            for (const relationship of (relationships.body || [])) {
-                if (relationship.user) {
-                    useUserStore.getState().addUser(relationship.user);
+			for (const relationship of relationships.body || []) {
+				if (relationship.user) {
+					useUserStore.getState().addUser(relationship.user);
 
-                    relationship.userId = relationship.user.id;
+					relationship.userId = relationship.user.id;
 
-                    delete relationship.user;
-                }
+					delete relationship.user;
+				}
 
-                addRelationship(relationship as RelationshipState);
-            }
+				addRelationship(relationship as RelationshipState);
+			}
 
-            setIsReady(true);
-        });
+			setIsReady(true);
+		});
 
-        client.on("close", () => {
-            setIsReady(false);
+		client.on("close", () => {
+			setIsReady(false);
 
-            client.isConnected = false;
-        });
-    }, [router.pathname]);
+			client.isConnected = false;
+		});
+	}, [router.pathname]);
 
-    return (
-        <>
-            {isMobile && !mobilePopupIgnored && (
-                <div className="fixed bottom-0 left-0 right-0 bg-black bg-opacity-50 p-2 flex flex-col items-center justify-between z-[5000]">
-                    <p className="text-white">You're on a mobile device, this site is not optimized for mobile yet. Please use a desktop device or download our mobile app.</p>
-                    <Button size="sm" variant="bordered" color="primary" onClick={() => setMobilePopupIgnored(true)}>I understand</Button>
-                </div>
-            )}
-            {!isReady ? <Loading /> :
-                <>
-                    {shouldHaveLayout ? <AppLayout>{children}</AppLayout> : children}
-                </>
-            }
-            <ModalQueue />
-        </>
-    );
+	return (
+		<>
+			{isMobile && !mobilePopupIgnored && (
+				<div className="fixed bottom-0 left-0 right-0 z-[5000] flex flex-col items-center justify-between bg-black bg-opacity-50 p-2">
+					<p className="text-white">
+						You're on a mobile device, this site is not optimized for mobile yet. Please use a desktop device or
+						download our mobile app.
+					</p>
+					<Button size="sm" variant="bordered" color="primary" onClick={() => setMobilePopupIgnored(true)}>
+						I understand
+					</Button>
+				</div>
+			)}
+			{!isReady ? <Loading /> : <>{shouldHaveLayout ? <AppLayout>{children}</AppLayout> : children}</>}
+			<ModalQueue />
+		</>
+	);
 };
 
 export default Init;

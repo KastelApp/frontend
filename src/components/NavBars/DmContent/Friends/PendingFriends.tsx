@@ -106,22 +106,34 @@ const PendingFriends = () => {
 						<DropdownMenu disabledKeys={["call"]}>
 							<DropdownItem key="view-dm">View DMs</DropdownItem>
 							{/* For some stupid reason we have to do type as any */}
-							{(user.pending && (
-								<DropdownItem key="accept" color="success" variant="flat">Accept</DropdownItem>
-							)) as never}
-							{(user.pending && (
-								<DropdownItem key="deny" color="danger" variant="flat">
-									Deny
-								</DropdownItem>
-							)) as never}
-							{(user.pending && (
-								<DropdownItem key="ignore" color="warning" variant="flat">
-									Ignore
-								</DropdownItem>
-							)) as never}
-							{(!user.pending && (
-								<DropdownItem key="cancel" color="danger" variant="flat">Cancel</DropdownItem>
-							)) as never}
+							{
+								(user.pending && (
+									<DropdownItem key="accept" color="success" variant="flat">
+										Accept
+									</DropdownItem>
+								)) as never
+							}
+							{
+								(user.pending && (
+									<DropdownItem key="deny" color="danger" variant="flat">
+										Deny
+									</DropdownItem>
+								)) as never
+							}
+							{
+								(user.pending && (
+									<DropdownItem key="ignore" color="warning" variant="flat">
+										Ignore
+									</DropdownItem>
+								)) as never
+							}
+							{
+								(!user.pending && (
+									<DropdownItem key="cancel" color="danger" variant="flat">
+										Cancel
+									</DropdownItem>
+								)) as never
+							}
 							<DropdownItem key="block" color="danger" variant="flat">
 								Block
 							</DropdownItem>
@@ -138,8 +150,8 @@ const PendingFriends = () => {
 	const topContent = useMemo(() => {
 		return (
 			<div className="flex flex-col gap-4">
-				<div className="flex justify-between gap-3 items-end">
-					<div className="flex gap-3 ml-auto">
+				<div className="flex items-end justify-between gap-3">
+					<div className="ml-auto flex gap-3">
 						<Dropdown>
 							<DropdownTrigger className="hidden sm:flex">
 								<Button endContent={<ChevronDown className="text-small" />} variant="flat">
@@ -169,22 +181,26 @@ const PendingFriends = () => {
 
 	useEffect(() => {
 		const subscribed = useRelationshipsStore.subscribe((state) => {
-			setFriends(state.getPendingRelationships().map((x) => {
+			setFriends(
+				state
+					.getPendingRelationships()
+					.map((x) => {
+						const foundUser = getUser(x.userId);
 
-				const foundUser = getUser(x.userId);
+						if (!foundUser) return null;
 
-				if (!foundUser) return null;
-
-				return {
-					id: x.relationshipId,
-					pending: x.pending,
-					status: "online",
-					user: {
-						...foundUser,
-						avatar: getDefaultAvatar(foundUser.id),
-					}
-				};
-			}).filter((x) => x !== null));
+						return {
+							id: x.relationshipId,
+							pending: x.pending,
+							status: "online",
+							user: {
+								...foundUser,
+								avatar: getDefaultAvatar(foundUser.id),
+							},
+						};
+					})
+					.filter((x) => x !== null),
+			);
 		});
 
 		const userSubscribed = useUserStore.subscribe((state) => {
@@ -199,28 +215,32 @@ const PendingFriends = () => {
 					user: {
 						...user,
 						avatar: state.getDefaultAvatar(user.id),
-					}
+					},
 				};
 			});
 
 			setFriends(updatedFriends);
 		});
 
-		setFriends(getPendingRelationships().map((x) => {
-			const foundUser = getUser(x.userId);
+		setFriends(
+			getPendingRelationships()
+				.map((x) => {
+					const foundUser = getUser(x.userId);
 
-			if (!foundUser) return null;
+					if (!foundUser) return null;
 
-			return {
-				id: x.relationshipId,
-				pending: x.pending,
-				status: "online",
-				user: {
-					...foundUser,
-					avatar: getDefaultAvatar(foundUser.id),
-				}
-			};
-		}).filter((x) => x !== null));
+					return {
+						id: x.relationshipId,
+						pending: x.pending,
+						status: "online",
+						user: {
+							...foundUser,
+							avatar: getDefaultAvatar(foundUser.id),
+						},
+					};
+				})
+				.filter((x) => x !== null),
+		);
 
 		return () => {
 			subscribed();
@@ -235,7 +255,7 @@ const PendingFriends = () => {
 			bottomContentPlacement="outside"
 			classNames={{
 				wrapper: "max-h-[382px] bg-lightAccent dark:bg-darkAccent",
-				th: "bg-lightBackground dark:bg-darkBackground"
+				th: "bg-lightBackground dark:bg-darkBackground",
 			}}
 			selectedKeys={selectedKeys}
 			selectionMode="none"
@@ -258,7 +278,9 @@ const PendingFriends = () => {
 			</TableHeader>
 			<TableBody emptyContent={"You have no pending friend requests."} items={sortedItems}>
 				{(item) => (
-					<TableRow key={item.id}>{(columnKey) => <TableCell>{renderCell(item, columnKey) as string}</TableCell>}</TableRow>
+					<TableRow key={item.id}>
+						{(columnKey) => <TableCell>{renderCell(item, columnKey) as string}</TableCell>}
+					</TableRow>
 				)}
 			</TableBody>
 		</Table>

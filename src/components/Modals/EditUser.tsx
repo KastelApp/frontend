@@ -13,7 +13,6 @@ const EditUser = ({
 	onOpenChange: () => void;
 	onClose: () => void;
 }) => {
-
 	const [user, setUser] = useState<User | undefined>(undefined);
 	const [globalNickname, setGlobalNickname] = useState<string>("");
 	const [username, setUsername] = useState<string>("");
@@ -51,8 +50,8 @@ const EditUser = ({
 		const correctedGlobalNickname = globalNickname || null;
 
 		const globalNicknameUpdate = correctedGlobalNickname === user?.globalNickname ? undefined : correctedGlobalNickname;
-		const usernameUpdate = username ? username === user?.username ? null : username : null;
-		const tagUpdate = tag ? tag === user?.tag ? null : tag : null;
+		const usernameUpdate = username ? (username === user?.username ? null : username) : null;
+		const tagUpdate = tag ? (tag === user?.tag ? null : tag) : null;
 		const bioUpdate = correctedBio === user?.bio ? undefined : correctedBio;
 
 		if (tagUpdate && (tagUpdate.length !== 4 || !/^[0-9]*$/.test(tagUpdate))) {
@@ -123,7 +122,13 @@ const EditUser = ({
 			setTagError("Invalid Tag");
 		}
 
-		if (updated.errors.globalNickname && updated.errors.username && updated.errors.tag && updated.errors.bio && Object.values(updated.errors.unknown).length < 1) {
+		if (
+			updated.errors.globalNickname &&
+			updated.errors.username &&
+			updated.errors.tag &&
+			updated.errors.bio &&
+			Object.values(updated.errors.unknown).length < 1
+		) {
 			setError("An unknown error occurred, please try again later.");
 		}
 
@@ -131,13 +136,20 @@ const EditUser = ({
 	};
 
 	return (
-		<Modal isOpen={isOpen} onOpenChange={onOpenChange} placement="top-center" isDismissable={false} isKeyboardDismissDisabled hideCloseButton>
+		<Modal
+			isOpen={isOpen}
+			onOpenChange={onOpenChange}
+			placement="top-center"
+			isDismissable={false}
+			isKeyboardDismissDisabled
+			hideCloseButton
+		>
 			<ModalContent>
 				<ModalHeader className="flex flex-col gap-1">Edit User</ModalHeader>
 				<ModalBody>
 					<div>
-						<p className="text-lg font-semibold mb-2">Personal Information</p>
-						{error && <p className="text-danger text-center">{error}</p>}
+						<p className="mb-2 text-lg font-semibold">Personal Information</p>
+						{error && <p className="text-center text-danger">{error}</p>}
 						<Input
 							label="Global Nickname"
 							placeholder={user?.globalNickname ?? "Global Nickname"}
@@ -171,7 +183,7 @@ const EditUser = ({
 									maxLength={4}
 									type="text"
 									pattern="[1-9][0-9]{3}"
-									className="w-32 ml-1"
+									className="ml-1 w-32"
 									variant="bordered"
 									radius="sm"
 									label="Tag"
@@ -196,13 +208,23 @@ const EditUser = ({
 							variant="bordered"
 							color="primary"
 							endContent={
-								<Tooltip content={user?.emailVerified ? "Your email is verified" : "Your email is not verified, please check your email to verify it."}>
-									{user?.emailVerified ? <Check className="text-success" size={32} /> : <X className="text-danger" size={32} />}
+								<Tooltip
+									content={
+										user?.emailVerified
+											? "Your email is verified"
+											: "Your email is not verified, please check your email to verify it."
+									}
+								>
+									{user?.emailVerified ? (
+										<Check className="text-success" size={32} />
+									) : (
+										<X className="text-danger" size={32} />
+									)}
 								</Tooltip>
 							}
 							isReadOnly
 							value={user?.email ?? "unknown@example.com"}
-							description={"Kastel staff will never ask you to change your email to one we \"own\"."}
+							description={'Kastel staff will never ask you to change your email to one we "own".'}
 						/>
 						<Input
 							label="Phone Number"
@@ -216,7 +238,7 @@ const EditUser = ({
 						/>
 					</div>
 					<div>
-						<p className="text-lg font-semibold mt-2 mb-2">Profile</p>
+						<p className="mb-2 mt-2 text-lg font-semibold">Profile</p>
 						<Textarea
 							label="About Me"
 							placeholder={"Tell us about yourself..."}

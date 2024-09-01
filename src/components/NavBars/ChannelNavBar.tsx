@@ -1,14 +1,6 @@
 import { NavBarLocation } from "@/types/payloads/ready.ts";
 import { useGuildSettingsStore, useSettingsStore } from "@/wrapper/Stores.ts";
-import {
-	Chip,
-	Divider,
-	Dropdown,
-	DropdownItem,
-	DropdownMenu,
-	DropdownTrigger,
-	useDisclosure,
-} from "@nextui-org/react";
+import { Chip, Divider, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, useDisclosure } from "@nextui-org/react";
 import {
 	AlignJustify,
 	ChevronDown,
@@ -22,7 +14,7 @@ import {
 	X,
 } from "lucide-react";
 import React, { useEffect, useState } from "react";
-import { twMerge } from "tailwind-merge";
+import cn from "@/utils/cn.ts";
 import TopNavBar from "./TopNavBar.tsx";
 import { motion } from "framer-motion";
 import MemberBar from "./MemberBar.tsx";
@@ -63,24 +55,33 @@ const Channel = ({
 	isActive?: boolean;
 	link?: string;
 }) => {
-	const LinkMaybe = ({ children }: { children: React.ReactNode; }) => link ? <Link href={link} passHref className="item-drag">{children}</Link> : <>{children}</>;
+	const LinkMaybe = ({ children }: { children: React.ReactNode }) =>
+		link ? (
+			<Link href={link} passHref className="item-drag">
+				{children}
+			</Link>
+		) : (
+			<>{children}</>
+		);
 
 	return (
 		<div className="first:mt-2">
 			<LinkMaybe>
 				<>
 					<div
-						className={twMerge(
-							"flex items-center gap-1 p-1 cursor-pointer group rounded-md w-48 mb-1 text-white transition-all duration-75 ease-in-out",
+						className={cn(
+							"group mb-1 flex w-48 cursor-pointer items-center gap-1 rounded-md p-1 text-white transition-all duration-75 ease-in-out",
 							!shouldHideHover ? "hover:bg-slate-500/25" : "hover:text-slate-400",
-							isActive ? "!bg-slate-500/50" : ""
+							isActive ? "!bg-slate-500/50" : "",
 						)}
 					>
-						{hasUnreadMessages && <div className="w-1 h-2 bg-white absolute left-1 rounded-r-lg" />}
+						{hasUnreadMessages && <div className="absolute left-1 h-2 w-1 rounded-r-lg bg-white" />}
 						{startContent}
-						<p className={twMerge("text-sm truncate", hasUnreadMessages ? "font-bold" : "")}>{text}</p>
+						<p className={cn("truncate text-sm", hasUnreadMessages ? "font-bold" : "")}>{text}</p>
 						{endContent && (
-							<div className={twMerge("ml-auto", onlyShowOnHover ? "scale-0 group-hover:scale-100" : "")}>{endContent}</div>
+							<div className={cn("ml-auto", onlyShowOnHover ? "scale-0 group-hover:scale-100" : "")}>
+								{endContent}
+							</div>
 						)}
 					</div>
 					{divider && <Divider />}
@@ -100,12 +101,18 @@ interface Channel {
 	type?: number;
 }
 
-const ChannelNavBar = ({ children, isChannelHeaderHidden, isMemberBarHidden, currentGuildId, currentChannelId }: {
+const ChannelNavBar = ({
+	children,
+	isChannelHeaderHidden,
+	isMemberBarHidden,
+	currentGuildId,
+	currentChannelId,
+}: {
 	children?: React.ReactNode;
 	isMemberBarHidden?: boolean;
 	isChannelHeaderHidden?: boolean;
 	currentGuildId: string;
-	currentChannelId?: string
+	currentChannelId?: string;
 }) => {
 	const { navBarLocation, isSideBarOpen, setIsSideBarOpen } = useSettingsStore();
 	const { guildSettings: rawGuildSettings, setGuildSettings } = useGuildSettingsStore();
@@ -125,11 +132,7 @@ const ChannelNavBar = ({ children, isChannelHeaderHidden, isMemberBarHidden, cur
 		onOpenChange: onOpenChangeChannelSettings,
 		onClose: onCloseChannelSettings,
 	} = useDisclosure();
-	const {
-		isOpen: isChannelOpen,
-		onOpenChange: channelonOpenChange,
-		onClose: channelonClose
-	} = useDisclosure();
+	const { isOpen: isChannelOpen, onOpenChange: channelonOpenChange, onClose: channelonClose } = useDisclosure();
 
 	const { getGuild } = useGuildStore();
 	const { getSortedChannels, getChannel } = useChannelStore();
@@ -142,7 +145,7 @@ const ChannelNavBar = ({ children, isChannelHeaderHidden, isMemberBarHidden, cur
 		{
 			name: "Invite Friends",
 			icon: <UserRound size={20} color="#acaebf" />,
-			onClick: () => { },
+			onClick: () => {},
 			end: true, // ? if end is true, then we have a divider
 		},
 		{
@@ -238,12 +241,15 @@ const ChannelNavBar = ({ children, isChannelHeaderHidden, isMemberBarHidden, cur
 				case channelTypes.GuildNewMember:
 				case channelTypes.GuildNews:
 				case channelTypes.GuildRules: {
-
 					const foundChannel = foundGuild.channelProperties.find((p) => p.channelId === channel.id);
 
 					let hasUnread = false;
 
-					if (foundChannel?.lastMessageAckId !== channel.lastMessageId && snowflake.timeStamp(foundChannel?.lastMessageAckId ?? "0") < snowflake.timeStamp(channel.lastMessageId ?? "0")) {
+					if (
+						foundChannel?.lastMessageAckId !== channel.lastMessageId &&
+						snowflake.timeStamp(foundChannel?.lastMessageAckId ?? "0") <
+							snowflake.timeStamp(channel.lastMessageId ?? "0")
+					) {
 						hasUnread = true;
 					}
 
@@ -303,8 +309,8 @@ const ChannelNavBar = ({ children, isChannelHeaderHidden, isMemberBarHidden, cur
 								id: "overview",
 								section: <>Channel Overview</>,
 								disabled: false,
-							}
-						]
+							},
+						],
 					},
 					{
 						title: null,
@@ -313,9 +319,9 @@ const ChannelNavBar = ({ children, isChannelHeaderHidden, isMemberBarHidden, cur
 								id: "delete",
 								title: "Delete",
 								danger: true,
-							}
-						]
-					}
+							},
+						],
+					},
 				]}
 			/>
 			<BaseSettings
@@ -422,20 +428,20 @@ const ChannelNavBar = ({ children, isChannelHeaderHidden, isMemberBarHidden, cur
 				onClose={onCloseConfirmDelete}
 			/>
 
-			<div className="flex flex-row w-full h-screen m-0 overflow-x-auto">
+			<div className="m-0 flex h-screen w-full flex-row overflow-x-auto">
 				<div
-					className={twMerge(
-						"fixed w-52 h-screen m-0 bg-lightAccent dark:bg-darkAccent overflow-y-auto",
+					className={cn(
+						"fixed m-0 h-screen w-52 overflow-y-auto bg-lightAccent dark:bg-darkAccent",
 						isSideBarOpen ? (navBarLocation === NavBarLocation.Left ? "ml-16" : "") : "hidden",
 					)}
 				>
-					<div className="flex items-center gap-1 mt-3 select-none border-b-2 border-slate-800">
+					<div className="mt-3 flex select-none items-center gap-1 border-b-2 border-slate-800">
 						<Dropdown onOpenChange={setIsOpen}>
 							<DropdownTrigger>
-								<div className="flex items-center justify-between w-full mb-2 ml-3 cursor-pointer">
+								<div className="mb-2 ml-3 flex w-full cursor-pointer items-center justify-between">
 									<div className="flex items-center gap-1">
 										<GuildIcon features={foundGuild.features} />
-										<p className="text-white text-sm truncate">{foundGuild.name}</p>
+										<p className="truncate text-sm text-white">{foundGuild.name}</p>
 									</div>
 									<motion.div animate={isOpen ? "open" : "closed"} variants={variants}>
 										<ChevronRight size={20} color="#acaebf" />
@@ -466,7 +472,7 @@ const ChannelNavBar = ({ children, isChannelHeaderHidden, isMemberBarHidden, cur
 							</DropdownMenu>
 						</Dropdown>
 					</div>
-					<div className="flex flex-col items-center justify-start p-1 m-0 overflow-y-auto">
+					<div className="m-0 flex flex-col items-center justify-start overflow-y-auto p-1">
 						{builtInChannels.map((channel, index) => (
 							<Channel
 								key={index}
@@ -482,7 +488,9 @@ const ChannelNavBar = ({ children, isChannelHeaderHidden, isMemberBarHidden, cur
 								console.log("drop");
 							}}
 							onDrag={(item, items) => {
-								const nonCategoryIndexes = items.map((item, index) => item.type !== Constants.channelTypes.GuildCategory ? index : null).filter((type) => type !== null);
+								const nonCategoryIndexes = items
+									.map((item, index) => (item.type !== Constants.channelTypes.GuildCategory ? index : null))
+									.filter((type) => type !== null);
 
 								if (item.type === Constants.channelTypes.GuildCategory) {
 									setDraggableOptions({
@@ -497,14 +505,21 @@ const ChannelNavBar = ({ children, isChannelHeaderHidden, isMemberBarHidden, cur
 							render={(channel) => (
 								<Channel
 									text={channel.name}
-									endContent={channel.type === channelTypes.GuildCategory ? <ChevronDown size={20} color="#acaebf" /> :
-										<Settings size={16}
-											onClick={(e) => {
-												e.stopPropagation();
-												e.nativeEvent.preventDefault();
+									endContent={
+										channel.type === channelTypes.GuildCategory ? (
+											<ChevronDown size={20} color="#acaebf" />
+										) : (
+											<Settings
+												size={16}
+												onClick={(e) => {
+													e.stopPropagation();
+													e.nativeEvent.preventDefault();
 
-												onOpenChangeChannelSettings();
-											}} />}
+													onOpenChangeChannelSettings();
+												}}
+											/>
+										)
+									}
 									startContent={channel.icon}
 									shouldHideHover={channel.type === channelTypes.GuildCategory}
 									onlyShowOnHover={channel.type !== channelTypes.GuildCategory}
@@ -518,31 +533,37 @@ const ChannelNavBar = ({ children, isChannelHeaderHidden, isMemberBarHidden, cur
 						/>
 					</div>
 				</div>
-				<div className={twMerge("w-full overflow-x-hidden", navBarLocation === NavBarLocation.Left ? isSideBarOpen ? "ml-[17rem]" : "" : "ml-[13rem]")}>
-					{!isChannelHeaderHidden &&
+				<div
+					className={cn(
+						"w-full overflow-x-hidden",
+						navBarLocation === NavBarLocation.Left ? (isSideBarOpen ? "ml-[17rem]" : "") : "ml-[13rem]",
+					)}
+				>
+					{!isChannelHeaderHidden && (
 						<TopNavBar
 							startContent={
-								<div className="flex items-center gap-1 select-none">
+								<div className="flex select-none items-center gap-1">
 									<Hash size={20} color="#acaebf" />
-									<p className="text-gray-300 font-semibold">{foundChannel?.name}</p>
+									<p className="font-semibold text-gray-300">{foundChannel?.name}</p>
 									{foundChannel?.description && (
 										<>
-											<Divider orientation="vertical" className="h-6 ml-2 mr-2 w-[3px]" />
-											<p className="text-gray-400 text-sm cursor-pointer truncate w-96" onClick={() => {
-												modalStore.getState().createModal({
-													id: `channel-topic-${foundChannel.id}`,
-													title: `${foundChannel.name}'s Topic`,
-													closable: true,
-													props: {
-														modalSize: "md"
-													},
-													body: (
-														<div className="flex flex-col">
-															{foundChannel.description}
-														</div>
-													),
-												});
-											}}>{foundChannel.description}</p>
+											<Divider orientation="vertical" className="ml-2 mr-2 h-6 w-[3px]" />
+											<p
+												className="w-96 cursor-pointer truncate text-sm text-gray-400"
+												onClick={() => {
+													modalStore.getState().createModal({
+														id: `channel-topic-${foundChannel.id}`,
+														title: `${foundChannel.name}'s Topic`,
+														closable: true,
+														props: {
+															modalSize: "md",
+														},
+														body: <div className="flex flex-col">{foundChannel.description}</div>,
+													});
+												}}
+											>
+												{foundChannel.description}
+											</p>
 										</>
 									)}
 								</div>
@@ -561,12 +582,15 @@ const ChannelNavBar = ({ children, isChannelHeaderHidden, isMemberBarHidden, cur
 									},
 								},
 							]}
-						/>}
-					<div className="flex flex-row overflow-y-auto w-full max-h-[calc(100vh-4rem)]">
+						/>
+					)}
+					<div className="flex max-h-[calc(100vh-4rem)] w-full flex-row overflow-y-auto">
 						<div className="flex-grow overflow-y-auto">{children}</div>
-						{!isMemberBarHidden && <div className={twMerge(guildSettings.memberBarHidden ? "ml-1" : "ml-[13.2rem]")}>
-							<MemberBar />
-						</div>}
+						{!isMemberBarHidden && (
+							<div className={cn(guildSettings.memberBarHidden ? "ml-1" : "ml-[13.2rem]")}>
+								<MemberBar />
+							</div>
+						)}
 					</div>
 				</div>
 			</div>

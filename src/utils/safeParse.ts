@@ -4,11 +4,11 @@
  * @returns The parsed data, or null if it failed to parse
  */
 const safeParse = <T = unknown>(data: unknown): T | null => {
-    try {
-        return JSON.parse(data as string);
-    } catch {
-        return null;
-    }
+	try {
+		return JSON.parse(data as string);
+	} catch {
+		return null;
+	}
 };
 
 export default safeParse;

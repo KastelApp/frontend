@@ -1,7 +1,7 @@
 import { Modal, ModalContent, ModalBody, Button, Divider, ModalHeader, ModalFooter } from "@nextui-org/react";
 import { Check } from "lucide-react";
 import { useState } from "react";
-import { twMerge } from "tailwind-merge";
+import cn from "@/utils/cn.ts";
 import Language from "./Language.tsx";
 import Appearance from "./Appearance.tsx";
 
@@ -36,8 +36,8 @@ const CheckStep = ({
 	return (
 		<div className="flex items-center justify-center rounded-full">
 			<div
-				className={twMerge(
-					"border-3 rounded-full w-10 h-10 justify-center items-center flex",
+				className={cn(
+					"flex h-10 w-10 items-center justify-center rounded-full border-3",
 					isComplete ? completeColor : outlineColor,
 					isSelected ? selectedColor : "",
 					transitionClasses,
@@ -68,7 +68,7 @@ const Step = ({
 }) => {
 	return (
 		<div
-			className={twMerge("flex items-center justify-center gap-2", onClick ? "cursor-pointer" : "")}
+			className={cn("flex items-center justify-center gap-2", onClick ? "cursor-pointer" : "")}
 			onClick={onClick}
 		>
 			<CheckStep stepNumber={index} isComplete={isComplete} isDanger={danger} isSelected={isSelected} />
@@ -89,7 +89,7 @@ const Steps = ({
 	setStep?: (step: string) => void;
 }) => {
 	return (
-		<div className="flex items-center justify-center gap-4 select-none">
+		<div className="flex select-none items-center justify-center gap-4">
 			{steps.map((step, index) => (
 				<Step
 					key={step.id}
@@ -120,7 +120,7 @@ const InitialSignup = () => {
 			<Modal size="5xl" isOpen hideCloseButton placement="center" className="z-50 w-[100vw]">
 				<ModalContent>
 					<ModalHeader>
-						<div className="flex w-full justify-center items-center flex-col gap-4">
+						<div className="flex w-full flex-col items-center justify-center gap-4">
 							<p className="">Welcome to Kastel, DarkerInk. Let's get you setup.</p>
 							<div className="flex w-full items-center justify-center">
 								<Steps steps={steps} currentSelected={currentStep} isFinished={isFinished} />

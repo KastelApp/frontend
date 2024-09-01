@@ -35,7 +35,7 @@ class FlagFields {
 		};
 	}
 
-	public static fromJSON(data: { PrivateFlags: bigint | number | string; PublicFlags: bigint | number | string; }) {
+	public static fromJSON(data: { PrivateFlags: bigint | number | string; PublicFlags: bigint | number | string }) {
 		return new FlagFields(data.PrivateFlags, data.PublicFlags);
 	}
 }

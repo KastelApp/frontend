@@ -37,7 +37,7 @@ const SlateEditor = ({
 	readOnlyMessage,
 	sendMessage,
 	onType,
-	initialText = ""
+	initialText = "",
 }: {
 	placeholder: string;
 	readOnlyMessage?: string;
@@ -76,7 +76,7 @@ const SlateEditor = ({
 	// 			rootMargin: "0px",
 	// 			threshold: 0,
 	// 			trackVisibility: true,
-	// 			delay: 100			
+	// 			delay: 100
 	// 		};
 
 	// 		const observer = new IntersectionObserver((entries) => {
@@ -94,7 +94,7 @@ const SlateEditor = ({
 
 	const decorate = useCallback(([node, path]: [Text, number[]]) => {
 		const ranges: {
-			[key: string]: boolean | { path: number[]; offset: number; };
+			[key: string]: boolean | { path: number[]; offset: number };
 		}[] = [];
 
 		if (!Text.isText(node)) {
@@ -132,11 +132,13 @@ const SlateEditor = ({
 			initialValue={convertSTringToDescendantText(initialText)}
 			onChange={() => {
 				if (onType && !isReadOnly) {
-					const text = editor.children.map((node) => {
-						const str = Node.string(node);
+					const text = editor.children
+						.map((node) => {
+							const str = Node.string(node);
 
-						return ("type" in node && node.type === "blockquote") ? `> ${str}` : str;
-					}).join("\n");
+							return "type" in node && node.type === "blockquote" ? `> ${str}` : str;
+						})
+						.join("\n");
 
 					if (!text.trim()) {
 						return;
@@ -154,7 +156,7 @@ const SlateEditor = ({
 				// @ts-expect-error -- Unsure how to fix these types
 				renderElement={renderElement}
 				placeholder={isReadOnly ? readOnlyMessage : placeholder}
-				className="outline-none overflow-y-auto w-full overflow-x-hidden"
+				className="w-full overflow-y-auto overflow-x-hidden outline-none"
 				id="slate-editor"
 				readOnly={isReadOnly}
 				onKeyDown={(event) => {
@@ -188,21 +190,26 @@ const SlateEditor = ({
 
 						if (beforeText.startsWith(">")) {
 							event.preventDefault();
-							Transforms.setNodes<TypeNode>(editor, { type: "blockquote" }, { match: (n) => "type" in n && n.type === "paragraph" });
+							Transforms.setNodes<TypeNode>(
+								editor,
+								{ type: "blockquote" },
+								{ match: (n) => "type" in n && n.type === "paragraph" },
+							);
 							Transforms.move(editor, { distance: 1, unit: "line" });
 							Transforms.delete(editor, { at: { path: start.path, offset: 0 }, distance: 1 });
 						}
 					}
 
-
 					if (sendMessage && event.key === "Enter" && !isReadOnly && !event.shiftKey) {
 						event.preventDefault();
 
-						const text = editor.children.map((node) => {
-							const str = Node.string(node);
+						const text = editor.children
+							.map((node) => {
+								const str = Node.string(node);
 
-							return ("type" in node && node.type === "blockquote") ? `> ${str}` : str;
-						}).join("\n");
+								return "type" in node && node.type === "blockquote" ? `> ${str}` : str;
+							})
+							.join("\n");
 
 						if (!text.trim()) {
 							return;
@@ -214,11 +221,13 @@ const SlateEditor = ({
 							Transforms.delete(editor, { at: [0] });
 						});
 
-						editor.children = [{
-							// @ts-expect-error -- Unsure how to fix these types
-							type: "paragraph",
-							children: [{ text: "" }]
-						}];
+						editor.children = [
+							{
+								// @ts-expect-error -- Unsure how to fix these types
+								type: "paragraph",
+								children: [{ text: "" }],
+							},
+						];
 
 						// ? refocus
 						// note: Editor.focus(editor) does not seem to work, unsure why, this is a hack / workaround which works
@@ -233,7 +242,10 @@ const SlateEditor = ({
 					const textLength = Editor.string(editor, []).length;
 					const text = (event.data as string) ?? event.dataTransfer?.getData("text/plain");
 
-					if (textLength >= Constants.settings.maxMessageSize + 2000 || textLength + text.length >= Constants.settings.maxMessageSize + 2000) {
+					if (
+						textLength >= Constants.settings.maxMessageSize + 2000 ||
+						textLength + text.length >= Constants.settings.maxMessageSize + 2000
+					) {
 						event.preventDefault();
 					}
 				}}

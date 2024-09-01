@@ -10,7 +10,6 @@ const CustomStatus = ({
 	onOpenChange: () => void;
 	onClose: () => void;
 }) => {
-
 	const [status, setStatus] = useState("");
 
 	return (

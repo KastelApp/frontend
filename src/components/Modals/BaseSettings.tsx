@@ -2,7 +2,7 @@ import { type Section } from "@/types/settings.ts";
 import { Modal, ModalContent } from "@nextui-org/react";
 import { Menu } from "lucide-react";
 import { useEffect, useState } from "react";
-import { twMerge } from "tailwind-merge";
+import cn from "@/utils/cn.ts";
 
 const Section = ({
 	title,
@@ -14,17 +14,17 @@ const Section = ({
 	setSection: (section: string) => void;
 }) => {
 	return (
-		<div className="flex flex-col gap-1 p-2 select-none xl:min-w-64 min-w-60 w-full">
-			{title && <h2 className="text-md font-semibold select-none mb-2 text-white ml-2">{title}</h2>}
+		<div className="flex w-full min-w-60 select-none flex-col gap-1 p-2 xl:min-w-64">
+			{title && <h2 className="text-md mb-2 ml-2 select-none font-semibold text-white">{title}</h2>}
 			{children.map((child) => (
 				<div
 					key={child.title}
-					className={twMerge(
-						"flex items-center justify-between w-full h-14 cursor-pointer rounded-lg mb-0.5 group",
+					className={cn(
+						"group mb-0.5 flex h-14 w-full cursor-pointer items-center justify-between rounded-lg",
 						child.disabled
 							? "cursor-not-allowed bg-charcoal-900"
-							: "hover:bg-charcoal-600 bg-charcoal-700 transition-all duration-300 ease-in-out transform active:scale-[.97]",
-						child.danger ? "bg-danger/20 hover:bg-danger/15 text-danger focus:bg-danger/20" : "text-white",
+							: "transform bg-charcoal-700 transition-all duration-300 ease-in-out hover:bg-charcoal-600 active:scale-[.97]",
+						child.danger ? "bg-danger/20 text-danger hover:bg-danger/15 focus:bg-danger/20" : "text-white",
 					)}
 					onClick={() => {
 						if (child.onClick) {
@@ -38,7 +38,7 @@ const Section = ({
 				>
 					<div className="flex items-center">
 						{child.startContent}
-						<p className=" truncate ml-2 text-md">{child.title}</p>
+						<p className="text-md ml-2 truncate">{child.title}</p>
 					</div>
 					{child.endContent}
 				</div>
@@ -56,7 +56,7 @@ const BaseSettings = ({
 	sections,
 	initialSection,
 	title,
-	metadata
+	metadata,
 }: {
 	isOpen: boolean;
 	onOpenChange: () => void;
@@ -79,27 +79,25 @@ const BaseSettings = ({
 				isOpen={isOpen}
 				onOpenChange={onOpenChange}
 				size="full"
-				className="w-screen h-screen"
+				className="h-screen w-screen"
 				isDismissable={false}
 				isKeyboardDismissDisabled={true}
 				classNames={{
-					closeButton: "z-20"
+					closeButton: "z-20",
 				}}
 			>
 				<ModalContent>
-					<div className="flex w-full m-0 overflow-x-hidden h-full">
-						<div className="flex w-full h-full">
-							<div className={twMerge("!z-[100] bg-lightAccent dark:bg-darkAccent overflow-y-auto h-screen xl:min-w-96 min-w-64 sm:flex justify-end", !open ? "hidden" : "absolute z-20 w-[100vw]")}>
-								<div className="justify-end mr-2">
-									<Menu
-										color="#acaebf"
-										size={24}
-										onClick={() => setOpen(!open)}
-										className="cursor-pointer sm:hidden"
-									/>
-									<p className="text-white text-md font-semibold p-4 select-none truncate max-w-64">
-										{title}
-									</p>
+					<div className="m-0 flex h-full w-full overflow-x-hidden">
+						<div className="flex h-full w-full">
+							<div
+								className={cn(
+									"!z-[100] h-screen min-w-64 justify-end overflow-y-auto bg-lightAccent dark:bg-darkAccent sm:flex xl:min-w-96",
+									!open ? "hidden" : "absolute z-20 w-[100vw]",
+								)}
+							>
+								<div className="mr-2 justify-end">
+									<Menu color="#acaebf" size={24} onClick={() => setOpen(!open)} className="cursor-pointer sm:hidden" />
+									<p className="text-md max-w-64 select-none truncate p-4 font-semibold text-white">{title}</p>
 									{sections.map((section) => (
 										<Section
 											title={section.title}
@@ -113,15 +111,11 @@ const BaseSettings = ({
 								</div>
 							</div>
 
-							<div className={twMerge("overflow-auto sm:hidden justify-center cursor-pointer", open ? "hidden" : "")}>
-								<Menu
-									color="#acaebf"
-									size={24}
-									onClick={() => setOpen(!open)}
-								/>
+							<div className={cn("cursor-pointer justify-center overflow-auto sm:hidden", open ? "hidden" : "")}>
+								<Menu color="#acaebf" size={24} onClick={() => setOpen(!open)} />
 							</div>
 
-							<div className="flex flex-col w-full p-5 pt-4 h-full overflow-auto">
+							<div className="flex h-full w-full flex-col overflow-auto p-5 pt-4">
 								{
 									sections
 										.find((s) => s.children.find((c) => c.id === selectedSection))

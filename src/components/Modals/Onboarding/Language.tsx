@@ -46,9 +46,9 @@ const Language = () => {
 
 	return (
 		<div className="flex flex-col gap-4">
-			<p className="text-white text-center">Select your preferred language</p>
+			<p className="text-center text-white">Select your preferred language</p>
 			{notFound && (
-				<p className="text-white text-center">
+				<p className="text-center text-white">
 					We currently do not have your preferred language ({navigator.language}
 					), though you can help us translate it{" "}
 					<Link className="text-blue-500" href="https://github.com/KastelApp" target="_blank">
@@ -59,7 +59,7 @@ const Language = () => {
 
 			<Select
 				label="Select Language"
-				className="w-96 mx-auto"
+				className="mx-auto w-96"
 				items={currentSupportedLanguages.map((language) => language.id) as Iterable<string[]>}
 				onChange={(value) => setSelectedLanguage(value.target.value)}
 				selectedKeys={[selectedLanguage]}

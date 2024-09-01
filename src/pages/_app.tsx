@@ -12,6 +12,12 @@ import { DefaultSeo } from "next-seo";
 import Init from "@/components/Init.tsx";
 import { NextPage } from "next";
 import { useEffect } from "react";
+import { Figtree } from "next/font/google";
+
+const dmSans = Figtree({
+	subsets: ["latin"],
+	display: "swap",
+});
 
 type NextPageWithLayout = NextPage & {
 	shouldHaveLayout?: boolean;
@@ -20,7 +26,6 @@ type NextPageWithLayout = NextPage & {
 type AppPropsWithLayout = AppProps & {
 	Component: NextPageWithLayout;
 };
-
 
 const App = ({ Component, pageProps }: AppPropsWithLayout) => {
 	const router = useRouter();
@@ -48,7 +53,7 @@ const App = ({ Component, pageProps }: AppPropsWithLayout) => {
 		<>
 			<DefaultSeo {...SEO} />
 			<ErrorBoundary>
-				<NextUIProvider navigate={router.push} >
+				<NextUIProvider navigate={router.push} className={dmSans.className}>
 					<NextThemesProvider attribute="class">
 						<Init shouldHaveLayout={shouldHaveLayout}>
 							<Component {...pageProps} />

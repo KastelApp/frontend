@@ -15,7 +15,7 @@ import { EllipsisVertical } from "lucide-react";
 import BaseContextMenu from "../Dropdowns/BaseContextMenu.tsx";
 import { User, useUserStore } from "@/wrapper/Stores/UserStore.ts";
 
-const UserModal = ({ isOpen, onClose, user }: { isOpen: boolean; onClose: () => void; user: User; }) => {
+const UserModal = ({ isOpen, onClose, user }: { isOpen: boolean; onClose: () => void; user: User }) => {
 	const userId = useUserStore((s) => s.getCurrentUser()?.id);
 
 	if (!user) return null;
@@ -32,7 +32,7 @@ const UserModal = ({ isOpen, onClose, user }: { isOpen: boolean; onClose: () => 
 			>
 				<ModalContent>
 					<ModalBody>
-						<div className="rounded-lg p-0 w-full min-w-full">
+						<div className="w-full min-w-full rounded-lg p-0">
 							<div>
 								<div className="flex items-end justify-between p-2">
 									<div className="flex items-end justify-between">
@@ -51,9 +51,17 @@ const UserModal = ({ isOpen, onClose, user }: { isOpen: boolean; onClose: () => 
 											// }
 											color="success"
 										>
-											<Avatar src={useUserStore.getState().getAvatarUrl(user.id, user.avatar) ?? useUserStore.getState().getDefaultAvatar(user.id)} alt="User Avatar" className="h-24 w-24 mt-4" imgProps={{
-												className: "transition-none",
-											}} />
+											<Avatar
+												src={
+													useUserStore.getState().getAvatarUrl(user.id, user.avatar) ??
+													useUserStore.getState().getDefaultAvatar(user.id)
+												}
+												alt="User Avatar"
+												className="mt-4 h-24 w-24"
+												imgProps={{
+													className: "transition-none",
+												}}
+											/>
 										</Badge>
 										<div>
 											<AllBadges privateFlags={user.flags} publicFlags={user.publicFlags} size={20} />
@@ -82,18 +90,18 @@ const UserModal = ({ isOpen, onClose, user }: { isOpen: boolean; onClose: () => 
 												]}
 												placement="right"
 											>
-												<EllipsisVertical size={24} className="cursor-pointer mt-1" />
+												<EllipsisVertical size={24} className="mt-1 cursor-pointer" />
 											</BaseContextMenu>
 										</div>
 									)}
 								</div>
-								<Divider className="mt-2 mb-4" />
+								<Divider className="mb-4 mt-2" />
 								<div>
-									<Card className="mt-2 mb-2" isBlurred>
-										<CardBody className="overflow-y-auto max-h-[85vh]">
+									<Card className="mb-2 mt-2" isBlurred>
+										<CardBody className="max-h-[85vh] overflow-y-auto">
 											<div>
-												<p className="text-white text-xl font-semibold">{user.username}</p>
-												<p className="text-gray-300 text-sm">
+												<p className="text-xl font-semibold text-white">{user.username}</p>
+												<p className="text-sm text-gray-300">
 													{user.username}#{user.tag}
 												</p>
 												{/* {member.customStatus && <p className="text-gray-200 text-md mt-2">{member.customStatus}</p>} */}
@@ -102,8 +110,8 @@ const UserModal = ({ isOpen, onClose, user }: { isOpen: boolean; onClose: () => 
 												<>
 													<Divider className="mt-2" />
 													<div className="mt-2">
-														<span className="text-white font-bold">About Me</span>
-														<p className="text-gray-300 whitespace-pre-line overflow-hidden break-words">{user.bio}</p>
+														<span className="font-bold text-white">About Me</span>
+														<p className="overflow-hidden whitespace-pre-line break-words text-gray-300">{user.bio}</p>
 													</div>
 												</>
 											)}
@@ -123,7 +131,7 @@ const ControlledUserModal = ({
 	children,
 	onClick,
 	className,
-	user
+	user,
 }: {
 	children: React.ReactNode;
 	onClick?: () => void;

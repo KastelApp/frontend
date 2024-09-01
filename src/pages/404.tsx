@@ -14,10 +14,10 @@ const FourOhFour = () => {
 		<>
 			<SEO title={"Page Not Found"} />
 			<HomeLayout>
-				<div className="bg-cover text-white py-32 flex items-center justify-center ">
+				<div className="flex items-center justify-center bg-cover py-32 text-white">
 					<div className="text-center">
 						<h1 className="text-3xl font-bold">{t("error.forohfor.header")}</h1>
-						<p className="text-medium mt-4">{t("error.forohfor.message")}</p>
+						<p className="mt-4 text-medium">{t("error.forohfor.message")}</p>
 						<div className="mt-8">
 							<Button href="/" as={Link} size="lg" variant="flat" color="primary">
 								{t("error.forohfor.buttons.home")}

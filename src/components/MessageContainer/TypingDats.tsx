@@ -1,4 +1,3 @@
-
 /**
  * It probably would be better to use an SVG, but for now this will do.
  */

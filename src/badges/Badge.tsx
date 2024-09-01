@@ -9,7 +9,7 @@ import Partner from "@/badges/Partner.tsx";
 import BotBadge from "@/badges/BotBadge.tsx";
 import Sponsor from "@/badges/Sponsor.tsx";
 
-const Badge = ({ flag, size = 24 }: { flag: keyof typeof publicFlags; size?: number; }) => {
+const Badge = ({ flag, size = 24 }: { flag: keyof typeof publicFlags; size?: number }) => {
 	switch (flag) {
 		case "StaffBadge": {
 			return <StaffBadge size={size} />;

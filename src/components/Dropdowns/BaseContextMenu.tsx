@@ -8,7 +8,7 @@ import {
 } from "@nextui-org/react";
 import { ChevronRight } from "lucide-react";
 import { useState } from "react";
-import { twMerge } from "tailwind-merge";
+import cn from "@/utils/cn.ts";
 
 interface ModalOptions {
 	close: () => void;
@@ -115,7 +115,7 @@ const BaseContextMenu = ({
 				}}
 			>
 				{values.map((value, index) => {
-					const PossiblyDropdown = ({ children }: { children: React.ReactElement | React.ReactElement[]; }) => {
+					const PossiblyDropdown = ({ children }: { children: React.ReactElement | React.ReactElement[] }) => {
 						if (!value.subValues) return children as React.ReactElement;
 
 						return (
@@ -152,10 +152,10 @@ const BaseContextMenu = ({
 												});
 											}}
 											{...subValue.props}
-											className={twMerge("rounded-md", subValue.props?.className)}
+											className={cn("rounded-md", subValue.props?.className)}
 										>
 											<div className="flex flex-row items-center">
-												{subValue.startContent && <div className="mr-auto ml-2 my-auto">{subValue.startContent}</div>}
+												{subValue.startContent && <div className="my-auto ml-2 mr-auto">{subValue.startContent}</div>}
 												<span>{subValue.label}</span>
 												<div className="ml-auto">{subValue.endContent}</div>
 											</div>
@@ -184,7 +184,7 @@ const BaseContextMenu = ({
 								});
 							}}
 							{...value.props}
-							className={twMerge("rounded-md", value.props?.className)}
+							className={cn("rounded-md", value.props?.className)}
 						>
 							<PossiblyDropdown>
 								<div className="flex items-center">

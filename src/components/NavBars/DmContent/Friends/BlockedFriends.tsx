@@ -143,8 +143,8 @@ const BlockedFriends = () => {
 	const topContent = useMemo(() => {
 		return (
 			<div className="flex flex-col gap-4">
-				<div className="flex justify-between gap-3 items-end">
-					<div className="flex gap-3 ml-auto">
+				<div className="flex items-end justify-between gap-3">
+					<div className="ml-auto flex gap-3">
 						<Dropdown>
 							<DropdownTrigger className="hidden sm:flex">
 								<Button endContent={<ChevronDown className="text-small" />} variant="flat">
@@ -179,7 +179,7 @@ const BlockedFriends = () => {
 			bottomContentPlacement="outside"
 			classNames={{
 				wrapper: "max-h-[382px] bg-lightAccent dark:bg-darkAccent",
-				th: "bg-lightBackground dark:bg-darkBackground"
+				th: "bg-lightBackground dark:bg-darkBackground",
 			}}
 			selectedKeys={selectedKeys}
 			selectionMode="none"

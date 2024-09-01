@@ -1,5 +1,16 @@
 import { useEffect, useRef, useState } from "react";
-import { Tabs, Tab, Button, Input, Switch, Chip, Divider, Popover, PopoverTrigger, PopoverContent } from "@nextui-org/react";
+import {
+	Tabs,
+	Tab,
+	Button,
+	Input,
+	Switch,
+	Chip,
+	Divider,
+	Popover,
+	PopoverTrigger,
+	PopoverContent,
+} from "@nextui-org/react";
 import { useColor, ColorPicker as CustomColorPicker, ColorService } from "react-color-palette";
 import { Trash } from "lucide-react";
 import PermissionsDescriptions from "@/utils/PermissionsDescriptions.ts";
@@ -14,13 +25,11 @@ const generateRgbAndHsv = (color: string) => {
 	return {
 		hex: color,
 		rgb: ColorService.toRgb(color),
-		hsv: ColorService.toHsv(color)
+		hsv: ColorService.toHsv(color),
 	};
 };
 
-const ColorPicker = ({ selectedRole }: {
-	selectedRole: Role;
-}) => {
+const ColorPicker = ({ selectedRole }: { selectedRole: Role }) => {
 	const colors = [
 		"#FF5733", // Reddish-orange
 		"#FF6347", // Tomato
@@ -46,47 +55,61 @@ const ColorPicker = ({ selectedRole }: {
 
 	const defaultColor = "#c1c1c1";
 
-	const [color, setColor] = useColor(`#${selectedRole.color === 0 ? "c1c1c1" : selectedRole.color.toString(16).padStart(6, "0")}`);
+	const [color, setColor] = useColor(
+		`#${selectedRole.color === 0 ? "c1c1c1" : selectedRole.color.toString(16).padStart(6, "0")}`,
+	);
 	const [delayOpen, setDelayOpen] = useState(false);
 
 	return (
 		<div className="flex">
 			<Tooltip content="Default Color">
-				<div className="cursor-pointer w-11 h-11 rounded-md mr-2" style={{
-					backgroundColor: defaultColor
-				}} onClick={() => {
-					setColor(generateRgbAndHsv(defaultColor));
-					// selectedRole.color = defaultColor;
-				}} />
+				<div
+					className="mr-2 h-11 w-11 cursor-pointer rounded-md"
+					style={{
+						backgroundColor: defaultColor,
+					}}
+					onClick={() => {
+						setColor(generateRgbAndHsv(defaultColor));
+						// selectedRole.color = defaultColor;
+					}}
+				/>
 			</Tooltip>
 
-			<Popover placement="right" onOpenChange={(isOpen) => {
-				if (isOpen) {
-					setTimeout(() => setDelayOpen(true), 150);
-				} else {
-					setDelayOpen(false);
-				}
-			}}>
+			<Popover
+				placement="right"
+				onOpenChange={(isOpen) => {
+					if (isOpen) {
+						setTimeout(() => setDelayOpen(true), 150);
+					} else {
+						setDelayOpen(false);
+					}
+				}}
+			>
 				<PopoverTrigger>
 					<div>
 						<Tooltip content="Custom Color">
-							<div className="cursor-pointer w-11 h-11 rounded-md mr-2" style={{
-								backgroundColor: `#${selectedRole.color === 0 ? "c1c1c1" : selectedRole.color.toString(16).padStart(6, "0")}`
-							}} />
+							<div
+								className="mr-2 h-11 w-11 cursor-pointer rounded-md"
+								style={{
+									backgroundColor: `#${selectedRole.color === 0 ? "c1c1c1" : selectedRole.color.toString(16).padStart(6, "0")}`,
+								}}
+							/>
 						</Tooltip>
 					</div>
 				</PopoverTrigger>
-				<PopoverContent className="w-full h-full">
-					{delayOpen && <CustomColorPicker
-						color={color}
-						onChange={(color) => {
-							setColor(color);
-							// selectedRole.color = color.hex;
-						}}
-						hideAlpha
-						hideInput={["hsv", "rgb"]}
-						height={150}
-					/>}
+				<PopoverContent className="h-full w-full">
+					{delayOpen && (
+						<CustomColorPicker
+							color={color}
+							onChange={(color) => {
+								setColor(color);
+								// selectedRole.color = color.hex;
+							}}
+							hideAlpha
+							hideInput={["hsv", "rgb"]}
+							height={150}
+						/>
+					)}
 				</PopoverContent>
 			</Popover>
 
@@ -95,7 +118,7 @@ const ColorPicker = ({ selectedRole }: {
 					{colors.slice(0, 10).map((color, index) => (
 						<div
 							key={index}
-							className="cursor-pointer w-5 h-5 rounded-md"
+							className="h-5 w-5 cursor-pointer rounded-md"
 							style={{ backgroundColor: color }}
 							onClick={() => {
 								setColor(generateRgbAndHsv(color));
@@ -108,7 +131,7 @@ const ColorPicker = ({ selectedRole }: {
 					{colors.slice(10).map((color, index) => (
 						<div
 							key={index + 10}
-							className="cursor-pointer w-5 h-5 rounded-md"
+							className="h-5 w-5 cursor-pointer rounded-md"
 							style={{ backgroundColor: color }}
 							onClick={() => {
 								setColor(generateRgbAndHsv(color));
@@ -123,16 +146,24 @@ const ColorPicker = ({ selectedRole }: {
 };
 
 const Roles = () => {
-
 	const router = useRouter();
 
 	const [currentGuildId] = router.query.slug as string[];
 
-	const roleRef = useRef(useRoleStore.getState().getRoles(currentGuildId).sort((a, b) => a.position - b.position).reverse());
+	const roleRef = useRef(
+		useRoleStore
+			.getState()
+			.getRoles(currentGuildId)
+			.sort((a, b) => a.position - b.position)
+			.reverse(),
+	);
 
 	useEffect(() => {
 		const roleSubscribe = useRoleStore.subscribe((s) => {
-			const roles = s.getRoles(currentGuildId).sort((a, b) => a.position - b.position).reverse();
+			const roles = s
+				.getRoles(currentGuildId)
+				.sort((a, b) => a.position - b.position)
+				.reverse();
 
 			if (deepEqual(roles, roleRef.current)) return;
 
@@ -158,28 +189,34 @@ const Roles = () => {
 	}, [selectedRole]);
 
 	return (
-		<div className="mr-2 bg-lightAccent dark:bg-darkAccent rounded-lg p-4">
-			<h1 className="text-2xl font-semibold mb-4">Roles</h1>
+		<div className="mr-2 rounded-lg bg-lightAccent p-4 dark:bg-darkAccent">
+			<h1 className="mb-4 text-2xl font-semibold">Roles</h1>
 			<div className="flex h-screen">
 				<div>
 					<Button className="mb-4 min-w-80 max-w-80 rounded-md text-white">Create New Role</Button>
 					<div className="flex">
-						<div className="flex flex-col space-y-2 mr-4 overflow-y-auto max-h-[95vh]">
+						<div className="mr-4 flex max-h-[95vh] flex-col space-y-2 overflow-y-auto">
 							{roles.map((role, index) => (
 								<Chip
 									key={index}
 									onClick={() => setSelectedRole(role)}
 									variant="flat"
-									className="min-w-80 max-w-80 rounded-md cursor-pointer min-h-10"
+									className="min-h-10 min-w-80 max-w-80 cursor-pointer rounded-md"
 								>
-									<div className="flex group select-none">
+									<div className="group flex select-none">
 										<span className="flex items-center space-x-2 text-white">
-											<div className={"w-4 h-4 rounded-full mr-1"} style={{
-												backgroundColor: `#${role.color === 0 ? "c1c1c1" : role.color.toString(16).padStart(6, "0")}`
-											}} />
+											<div
+												className={"mr-1 h-4 w-4 rounded-full"}
+												style={{
+													backgroundColor: `#${role.color === 0 ? "c1c1c1" : role.color.toString(16).padStart(6, "0")}`,
+												}}
+											/>
 											{role.name}
 										</span>
-										<Trash size={16} className="cursor-pointer ml-auto scale-0 group-hover:scale-100 transition-transform duration-100 ease-in-out text-danger" />
+										<Trash
+											size={16}
+											className="ml-auto scale-0 cursor-pointer text-danger transition-transform duration-100 ease-in-out group-hover:scale-100"
+										/>
 									</div>
 								</Chip>
 							))}
@@ -188,78 +225,81 @@ const Roles = () => {
 				</div>
 				<div className="flex w-full">
 					<Divider orientation="vertical" />
-					<div className="pl-4 pr-4 flex-1 bg-charcoal-700 rounded-md ml-2">
-						<Tabs
-							color="primary"
-							variant="light"
-							className="w-full border-b-2 border-slate-800 text-slate-800"
-						>
+					<div className="ml-2 flex-1 rounded-md bg-charcoal-700 pl-4 pr-4">
+						<Tabs color="primary" variant="light" className="w-full border-b-2 border-slate-800 text-slate-800">
 							<Tab key="1" title="Information">
 								<div className="flex flex-col space-y-4">
 									<div className="space-y-2">
-										<p className="text-white font-semibold">Role Name</p>
+										<p className="font-semibold text-white">Role Name</p>
 										<Input
 											value={selectedRole.name}
 											isRequired
-											className="w-full h-8"
+											className="h-8 w-full"
 											radius="sm"
 											classNames={{
-												inputWrapper: "h-8"
+												inputWrapper: "h-8",
 											}}
 										/>
 									</div>
 									<div className="space-y-2">
-										<p className="text-white font-semibold">Role Color</p>
+										<p className="font-semibold text-white">Role Color</p>
 										<ColorPicker selectedRole={selectedRole} />
 									</div>
 									<Divider />
-									<div className="cursor-pointer h-full w-full">
-										<Switch isSelected={false}>
-											Display role members separately from online members
-										</Switch>
-										<p className="text-gray-500 text-sm select-none">This will display role members in a separate category in the member list.</p>
+									<div className="h-full w-full cursor-pointer">
+										<Switch isSelected={false}>Display role members separately from online members</Switch>
+										<p className="select-none text-sm text-gray-500">
+											This will display role members in a separate category in the member list.
+										</p>
 									</div>
 									<Divider />
-									<div className="cursor-pointer h-full w-full">
-										<Switch isSelected={false}>
-											Mentionable
-										</Switch>
-										<p className="text-gray-500 text-sm select-none">This will allow anyone to mention this role.</p>
+									<div className="h-full w-full cursor-pointer">
+										<Switch isSelected={false}>Mentionable</Switch>
+										<p className="select-none text-sm text-gray-500">This will allow anyone to mention this role.</p>
 									</div>
 									<Divider />
-									<div className="cursor-pointer h-full w-full">
-										<Switch isSelected={false}>
-											Allow access to age restricted channels
-										</Switch>
-										<p className="text-gray-500 text-sm select-none">This will allow anyone with this role to access age restricted channels.</p>
+									<div className="h-full w-full cursor-pointer">
+										<Switch isSelected={false}>Allow access to age restricted channels</Switch>
+										<p className="select-none text-sm text-gray-500">
+											This will allow anyone with this role to access age restricted channels.
+										</p>
 									</div>
 									<Divider />
 								</div>
 							</Tab>
 							<Tab key="2" title="Permissions">
 								<div className="flex flex-col space-y-6">
-									<div className="cursor-pointer h-full w-full flex">
-										<p className="text-white select-none font-semibold">Advanced Mode</p>
-										<Switch className="ml-auto" isSelected={advancedMode} onChange={() => setAdvancedMode(!advancedMode)} size="sm" />
+									<div className="flex h-full w-full cursor-pointer">
+										<p className="select-none font-semibold text-white">Advanced Mode</p>
+										<Switch
+											className="ml-auto"
+											isSelected={advancedMode}
+											onChange={() => setAdvancedMode(!advancedMode)}
+											size="sm"
+										/>
 									</div>
 									<Input
 										placeholder="Search Permissions"
-										className="w-full h-8"
+										className="h-8 w-full"
 										radius="sm"
 										classNames={{
-											inputWrapper: "h-8"
+											inputWrapper: "h-8",
 										}}
 									/>
-									<div className="flex flex-col space-y-2 overflow-y-auto max-h-[80vh]">
-										{Object.entries(advancedMode ? PermissionsDescriptions.advanced.groups : PermissionsDescriptions.simple.groups).map(([index, permission]) => (
-											<div key={index} className="bg-lightAccent dark:bg-darkAccent rounded-md p-4">
+									<div className="flex max-h-[80vh] flex-col space-y-2 overflow-y-auto">
+										{Object.entries(
+											advancedMode ? PermissionsDescriptions.advanced.groups : PermissionsDescriptions.simple.groups,
+										).map(([index, permission]) => (
+											<div key={index} className="rounded-md bg-lightAccent p-4 dark:bg-darkAccent">
 												<div className="flex">
-													<p className="text-white font-semibold">{permission.label}</p>
-													<Switch className="ml-auto" size="sm"
+													<p className="font-semibold text-white">{permission.label}</p>
+													<Switch
+														className="ml-auto"
+														size="sm"
 														isSelected={permissions.has(permission.permissions, true)}
 													/>
 												</div>
-												<p className="text-gray-300 text-sm select-none mt-2">{permission.description}</p>
+												<p className="mt-2 select-none text-sm text-gray-300">{permission.description}</p>
 											</div>
 										))}
 									</div>

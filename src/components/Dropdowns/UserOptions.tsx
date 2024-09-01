@@ -1,7 +1,7 @@
 import { Chip, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, useDisclosure } from "@nextui-org/react";
 import { ArrowRight, LogOut, Settings } from "lucide-react";
 import { useEffect, useState } from "react";
-import { twMerge } from "tailwind-merge";
+import cn from "@/utils/cn.ts";
 import { motion } from "framer-motion";
 import CustomStatus from "../Modals/CustomStatus.tsx";
 import OverView from "../Settings/User/Overview.tsx";
@@ -13,15 +13,21 @@ import { useUserStore } from "@/wrapper/Stores/UserStore.ts";
 import DifferentTesting from "../Settings/User/DifferentTesting.tsx";
 import getClientVersion from "@/utils/getClientVersion.ts";
 
-const UserOptions = ({ children, type = "context", orientation = "vertical" }: { children: React.ReactElement | React.ReactElement[]; type?: "normal" | "context", orientation?: "vertical" | "horizontal"; }) => {
+const UserOptions = ({
+	children,
+	type = "context",
+	orientation = "vertical",
+}: {
+	children: React.ReactElement | React.ReactElement[];
+	type?: "normal" | "context";
+	orientation?: "vertical" | "horizontal";
+}) => {
 	const router = useRouter();
 	const { setToken } = useTokenStore();
 	const { getCurrentUser, isStaff } = useUserStore();
 	const [statusOpen, setStatusOpen] = useState(false);
 	const [status, setStatus] = useState<"Online" | "Invisible" | "DND" | "Idle">("Invisible");
 	const { t } = useTranslationStore();
-	const color =
-		status === "Online" ? "success" : status === "Idle" ? "warning" : status === "DND" ? "danger" : "gray-500";
 
 	// ? Custom Status Modal
 	const { isOpen, onOpenChange, onClose } = useDisclosure();
@@ -72,23 +78,26 @@ const UserOptions = ({ children, type = "context", orientation = "vertical" }: {
 		// todo: handle other logic
 	};
 
-	const [sections, setSections] = useState<Section[]>([{
-		title: null,
-		id: "user",
-		children: [
-			{
-				title: t("settings.user.overview"),
-				id: "overview",
-				section: <OverView />,
-				disabled: false,
-			},
-		],
-	}]);
+	const [sections, setSections] = useState<Section[]>([
+		{
+			title: null,
+			id: "user",
+			children: [
+				{
+					title: t("settings.user.overview"),
+					id: "overview",
+					section: <OverView />,
+					disabled: false,
+				},
+			],
+		},
+	]);
 
 	useEffect(() => {
 		const gotUser = getCurrentUser();
 
-		const developerSections = { // t! If the user does not have developer mode enabled, do not show these
+		const developerSections = {
+			// t! If the user does not have developer mode enabled, do not show these
 			title: t("settings.developer.title"),
 			id: "developer",
 			children: [
@@ -106,15 +115,12 @@ const UserOptions = ({ children, type = "context", orientation = "vertical" }: {
 					id: "dft",
 					section: <DifferentTesting />,
 					disabled: false,
-				}
+				},
 			],
 		};
 
 		if (isStaff(gotUser?.id ?? "")) {
-			setSections((prev) => ([
-				...prev.filter((section) => section.id !== "developer"),
-				developerSections
-			]));
+			setSections((prev) => [...prev.filter((section) => section.id !== "developer"), developerSections]);
 		}
 
 		useUserStore.subscribe((state) => {
@@ -123,10 +129,7 @@ const UserOptions = ({ children, type = "context", orientation = "vertical" }: {
 			if (!state.isStaff(newCurrentUser?.id ?? "")) {
 				setSections((prev) => prev.filter((section) => section.id !== "developer"));
 			} else if (state.isStaff(newCurrentUser?.id ?? "")) {
-				setSections((prev) => ([
-					...prev.filter((section) => section.id !== "developer"),
-					developerSections
-				]));
+				setSections((prev) => [...prev.filter((section) => section.id !== "developer"), developerSections]);
 			}
 		});
 	}, []);
@@ -191,14 +194,14 @@ const UserOptions = ({ children, type = "context", orientation = "vertical" }: {
 							endContent={
 								<ArrowRight
 									size={20}
-									className={twMerge("transition-transform duration-300", statusOpen ? "rotate-90" : "")}
+									className={cn("transition-transform duration-300", statusOpen ? "rotate-90" : "")}
 								/>
 							}
 						>
 							<p>Status</p>
-							<p className={twMerge("text-xs mt-1", `text-${color}`)}>{status}</p>
+							<p className={cn("mt-1 text-xs", status === "Online" ? "text-success" : status === "Idle" ? "text-warning" : status === "DND" ? "text-danger" : "text-gray-500")}>{status}</p>
 							<motion.div
-								className="grid grid-cols-[repeat(2,minmax(0px,1fr))] items-center mt-2"
+								className="mt-2 grid grid-cols-[repeat(2,minmax(0px,1fr))] items-center"
 								initial="collapsed"
 								animate={statusOpen ? "expanded" : "collapsed"}
 								variants={{
@@ -206,7 +209,6 @@ const UserOptions = ({ children, type = "context", orientation = "vertical" }: {
 									expanded: { height: "auto", opacity: 1 },
 								}}
 								transition={{ duration: 0.3, delay: 0.05 }}
-
 							>
 								<Chip
 									onClick={() => handleStatus("Online")}

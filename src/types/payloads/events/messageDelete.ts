@@ -1,4 +1,4 @@
 export interface MessageDeletePayload {
-    channelId: string;
-    messageId: string;
+	channelId: string;
+	messageId: string;
 }

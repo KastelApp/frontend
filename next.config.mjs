@@ -4,9 +4,7 @@ import { next } from "@million/lint";
 
 const fetchedData = gitInfo();
 
-const sha = (
-  process.env.CF_PAGES_COMMIT_SHA ?? fetchedData.gitCommitHash
-).slice(0, 7);
+const sha = (process.env.CF_PAGES_COMMIT_SHA ?? fetchedData.gitCommitHash).slice(0, 7);
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
@@ -52,23 +50,27 @@ const nextConfig = {
 		CLOUDFLARE_TURNSTILE_SITE_KEY: process.env.PUBLIC_CLOUDFLARE_TURNSTILE_SITE_KEY,
 		ICON_CDN: process.env.PUBLIC_ICON_CDN,
 		GIT_BRANCH: process.env.CF_PAGES_BRANCH ?? fetchedData.gitBranch,
-		GIT_COMMIT_SHA: sha,	
+		GIT_COMMIT_SHA: sha,
 	},
 	typescript: {
-		ignoreBuildErrors: true
+		ignoreBuildErrors: true,
 	},
 	images: {
-		remotePatterns: [{
-			protocol: "https",
-			hostname: "opengraph.githubassets.com",
-			port: "",
-			pathname: "/**"
-		}]
-	}
+		remotePatterns: [
+			{
+				protocol: "https",
+				hostname: "opengraph.githubassets.com",
+				port: "",
+				pathname: "/**",
+			},
+		],
+	},
 };
 
 // ? Million lint disabled for now due to internal issues with nextui, tho I have a arg you can provide to enable it again (since it only affects the dropdown)
 // export default next({ rsc: true, optimizeDOM: true, telemetry: false })(nextConfig);
 // export default nextConfig;
 
-export default process.env.MILLION === "true" ? next({ rsc: true, optimizeDOM: true, telemetry: false })(nextConfig) : nextConfig;
+export default process.env.MILLION === "true"
+	? next({ rsc: true, optimizeDOM: true, telemetry: false })(nextConfig)
+	: nextConfig;

@@ -1,5 +1,5 @@
 import { Moon, Sun } from "lucide-react";
-import { twMerge } from "tailwind-merge";
+import cn from "@/utils/cn.ts";
 
 const ThemeButton = ({
 	children,
@@ -31,8 +31,8 @@ const ThemeButton = ({
 	return (
 		<div className="flex items-center justify-center gap-2">
 			<button
-				className={twMerge(
-					"hover:opacity-85 active:scale-95 transition-all duration-300 ease-in-out flex items-center justify-center gap-2 p-2 rounded-md w-40",
+				className={cn(
+					"flex w-40 items-center justify-center gap-2 rounded-md p-2 transition-all duration-300 ease-in-out hover:opacity-85 active:scale-95",
 					className,
 					mixVariant,
 					colors,
@@ -49,9 +49,9 @@ const ThemeButton = ({
 
 const Appearance = () => {
 	return (
-		<div className="flex flex-col gap-4 justify-center mx-auto w-full">
+		<div className="mx-auto flex w-full flex-col justify-center gap-4">
 			<p className="text-center text-lg font-semibold">What theme would you like to use?</p>
-			<div className="flex flex-col gap-4 w-full max-w-[25vw] mx-auto">
+			<div className="mx-auto flex w-full max-w-[25vw] flex-col gap-4">
 				<ThemeButton
 					startContent={<Sun size={22} />}
 					onClick={() => {
@@ -76,14 +76,14 @@ const Appearance = () => {
 				</ThemeButton>
 			</div>
 			<p className="text-center text-lg font-semibold">What emoji pack would you like to use?</p>
-			<div className="flex flex-wrap justify-center gap-4 w-full max-w-[50vw] mx-auto">
+			<div className="mx-auto flex w-full max-w-[50vw] flex-wrap justify-center gap-4">
 				{/*// todo: show actual emojis*/}
 				<ThemeButton
 					onClick={() => {
 						console.log("click");
 					}}
 					variant="outlined"
-					className="rounded-lg !text-yellow-400 !border-yellow-400"
+					className="rounded-lg !border-yellow-400 !text-yellow-400"
 				>
 					Twemoji
 				</ThemeButton>

@@ -1,5 +1,5 @@
 const Paragraph = (props: React.JSX.IntrinsicElements["p"]) => {
-	return <p className="dark:text-darkText text-lightText text-base mt-3 mb-3" {...props} />;
+	return <p className="mb-3 mt-3 text-base text-lightText dark:text-darkText" {...props} />;
 };
 
 export default Paragraph;

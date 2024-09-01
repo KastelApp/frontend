@@ -1,11 +1,7 @@
 {
 	"compilerOptions": {
 		"target": "ES2022",
-		"lib": [
-			"dom",
-			"dom.iterable",
-			"esnext"
-		],
+		"lib": ["dom", "dom.iterable", "esnext"],
 		"allowJs": true,
 		"skipLibCheck": true,
 		"strict": true,
@@ -20,9 +16,7 @@
 		"incremental": true,
 		"allowImportingTsExtensions": true,
 		"paths": {
-			"@/*": [
-				"./src/*"
-			]
+			"@/*": ["./src/*"]
 		}
 	},
 	"include": [
@@ -34,7 +28,5 @@
 		"./public/workers/interval.worker.js",
 		"./src/gitInfo.mjs"
 	],
-	"exclude": [
-		"node_modules"
-	]
+	"exclude": ["node_modules"]
 }

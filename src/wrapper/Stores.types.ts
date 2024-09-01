@@ -13,12 +13,12 @@ type DataWithoutMetaAndDebug = ExcludeKeys<typeof enTranslations, "_meta" | "_de
 
 type NestedPaths<T, P extends string = ""> = T extends object
 	? {
-		[K in keyof T]: T[K] extends object
-		// @ts-expect-error -- We do not care, its valid
-		? NestedPaths<T[K], `${P}${K}.`>
-		// @ts-expect-error -- We do not care, its valid
-		: `${P}${K}`;
-	}[keyof T]
+			[K in keyof T]: T[K] extends object
+				? // @ts-expect-error -- We do not care, its valid
+					NestedPaths<T[K], `${P}${K}.`>
+				: // @ts-expect-error -- We do not care, its valid
+					`${P}${K}`;
+		}[keyof T]
 	: P;
 
 export type TranslationKeys = NestedPaths<DataWithoutMetaAndDebug>;
@@ -77,7 +77,6 @@ export interface TranslationStore {
 	_hasHydrated: boolean;
 	setHasHydrated: (hasHydrated: boolean) => void;
 }
-
 
 export interface APIStore {
 	api: API;

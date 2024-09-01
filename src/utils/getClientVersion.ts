@@ -7,20 +7,27 @@ import packageJson from "@/../package.json";
  * 3) the version (i.e 1.0.0)
  */
 const getClientVersion = (): {
-    clean: boolean;
-    channel: string;
-    version: string;
-    hash?: string;
+	clean: boolean;
+	channel: string;
+	version: string;
+	hash?: string;
 } => {
-    const channel = process.env.GIT_BRANCH === "development" ? "development" : process.env.GIT_BRANCH === "canary" ? "canary" : process.env.GIT_BRANCH === "ptb" ? "ptb" : "stable";
-    const clean = channel === "stable" && process.env.NODE_ENV === "production";
+	const channel =
+		process.env.GIT_BRANCH === "development"
+			? "development"
+			: process.env.GIT_BRANCH === "canary"
+				? "canary"
+				: process.env.GIT_BRANCH === "ptb"
+					? "ptb"
+					: "stable";
+	const clean = channel === "stable" && process.env.NODE_ENV === "production";
 
-    return {
-        clean,
-        channel,
-        version: packageJson.version,
-        hash: process.env.GIT_COMMIT_SHA,
-    }
-}
+	return {
+		clean,
+		channel,
+		version: packageJson.version,
+		hash: process.env.GIT_COMMIT_SHA,
+	};
+};
 
 export default getClientVersion;

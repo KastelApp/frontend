@@ -1,9 +1,5 @@
 const Invite = () => {
-    return (
-        <>
-            Coming Soon
-        </>
-    );
+	return <>Coming Soon</>;
 };
 
 export default Invite;

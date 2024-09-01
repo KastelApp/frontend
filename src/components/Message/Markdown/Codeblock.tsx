@@ -11,13 +11,13 @@ interface CodeblockProps {
 
 const Codeblock = ({ language, code }: CodeblockProps) => {
 	return (
-		<div className="relative group w-full">
+		<div className="group relative w-full">
 			<SyntaxHighlighter language={getLanguageFromExtension(language)} style={oneDark as never}>
 				{code}
 			</SyntaxHighlighter>
 			<Tooltip content={"Copy"}>
 				<Copy
-					className="absolute top-1 right-1 hidden group-hover:block cursor-pointer text-white"
+					className="absolute right-1 top-1 hidden cursor-pointer text-white group-hover:block"
 					size={18}
 					onClick={() => {
 						navigator.clipboard.writeText(code);

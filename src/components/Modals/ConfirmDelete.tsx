@@ -49,25 +49,31 @@ const ConfirmDelete = ({
 				<ModalHeader className="flex flex-col gap-1">{t("guilds.delete.header")}</ModalHeader>
 				<ModalBody>
 					<p className="text-lg">{t("guilds.delete.loose")}</p>
-					<ul className="list-disc ml-6">
+					<ul className="ml-6 list-disc">
 						<li>{t("guilds.delete.messages")}</li>
 						<li>{t("guilds.delete.channels")}</li>
 						<li>{t("guilds.delete.roles")}</li>
 						<li>{t("guilds.delete.members")}</li>
 						<li>{t("guilds.delete.banned")}</li>
 					</ul>
-					<p>{timer > 0 ? t("guilds.delete.sureWait", {
-						time: timer
-					}) : t("guilds.delete.sureReady")}</p>
+					<p>
+						{timer > 0
+							? t("guilds.delete.sureWait", {
+									time: timer,
+								})
+							: t("guilds.delete.sureReady")}
+					</p>
 				</ModalBody>
 				<ModalFooter>
 					<Button color="success" variant="flat" onPress={onClose}>
 						{t("common.cancel")}
 					</Button>
 					<Button color="danger" variant="flat" onPress={onClose}>
-						{timer <= 0 ? t("common.delete") : t("guilds.delete.delete", {
-							time: timer
-						})}
+						{timer <= 0
+							? t("common.delete")
+							: t("guilds.delete.delete", {
+									time: timer,
+								})}
 					</Button>
 				</ModalFooter>
 			</ModalContent>

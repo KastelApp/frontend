@@ -17,24 +17,24 @@ interface Library {
 	description: string;
 }
 
-const AcknowledgementCard = ({ data }: { data: NormalAcknowledgementData[]; }) => {
+const AcknowledgementCard = ({ data }: { data: NormalAcknowledgementData[] }) => {
 	return (
 		<div className="grid grid-cols-4 gap-4">
 			{data.map((person, index) => (
 				<Card key={index} className="flex flex-col items-center">
-					<Avatar src={person.avatar} alt={person.name} className="w-24 h-24" />
-					<h3 className="text-center mt-2 text-lg font-semibold">{person.name}</h3>
+					<Avatar src={person.avatar} alt={person.name} className="h-24 w-24" />
+					<h3 className="mt-2 text-center text-lg font-semibold">{person.name}</h3>
 					{person.role && <p className="text-center text-gray-400">{person.role}</p>}
-					<blockquote className="text-center mt-2 text-gray-200 max-w-80">{person.quote}</blockquote>
+					<blockquote className="mt-2 max-w-80 text-center text-gray-200">{person.quote}</blockquote>
 				</Card>
 			))}
 		</div>
 	);
 };
 
-const Libraries = ({ data }: { data: Library[]; }) => {
+const Libraries = ({ data }: { data: Library[] }) => {
 	return (
-		<div className="grid grid-cols-2 gap-4 overflow-auto max-h-[44rem]">
+		<div className="grid max-h-[44rem] grid-cols-2 gap-4 overflow-auto">
 			{data.map((library, index) => (
 				<Card key={index} className="flex flex-col items-center">
 					<h3 className="text-center text-lg font-semibold">{library.name}</h3>
@@ -62,21 +62,21 @@ const Acknowledgements = () => {
 		<>
 			<SEO title={"Acknowledgements"} />
 			<HomeLayout>
-				<div className="container mx-auto p-4 flex flex-col gap-4">
+				<div className="container mx-auto flex flex-col gap-4 p-4">
 					<div className="text-center">
-						<h2 className="text-2xl font-bold mb-4">{t("acknowledgements.staff.title")}</h2>
+						<h2 className="mb-4 text-2xl font-bold">{t("acknowledgements.staff.title")}</h2>
 						<p className="text-gray-400">{t("acknowledgements.staff.message")}</p>
 					</div>
 					<AcknowledgementCard data={kastelStaff} />
 
-					<div className="text-center mt-8">
-						<h2 className="text-2xl font-bold mb-4">{t("acknowledgements.contributors.title")}</h2>
+					<div className="mt-8 text-center">
+						<h2 className="mb-4 text-2xl font-bold">{t("acknowledgements.contributors.title")}</h2>
 						<p className="text-gray-400">{t("acknowledgements.contributors.message")}</p>
 					</div>
 					<AcknowledgementCard data={contributors} />
 
-					<div className="text-center mt-8">
-						<h2 className="text-2xl font-bold mb-4">{t("acknowledgements.libraries.title")}</h2>
+					<div className="mt-8 text-center">
+						<h2 className="mb-4 text-2xl font-bold">{t("acknowledgements.libraries.title")}</h2>
 						<p className="text-gray-400">{t("acknowledgements.libraries.message")}</p>
 					</div>
 					<Libraries data={libraries} />

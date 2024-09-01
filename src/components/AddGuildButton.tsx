@@ -4,11 +4,7 @@ import { NavBarIcon } from "./NavBars/NavBarIcon.tsx";
 import { Plus } from "lucide-react";
 import GuildModal from "./Modals/CreateGuild.tsx";
 
-const AddGuildButton = memo(({
-	orientation = "vertical"
-}: {
-	orientation?: "vertical" | "horizontal";
-}) => {
+const AddGuildButton = memo(({ orientation = "vertical" }: { orientation?: "vertical" | "horizontal" }) => {
 	const { isOpen, onOpenChange, onClose } = useDisclosure();
 
 	return (

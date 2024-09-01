@@ -22,7 +22,10 @@ const IndexPage = () => {
 		globalThis.getLanguages = () => {
 			const langs = fetchLanguages();
 
-			console.log("pick a lang (use the code i.e en, fr, de then do setLanguage('langCode')\n\n", langs.map((lang) => (`${lang.code} [${lang.status}] - ${lang.notes.join(", ") || "No Notes"}`)).join("\n\n"));
+			console.log(
+				"pick a lang (use the code i.e en, fr, de then do setLanguage('langCode')\n\n",
+				langs.map((lang) => `${lang.code} [${lang.status}] - ${lang.notes.join(", ") || "No Notes"}`).join("\n\n"),
+			);
 		};
 	}, []);
 
@@ -31,10 +34,10 @@ const IndexPage = () => {
 			<SEO title={"Home"} />
 
 			<HomeLayout>
-				<div className="bg-cover text-white py-36 flex items-center justify-center ">
+				<div className="flex items-center justify-center bg-cover py-36 text-white">
 					<div className="text-center">
 						<h1 className="text-3xl font-bold">{t("home.title")}</h1>
-						<p className="text-medium mt-4">{t("home.subtitle")}</p>
+						<p className="mt-4 text-medium">{t("home.subtitle")}</p>
 						<p className="text-medium">{t("home.subtitle2")}</p>
 						<div className="mt-8">
 							<Button href={token ? "/app" : "/register"} as={Link} size="lg" variant="flat" color="primary">

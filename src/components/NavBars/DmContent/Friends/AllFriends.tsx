@@ -46,7 +46,6 @@ const statusOptions = [
 	{ name: "Idle", uid: "idle" },
 ];
 
-
 interface Friend {
 	id: string;
 	friendSince: string;
@@ -78,7 +77,9 @@ const AllFriends = () => {
 		let filteredUsers = [...friends];
 
 		if (hasSearchFilter) {
-			filteredUsers = filteredUsers.filter((user) => user.user.username.toLowerCase().includes(filterValue.toLowerCase()));
+			filteredUsers = filteredUsers.filter((user) =>
+				user.user.username.toLowerCase().includes(filterValue.toLowerCase()),
+			);
 		}
 		if (statusFilter !== "all" && Array.from(statusFilter).length !== statusOptions.length) {
 			filteredUsers = filteredUsers.filter((user) => Array.from(statusFilter).includes(user.status));
@@ -126,7 +127,7 @@ const AllFriends = () => {
 			case "status": {
 				return (
 					<Chip
-						className="capitalize border-none gap-1 text-default-600"
+						className="gap-1 border-none capitalize text-default-600"
 						color={statusColorMap[user.status]}
 						size="sm"
 						variant="dot"
@@ -178,22 +179,26 @@ const AllFriends = () => {
 
 	useEffect(() => {
 		const subscribed = useRelationshipsStore.subscribe((state) => {
-			setFriends(state.getFriendRelationships().map((x) => {
+			setFriends(
+				state
+					.getFriendRelationships()
+					.map((x) => {
+						const foundUser = useUserStore.getState().getUser(x.userId);
 
-				const foundUser = useUserStore.getState().getUser(x.userId);
+						if (!foundUser) return null;
 
-				if (!foundUser) return null;
-
-				return {
-					friendSince: x.createdAt,
-					id: x.relationshipId,
-					status: "online",
-					user: {
-						...foundUser,
-						avatar: useUserStore.getState().getDefaultAvatar(foundUser.id),
-					}
-				};
-			}).filter((x) => x !== null));
+						return {
+							friendSince: x.createdAt,
+							id: x.relationshipId,
+							status: "online",
+							user: {
+								...foundUser,
+								avatar: useUserStore.getState().getDefaultAvatar(foundUser.id),
+							},
+						};
+					})
+					.filter((x) => x !== null),
+			);
 		});
 
 		const userSubscribed = useUserStore.subscribe((state) => {
@@ -208,28 +213,32 @@ const AllFriends = () => {
 					user: {
 						...user,
 						avatar: state.getDefaultAvatar(user.id),
-					}
+					},
 				};
 			});
 
 			setFriends(updatedFriends);
 		});
 
-		setFriends(getFriendRelationships().map((x) => {
-			const foundUser = useUserStore.getState().getUser(x.userId);
+		setFriends(
+			getFriendRelationships()
+				.map((x) => {
+					const foundUser = useUserStore.getState().getUser(x.userId);
 
-			if (!foundUser) return null;
+					if (!foundUser) return null;
 
-			return {
-				friendSince: x.createdAt,
-				id: x.relationshipId,
-				status: "online",
-				user: {
-					...foundUser,
-					avatar: useUserStore.getState().getDefaultAvatar(foundUser.id),
-				}
-			};
-		}).filter((x) => x !== null));
+					return {
+						friendSince: x.createdAt,
+						id: x.relationshipId,
+						status: "online",
+						user: {
+							...foundUser,
+							avatar: useUserStore.getState().getDefaultAvatar(foundUser.id),
+						},
+					};
+				})
+				.filter((x) => x !== null),
+		);
 
 		return () => {
 			subscribed();
@@ -240,7 +249,7 @@ const AllFriends = () => {
 	const topContent = useMemo(() => {
 		return (
 			<div className="flex flex-col gap-4">
-				<div className="flex justify-between gap-3 items-end">
+				<div className="flex items-end justify-between gap-3">
 					<Input
 						isClearable
 						className="w-full sm:max-w-[44%]"
@@ -306,7 +315,7 @@ const AllFriends = () => {
 			bottomContentPlacement="outside"
 			classNames={{
 				wrapper: "max-h-[382px] bg-lightAccent dark:bg-darkAccent",
-				th: "bg-lightBackground dark:bg-darkBackground"
+				th: "bg-lightBackground dark:bg-darkBackground",
 			}}
 			selectedKeys={selectedKeys}
 			selectionMode="none"
@@ -329,7 +338,9 @@ const AllFriends = () => {
 			</TableHeader>
 			<TableBody emptyContent={"Seems lonely here, why not add someone?"} items={sortedItems}>
 				{(item) => (
-					<TableRow key={item.id}>{(columnKey) => <TableCell>{renderCell(item, columnKey) as string}</TableCell>}</TableRow>
+					<TableRow key={item.id}>
+						{(columnKey) => <TableCell>{renderCell(item, columnKey) as string}</TableCell>}
+					</TableRow>
 				)}
 			</TableBody>
 		</Table>

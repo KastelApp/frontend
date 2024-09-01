@@ -5,13 +5,13 @@ import BugHunterLevel2 from "./BugHunter2.tsx";
 import BugHunterLevel3 from "./BugHunter3.tsx";
 import { badgeOrder, publicFlags as pubFlags } from "@/utils/Constants.ts";
 import Sponsor from "./Sponsor.tsx";
-import { twMerge } from "tailwind-merge";
 import Tooltip from "@/components/Tooltip.tsx";
 import Moderator from "@/badges/Moderator.tsx";
 import Contributor from "@/badges/Contributor.tsx";
 import Partner from "@/badges/Partner.tsx";
 import BotBadge from "@/badges/BotBadge.tsx";
 import { useTranslationStore } from "@/wrapper/Stores.ts";
+import cn from "@/utils/cn.ts";
 
 /**
  * Just a small helper component to display all badges a user has.
@@ -32,17 +32,21 @@ const AllBadges = ({
 	const badges = Object.entries(flags.PublicFlags.toJSON())
 		.filter(([, value]) => value === true)
 		.map(([key]) => key)
-		.sort((a, b) => badgeOrder.indexOf(pubFlags[a as keyof typeof pubFlags]) - badgeOrder.indexOf(pubFlags[b as keyof typeof pubFlags]));
+		.sort(
+			(a, b) =>
+				badgeOrder.indexOf(pubFlags[a as keyof typeof pubFlags]) -
+				badgeOrder.indexOf(pubFlags[b as keyof typeof pubFlags]),
+		);
 
 	return (
-		<div className={twMerge("rounded-md pt-1.5 pr-1.5 bg-charcoal-600 flex flex-wrap justify-end max-w-48 w-fit")}>
+		<div className={cn("flex w-fit max-w-48 flex-wrap justify-end rounded-md bg-charcoal-600 pr-1.5 pt-1.5")}>
 			{badges.map((flag, index) => {
 				switch (flag) {
 					case "StaffBadge":
 						return (
-							<div key={index} className="relative flex-none w-1/5 p-1">
+							<div key={index} className="relative w-1/5 flex-none p-1">
 								<Tooltip content={t("badges.sponsor.tooltip")} color="secondary">
-									<span className="text-lg text-warning cursor-pointer hover:opacity-75">
+									<span className="cursor-pointer text-lg text-warning hover:opacity-75">
 										<StaffBadge size={size} />
 									</span>
 								</Tooltip>
@@ -50,9 +54,9 @@ const AllBadges = ({
 						);
 					case "BugHunterLevel1":
 						return (
-							<div key={index} className="relative flex-none w-1/5 p-1">
+							<div key={index} className="relative w-1/5 flex-none p-1">
 								<Tooltip content={t("badges.bug1.tooltip")} color="success">
-									<span className="text-lg text-success cursor-pointer hover:opacity-75">
+									<span className="cursor-pointer text-lg text-success hover:opacity-75">
 										<BugHunterLevel1 size={size} />
 									</span>
 								</Tooltip>
@@ -60,9 +64,9 @@ const AllBadges = ({
 						);
 					case "BugHunterLevel2":
 						return (
-							<div key={index} className="relative flex-none w-1/5 p-1">
+							<div key={index} className="relative w-1/5 flex-none p-1">
 								<Tooltip content={t("badges.bug2.tooltip")} color="warning">
-									<span className="text-lg text-success cursor-pointer hover:opacity-75">
+									<span className="cursor-pointer text-lg text-success hover:opacity-75">
 										<BugHunterLevel2 size={size} />
 									</span>
 								</Tooltip>
@@ -70,9 +74,9 @@ const AllBadges = ({
 						);
 					case "BugHunterLevel3":
 						return (
-							<div key={index} className="relative flex-none w-1/5 p-1">
+							<div key={index} className="relative w-1/5 flex-none p-1">
 								<Tooltip showArrow content={t("badges.bug3.tooltip")} color="secondary">
-									<span className="text-lg text-success cursor-pointer hover:opacity-75">
+									<span className="cursor-pointer text-lg text-success hover:opacity-75">
 										<BugHunterLevel3 size={size} />
 									</span>
 								</Tooltip>
@@ -80,9 +84,9 @@ const AllBadges = ({
 						);
 					case "SponsorBadge":
 						return (
-							<div key={index} className="relative flex-none w-1/5 p-1">
+							<div key={index} className="relative w-1/5 flex-none p-1">
 								<Tooltip content={t("badges.sponsor.tooltip")} color="secondary">
-									<span className="text-lg text-secondary cursor-pointer hover:opacity-75">
+									<span className="cursor-pointer text-lg text-secondary hover:opacity-75">
 										<Sponsor size={size} />
 									</span>
 								</Tooltip>
@@ -90,9 +94,9 @@ const AllBadges = ({
 						);
 					case "ModeratorBadge":
 						return (
-							<div key={index} className="relative flex-none w-1/5 p-1">
+							<div key={index} className="relative w-1/5 flex-none p-1">
 								<Tooltip content={t("badges.moderator.tooltip")} color="primary">
-									<span className="text-lg text-info cursor-pointer hover:opacity-75">
+									<span className="text-info cursor-pointer text-lg hover:opacity-75">
 										<Moderator size={size} />
 									</span>
 								</Tooltip>
@@ -100,9 +104,9 @@ const AllBadges = ({
 						);
 					case "DeveloperBadge":
 						return (
-							<div key={index} className="relative flex-none w-1/5 p-1">
+							<div key={index} className="relative w-1/5 flex-none p-1">
 								<Tooltip content={t("badges.contributor.tooltip")} color="danger">
-									<span className="text-lg text-danger cursor-pointer hover:opacity-75">
+									<span className="cursor-pointer text-lg text-danger hover:opacity-75">
 										<Contributor size={size} />
 									</span>
 								</Tooltip>
@@ -110,9 +114,9 @@ const AllBadges = ({
 						);
 					case "PartnerBadge":
 						return (
-							<div key={index} className="relative flex-none w-1/5 p-1">
+							<div key={index} className="relative w-1/5 flex-none p-1">
 								<Tooltip content={t("badges.partner.tooltip")} color="success">
-									<span className="text-lg text-success cursor-pointer hover:opacity-75">
+									<span className="cursor-pointer text-lg text-success hover:opacity-75">
 										<Partner size={size} />
 									</span>
 								</Tooltip>
@@ -120,9 +124,9 @@ const AllBadges = ({
 						);
 					case "VerifiedBotDeveloperBadge":
 						return (
-							<div key={index} className="relative flex-none w-1/5 p-1">
+							<div key={index} className="relative w-1/5 flex-none p-1">
 								<Tooltip content={t("badges.trustedBotDeveloper.tooltip")} color="danger">
-									<span className="text-lg text-danger cursor-pointer hover:opacity-75">
+									<span className="cursor-pointer text-lg text-danger hover:opacity-75">
 										<BotBadge size={size} />
 									</span>
 								</Tooltip>

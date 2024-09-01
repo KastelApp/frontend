@@ -8,16 +8,16 @@ class FlagUtils<
 	public Flags:
 		| T
 		| {
-			[key: string]: bigint;
-		};
+				[key: string]: bigint;
+		  };
 
 	public constructor(
 		bits: bigint | number | string,
 		flags:
 			| T
 			| {
-				[key: string]: bigint;
-			},
+					[key: string]: bigint;
+			  },
 	) {
 		this.bits = BigInt(bits);
 

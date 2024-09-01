@@ -4,22 +4,22 @@ import Websocket from "@/wrapper/gateway/Websocket.ts";
 import { useMessageStore } from "@/wrapper/Stores/MessageStore.ts";
 
 const isMessageDelete = (payload: unknown): payload is MessageDeletePayload => {
-    if (payload === null || typeof payload !== "object") return false;
+	if (payload === null || typeof payload !== "object") return false;
 
-    if (!("channelId" in payload)) return false;
-    if (!("messageId" in payload)) return false;
+	if (!("channelId" in payload)) return false;
+	if (!("messageId" in payload)) return false;
 
-    return true;
+	return true;
 };
 
 const messageDelete = (ws: Websocket, payload: unknown) => {
-    if (!isMessageDelete(payload)) {
-        Logger.warn("Invalid Message Delete Payload", "Wrapper | WebSocket");
+	if (!isMessageDelete(payload)) {
+		Logger.warn("Invalid Message Delete Payload", "Wrapper | WebSocket");
 
-        return;
-    }
+		return;
+	}
 
-    useMessageStore.getState().removeMessage(payload.messageId);
+	useMessageStore.getState().removeMessage(payload.messageId);
 };
 
 export default messageDelete;

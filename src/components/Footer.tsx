@@ -12,12 +12,16 @@ const Footer = () => {
 						<h1 className="text-2xl font-bold text-white">Kastel</h1>
 						<p className="text-gray-400">Join hundreds of users today!</p>
 					</div>
-					<div className="grid grid-cols-2 gap-8 sm:gap-6 sm:grid-cols-4">
+					<div className="grid grid-cols-2 gap-8 sm:grid-cols-4 sm:gap-6">
 						<div>
-							<h2 className="mb-2 text-sm font-semibold text-white uppercase">Contact</h2>
-							<ul className="text-gray-400 font-medium">
+							<h2 className="mb-2 text-sm font-semibold uppercase text-white">Contact</h2>
+							<ul className="font-medium text-gray-400">
 								<li className="mb-1">
-									<Link href="https://support.kastelapp.com/" className="hover:text-blue-500 hover:underline" as={NextLink}>
+									<Link
+										href="https://support.kastelapp.com/"
+										className="hover:text-blue-500 hover:underline"
+										as={NextLink}
+									>
 										Support
 									</Link>
 								</li>
@@ -29,8 +33,8 @@ const Footer = () => {
 							</ul>
 						</div>
 						<div>
-							<h2 className="mb-2 text-sm font-semibold  uppercase text-white">Engage with Us</h2>
-							<ul className="text-gray-400 font-medium">
+							<h2 className="mb-2 text-sm font-semibold uppercase text-white">Engage with Us</h2>
+							<ul className="font-medium text-gray-400">
 								<li className="mb-1">
 									<Link
 										href="https://github.com/orgs/KastelApp/discussions"
@@ -41,12 +45,20 @@ const Footer = () => {
 									</Link>
 								</li>
 								<li className="mb-1">
-									<Link href="https://kastelapp.com/invite/plaza" className="hover:text-blue-500 hover:underline" as={NextLink}>
+									<Link
+										href="https://kastelapp.com/invite/plaza"
+										className="hover:text-blue-500 hover:underline"
+										as={NextLink}
+									>
 										Kastel Plaza
 									</Link>
 								</li>
 								<li className="mb-1">
-									<Link href="https://kastelapp.com/invite/developers" className="hover:text-blue-500 hover:underline" as={NextLink}>
+									<Link
+										href="https://kastelapp.com/invite/developers"
+										className="hover:text-blue-500 hover:underline"
+										as={NextLink}
+									>
 										Kastel Developers
 									</Link>
 								</li>
@@ -58,28 +70,43 @@ const Footer = () => {
 							</ul>
 						</div>
 						<div>
-							<h2 className="mb-2 text-sm font-semibold  uppercase text-white">Developers</h2>
-							<ul className="text-gray-400 font-medium">
+							<h2 className="mb-2 text-sm font-semibold uppercase text-white">Developers</h2>
+							<ul className="font-medium text-gray-400">
 								<li className="mb-1">
-									<Link href="https://github.com/KastelApp" target="_blank" className="hover:text-blue-500 hover:underline" as={NextLink}>
+									<Link
+										href="https://github.com/KastelApp"
+										target="_blank"
+										className="hover:text-blue-500 hover:underline"
+										as={NextLink}
+									>
 										GitHub
 									</Link>
 								</li>
 								<li className="mb-1">
-									<Link href="https://kastel.dev/docs" target="_blank" className="hover:text-blue-500 hover:underline" as={NextLink}>
+									<Link
+										href="https://kastel.dev/docs"
+										target="_blank"
+										className="hover:text-blue-500 hover:underline"
+										as={NextLink}
+									>
 										Documentation
 									</Link>
 								</li>
 								<li className="mb-1">
-									<Link href="https://kastel.dev/" target="_blank" className="hover:text-blue-500 hover:underline" as={NextLink}>
+									<Link
+										href="https://kastel.dev/"
+										target="_blank"
+										className="hover:text-blue-500 hover:underline"
+										as={NextLink}
+									>
 										Bots
 									</Link>
 								</li>
 							</ul>
 						</div>
 						<div>
-							<h2 className="mb-2 text-sm font-semibold  uppercase text-white">Legal</h2>
-							<ul className="text-gray-400 font-medium">
+							<h2 className="mb-2 text-sm font-semibold uppercase text-white">Legal</h2>
+							<ul className="font-medium text-gray-400">
 								<li className="mb-1">
 									<Link href="/privacy" className="hover:text-blue-500 hover:underline" as={NextLink}>
 										Privacy Policy
@@ -94,19 +121,24 @@ const Footer = () => {
 						</div>
 					</div>
 				</div>
-				<hr className="my-6 sm:mx-auto border-gray-700 lg:my-8" />
+				<hr className="my-6 border-gray-700 sm:mx-auto lg:my-8" />
 				<div className="sm:flex sm:items-center sm:justify-between">
-					<span className="text-sm sm:text-center text-gray-400">
+					<span className="text-sm text-gray-400 sm:text-center">
 						© {year}{" "}
 						<Link href="https://kastelapp.com" className="hover:text-blue-500 hover:underline" as={NextLink}>
 							Kastel
 						</Link>
 						. All Rights Reserved.
 					</span>
-					<div className="flex mt-4 sm:justify-center sm:mt-0">
-						<Link href="https://x.com/KastelApp" target="_blank" className="text-gray-500 hover: hover:text-white ms-5" as={NextLink}>
+					<div className="mt-4 flex sm:mt-0 sm:justify-center">
+						<Link
+							href="https://x.com/KastelApp"
+							target="_blank"
+							className="hover: ms-5 text-gray-500 hover:text-white"
+							as={NextLink}
+						>
 							<svg
-								className="w-4 h-4"
+								className="h-4 w-4"
 								aria-hidden="true"
 								xmlns="http://www.w3.org/2000/svg"
 								fill="currentColor"
@@ -123,10 +155,10 @@ const Footer = () => {
 						<Link
 							href="https://github.com/KastelApp"
 							target="_blank"
-							className="text-gray-500 hover: hover:text-white ms-5"
+							className="hover: ms-5 text-gray-500 hover:text-white"
 						>
 							<svg
-								className="w-4 h-4"
+								className="h-4 w-4"
 								aria-hidden="true"
 								xmlns="http://www.w3.org/2000/svg"
 								fill="currentColor"

@@ -23,32 +23,32 @@ const TopHeader = () => {
 		href: string;
 		newTab: boolean;
 	}[] = [
-			{
-				title: t("home.navbar.docs"),
-				href: "https://kastel.dev",
-				newTab: true,
-			},
-			{
-				title: "GitHub",
-				href: "https://github.com/KastelApp",
-				newTab: true,
-			},
-			{
-				title: t("home.navbar.blog"),
-				href: "/blog",
-				newTab: false,
-			},
-			{
-				title: t("home.navbar.support"),
-				href: "#",
-				newTab: false,
-			},
-		];
+		{
+			title: t("home.navbar.docs"),
+			href: "https://kastel.dev",
+			newTab: true,
+		},
+		{
+			title: "GitHub",
+			href: "https://github.com/KastelApp",
+			newTab: true,
+		},
+		{
+			title: t("home.navbar.blog"),
+			href: "/blog",
+			newTab: false,
+		},
+		{
+			title: t("home.navbar.support"),
+			href: "#",
+			newTab: false,
+		},
+	];
 
 	return (
 		<Navbar onMenuOpenChange={setIsMenuOpen}>
 			<NavbarContent>
-				<NavbarMenuToggle aria-label={isMenuOpen ? "Close menu" : "Open menu"} className="sm:hidden text-white" />
+				<NavbarMenuToggle aria-label={isMenuOpen ? "Close menu" : "Open menu"} className="text-white sm:hidden" />
 				<NavbarBrand>
 					<Link className="font-bold text-inherit" href="/" as={NextLink}>
 						Kastel
@@ -56,7 +56,7 @@ const TopHeader = () => {
 				</NavbarBrand>
 			</NavbarContent>
 
-			<NavbarContent className="hidden sm:flex gap-4" justify="center">
+			<NavbarContent className="hidden gap-4 sm:flex" justify="center">
 				<NavbarItem>
 					<Link href="https://kastel.dev" color="foreground" target="_blank" as={NextLink}>
 						{t("home.navbar.docs")}
@@ -79,22 +79,26 @@ const TopHeader = () => {
 				</NavbarItem>
 			</NavbarContent>
 			<NavbarContent justify="end">
-				{!token ? <>
-					<NavbarItem>
-						<Link href="/login" as={NextLink}>{t("home.navbar.login")}</Link>
-					</NavbarItem>
-					<NavbarItem className="hidden lg:flex">
-						<Button as={NextLink} color="primary" href="/register" variant="flat">
-							{t("home.navbar.signup")}
-						</Button>
-					</NavbarItem>
-				</> :
+				{!token ? (
+					<>
+						<NavbarItem>
+							<Link href="/login" as={NextLink}>
+								{t("home.navbar.login")}
+							</Link>
+						</NavbarItem>
+						<NavbarItem className="hidden lg:flex">
+							<Button as={NextLink} color="primary" href="/register" variant="flat">
+								{t("home.navbar.signup")}
+							</Button>
+						</NavbarItem>
+					</>
+				) : (
 					<NavbarItem>
 						<Button as={NextLink} color="primary" href="/app" variant="flat">
 							{t("home.navbar.app")}
 						</Button>
 					</NavbarItem>
-				}
+				)}
 			</NavbarContent>
 			<NavbarMenu>
 				{menuItems.map((item, index) => (

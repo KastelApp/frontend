@@ -10,9 +10,9 @@ class ErrorBoundary extends Component {
 		} | null;
 	};
 
-	declare props: { children: React.ReactNode; };
+	declare props: { children: React.ReactNode };
 
-	public constructor(props: { children: React.ReactNode; }) {
+	public constructor(props: { children: React.ReactNode }) {
 		super(props);
 
 		this.state = { hasError: false, error: null };
@@ -30,17 +30,16 @@ class ErrorBoundary extends Component {
 
 	public render() {
 		if (this.state.hasError) {
-
 			Logger.error("An error occurred and we caught it", "ErrorBoundary");
 			console.log(this.state.error?.error.stack);
 
 			return (
-				<div className="bg-cover text-white py-32 flex items-center justify-center ">
+				<div className="flex items-center justify-center bg-cover py-32 text-white">
 					<div className="">
 						<h1 className="text-center text-3xl font-bold">Something went wrong :/</h1>
-						<p className="text-center text-lg mt-4">Sadly we seemed to have encountered an error.</p>
-						<p className="text-center text-lg mt-2">Error: {this.state.error?.error.message}</p>
-						<pre className="text-sm whitespace-pre-wrap mt-2">{this.state.error?.error.stack}</pre>
+						<p className="mt-4 text-center text-lg">Sadly we seemed to have encountered an error.</p>
+						<p className="mt-2 text-center text-lg">Error: {this.state.error?.error.message}</p>
+						<pre className="mt-2 whitespace-pre-wrap text-sm">{this.state.error?.error.stack}</pre>
 					</div>
 				</div>
 			);

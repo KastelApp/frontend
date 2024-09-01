@@ -8,16 +8,16 @@
  * // since on each call it will create a new throttle function. which looses the waiting context.
  */
 const throttle = (callback: () => void, limit: number) => {
-    let waiting = false;
-    return () => {
-        if (!waiting) {
-            callback();
-            waiting = true;
-            setTimeout(() => {
-                waiting = false;
-            }, limit);
-        }
-    };
+	let waiting = false;
+	return () => {
+		if (!waiting) {
+			callback();
+			waiting = true;
+			setTimeout(() => {
+				waiting = false;
+			}, limit);
+		}
+	};
 };
 
 export default throttle;

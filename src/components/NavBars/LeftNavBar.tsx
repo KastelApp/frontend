@@ -2,7 +2,7 @@
 // ? Though the bottom bar is the one we will care about the most, the left navbar is still a good option for those who want it.
 import { useCallback } from "react";
 import { Compass } from "lucide-react";
-import { twMerge } from "tailwind-merge";
+import cn from "@/utils/cn.ts";
 import { Avatar } from "@nextui-org/react";
 import UserOptions from "../Dropdowns/UserOptions.tsx";
 import { useGuildSettingsStore, useSettingsStore } from "@/wrapper/Stores.ts";
@@ -28,64 +28,82 @@ const LeftNavBar = () => {
 	const currentUser = useUserStore((s) => s.getCurrentUser());
 
 	const mappedGuilds = useCallback(() => {
-		return <Draggables disableGhostElement items={guilds.filter((guild) => !guild.unavailable && !guild.partial)} onDrop={console.log} render={(item, index) => {
-			let hasUnread = false;
+		return (
+			<Draggables
+				disableGhostElement
+				items={guilds.filter((guild) => !guild.unavailable && !guild.partial)}
+				onDrop={console.log}
+				render={(item, index) => {
+					let hasUnread = false;
 
-			const gotChannels = getChannelsWithValidPermissions(item.id);
-			const foundGuildSettings = guildSettings[item.id];
+					const gotChannels = getChannelsWithValidPermissions(item.id);
+					const foundGuildSettings = guildSettings[item.id];
 
-			for (const channel of gotChannels) {
-				const foundChannel = item.channelProperties.find((channelProperty) => channelProperty.channelId === channel.id);
-				if (foundChannel?.lastMessageAckId !== channel.lastMessageId) {
-					if (foundChannel?.lastMessageAckId && channel.lastMessageId && snowflake.timeStamp(foundChannel.lastMessageAckId) > snowflake.timeStamp(channel.lastMessageId)) {
-						continue;
+					for (const channel of gotChannels) {
+						const foundChannel = item.channelProperties.find(
+							(channelProperty) => channelProperty.channelId === channel.id,
+						);
+						if (foundChannel?.lastMessageAckId !== channel.lastMessageId) {
+							if (
+								foundChannel?.lastMessageAckId &&
+								channel.lastMessageId &&
+								snowflake.timeStamp(foundChannel.lastMessageAckId) > snowflake.timeStamp(channel.lastMessageId)
+							) {
+								continue;
+							}
+
+							hasUnread = true;
+
+							break;
+						}
 					}
 
-					hasUnread = true;
+					const topChannel = getTopChannel(item.id);
 
-					break;
-				}
-			}
-
-			const topChannel = getTopChannel(item.id);
-
-			return (
-				<NavBarIcon
-					href={`/app/guilds/${item.id}${foundGuildSettings?.lastChannelId ? `/channels/${foundGuildSettings.lastChannelId}` : topChannel ? `/channels/${topChannel.id}` : ""}`}
-					badgePosition="bottom-right"
-					badgeColor="danger"
-					// badgeContent={item.mentionCount === "0" ? undefined : item.mentionCount}
-					key={index}
-					icon={
-						<Avatar
-							name={item.name}
-							src={item.icon ?? undefined}
-							className="mt-1.5 w-10 h-10 rounded-3xl transition-all group-hover:rounded-xl duration-300 ease-in-out transform"
-							imgProps={{ className: "transition-none" }}
+					return (
+						<NavBarIcon
+							href={`/app/guilds/${item.id}${foundGuildSettings?.lastChannelId ? `/channels/${foundGuildSettings.lastChannelId}` : topChannel ? `/channels/${topChannel.id}` : ""}`}
+							badgePosition="bottom-right"
+							badgeColor="danger"
+							// badgeContent={item.mentionCount === "0" ? undefined : item.mentionCount}
+							key={index}
+							icon={
+								<Avatar
+									name={item.name}
+									src={item.icon ?? undefined}
+									className="mt-1.5 h-10 w-10 transform rounded-3xl transition-all duration-300 ease-in-out group-hover:rounded-xl"
+									imgProps={{ className: "transition-none" }}
+								/>
+							}
+							description={item.name}
+							contextMenuItemsProps={[
+								{
+									label: "Test",
+								},
+							]}
+							hasUnReadMessages={hasUnread}
+							isActive={item.id === guildId}
 						/>
-					}
-					description={item.name}
-					contextMenuItemsProps={[{
-						label: "Test",
-					}]}
-					hasUnReadMessages={hasUnread}
-					isActive={item.id === guildId}
-				/>
-			);
-		}} />;
+					);
+				}}
+			/>
+		);
 	}, [guilds, guildId]);
 
 	return (
 		<>
-			<div className={twMerge("block", isSideBarOpen ? "" : "hidden")}>
-				<div className="fixed left-0 top-0 h-full w-16 flex flex-col shadow-lg z-[5] overflow-y-auto overflow-x-hidden">
+			<div className={cn("block", isSideBarOpen ? "" : "hidden")}>
+				<div className="fixed left-0 top-0 z-[5] flex h-full w-16 flex-col overflow-y-auto overflow-x-hidden shadow-lg">
 					<UserOptions orientation="vertical" type="context">
 						<NavBarIcon
 							icon={
-								<div className="min-w-9 min-h-9 max-h-9 max-w-9">
+								<div className="max-h-9 min-h-9 min-w-9 max-w-9">
 									<Avatar
-										src={useUserStore.getState().getAvatarUrl(currentUser!.id, currentUser!.avatar) ?? useUserStore.getState().getDefaultAvatar(currentUser!.id)}
-										className="min-w-9 min-h-9 max-h-9 max-w-9 hover:scale-95 transition-all duration-300 ease-in-out transform"
+										src={
+											useUserStore.getState().getAvatarUrl(currentUser!.id, currentUser!.avatar) ??
+											useUserStore.getState().getDefaultAvatar(currentUser!.id)
+										}
+										className="max-h-9 min-h-9 min-w-9 max-w-9 transform transition-all duration-300 ease-in-out hover:scale-95"
 										imgProps={{ className: "transition-none" }}
 									/>
 								</div>
@@ -114,6 +132,5 @@ const LeftNavBar = () => {
 		</>
 	);
 };
-
 
 export default LeftNavBar;

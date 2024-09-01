@@ -61,31 +61,31 @@ const TopNavBar = ({
 	};
 
 	return (
-		<div className="flex flex-row items-center justify-evenly bg-lightAccent dark:bg-darkAccent bg-opacity-90 w-full h-10 m-0 shadow-lg">
+		<div className="m-0 flex h-10 w-full flex-row items-center justify-evenly bg-lightAccent bg-opacity-90 shadow-lg dark:bg-darkAccent">
 			<motion.div
-				className="ml-2 my-auto cursor-pointer flex md:hidden"
+				className="my-auto ml-2 flex cursor-pointer md:hidden"
 				onClick={() => setIsOpen(!isOpen)}
 				animate={isOpen ? "open" : "closed"}
 				variants={variants}
 			>
 				{isOpen ? <X color="#acaebf" size={22} /> : <Menu color="#acaebf" size={22} />}
 			</motion.div>
-			<div className="mr-auto ml-2 my-auto">{startContent}</div>
+			<div className="my-auto ml-2 mr-auto">{startContent}</div>
 			{!beforeIcons && endContent}
 			{icons?.map((icon, index) => (
 				<TooltipOrNot key={index} tooltip={icon.tooltip}>
 					<div
-						className="mr-2 ml-2 transition duration-300 ease-in-out cursor-pointer last:mr-4"
+						className="ml-2 mr-2 cursor-pointer transition duration-300 ease-in-out last:mr-4"
 						onClick={icon.onClick}
 					>
 						{icon.icon}
 					</div>
 				</TooltipOrNot>
 			))}
-			{icons && <Divider orientation="vertical" className="w-[3px] h-6" />}
+			{icons && <Divider orientation="vertical" className="h-6 w-[3px]" />}
 			{baseIcons?.map((icon, index) => (
 				<TooltipOrNot key={index} tooltip={icon.tooltip}>
-					<div className="mr-2 ml-2 transition duration-300 ease-in-out cursor-pointer last:mr-5">{icon.icon}</div>
+					<div className="ml-2 mr-2 cursor-pointer transition duration-300 ease-in-out last:mr-5">{icon.icon}</div>
 				</TooltipOrNot>
 			))}
 
