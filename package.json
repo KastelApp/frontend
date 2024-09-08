@@ -13,6 +13,7 @@
     "@million/lint": "0.0.73",
     "@nextui-org/react": "2.4.6",
     "@radix-ui/react-context-menu": "^2.2.1",
+    "@radix-ui/react-label": "^2.1.0",
     "@types/memoizee": "^0.4.11",
     "@types/ramda": "^0.30.2",
     "@unlazy/react": "0.11.3",

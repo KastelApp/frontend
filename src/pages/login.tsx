@@ -12,7 +12,7 @@ import {
 } from "@nextui-org/react";
 import { useEffect, useState } from "react";
 import { EyeIcon, EyeOffIcon, LoaderCircle } from "lucide-react";
-import { useClientStore, useTokenStore, useTranslationStore } from "@/wrapper/Stores.ts";
+import { useClientStore, useIsReady, useTokenStore, useTranslationStore } from "@/wrapper/Stores.ts";
 import SEO from "@/components/SEO.tsx";
 import NextLink from "next/link";
 import { useRouter } from "next/router";
@@ -28,6 +28,7 @@ const Login = () => {
 
 	const { client } = useClientStore();
 	const { setToken } = useTokenStore();
+	const { setIsReady } = useIsReady();
 
 	// ? General state
 	const [error, setError] = useState("");
@@ -136,8 +137,11 @@ const Login = () => {
 		// ? If we get here, the login was successful so now we can set the token in storage and redirect
 
 		setToken(attemptLogin.token);
+		setIsReady(false);
 
-		router.push("/app");
+		setTimeout(() => {
+			router.push("/app");
+		}, 750);
 	};
 
 	return (

@@ -10,13 +10,14 @@ import {
 	Link,
 	Button,
 } from "@nextui-org/react";
-import { useTokenStore, useTranslationStore } from "@/wrapper/Stores.ts";
+import { useIsReady, useTokenStore, useTranslationStore } from "@/wrapper/Stores.ts";
 import NextLink from "next/link";
 
 const TopHeader = () => {
 	const [isMenuOpen, setIsMenuOpen] = useState(false);
 	const { t } = useTranslationStore();
 	const { token } = useTokenStore();
+	const { setIsReady } = useIsReady();
 
 	const menuItems: {
 		title: string;
@@ -94,7 +95,9 @@ const TopHeader = () => {
 					</>
 				) : (
 					<NavbarItem>
-						<Button as={NextLink} color="primary" href="/app" variant="flat">
+						<Button as={NextLink} color="primary" href="/app" variant="flat" onClick={() => {
+							setIsReady(false);
+						}}>
 							{t("home.navbar.app")}
 						</Button>
 					</NavbarItem>

@@ -12,6 +12,8 @@ import { useTokenStore, useTranslationStore } from "@/wrapper/Stores.ts";
 import { useUserStore } from "@/wrapper/Stores/UserStore.ts";
 import DifferentTesting from "../Settings/User/DifferentTesting.tsx";
 import getClientVersion from "@/utils/getClientVersion.ts";
+import Appearance from "@/components/Settings/User/Appearance.tsx";
+import Language from "@/components/Settings/User/Language.tsx";
 
 const UserOptions = ({
 	children,
@@ -91,6 +93,24 @@ const UserOptions = ({
 				},
 			],
 		},
+		{
+			title: "General",
+			id: "general",
+			children: [
+				{
+					title: "Appearance",
+					id: "appearance",
+					section: <Appearance />,
+					disabled: false
+				},
+				{
+					title: "Language",
+					id: "language",
+					section: <Language />,
+					disabled: false
+				}
+			]
+		}
 	]);
 
 	useEffect(() => {

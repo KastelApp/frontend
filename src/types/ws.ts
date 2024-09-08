@@ -13,7 +13,6 @@ export type status =
 
 export interface WebsocketSettings {
 	compress: boolean;
-	// only json is supported for now
 	encoding: encoding;
 	url: string;
 	version: string;

@@ -233,7 +233,7 @@ const Message = ({
 								)}
 								<div
 									className={cn(
-										"flex max-w-[calc(100%-5rem)] overflow-hidden whitespace-pre-wrap break-words text-white",
+										"max-w-[calc(100%-5rem)] overflow-hidden whitespace-pre-wrap break-words text-white",
 										message.state === MessageStates.Failed || message.state === MessageStates.Unknown
 											? "text-red-500"
 											: "",

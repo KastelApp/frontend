@@ -11,10 +11,12 @@ const ChannelMention = ({ channelId }: { channelId: string }) => {
 		return <Link href={href}>{children}</Link>;
 	};
 
+	const name = foundChannel?.name ? `#${foundChannel.name}` : `<#${channelId}>`;
+
 	return (
 		<LinkMaybe href={foundChannel ? `/app/guilds/${foundChannel?.guildId}/channels/${channelId}` : null}>
 			<span className="cursor-pointer rounded-lg bg-branding-300/25 p-1 font-medium text-gray-300 hover:underline">
-				#{foundChannel?.name ?? channelId}
+				{name}
 			</span>
 		</LinkMaybe>
 	);

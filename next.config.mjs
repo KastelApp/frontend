@@ -9,6 +9,7 @@ const sha = (process.env.CF_PAGES_COMMIT_SHA ?? fetchedData.gitCommitHash).slice
 /** @type {import('next').NextConfig} */
 const nextConfig = {
 	reactStrictMode: false,
+	productionBrowserSourceMaps: true, // ? NOTE: this is temporary. At a later point in time this will be staff only (i.e the source maps being available)
 	rewrites: async () => {
 		// ? We are fine with users going to /app/guilds/*
 		// ? but if they access just /app/guilds we want to redirect them to /app

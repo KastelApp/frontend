@@ -412,6 +412,8 @@ const TextBasedChannel = () => {
 			placeholder={`Message #${channelName}`}
 			isReadOnly={readOnly}
 			sendMessage={(content) => {
+				if (!content) return;
+
 				const perChannel = getChannel(channelId);
 
 				createMessage(channelId, {

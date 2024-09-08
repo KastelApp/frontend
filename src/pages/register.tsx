@@ -15,7 +15,7 @@ import { EyeIcon, EyeOffIcon, LoaderCircle } from "lucide-react";
 import confetti from "canvas-confetti";
 import SEO from "@/components/SEO.tsx";
 import NextLink from "next/link";
-import { useClientStore, useTokenStore, useTranslationStore } from "@/wrapper/Stores.ts";
+import { useClientStore, useIsReady, useTokenStore, useTranslationStore } from "@/wrapper/Stores.ts";
 import { useRouter } from "next/router";
 import onEnter from "@/utils/onEnter.ts";
 
@@ -25,6 +25,7 @@ const Register = () => {
 	const toggleVisibility = () => setIsVisible(!isVisible);
 	const toggleConfirmVisibility = () => setIsConfirmVisible(!isConfirmVisible);
 
+	const { setIsReady } = useIsReady();
 	const { client } = useClientStore();
 	const { t } = useTranslationStore();
 	const { setToken } = useTokenStore();
@@ -170,6 +171,7 @@ const Register = () => {
 		});
 
 		setToken(attemptRegister.token);
+		setIsReady(false);
 
 		setTimeout(() => {
 			router.push("/app");

@@ -403,7 +403,7 @@ const MessageContainer = ({
 								<SmilePlus size={22} color="#acaebf" className={cn(isReadOnly ? "" : "cursor-pointer")} />
 								<SendHorizontal
 									size={22}
-									color="#8c52ff"
+									color="#008da5"
 									className={cn("opacity-75", isReadOnly ? "" : "cursor-pointer")}
 									onClick={async () => {
 										if (isReadOnly) return;
