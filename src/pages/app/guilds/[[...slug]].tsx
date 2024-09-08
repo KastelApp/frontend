@@ -9,7 +9,7 @@ import { useEffect } from "react";
 
 const GuildPages = () => {
 	const router = useRouter();
-	const [guildId, part, channelId, messageId] = router.query.slug as string[];
+	const [guildId, part, channelId, messageId] = router?.query?.slug as string[];
 	const { getTopChannel } = useChannelStore();
 	const inGuild = useGuildStore((state) => state.getGuild(guildId));
 	const channel = useChannelStore((state) => state.getChannel(channelId));

@@ -148,7 +148,7 @@ const ColorPicker = ({ selectedRole }: { selectedRole: Role }) => {
 const Roles = () => {
 	const router = useRouter();
 
-	const [currentGuildId] = router.query.slug as string[];
+	const [currentGuildId] = router?.query?.slug as string[];
 
 	const roleRef = useRef(
 		useRoleStore

@@ -13,7 +13,7 @@ import { useMultiFormState } from "@/hooks/useStateForm.ts";
 
 const Overview = () => {
 	const router = useRouter();
-	const [guildId] = router.query.slug as string[];
+	const [guildId] = router?.query?.slug as string[];
 	const guild = useGuildStore((s) => s.getGuild(guildId));
 
 	const {

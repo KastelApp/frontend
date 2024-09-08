@@ -16,8 +16,8 @@ const Reset = () => {
 	const { client } = useClientStore();
 	const { setToken } = useTokenStore();
 
-	const requestId = router.query.slug?.[0];
-	const token = router.query.slug?.[1];
+	const requestId = router?.query?.slug?.[0];
+	const token = router?.query?.slug?.[1];
 
 	const [ready, setReady] = useState(false);
 	const [loading, setLoading] = useState(false);

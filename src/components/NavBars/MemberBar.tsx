@@ -218,7 +218,7 @@ const MemberBar = () => {
 
 	const { guildSettings: rawGuildSettings } = useGuildSettingsStore();
 
-	const [currentGuildId, , channelId] = router.query.slug as string[];
+	const [currentGuildId, , channelId] = router?.query?.slug as string[];
 	const guildSettings = rawGuildSettings[currentGuildId ?? ""] ?? { memberBarHidden: false };
 
 	const roleRef = useRef<Role[] | null>(null);
