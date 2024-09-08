@@ -19,6 +19,7 @@
     "@unlazy/react": "0.11.3",
     "autoprefixer": "10.4.20",
     "canvas-confetti": "^1.9.3",
+    "class-variance-authority": "^0.7.0",
     "clsx": "2.1.1",
     "country-flag-icons": "^1.5.11",
     "eslint-config-next": "14.2.7",
