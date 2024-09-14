@@ -24,7 +24,7 @@ const LeftNavBar = () => {
 	const { getChannelsWithValidPermissions, getTopChannel } = useChannelStore();
 	const router = useRouter();
 
-	const [guildId] = router.query.slug as string[];
+	const [guildId] = router.query?.slug ?? []
 	const currentUser = useUserStore((s) => s.getCurrentUser());
 
 	const mappedGuilds = useCallback(() => {

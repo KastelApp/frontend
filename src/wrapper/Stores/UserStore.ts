@@ -107,7 +107,7 @@ export const useUserStore = create<UserStore>((set, get) => ({
 						tag: "0000",
 						username: "Unknown User",
 						isBot: false,
-						isSystem: false,
+						isSystem: true,
 						defaultAvatar: get().getDefaultAvatar(user.id ?? "0"),
 						metaData: {
 							bioless: false,

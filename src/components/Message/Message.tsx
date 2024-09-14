@@ -210,12 +210,12 @@ const Message = ({
 									</PopOverData>
 									{message.author.user && (message.author.user.isBot || message.author.user.isSystem) && (
 										<Chip
-											color="success"
-											variant="flat"
-											className="ml-1 h-4 w-1 rounded-sm p-0 text-[10px]"
-											radius="none"
+											color="primary"
+											variant="solid"
+											className="ml-1 h-5 w-5 p-0 text-[12px] text-white bg-[#008da5]/60 text-center"
+											radius="sm"
 										>
-											{message.author.user.isBot ? t("tags.bot") : t("tags.system")}
+											<span className="font-extrabold">{message.author.user.isBot ? t("tags.bot") : t("tags.system")}</span>
 										</Chip>
 									)}
 									<Tooltip content={formatDate(message.creationDate, false, true)} placement="top" delay={500}>

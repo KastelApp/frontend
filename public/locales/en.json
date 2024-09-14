@@ -139,9 +139,9 @@
 		}
 	},
 	"tags": {
-		"system": "System",
-		"bot": "Bot",
-		"server": "Server"
+		"system": "SYSTEM",
+		"bot": "BOT",
+		"server": "SERVER"
 	},
 	"channelTypes": {
 		"guildCategory": {

@@ -178,12 +178,12 @@ const MemberItem = memo(
 										</div>
 										{(member.user.isBot || member.user.isSystem) && (
 											<Chip
-												color="success"
-												variant="flat"
-												className="ml-1 h-4 w-1 rounded-sm p-0 text-[10px]"
-												radius="none"
+												color="primary"
+												variant="solid"
+												className="ml-1 h-5 w-5 p-0 text-[12px] text-white bg-[#008da5]/60 text-center"
+												radius="sm"
 											>
-												{member.user.isBot ? t("tags.bot") : t("tags.system")}
+												<span className="font-extrabold">{member.user.isBot ? t("tags.bot") : t("tags.system")}</span>
 											</Chip>
 										)}
 									</div>
