@@ -56,7 +56,7 @@ const SecurityPage = () => {
                                         </>
                                     ),
                                     props: {
-                                        modalSize: "4xl"
+                                        modalSize: "5xl"
                                     },
                                     title: "Report a Vulnerability"
                                 });
