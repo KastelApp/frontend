@@ -30,6 +30,11 @@ const Footer = () => {
 										Reporting
 									</Link>
 								</li>
+								<li>
+									<Link href="/security" className="hover:text-blue-500 hover:underline" as={NextLink}>
+										Report a Vulnerability
+									</Link>
+								</li>
 							</ul>
 						</div>
 						<div>
