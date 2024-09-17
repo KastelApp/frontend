@@ -91,7 +91,56 @@ const UserOptions = ({
 					section: <OverView />,
 					disabled: false,
 				},
+				{
+					title: "Sessions",
+					id: "sessions",
+					disabled: true,
+					section: <div>Sessions</div>,
+					endContent: <Chip color="primary" size="sm" variant="bordered" className="mr-2" radius="sm">Coming Soon</Chip>,
+				},
+				{
+					title: "Account Status", // ? i.e if they got any warnings or bans etc
+					id: "accountStatus",
+					disabled: true,
+					section: <div>Account Status</div>,
+					endContent: <Chip color="primary" size="sm" variant="bordered" className="mr-2" radius="sm">Coming Soon</Chip>,
+				},
+				{
+					title: "Privacy & Safety",
+					id: "privacySafety",
+					disabled: true,
+					section: <div>Privacy & Safety</div>,
+					endContent: <Chip color="primary" size="sm" variant="bordered" className="mr-2" radius="sm">Coming Soon</Chip>,
+				},
+
 			],
+		},
+		{
+			title: "Billing",
+			id: "billing",
+			children: [
+				{
+					title: "Subscriptions",
+					id: "subscriptions",
+					section: <div>subscriptions</div>,
+					disabled: true,
+					endContent: <Chip color="primary" size="sm" variant="bordered" className="mr-2" radius="sm">Coming Soon</Chip>,
+				},
+				{
+					title: "Gifts",
+					id: "gifts",
+					section: <div>gifts</div>,
+					disabled: true,
+					endContent: <Chip color="primary" size="sm" variant="bordered" className="mr-2" radius="sm">Coming Soon</Chip>,
+				},
+				{
+					title: "Payment",
+					id: "payment",
+					section: <div>payment</div>,
+					disabled: true,
+					endContent: <Chip color="primary" size="sm" variant="bordered" className="mr-2" radius="sm">Coming Soon</Chip>,
+				}
+			]
 		},
 		{
 			title: "General",
@@ -108,6 +157,26 @@ const UserOptions = ({
 					id: "language",
 					section: <Language />,
 					disabled: false
+				},
+				{
+					title: "Notifications",
+					id: "notifications",
+					section: <div>Notifications</div>,
+					disabled: true,
+					endContent: <Chip color="primary" size="sm" variant="bordered" className="mr-2" radius="sm">Coming Soon</Chip>,
+				}
+			]
+		},
+		{
+			title: "Advanced",
+			id: "advanced",
+			children: [
+				{
+					title: "Public Experiments",
+					id: "publicExperiments",
+					section: <div>Public Experiments</div>,
+					disabled: true,
+					endContent: <Chip color="primary" size="sm" variant="bordered" className="mr-2" radius="sm">Coming Soon</Chip>,
 				}
 			]
 		}
@@ -124,9 +193,6 @@ const UserOptions = ({
 				{
 					title: t("settings.developer.experiments"),
 					id: "experiments",
-					// t! Users should have access to "public" experiments, but not "private" ones
-					// t! private ones are something that are still in the works but may break or may need access for a certian api endpoint
-					// t! which we haven't finalized yet (or if we just want a low roll outs)
 					section: <div>Experiments</div>,
 					disabled: false,
 				},

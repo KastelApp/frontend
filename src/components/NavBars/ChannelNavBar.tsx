@@ -65,12 +65,12 @@ const Channel = ({
 		);
 
 	return (
-		<div className="first:mt-2">
+		<div className="first:mt-2 group">
 			<LinkMaybe>
 				<>
 					<div
 						className={cn(
-							"group mb-1 flex w-48 cursor-pointer items-center gap-1 rounded-md p-1 text-white transition-all duration-75 ease-in-out",
+							"mb-1 flex w-48 cursor-pointer items-center gap-1 rounded-md p-1 text-white transition-all duration-75 ease-in-out",
 							!shouldHideHover ? "hover:bg-slate-500/25" : "hover:text-slate-400",
 							isActive ? "!bg-slate-500/50" : "",
 						)}
@@ -506,7 +506,8 @@ const ChannelNavBar = ({
 								<Channel
 									text={channel.name}
 									endContent={
-										channel.type === channelTypes.GuildCategory ? (
+										<>
+										{channel.type === channelTypes.GuildCategory ? (
 											<ChevronDown size={20} color="#acaebf" />
 										) : (
 											<Settings
@@ -518,7 +519,8 @@ const ChannelNavBar = ({
 													onOpenChangeChannelSettings();
 												}}
 											/>
-										)
+										)}
+										</>
 									}
 									startContent={channel.icon}
 									shouldHideHover={channel.type === channelTypes.GuildCategory}

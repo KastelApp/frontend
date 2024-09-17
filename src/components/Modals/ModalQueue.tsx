@@ -17,7 +17,7 @@ const ModalQueue = memo(() => {
 					key={item.id}
 					isOpen
 					onClose={() => {
-						if (item.closable !== undefined && !item.closable) return;
+						if (item.allowCloseByButton !== true && !(item.closable ?? true)) return;
 
 						item.onClose?.();
 
@@ -27,7 +27,7 @@ const ModalQueue = memo(() => {
 					isKeyboardDismissDisabled={!(item.closable ?? true)}
 					size={item.props?.modalSize}
 					className={item.props?.classNames?.modal}
-					hideCloseButton={!(item.closable ?? true)}
+					hideCloseButton={item.allowCloseByButton !== true && !(item.closable ?? true)}
 					backdrop={"transparent"}
 					classNames={{
 						wrapper: "z-[101]",

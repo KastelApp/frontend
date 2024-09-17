@@ -1,4 +1,4 @@
-import { Avatar, Chip, Tooltip } from "@nextui-org/react";
+import { Avatar, Tooltip } from "@nextui-org/react";
 import { memo, useState } from "react";
 import { Pen, Reply, Trash2, Ellipsis } from "lucide-react";
 import InviteEmbed from "./Embeds/InviteEmbed.tsx";
@@ -20,18 +20,20 @@ import cn from "@/utils/cn.ts";
 import ImageEmbed from "@/components/Message/Embeds/Image.tsx";
 import VideoEmbed from "@/components/Message/Embeds/Video.tsx";
 import PopOverData from "@/components/Popovers/PopoverData.tsx";
+// import ReactionBox from "@/components/Message/Reaction.tsx";
+import UserTag from "@/components/UserTag.tsx";
 
 export type CustomizedMessage = Omit<MessageType, "invites"> & {
 	invites: (
 		| (Invite & {
-				guild: Guild | null;
-		  })
+			guild: Guild | null;
+		})
 		| null
 	)[];
 	author: {
 		user: User;
-		member: (Omit<Member, "roles"> & { roles: Role[] }) | null;
-		roleColor: { color: string | null; id: string } | null;
+		member: (Omit<Member, "roles"> & { roles: Role[]; }) | null;
+		roleColor: { color: string | null; id: string; } | null;
 	};
 };
 
@@ -45,8 +47,8 @@ export interface MessageProps {
 	replyMessage: {
 		user: User;
 		message: MessageType;
-		member: Member | null;
-		roleColor: { color: string | null; id: string } | null;
+		member: (Omit<Member, "roles"> & { roles: Role[]; }) | null;
+		roleColor: { color: string | null; id: string; } | null;
 	} | null;
 	inGuild: boolean;
 	isDeleteable?: boolean;
@@ -125,7 +127,7 @@ const Message = ({
 									transform: "rotate(180deg) scale(1, -1)",
 								}}
 							/>
-							<PopOverData user={message.author.user} member={message.author.member} onlyChildren={isButtonDisabled}>
+							<PopOverData user={replyMessage.user} member={replyMessage.member} onlyChildren={isButtonDisabled}>
 								<div className="flex cursor-pointer items-center">
 									<Avatar
 										src={
@@ -209,21 +211,16 @@ const Message = ({
 										</span>
 									</PopOverData>
 									{message.author.user && (message.author.user.isBot || message.author.user.isSystem) && (
-										<Chip
-											color="success"
-											variant="flat"
-											className="ml-1 h-4 w-1 rounded-sm p-0 text-[10px]"
-											radius="none"
-										>
+										<UserTag>
 											{message.author.user.isBot ? t("tags.bot") : t("tags.system")}
-										</Chip>
+										</UserTag>
 									)}
 									<Tooltip content={formatDate(message.creationDate, false, true)} placement="top" delay={500}>
 										<span className="ml-1 mt-1 select-none text-2xs text-gray-400">{formattedDate}</span>
 									</Tooltip>
 								</div>
 							)}
-							<div className="flex">
+							<div className="flex items-center">
 								{isGrouped && (
 									<Tooltip content={formatDate(message.creationDate, false, true)} placement="top" delay={500}>
 										<div className="mr-2 flex min-w-9 max-w-9 select-none text-3xs text-gray-400 transition-opacity opacity-0 duration-300 ease-in-out group-hover:opacity-100">
@@ -271,6 +268,19 @@ const Message = ({
 											{embed.type === "Video" && <VideoEmbed embed={embed} />}
 										</div>
 									))}
+
+								<div className="flex space-x-1">
+									{/* <ReactionBox icon="👍" count={15} />
+									<ReactionBox icon="👍" count={15} />
+									<ReactionBox icon="👍" count={15} />
+									<ReactionBox icon="👍" count={15} />
+									<ReactionBox icon="👍" count={15} />
+									<ReactionBox icon="👍" count={15} />
+									<ReactionBox icon="👍" count={15} />
+									<ReactionBox icon="👍" count={15} />
+									<ReactionBox icon="👍" count={15} />
+									<ReactionBox icon="👍" count={15} /> */}
+								</div>
 							</div>
 						</div>
 					</div>

@@ -7,7 +7,7 @@ import { usePerChannelStore } from "./ChannelStore.ts";
 import getInviteCodes from "@/utils/getInviteCodes.ts";
 import { useUserStore } from "./UserStore.ts";
 import fastDeepEqual from "fast-deep-equal";
-import { fakeUserIds, messageFlags, snowflake } from "@/utils/Constants.ts";
+import { allowedMentions, fakeUserIds, messageFlags, snowflake } from "@/utils/Constants.ts";
 import safePromise from "@/utils/safePromise.ts";
 import { isErrorResponse } from "@/types/http/error.ts";
 
@@ -168,7 +168,7 @@ export const useMessageStore = create<MessageStore>((set, get) => ({
 			replyingTo: null,
 			attachments: [],
 			flags: messageFlags.Normal,
-			allowedMentions: 0,
+			allowedMentions: allowedMentions.All!,
 			mentions: {
 				channels: [],
 				roles: [],
@@ -343,8 +343,24 @@ export const useMessageStore = create<MessageStore>((set, get) => ({
 			return false;
 		}
 
+		const newParams = new URLSearchParams();
+
+		if (options?.after) {
+			newParams.append("after", options.after);
+		}
+
+		if (options?.before) {
+			newParams.append("before", options.before);
+		}
+
+		if (options?.around) {
+			newParams.append("around", options.around);
+		}
+
+		newParams.append("limit", String(options?.limit ?? 50));
+
 		const messages = await api.get<unknown, MessageData[]>({
-			url: `/channels/${channelId}/messages?limit=${options?.limit ?? 50}`,
+			url: `/channels/${channelId}/messages?${newParams.toString()}`,
 		});
 
 		if (!messages.ok || messages.status !== 200) {
@@ -385,6 +401,8 @@ export const useMessageStore = create<MessageStore>((set, get) => ({
 				pinned: message.pinned,
 				state: MessageStates.Sent,
 			});
+
+			useUserStore.getState().addUser(message.author);
 		}
 
 		if (messages.body.length === 0) {

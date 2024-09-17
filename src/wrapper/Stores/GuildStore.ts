@@ -17,6 +17,7 @@ export interface Guild {
 		channelId: string;
 		lastMessageAckId: string | null;
 		timedoutUntil: string | null;
+		mentions: { messageId: string }[];
 	}[];
 	memberCount: number;
 	partial?: boolean;

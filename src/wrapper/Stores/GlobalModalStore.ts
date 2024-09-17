@@ -37,6 +37,11 @@ export interface GlobalModal {
 	 */
 	closable?: boolean;
 
+	/**
+	 * Even if closable is false, you can still close the modal by clicking the close button
+	 */
+	allowCloseByButton?: boolean;
+
 	props?: {
 		modalSize?: "xs" | "sm" | "md" | "lg" | "xl" | "2xl" | "3xl" | "4xl" | "5xl" | "full";
 		classNames?: {

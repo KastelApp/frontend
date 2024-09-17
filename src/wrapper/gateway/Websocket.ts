@@ -11,7 +11,8 @@ class Websocket {
 
 	public VERSION: string = process.env.API_VERSION || "1";
 
-	public ENCODING: encoding = "zlib";
+	// ? in development environments, we use json to make it easier to debug else we use zlib to compress the data
+	public ENCODING: encoding = process.env.NODE_ENV === "development" ? "json" : "zlib";
 
 	private ws: WebSocket | null = null;
 

@@ -50,6 +50,7 @@ const BottomNavBar = () => {
 				className="horizontal-scroll-content flex gap-3"
 				render={(item, index) => {
 					let hasUnread = false;
+					let mentions = 0;
 
 					const gotChannels = getChannelsWithValidPermissions(item.id);
 					const foundGuildSettings = guildSettings[item.id];
@@ -58,7 +59,10 @@ const BottomNavBar = () => {
 						const foundChannel = item.channelProperties.find(
 							(channelProperty) => channelProperty.channelId === channel.id,
 						);
-						if (foundChannel?.lastMessageAckId !== channel.lastMessageId) {
+
+						mentions += foundChannel?.mentions?.length ?? 0;
+
+						if (channel.lastMessageId && foundChannel?.lastMessageAckId !== channel.lastMessageId) {
 							if (
 								foundChannel?.lastMessageAckId &&
 								channel.lastMessageId &&
@@ -81,6 +85,7 @@ const BottomNavBar = () => {
 							badgePosition="bottom-right"
 							badgeColor="danger"
 							// badgeContent={item.mentionCount === "0" ? undefined : item.mentionCount}
+							badgeContent={mentions === 0 ? undefined : mentions > 9 ? "9+" : String(mentions)}
 							key={index}
 							icon={
 								<Avatar

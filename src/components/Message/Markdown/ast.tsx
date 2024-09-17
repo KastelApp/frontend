@@ -1,4 +1,6 @@
 import { channelMention } from "@/components/Message/Markdown/ChannelMention.tsx";
+import { emoji } from "@/components/Message/Markdown/Emoji.tsx";
+import { roleMention } from "@/components/Message/Markdown/RoleMention.tsx";
 import { userMention } from "@/components/Message/Markdown/UserMention.tsx";
 import { defaultRules, inlineRegex } from "simple-markdown";
 
@@ -41,11 +43,6 @@ export const customRules = {
 			content: parse(capture[0].replace(/^ *>(?:>>)? ?/gm, ""), state),
 		}),
 	},
-	emoji: {
-		order: defaultRules.text.order,
-		match: (source: string) => /^(¯\\_\(ツ\)_\/¯)/.exec(source),
-		parse: (capture: string[]) => ({ type: "text", content: capture[1] }),
-	},
 	codeBlock: {
 		order: defaultRules.codeBlock.order,
 		match: (source: string) => {
@@ -68,17 +65,6 @@ export const customRules = {
 	},
 	userMention,
 	channelMention,
-	// roleMention,
-	// defaultEmoji: {
-	//   order: defaultRules.text.order,
-	//   match: (source: string) => /^(?!<):([^\s:]+?):(?![0-9]+>)/gu.exec(source),
-	//   parse: (match: string[]) => ({
-	//     content: match[1],
-	//   }),
-	//   react: (
-	//     { content }: { content: string },
-	//     _: unknown,
-	//     state: { key: string },
-	//   ) => <Emoji emoji={content} key={state.key} />,
-	// },
+	roleMention,
+	emoji,
 };

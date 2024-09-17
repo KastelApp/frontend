@@ -12,6 +12,7 @@ import { useChannelStore } from "../Stores/ChannelStore.ts";
 import { useMemberStore } from "../Stores/Members.ts";
 import { useRoleStore } from "../Stores/RoleStore.ts";
 import { useSettingsStore } from "@/wrapper/Stores.ts";
+import FlagFields from "@/utils/FlagFields.ts";
 
 const handleMessage = async (ws: Websocket, data: unknown) => {
 	const decompressed = safeParse<EventPayload>(await ws.decompress(data));
@@ -139,6 +140,8 @@ const handleMessage = async (ws: Websocket, data: unknown) => {
 						nickname: member.nickname || null,
 					});
 
+					const flagFields = new FlagFields(member.user.flags, "0");
+
 					useUserStore.getState().addUser({
 						username: member.user.username,
 						id: member.user.id,
@@ -146,6 +149,9 @@ const handleMessage = async (ws: Websocket, data: unknown) => {
 						publicFlags: member.user.publicFlags,
 						avatar: member.user.avatar,
 						tag: member.user.tag,
+						isBot: flagFields.has("Bot"),
+						isSystem: flagFields.has("System"),
+						isGhost: flagFields.has("Ghost"),
 					});
 				}
 

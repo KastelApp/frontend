@@ -1,7 +1,10 @@
 import { MessageCreatePayload } from "@/types/payloads/events/messageCreate.ts";
 import getInviteCodes from "@/utils/getInviteCodes.ts";
 import Logger from "@/utils/Logger.ts";
+import playSound from "@/utils/soundPlayer.ts";
 import Websocket from "@/wrapper/gateway/Websocket.ts";
+import { useChannelStore, usePerChannelStore } from "@/wrapper/Stores/ChannelStore.ts";
+import { useMemberStore } from "@/wrapper/Stores/Members.ts";
 import { MessageStates, useMessageStore } from "@/wrapper/Stores/MessageStore.ts";
 import { useUserStore } from "@/wrapper/Stores/UserStore.ts";
 
@@ -28,6 +31,28 @@ const messageCreate = async (ws: Websocket, payload: unknown) => {
 
 	if (payload.replyingTo && "author" in payload.replyingTo) {
 		await useUserStore.getState().fetchUser(payload.replyingTo.author.id);
+	}
+
+	const currentMemberId = useUserStore.getState().getCurrentUser()?.id;
+	const perChannel = usePerChannelStore.getState().getChannel(payload.channelId);
+	const guildId = useChannelStore.getState().getGuildId(payload.channelId);
+	const member = guildId ? useMemberStore.getState().getMember(guildId, payload.author.id) : null;
+
+	if (payload.mentions.users.includes(currentMemberId ?? "")) {
+		playSound("mention", 0.5);
+	} else if (payload.mentions.roles.length > 0 && member?.roles.some((role) => payload.mentions.roles.includes(role))) {
+		playSound("mention", 0.5);
+	}
+
+	if (perChannel) {
+		const typingUsers = perChannel.typingUsers.filter((user) => user.id !== payload.author.id);
+
+		usePerChannelStore.getState().updateChannel(payload.channelId, {
+			typingUsers,
+			lastTypingSent: 0,
+			typingStarted: 0,
+			lastTyped: 0
+		})
 	}
 
 	useMessageStore.getState().addMessage(

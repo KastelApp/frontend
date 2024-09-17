@@ -19,6 +19,9 @@ const config = {
 				"2xl": "1400px",
 			},
 		},
+		fontFamily: {
+			figtree: ["Figtree", "sans-serif"],
+		},
 		extend: {
 			colors: {
 				white: "#CFDBFF",

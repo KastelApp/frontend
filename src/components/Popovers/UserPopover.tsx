@@ -1,4 +1,7 @@
 import AllBadges from "@/badges/AllBadges.tsx";
+import ContextMenuHandler from "@/components/ContextMenuHandler.tsx";
+import UserTag from "@/components/UserTag.tsx";
+import { useTranslationStore } from "@/wrapper/Stores.ts";
 import { Member } from "@/wrapper/Stores/Members.ts";
 import { Role } from "@/wrapper/Stores/RoleStore.ts";
 import { User, useUserStore } from "@/wrapper/Stores/UserStore.ts";
@@ -10,11 +13,13 @@ const UserPopover = ({
 	onClick,
 }: {
 	member: {
-		member: (Omit<Member, "roles"> & { roles: Role[] }) | null;
+		member: (Omit<Member, "roles"> & { roles: Role[]; }) | null;
 		user: User;
 	};
 	onClick?: () => void;
 }) => {
+	const { t } = useTranslationStore();
+
 	return (
 		<div>
 			<div className="z-[200] w-[18.70rem] rounded-sm p-0">
@@ -55,7 +60,7 @@ const UserPopover = ({
 								<div className="absolute inset-0 rounded-full bg-black bg-opacity-0 group-hover:bg-opacity-50"></div>
 							</div>
 						</Badge>
-						<div className="rounded-md bg-[#131315] p-1">
+						<div className="rounded-md">
 							<AllBadges privateFlags={member.user.flags} publicFlags={member.user.publicFlags} size={18} />
 						</div>
 					</div>
@@ -67,9 +72,14 @@ const UserPopover = ({
 						<CardBody className="p-0">
 							<div className="max-h-[85vh] overflow-y-auto p-3">
 								<div>
-									<p className="text-lg font-semibold text-white">
+									<span className="text-lg font-semibold text-white">
 										{member.member?.nickname ?? member.user.globalNickname ?? member.user.username}
-									</p>
+										{(member.user.isBot || member.user.isSystem) && (
+											<UserTag>
+												{member.user.isBot ? t("tags.bot") : t("tags.system")}
+											</UserTag>
+										)}
+									</span>
 									<p className="text-sm text-gray-300">
 										{member.user.username}#{member.user.tag}
 									</p>
@@ -89,20 +99,31 @@ const UserPopover = ({
 										<span className="font-bold text-white">Roles</span>
 										<div className="flex select-none flex-wrap">
 											{member.member.roles.map((role) => (
-												<div
-													className="group mr-1 mt-2 flex flex-wrap items-center rounded-md border border-gray-400 bg-lightAccent px-2 dark:bg-darkAccent"
-													key={role.id}
-												>
-													<span
-														className="mr-1 box-border flex h-3 min-h-3 w-3 min-w-3 items-center rounded-full border-background"
-														style={{
-															backgroundColor: role.color ? `#${role.color.toString(16).padStart(6, "0")}` : "gray",
-														}}
+												<ContextMenuHandler identifier="role" key={role.id} items={[{
+													label: <p className="text-danger">Remove role</p>,
+													onClick: () => console.log("Remove Role"),
+												}, {
+													label: "Copy Role ID",
+													onClick: () => {
+														navigator.clipboard.writeText(role.id);
+													}
+												}]}>
+
+													<div
+														className="group mr-1 mt-2 flex flex-wrap items-center rounded-md border border-gray-400 bg-lightAccent px-2 dark:bg-darkAccent"
+														key={role.id}
 													>
-														<X size={14} className="hidden group-hover:block" strokeWidth={3} color="white" />
-													</span>
-													<span className="text-xs text-white">{role.name}</span>
-												</div>
+														<span
+															className="mr-1 box-border flex h-3 min-h-3 w-3 min-w-3 items-center rounded-full border-background"
+															style={{
+																backgroundColor: role.color ? `#${role.color.toString(16).padStart(6, "0")}` : "gray",
+															}}
+														>
+															<X size={14} className="hidden group-hover:block" strokeWidth={3} color="white" />
+														</span>
+														<span className="text-xs text-white">{role.name}</span>
+													</div>
+												</ContextMenuHandler>
 											))}
 										</div>
 									</div>

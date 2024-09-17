@@ -57,10 +57,12 @@ const TextBasedChannel = () => {
 	const [isInViewOfBottom] = useState(true);
 	const [shouldScrollToBottom, setShouldScrollToBottom] = useState(false);
 	const scrollerRef = useRef<HTMLDivElement | null>(null);
+	const renderedMessagesRef = useRef<Omit<MessageProps, "className" | "disableButtons" | "id">[]>([]);
 
 	useEffect(() => {
 		fetchingRef.current = fetching;
-	}, [fetching]);
+		renderedMessagesRef.current = renderedMessages;
+	}, [fetching, renderedMessages]);
 
 	useEffect(() => {
 		const memberSubscription = useMemberStore.subscribe(() => setChangeSignal((prev) => prev + 1));
@@ -253,7 +255,7 @@ const TextBasedChannel = () => {
 			const fetchedMember = guildId ? getMember(guildId, msg.authorId) ?? null : null;
 			const roles = getRoles(guildId ?? "");
 
-			let roleData: { color: string; id: string } | null = null;
+			let roleData: { color: string; id: string; } | null = null;
 
 			if (fetchedMember) {
 				const topColorRole = fetchedMember.roles
@@ -275,7 +277,7 @@ const TextBasedChannel = () => {
 				const fetchedReplyAuthor = getUser(foundReplyMessage.authorId);
 				const fetchedReplyMember = guildId ? getMember(guildId, foundReplyMessage.authorId) ?? null : null;
 
-				let roleData: { color: string; id: string } | null = null;
+				let roleData: { color: string; id: string; } | null = null;
 
 				if (fetchedReplyMember) {
 					const roles = useRoleStore.getState().getRoles(guildId ?? "");
@@ -293,7 +295,12 @@ const TextBasedChannel = () => {
 
 				replyData = {
 					message: foundReplyMessage,
-					member: fetchedReplyMember,
+					member: fetchedReplyMember ? {
+						...fetchedReplyMember,
+						roles: fetchedReplyMember.roles
+							.map((roleId) => roles.find((role) => role.id === roleId))
+							.filter((rol) => rol !== undefined),
+					} : null,
 					roleColor: roleData,
 					user: fetchedReplyAuthor!,
 				};
@@ -328,11 +335,11 @@ const TextBasedChannel = () => {
 						user: fetchedAuthor!,
 						member: fetchedMember
 							? {
-									...fetchedMember,
-									roles: fetchedMember.roles
-										.map((roleId) => roles.find((role) => role.id === roleId))
-										.filter((rol) => rol !== undefined),
-								}
+								...fetchedMember,
+								roles: fetchedMember.roles
+									.map((roleId) => roles.find((role) => role.id === roleId))
+									.filter((rol) => rol !== undefined),
+							}
 							: null,
 						roleColor: roleData,
 					},
@@ -507,7 +514,6 @@ const TextBasedChannel = () => {
 						console.log("bottom reached");
 					}}
 					onTopReached={async () => {
-						console.log("top reached");
 					}}
 					topSkeleton={<>{skelliedMessages}</>}
 					bottomSkeleton={<>{skelliedMessages}</>}

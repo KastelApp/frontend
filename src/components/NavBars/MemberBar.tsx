@@ -3,7 +3,6 @@ import {
 	Avatar,
 	Badge,
 	Checkbox,
-	Chip,
 	Popover,
 	PopoverContent,
 	PopoverTrigger,
@@ -23,12 +22,13 @@ import TypingDots from "../MessageContainer/TypingDats.tsx";
 import { usePerChannelStore } from "@/wrapper/Stores/ChannelStore.ts";
 import ContextMenuHandler from "@/components/ContextMenuHandler.tsx";
 import { Hammer, Wine } from "lucide-react";
+import UserTag from "@/components/UserTag.tsx";
 
 interface Section {
 	name: string; // ? two defaults, "offline" and "online"
 	members: {
 		member: {
-			member: Omit<Member, "roles"> & { roles: Role[] };
+			member: Omit<Member, "roles"> & { roles: Role[]; };
 			user: User;
 		};
 		color: string | null;
@@ -43,7 +43,7 @@ const MemberItem = memo(
 		channelId,
 	}: {
 		member: {
-			member: Omit<Member, "roles"> & { roles: Role[] };
+			member: Omit<Member, "roles"> & { roles: Role[]; };
 			user: User;
 		};
 		color: string | null;
@@ -90,105 +90,164 @@ const MemberItem = memo(
 					key={member.user.id}
 					isOpen={isOpen}
 					onOpenChange={setIsOpen}
-					shouldCloseOnInteractOutside={() => {
+					shouldCloseOnInteractOutside={(e) => {
+						const identifier = e.getAttribute("data-identifier");
+
+						if (identifier === "role") {
+							return false;
+						}
+
+						// ? get its parent if it has one and check
+						const parent = e.parentElement;
+
+						if (!parent) {
+							setIsOpen(false);
+
+							return false;
+						}
+
+						const parentIdentifier = parent.getAttribute("data-identifier");
+
+						if (parentIdentifier === "role") {
+							return false;
+						}
+
 						setIsOpen(false);
+
 						return false;
 					}}
 					style={{
-						zIndex: "15",
+						zIndex: "25",
 					}}
 					radius="sm"
 					className="rounded-lg"
 				>
 					<PopoverTrigger>
-						<div
-							className="justify-=between relative flex h-12 w-full max-w-48 cursor-pointer items-center rounded-lg px-2 hover:bg-slate-800"
-							onClick={async () => {
-								if (member.user.metaData.bioless || typeof member.user.bio === "string") {
-									setLoading(false);
+						<div onClick={async () => {
+							if (member.user.metaData.bioless || typeof member.user.bio === "string") {
+								setLoading(false);
 
-									return;
+								return;
+							}
+
+							setLoading(true);
+
+							const api = useAPIStore.getState().api;
+
+							const profile = await api.get<
+								unknown,
+								{
+									// TODO: Add connections (Discord, Twitter (X), Github, Steam, Spotify (Not sure if we can do this one), Reddit, Youtube, Twitch)
+									bio: string | null;
+									connections: unknown[];
+									mutualFriends: string[];
+									mutualGuilds: string[];
 								}
+							>({
+								url: `/users/${member.user.id}/profile`,
+							});
 
-								setLoading(true);
-
-								const api = useAPIStore.getState().api;
-
-								const profile = await api.get<
-									unknown,
-									{
-										// TODO: Add connections (Discord, Twitter (X), Github, Steam, Spotify (Not sure if we can do this one), Reddit, Youtube, Twitch)
-										bio: string | null;
-										connections: unknown[];
-										mutualFriends: string[];
-										mutualGuilds: string[];
-									}
-								>({
-									url: `/users/${member.user.id}/profile`,
+							if (profile.ok && profile.status === 200) {
+								useUserStore.getState().updateUser({
+									bio: profile.body.bio,
+									id: member.user.id,
+									metaData: {
+										bioless: typeof profile.body.bio !== "string",
+									},
 								});
+							}
 
-								if (profile.ok && profile.status === 200) {
-									useUserStore.getState().updateUser({
-										bio: profile.body.bio,
-										id: member.user.id,
-										metaData: {
-											bioless: typeof profile.body.bio !== "string",
+							setTimeout(() => setLoading(false), 75);
+						}}>
+
+							<ContextMenuHandler
+								items={[
+									{
+										label: "Profile",
+									},
+									{
+										label: "Mention",
+									},
+									{
+										label: "Message",
+										divider: true,
+									},
+									{
+										label: "Roles",
+										subValues: [
+											{
+												label: "role 1",
+												endContent: <Checkbox />,
+												preventCloseOnClick: true,
+											},
+										],
+									},
+									{
+										label: <p className="text-danger">Ban</p>,
+										endContent: <Hammer className="text-danger" size={18} />,
+									},
+									{
+										label: <p className="text-danger">Kick</p>,
+										endContent: <Wine className="text-danger" size={18} />,
+										divider: true,
+									},
+									{
+										label: "Copy User ID",
+										onClick: () => {
+											navigator.clipboard.writeText(member.user.id);
 										},
-									});
-								}
-
-								setTimeout(() => setLoading(false), 75);
-							}}
-						>
-							<div className="flex items-center">
-								<Badge
-									content={typing ? <TypingDots className="mt-2.5 flex w-1 -rotate-90 flex-col gap-0.5" /> : ""}
-									placement="bottom-right"
-									// color={
-									// 	member.status === "online"
-									// 		? "success"
-									// 		: member.status === "idle"
-									// 			? "warning"
-									// 			: member.status === "dnd"
-									// 				? "danger"
-									// 				: "default"
-									// }
-									color="success"
-									className={cn("mb-1 transition-all duration-300 ease-out", typing ? "mr-1 h-4 w-8" : "")}
+									},
+								]}
+							>
+								<div
+									className="justify-=between relative flex h-12 w-full max-w-48 cursor-pointer items-center rounded-lg px-2 hover:bg-slate-800"
 								>
-									<Avatar
-										src={
-											useUserStore.getState().getAvatarUrl(member.user.id, member.user.avatar) ??
-											useUserStore.getState().getDefaultAvatar(member.user.id)
-										}
-										size="sm"
-										imgProps={{ className: "transition-none" }}
-									/>
-								</Badge>
-								<div className="ml-1 flex flex-col">
-									<div className={cn("flex items-center")}>
-										<div className={cn("ml-2 flex flex-col", member.user.tag ? "max-w-[6.75rem]" : "max-w-36")}>
-											<p
-												className={cn("truncate text-sm", color ? "" : "text-white")}
-												style={color !== null ? { color: `#${color}` } : {}}
-											>
-												{member.member.nickname ?? member.user.globalNickname ?? member.user.username}
-											</p>
-											{/* {member.customStatus && <p className="text-xs text-gray-500 truncate">{member.customStatus}</p>} */}
+									<div className="flex items-center">
+										<Badge
+											content={typing ? <TypingDots className="mt-2.5 flex w-1 -rotate-90 flex-col gap-0.5" /> : ""}
+											placement="bottom-right"
+											// color={
+											// 	member.status === "online"
+											// 		? "success"
+											// 		: member.status === "idle"
+											// 			? "warning"
+											// 			: member.status === "dnd"
+											// 				? "danger"
+											// 				: "default"
+											// }
+											color="success"
+											className={cn("mb-1 transition-all duration-300 ease-out", typing ? "mr-1 h-4 w-8" : "")}
+										>
+											<Avatar
+												src={
+													useUserStore.getState().getAvatarUrl(member.user.id, member.user.avatar) ??
+													useUserStore.getState().getDefaultAvatar(member.user.id)
+												}
+												size="sm"
+												imgProps={{ className: "transition-none" }}
+											/>
+										</Badge>
+										<div className="ml-1 flex flex-col">
+											<div className={cn("flex items-center")}>
+												<div className={cn("ml-2 flex flex-col", member.user.tag ? "max-w-[6.75rem]" : "max-w-36")}>
+													<p
+														className={cn("truncate text-sm", color ? "" : "text-white")}
+														style={color !== null ? { color: `#${color}` } : {}}
+													>
+														{member.member.nickname ?? member.user.globalNickname ?? member.user.username}
+													</p>
+													{/* {member.customStatus && <p className="text-xs text-gray-500 truncate">{member.customStatus}</p>} */}
+												</div>
+												{(member.user.isBot || member.user.isSystem) && (
+													<UserTag>
+														{member.user.isBot ? t("tags.bot") : t("tags.system")}
+													</UserTag>
+												)}
+											</div>
 										</div>
-										{(member.user.isBot || member.user.isSystem) && (
-											<Chip
-												color="success"
-												variant="flat"
-												className="ml-1 h-4 w-1 rounded-sm p-0 text-[10px]"
-												radius="none"
-											>
-												{member.user.isBot ? t("tags.bot") : t("tags.system")}
-											</Chip>
-										)}
 									</div>
 								</div>
-							</div>
+							</ContextMenuHandler>
 						</div>
 					</PopoverTrigger>
 					<PopoverContent>
@@ -498,48 +557,9 @@ const MemberBar = () => {
 								{section.name} — {section.members.length}
 							</p>
 							{section.members.map((member, index) => (
-								<ContextMenuHandler
-									key={index}
-									items={[
-										{
-											label: "Profile",
-										},
-										{
-											label: "Mention",
-										},
-										{
-											label: "Message",
-											divider: true,
-										},
-										{
-											label: "Roles",
-											subValues: [
-												{
-													label: "role 1",
-													endContent: <Checkbox />,
-													preventCloseOnClick: true,
-												},
-											],
-										},
-										{
-											label: <p className="text-danger">Ban</p>,
-											endContent: <Hammer className="text-danger" size={18} />,
-										},
-										{
-											label: <p className="text-danger">Kick</p>,
-											endContent: <Wine className="text-danger" size={18} />,
-											divider: true,
-										},
-										{
-											label: "Copy User ID",
-											onClick: () => {
-												navigator.clipboard.writeText(member.member.user.id);
-											},
-										},
-									]}
-								>
-									<MemberItem key={index} member={member.member} color={member.color} channelId={channelId} />
-								</ContextMenuHandler>
+
+								<MemberItem key={index} member={member.member} color={member.color} channelId={channelId} />
+								// </ContextMenuHandler>
 							))}
 						</div>
 					))}
