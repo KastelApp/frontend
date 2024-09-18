@@ -150,7 +150,7 @@ const Login = () => {
 
 			<HomeLayout>
 				<div className="flex items-center justify-center">
-					<Card className="mt-32 flex w-full max-w-md items-center justify-center bg-lightAccent p-8 dark:bg-darkAccent">
+					<Card className="mt-32 mb-5 flex w-full max-w-md items-center justify-center bg-lightAccent p-8 dark:bg-darkAccent">
 						<div className="w-full max-w-md">
 							<div className="text-center">
 								<h1 className="text-3xl font-bold">{t("login.title")}</h1>
