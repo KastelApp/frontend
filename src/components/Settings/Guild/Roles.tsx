@@ -20,6 +20,7 @@ import deepEqual from "fast-deep-equal";
 import SaveChanges from "@/components/SaveChanges.tsx";
 import Permissions from "@/wrapper/Permissions.ts";
 import Tooltip from "@/components/Tooltip.tsx";
+import arrayify from "@/utils/arrayify.ts";
 
 const generateRgbAndHsv = (color: string) => {
 	return {
@@ -148,7 +149,7 @@ const ColorPicker = ({ selectedRole }: { selectedRole: Role }) => {
 const Roles = () => {
 	const router = useRouter();
 
-	const [currentGuildId] = router?.query?.slug as string[];
+	const [currentGuildId] = arrayify(router.query?.slug);
 
 	const roleRef = useRef(
 		useRoleStore

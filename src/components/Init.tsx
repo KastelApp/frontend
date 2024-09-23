@@ -1,4 +1,4 @@
-import { useAPIStore, useClientStore, useIsReady, useStoredSettingsStore, useTokenStore } from "@/wrapper/Stores.ts";
+import { useAPIStore, useClientStore, useIsReady, useStoredSettingsStore, useTokenStore } from "@/wrapper/Stores.tsx";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import Loading from "./Loading.tsx";

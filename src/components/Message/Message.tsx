@@ -7,7 +7,7 @@ import { User, useUserStore } from "@/wrapper/Stores/UserStore.ts";
 import fastDeepEqual from "fast-deep-equal";
 import { Member } from "@/wrapper/Stores/Members.ts";
 import { usePerChannelStore } from "@/wrapper/Stores/ChannelStore.ts";
-import { useTranslationStore } from "@/wrapper/Stores.ts";
+import { useTranslationStore } from "@/wrapper/Stores.tsx";
 import formatDate from "@/utils/formatDate.ts";
 import { Invite } from "@/wrapper/Stores/InviteStore.ts";
 import { Guild } from "@/wrapper/Stores/GuildStore.ts";

@@ -1,12 +1,12 @@
 import AllBadges from "@/badges/AllBadges.tsx";
 import ContextMenuHandler from "@/components/ContextMenuHandler.tsx";
 import UserTag from "@/components/UserTag.tsx";
-import { useTranslationStore } from "@/wrapper/Stores.ts";
+import { useTranslationStore } from "@/wrapper/Stores.tsx";
 import { Member } from "@/wrapper/Stores/Members.ts";
 import { Role } from "@/wrapper/Stores/RoleStore.ts";
 import { User, useUserStore } from "@/wrapper/Stores/UserStore.ts";
 import { Avatar, Badge, Card, CardBody, Divider, Input } from "@nextui-org/react";
-import { X } from "lucide-react";
+import { SendHorizontal, X } from "lucide-react";
 
 const UserPopover = ({
 	member,
@@ -72,7 +72,7 @@ const UserPopover = ({
 						<CardBody className="p-0">
 							<div className="max-h-[85vh] overflow-y-auto p-3">
 								<div>
-									<span className="text-lg font-semibold text-white">
+									<span className="text-lg font-semibold text-white flex  items-center">
 										{member.member?.nickname ?? member.user.globalNickname ?? member.user.username}
 										{(member.user.isBot || member.user.isSystem) && (
 											<UserTag>
@@ -137,6 +137,7 @@ const UserPopover = ({
 									// onChange={(e) => setMessage(e.target.value)}
 									// onKeyDown={handleKeyDown}
 									radius="sm"
+									endContent={<SendHorizontal color="#008da5" className="cursor-pointer" />}
 								/>
 							)}
 						</CardBody>

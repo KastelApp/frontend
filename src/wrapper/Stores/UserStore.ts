@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { useAPIStore } from "../Stores.ts";
+import { useAPIStore } from "../Stores.tsx";
 import Logger from "@/utils/Logger.ts";
 import FlagFields from "@/utils/FlagFields.ts";
 import safePromise from "@/utils/safePromise.ts";

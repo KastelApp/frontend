@@ -1,5 +1,5 @@
 import HomeLayout from "@/layouts/HomeLayout.tsx";
-import { useTranslationStore } from "@/wrapper/Stores.ts";
+import { useTranslationStore } from "@/wrapper/Stores.tsx";
 import { Button } from "@nextui-org/react";
 import Link from "next/link";
 import { useRouter } from "next/router";

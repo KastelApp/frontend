@@ -15,7 +15,7 @@ import { EyeIcon, EyeOffIcon, LoaderCircle } from "lucide-react";
 import confetti from "canvas-confetti";
 import SEO from "@/components/SEO.tsx";
 import NextLink from "next/link";
-import { useClientStore, useIsReady, useTokenStore, useTranslationStore } from "@/wrapper/Stores.ts";
+import { useClientStore, useIsReady, useTokenStore, useTranslationStore } from "@/wrapper/Stores.tsx";
 import { useRouter } from "next/router";
 import onEnter from "@/utils/onEnter.ts";
 

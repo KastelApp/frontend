@@ -1,4 +1,4 @@
-import { useTranslationStore } from "@/wrapper/Stores.ts";
+import { useTranslationStore } from "@/wrapper/Stores.tsx";
 import { Button, Input, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from "@nextui-org/react";
 import { useState } from "react";
 

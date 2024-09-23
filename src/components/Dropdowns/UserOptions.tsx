@@ -8,7 +8,7 @@ import OverView from "../Settings/User/Overview.tsx";
 import BaseSettings from "../Modals/BaseSettings.tsx";
 import { Section } from "@/types/settings.ts";
 import { useRouter } from "next/router";
-import { useTokenStore, useTranslationStore } from "@/wrapper/Stores.ts";
+import { useTokenStore, useTranslationStore } from "@/wrapper/Stores.tsx";
 import { useUserStore } from "@/wrapper/Stores/UserStore.ts";
 import DifferentTesting from "../Settings/User/DifferentTesting.tsx";
 import getClientVersion from "@/utils/getClientVersion.ts";

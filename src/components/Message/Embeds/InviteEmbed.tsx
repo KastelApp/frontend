@@ -1,7 +1,7 @@
 import { Avatar, Button, Chip } from "@nextui-org/react";
 import cn from "@/utils/cn.ts";
 import { Skeleton } from "@nextui-org/react";
-import { useTranslationStore } from "@/wrapper/Stores.ts";
+import { useTranslationStore } from "@/wrapper/Stores.tsx";
 import { Invite } from "@/wrapper/Stores/InviteStore.ts";
 import { Guild } from "@/wrapper/Stores/GuildStore.ts";
 

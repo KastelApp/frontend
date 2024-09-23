@@ -8,7 +8,7 @@ import { User, useUserStore } from "@/wrapper/Stores/UserStore.ts";
 import { Member, useMemberStore } from "@/wrapper/Stores/Members.ts";
 import { useMessageStore } from "@/wrapper/Stores/MessageStore.ts";
 import { useRoleStore } from "@/wrapper/Stores/RoleStore.ts";
-import { useAPIStore, useGuildSettingsStore, useSettingsStore, useTranslationStore } from "@/wrapper/Stores.ts";
+import { useAPIStore, useGuildSettingsStore, useSettingsStore, useTranslationStore } from "@/wrapper/Stores.tsx";
 import { NavBarLocation } from "@/types/payloads/ready.ts";
 import Tooltip from "../Tooltip.tsx";
 import useTypingIndicator from "@/hooks/useTypingIndicator.ts";
@@ -334,7 +334,7 @@ const MessageContainer = ({
 				<div
 					className={cn(
 						"ml-1 max-h-96 w-full overflow-y-auto overflow-x-hidden rounded-lg bg-gray-800 px-4 py-1",
-						state ? "rounded-t-none" : "",
+						state.includes("replying") ? "rounded-t-none" : "",
 					)}
 				>
 					<div className="mb-3 mt-2">
@@ -346,7 +346,7 @@ const MessageContainer = ({
 								<Divider className="mt-2" />
 							</div>
 						)}
-						<div className={cn("flex", isReadOnly ? "cursor-not-allowed opacity-45" : "")}>
+						<div className={cn("flex items-center", isReadOnly ? "cursor-not-allowed opacity-45" : "")}>
 							<div className="relative mr-4 cursor-pointer">
 								{/*// todo: File select */}
 								<CirclePlus

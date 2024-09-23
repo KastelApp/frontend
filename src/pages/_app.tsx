@@ -6,7 +6,7 @@ import { useRouter } from "next/router";
 import "@/styles/globals.css";
 import "@/styles/colorPalette.css";
 import ErrorBoundary from "@/layouts/ErrorBoundary.tsx";
-import { useTranslationStore } from "@/wrapper/Stores.ts";
+import { useTranslationStore } from "@/wrapper/Stores.tsx";
 import SEO from "@/components/SEO.tsx";
 import { DefaultSeo } from "next-seo";
 import Init from "@/components/Init.tsx";

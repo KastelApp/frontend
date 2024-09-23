@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { useAPIStore } from "../Stores.ts";
+import { useAPIStore } from "../Stores.tsx";
 
 // ? We do not provide channels, roles or members as they got their own stores
 export interface Guild {

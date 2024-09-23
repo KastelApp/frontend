@@ -11,7 +11,7 @@ import { useGuildStore } from "../Stores/GuildStore.ts";
 import { useChannelStore } from "../Stores/ChannelStore.ts";
 import { useMemberStore } from "../Stores/Members.ts";
 import { useRoleStore } from "../Stores/RoleStore.ts";
-import { useSettingsStore } from "@/wrapper/Stores.ts";
+import { useSettingsStore } from "@/wrapper/Stores.tsx";
 import FlagFields from "@/utils/FlagFields.ts";
 
 const handleMessage = async (ws: Websocket, data: unknown) => {

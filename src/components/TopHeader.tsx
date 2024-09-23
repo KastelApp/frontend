@@ -10,7 +10,7 @@ import {
 	Link,
 	Button,
 } from "@nextui-org/react";
-import { useIsReady, useTokenStore, useTranslationStore } from "@/wrapper/Stores.ts";
+import { useIsReady, useTokenStore, useTranslationStore } from "@/wrapper/Stores.tsx";
 import NextLink from "next/link";
 
 const TopHeader = () => {

@@ -1,5 +1,5 @@
 import HomeLayout from "@/layouts/HomeLayout.tsx";
-import { useIsReady, useTokenStore, useTranslationStore } from "@/wrapper/Stores.ts";
+import { useIsReady, useTokenStore, useTranslationStore } from "@/wrapper/Stores.tsx";
 import { Button } from "@nextui-org/react";
 import Link from "next/link";
 import { useEffect, useState } from "react";

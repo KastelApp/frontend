@@ -1,7 +1,8 @@
 import TextBasedChannel from "@/components/Channels/TextBasedChannel.tsx";
 import ChannelNavBar from "@/components/NavBars/ChannelNavBar.tsx";
+import arrayify from "@/utils/arrayify.ts";
 import Logger from "@/utils/Logger.ts";
-import { useGuildSettingsStore } from "@/wrapper/Stores.ts";
+import { useGuildSettingsStore } from "@/wrapper/Stores.tsx";
 import { useChannelStore } from "@/wrapper/Stores/ChannelStore.ts";
 import { useGuildStore } from "@/wrapper/Stores/GuildStore.ts";
 import { useRouter } from "next/router";
@@ -9,7 +10,7 @@ import { useEffect } from "react";
 
 const GuildPages = () => {
 	const router = useRouter();
-	const [guildId, part, channelId, messageId] = router?.query?.slug as string[];
+	const [guildId, part, channelId, messageId] = arrayify(router.query?.slug);
 	const { getTopChannel } = useChannelStore();
 	const inGuild = useGuildStore((state) => state.getGuild(guildId));
 	const channel = useChannelStore((state) => state.getChannel(channelId));

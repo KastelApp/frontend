@@ -1,5 +1,5 @@
 import { NavBarLocation } from "@/types/payloads/ready.ts";
-import { useGuildSettingsStore, useSettingsStore } from "@/wrapper/Stores.ts";
+import { useGuildSettingsStore, useSettingsStore } from "@/wrapper/Stores.tsx";
 import { Chip, Divider, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, useDisclosure } from "@nextui-org/react";
 import {
 	AlignJustify,

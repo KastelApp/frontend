@@ -1,4 +1,5 @@
 import PopOverData from "@/components/Popovers/PopoverData.tsx";
+import arrayify from "@/utils/arrayify.ts";
 import cn from "@/utils/cn.ts";
 import hexOpacity from "@/utils/hexOpacity.ts";
 import { useMemberStore } from "@/wrapper/Stores/Members.ts";
@@ -10,7 +11,7 @@ import { defaultRules } from "simple-markdown";
 const UserMention = ({ userId }: { userId: string; }) => {
 	const foundUser = useUserStore((state) => state.getUser(userId));
 	const router = useRouter();
-	const [guildId] = router?.query?.slug as string[];
+	const [guildId] = arrayify(router.query?.slug);
 	const foundMember = useMemberStore((state) => (guildId ? state.getMember(guildId, userId) : null));
 	const name = foundUser
 		? `@${foundMember?.nickname ?? foundUser.globalNickname ?? foundUser.username}`

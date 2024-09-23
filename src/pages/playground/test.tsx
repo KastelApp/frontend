@@ -1,4 +1,4 @@
-import { useClientStore } from "@/wrapper/Stores.ts";
+import { useClientStore } from "@/wrapper/Stores.tsx";
 import { useEffect, useRef, useState } from "react";
 import mime from "mime";
 

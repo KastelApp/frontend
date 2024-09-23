@@ -10,7 +10,7 @@ import Moderator from "@/badges/Moderator.tsx";
 import Contributor from "@/badges/Contributor.tsx";
 import Partner from "@/badges/Partner.tsx";
 import BotBadge from "@/badges/BotBadge.tsx";
-import { useTranslationStore } from "@/wrapper/Stores.ts";
+import { useTranslationStore } from "@/wrapper/Stores.tsx";
 import cn from "@/utils/cn.ts";
 
 /**

@@ -5,7 +5,7 @@ import { Compass } from "lucide-react";
 import cn from "@/utils/cn.ts";
 import { Avatar } from "@nextui-org/react";
 import UserOptions from "../Dropdowns/UserOptions.tsx";
-import { useGuildSettingsStore, useSettingsStore } from "@/wrapper/Stores.ts";
+import { useGuildSettingsStore, useSettingsStore } from "@/wrapper/Stores.tsx";
 import { useGuildStore } from "@/wrapper/Stores/GuildStore.ts";
 import { useChannelStore } from "@/wrapper/Stores/ChannelStore.ts";
 import { useRouter } from "next/router";
@@ -16,6 +16,7 @@ import AddGuildButton from "../AddGuildButton.tsx";
 import { Divider } from "@nextui-org/react";
 import { snowflake } from "@/utils/Constants.ts";
 import { useUserStore } from "@/wrapper/Stores/UserStore.ts";
+import arrayify from "@/utils/arrayify.ts";
 
 const LeftNavBar = () => {
 	const { isSideBarOpen } = useSettingsStore();
@@ -24,7 +25,7 @@ const LeftNavBar = () => {
 	const { getChannelsWithValidPermissions, getTopChannel } = useChannelStore();
 	const router = useRouter();
 
-	const [guildId] = router?.query?.slug as string[];
+	const [guildId] = arrayify(router.query?.slug);
 	const currentUser = useUserStore((s) => s.getCurrentUser());
 
 	const mappedGuilds = useCallback(() => {

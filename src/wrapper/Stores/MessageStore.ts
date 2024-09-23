@@ -1,6 +1,6 @@
 import type { Embed } from "@/components/Message/Embeds/RichEmbed.tsx";
 import { create } from "zustand";
-import { useAPIStore } from "../Stores.ts";
+import { useAPIStore } from "../Stores.tsx";
 import Logger from "@/utils/Logger.ts";
 import { CreateMessageOptions, Message as MessageData } from "@/types/http/channels/messages.ts";
 import { usePerChannelStore } from "./ChannelStore.ts";

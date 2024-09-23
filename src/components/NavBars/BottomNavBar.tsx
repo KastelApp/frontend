@@ -10,14 +10,15 @@ import AddGuildButton from "../AddGuildButton.tsx";
 import UserOptions from "../Dropdowns/UserOptions.tsx";
 import { snowflake } from "@/utils/Constants.ts";
 import { useUserStore } from "@/wrapper/Stores/UserStore.ts";
-import { useGuildSettingsStore } from "@/wrapper/Stores.ts";
+import { useGuildSettingsStore } from "@/wrapper/Stores.tsx";
+import arrayify from "@/utils/arrayify.ts";
 
 const BottomNavBar = () => {
 	const { guilds } = useGuildStore();
 	const { getChannelsWithValidPermissions, getTopChannel } = useChannelStore();
 	const router = useRouter();
 
-	const [guildId] = (router.query?.slug ?? []) as string[];
+	const [guildId] = arrayify(router.query?.slug);
 	const { guildSettings } = useGuildSettingsStore();
 
 	const scrollContainerRef = useRef<HTMLDivElement>(null);

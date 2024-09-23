@@ -12,7 +12,7 @@ import {
 } from "@nextui-org/react";
 import { useEffect, useState } from "react";
 import { EyeIcon, EyeOffIcon, LoaderCircle } from "lucide-react";
-import { useClientStore, useIsReady, useTokenStore, useTranslationStore } from "@/wrapper/Stores.ts";
+import { useClientStore, useIsReady, useTokenStore, useTranslationStore } from "@/wrapper/Stores.tsx";
 import SEO from "@/components/SEO.tsx";
 import NextLink from "next/link";
 import { useRouter } from "next/router";

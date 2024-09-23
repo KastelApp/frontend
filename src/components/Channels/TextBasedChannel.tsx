@@ -20,6 +20,7 @@ import { useGuildStore } from "@/wrapper/Stores/GuildStore.ts";
 import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuTrigger } from "@/components/ui/context-menu.tsx";
 import { Copy, Pen, Pin, Reply, Trash2 } from "lucide-react";
 import { Divider } from "@nextui-org/react";
+import arrayify from "@/utils/arrayify.ts";
 
 const skelliedMessages = Array.from({ length: 30 }, (_, i) => <SkellyMessage key={i} />);
 
@@ -31,7 +32,7 @@ const TextBasedChannel = () => {
 	const [readOnly, setReadOnly] = useState(true); // ? This is just so we know if the user can send messages or not (we prevent any changes / letting them type if so)
 	const [changeSignal, setChangeSignal] = useState(0); // ? every time we want a re-render, we increment this value
 
-	const [guildId, , channelId] = router?.query?.slug as string[];
+	const [guildId, , channelId] = arrayify(router.query?.slug)
 
 	const bottomRef = useRef<HTMLDivElement>(null);
 	const channelIdRef = useRef(channelId);

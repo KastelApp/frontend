@@ -1,6 +1,6 @@
 import { LoginOptions, RegisterAccountOptions, RegisterLoginResponse } from "@/types/client/RegisterAndLogin.ts";
 import API from "./API.ts";
-import { useAPIStore } from "./Stores.ts";
+import { useAPIStore } from "./Stores.tsx";
 import Websocket from "./gateway/Websocket.ts";
 import { ApiLoginOptions, LoginResponse } from "@/types/http/auth/login.ts";
 import { isErrorResponse } from "@/types/http/error.ts";

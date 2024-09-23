@@ -2,7 +2,7 @@ import Constants from "@/utils/Constants.ts";
 import { Button, Input, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Textarea } from "@nextui-org/react";
 import { useState } from "react";
 import { RadioGroup, Radio, cn, RadioProps } from "@nextui-org/react";
-import { useTranslationStore } from "@/wrapper/Stores.ts";
+import { useTranslationStore } from "@/wrapper/Stores.tsx";
 
 export const CustomRadio = (props: RadioProps) => {
 	const { children, ...otherProps } = props;

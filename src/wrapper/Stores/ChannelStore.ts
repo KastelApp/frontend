@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { useAPIStore } from "../Stores.ts";
+import { useAPIStore } from "../Stores.tsx";
 import { useUserStore } from "./UserStore.ts";
 import { useMemberStore } from "./Members.ts";
 import { useRoleStore } from "./RoleStore.ts";

@@ -1,4 +1,4 @@
-import { useAPIStore, useGuildSettingsStore, useTranslationStore } from "@/wrapper/Stores.ts";
+import { useAPIStore, useGuildSettingsStore, useTranslationStore } from "@/wrapper/Stores.tsx";
 import {
 	Avatar,
 	Badge,
@@ -23,6 +23,7 @@ import { usePerChannelStore } from "@/wrapper/Stores/ChannelStore.ts";
 import ContextMenuHandler from "@/components/ContextMenuHandler.tsx";
 import { Hammer, Wine } from "lucide-react";
 import UserTag from "@/components/UserTag.tsx";
+import arrayify from "@/utils/arrayify.ts";
 
 interface Section {
 	name: string; // ? two defaults, "offline" and "online"
@@ -277,7 +278,7 @@ const MemberBar = () => {
 
 	const { guildSettings: rawGuildSettings } = useGuildSettingsStore();
 
-	const [currentGuildId, , channelId] = router?.query?.slug as string[];
+	const [currentGuildId, , channelId] = arrayify(router.query?.slug);
 	const guildSettings = rawGuildSettings[currentGuildId ?? ""] ?? { memberBarHidden: false };
 
 	const roleRef = useRef<Role[] | null>(null);

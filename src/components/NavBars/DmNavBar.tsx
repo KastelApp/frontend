@@ -1,5 +1,5 @@
 import { NavBarLocation } from "@/types/payloads/ready.ts";
-import { useSelectedTab, useSettingsStore } from "@/wrapper/Stores.ts";
+import { useSelectedTab, useSettingsStore } from "@/wrapper/Stores.tsx";
 import { Avatar, Badge } from "@nextui-org/react";
 import { Home, UserRound, X } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -9,6 +9,7 @@ import Friends from "./DmContent/Friends.tsx";
 import TopNavBar from "./TopNavBar.tsx";
 import { useRouter } from "next/router";
 import Link from "next/link";
+import arrayify from "@/utils/arrayify.ts";
 
 const DmNavBarItem = ({
 	isActive,
@@ -107,7 +108,7 @@ const DmNavBar = ({
 	const dms = [];
 
 	const [selectedChannel, setSelectedChannel] = useState<string | null>(null);
-	const [, , channelId] = router.query?.slug ?? ([] as string[]);
+	const [, , channelId] = arrayify(router.query?.slug);
 
 	useEffect(() => {
 		if (!router.isReady) return;

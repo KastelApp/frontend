@@ -13,10 +13,12 @@ import {
 	SettingsStore,
 	StoredSettingsStore,
 	TokenStore,
+	TranslationKeys,
 	TranslationStore,
 } from "./Stores.types.ts";
 import API from "./API.ts";
 import Client from "./Client.ts";
+import MessageMarkDown from "@/components/Message/Markdown/MarkDown.tsx";
 
 // todo: migrate this to @wrapper/Stores
 export const useSettingsStore = create<SettingsStore>((set) => ({
@@ -94,7 +96,16 @@ export const useTranslationStore = create(
 
 				set({ currentLanguage: language });
 			},
-			t: (key: string, ...anything: unknown[]) => get().rawTranslation.t(get().currentLanguage, key, ...anything),
+			t: (key: TranslationKeys, ...anything: unknown[]) => get().rawTranslation.t(get().currentLanguage, key, ...anything),
+			markdownT: (key: TranslationKeys, ...anything: unknown[]) => {
+				const value = get().t(key, anything);
+
+				return (
+					<span className="overflow-hidden whitespace-pre-wrap break-words">
+						<MessageMarkDown>{value}</MessageMarkDown>
+					</span>
+				);
+			},
 			fetchLanguages: () => get().rawTranslation.metaData.languages,
 		}),
 		{

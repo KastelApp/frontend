@@ -1,22 +1,13 @@
-import { Chip } from "@nextui-org/react";
-
 const UserTag = ({
     children
 }: {
     children: React.ReactNode;
 }) => {
+
     return (
-        <Chip
-            color="primary"
-            variant="solid"
-            className="ml-1 h-5 w-5 p-0 text-[12px] text-white bg-primary/60 text-center rounded-md"
-            classNames={{
-                content: "font-extrabold uppercase"
-            }}
-            radius="none"
-        >
+        <div className="bg-primary/60 text-xs pl-1.5 pr-1.5 rounded-md ml-1 max-w-10 max-h-4 min-w-9 min-h-4 uppercase font-extrabold">
             {children}
-        </Chip>
+        </div>
     );
 };
 

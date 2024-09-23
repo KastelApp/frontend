@@ -1,3 +1,4 @@
+import arrayify from "@/utils/arrayify.ts";
 import cn from "@/utils/cn.ts";
 import hexOpacity from "@/utils/hexOpacity.ts";
 import { useRoleStore } from "@/wrapper/Stores/RoleStore.ts";
@@ -6,7 +7,7 @@ import { defaultRules } from "simple-markdown";
 
 const RoleMention = ({ roleId }: { roleId: string }) => {
     const router = useRouter();
-	const [guildId] = router?.query?.slug as string[];
+	const [guildId] = arrayify(router.query?.slug);
 
     const foundRole = useRoleStore((state) => {
         const role = state.getRole(["@everyone", "@here"].includes(roleId) ? guildId : roleId);

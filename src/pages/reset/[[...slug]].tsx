@@ -1,13 +1,14 @@
 import HomeLayout from "@/layouts/HomeLayout.tsx";
 import onEnter from "@/utils/onEnter.ts";
 import safePromise from "@/utils/safePromise.ts";
-import { useClientStore, useTokenStore, useTranslationStore } from "@/wrapper/Stores.ts";
+import { useClientStore, useTokenStore, useTranslationStore } from "@/wrapper/Stores.tsx";
 import { Button, Card, Input, Link } from "@nextui-org/react";
 import { EyeIcon, EyeOffIcon, LoaderCircle } from "lucide-react";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import NextLink from "next/link";
 import Logger from "@/utils/Logger.ts";
+import arrayify from "@/utils/arrayify.ts";
 
 const Reset = () => {
 	const router = useRouter();
@@ -16,8 +17,7 @@ const Reset = () => {
 	const { client } = useClientStore();
 	const { setToken } = useTokenStore();
 
-	const requestId = router?.query?.slug?.[0];
-	const token = router?.query?.slug?.[1];
+	const [requestId, token] = arrayify(router.query?.slug);
 
 	const [ready, setReady] = useState(false);
 	const [loading, setLoading] = useState(false);

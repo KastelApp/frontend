@@ -1,5 +1,5 @@
 import HomeLayout from "@/layouts/HomeLayout.tsx";
-import { useTranslationStore } from "@/wrapper/Stores.ts";
+import { useTranslationStore } from "@/wrapper/Stores.tsx";
 import { Avatar, Card } from "@nextui-org/react";
 import SEO from "@/components/SEO.tsx";
 

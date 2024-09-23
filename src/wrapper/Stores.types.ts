@@ -72,6 +72,13 @@ export interface TranslationStore {
 	rawTranslation: Translation;
 	setLanguage: (language: string) => void;
 	t: (key: TranslationKeys, ...anything: unknown[]) => string;
+	/**
+	 * Supports markdown in translation keys. Returns a react node
+	 * @param key The key to get the text from
+	 * @param anything Values for said key
+	 * @returns A react node (SUPPORTS MARKDOWN AND NEWLINES)
+	 */
+	markdownT: (key: TranslationKeys, ...anything: unknown[]) => React.ReactNode;
 	fetchLanguages: () => MetaData["languages"];
 	currentLanguage: string;
 	_hasHydrated: boolean;

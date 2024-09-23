@@ -1,7 +1,7 @@
 import BottomNavBar from "@/components/NavBars/BottomNavBar.tsx";
 import LeftNavBar from "@/components/NavBars/LeftNavBar";
 import { NavBarLocation } from "@/types/payloads/ready.ts";
-import { useSettingsStore } from "@/wrapper/Stores.ts";
+import { useSettingsStore } from "@/wrapper/Stores.tsx";
 import { memo } from "react";
 
 const AppLayout = memo(({ children }: { children?: React.ReactElement | React.ReactElement[] }) => {

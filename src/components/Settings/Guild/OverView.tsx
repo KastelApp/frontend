@@ -10,10 +10,11 @@ import SwitchOption from "@/components/SwitchOption.tsx";
 import { useRouter } from "next/router";
 import Constants from "@/utils/Constants.ts";
 import { useMultiFormState } from "@/hooks/useStateForm.ts";
+import arrayify from "@/utils/arrayify.ts";
 
 const Overview = () => {
 	const router = useRouter();
-	const [guildId] = router?.query?.slug as string[];
+	const [guildId] = arrayify(router.query?.slug);
 	const guild = useGuildStore((s) => s.getGuild(guildId));
 
 	const {

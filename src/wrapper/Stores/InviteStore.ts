@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { useAPIStore } from "../Stores.ts";
+import { useAPIStore } from "../Stores.tsx";
 import safePromise from "@/utils/safePromise.ts";
 import { ErrorResponseData } from "@/types/http/error.ts";
 import { useGuildStore } from "@/wrapper/Stores/GuildStore.ts";
