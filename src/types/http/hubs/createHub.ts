@@ -1,4 +1,4 @@
-export interface CreateGuildOptions {
+export interface CreateHubOptions {
 	description?: string | null;
 	channels?: {
 		id?: string;
@@ -30,6 +30,6 @@ export interface CreateGuildOptions {
 	}[];
 	template?: string;
 	name: string;
-	features: ("Partnered" | "Verified" | "Official" | "Maintenance" | "InternalStaffGuild")[];
+	features: ("Partnered" | "Verified" | "Official" | "Maintenance" | "InternalStaffHub")[];
 	id?: string;
 }

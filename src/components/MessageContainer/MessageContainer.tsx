@@ -1,40 +1,56 @@
-import { X, Pen, CirclePlus, SendHorizontal, SmilePlus } from "lucide-react";
+import { X, Pen, CirclePlus, SendHorizontal, SmilePlus, FileIcon } from "lucide-react";
 import SlateEditor from "./SlateEditor.tsx";
 import { Avatar, Divider, Image } from "@nextui-org/react";
 import TypingDots from "./TypingDats.tsx";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useContentStore, usePerChannelStore } from "@/wrapper/Stores/ChannelStore.ts";
 import { User, useUserStore } from "@/wrapper/Stores/UserStore.ts";
 import { Member, useMemberStore } from "@/wrapper/Stores/Members.ts";
 import { useMessageStore } from "@/wrapper/Stores/MessageStore.ts";
 import { useRoleStore } from "@/wrapper/Stores/RoleStore.ts";
-import { useAPIStore, useGuildSettingsStore, useSettingsStore, useTranslationStore } from "@/wrapper/Stores.tsx";
-import { NavBarLocation } from "@/types/payloads/ready.ts";
+import { useAPIStore, useTranslationStore } from "@/wrapper/Stores.tsx";
 import Tooltip from "../Tooltip.tsx";
 import useTypingIndicator from "@/hooks/useTypingIndicator.ts";
 import hexOpacity from "@/utils/hexOpacity.ts";
 import cn from "@/utils/cn.ts";
+import { snowflake } from "@/utils/Constants.ts";
 
-const FileComponent = ({ fileName, imageUrl }: { fileName?: string; imageUrl?: string }) => {
+const FileComponent = ({ fileName, type, onDelete, onEdit, file }: { fileName?: string; type: "image" | "file"; file: File; onDelete: () => void; onEdit: () => void; }) => {
+	const url = URL.createObjectURL(file);
+
 	return (
-		<div className="relative mt-2 flex h-44 w-44 flex-col justify-center rounded-md bg-lightAccent dark:bg-darkAccent">
-			<div className="relative mb-4 ml-2.5 flex max-h-[75%] w-[90%] flex-col items-center justify-center bg-gray-500">
-				<div className="relative flex h-full w-full cursor-pointer items-center justify-center overflow-hidden">
-					<Image src={imageUrl} alt={fileName} className="h-full w-full rounded-md object-cover" />
-				</div>
+		<div className="relative mt-2 flex h-44 w-44 flex-col justify-between rounded-md bg-lightAccent dark:bg-darkAccent p-2">
+			{/* Top-right action buttons */}
+			<div className="absolute right-0.5 top-0.5 z-10 flex gap-2 rounded-md bg-gray-800 p-1">
+				<Tooltip content="Edit File Details">
+					<Pen size={18} color="#acaebf" className="cursor-pointer" onClick={onEdit} />
+				</Tooltip>
+				<Tooltip content="Remove File">
+					<X size={18} className="cursor-pointer text-danger" onClick={onDelete} />
+				</Tooltip>
 			</div>
-			<div className="absolute right-0 top-0 z-10 rounded-md bg-gray-800 p-1">
-				<div className="flex gap-2">
-					<Tooltip content="Edit File Details">
-						<Pen size={18} color="#acaebf" className="cursor-pointer" />
-					</Tooltip>
-					<Tooltip content="Remove File">
-						<X size={18} className="cursor-pointer text-danger" />
-					</Tooltip>
-				</div>
+
+			{/* File Preview */}
+			<div
+				className={cn(
+					"flex h-full w-full items-center justify-center overflow-hidden rounded-md",
+					type === "image" && "bg-gray-500"
+				)}
+			>
+				{type === "image" ? (
+					<Image
+						src={url!}
+						alt={fileName || "Uploaded file"}
+						className="h-full w-full object-cover z-0 transition-none"
+					/>
+				) : (
+					<FileIcon size={64} color="#acaebf" />
+				)}
 			</div>
-			<div className="absolute bottom-0 left-0 mb-1 w-full">
-				<span className="ml-2 text-sm text-white">{fileName}</span>
+
+			{/* Filename */}
+			<div className="mt-2 truncate text-sm text-white">
+				{fileName || "No file name"}
 			</div>
 		</div>
 	);
@@ -46,78 +62,66 @@ const MessageContainer = ({
 	isReadOnly,
 	sendMessage,
 	channelId,
-	guildId,
+	hubId,
+	onResize
 }: {
 	placeholder: string;
 	children?: React.ReactNode;
 	isReadOnly?: boolean;
 	sendMessage: (content: string) => void;
 	channelId: string;
-	guildId: string | null;
+	hubId: string | null;
+	onResize?: (height: number) => void;
 }) => {
 	const { t } = useTranslationStore();
-	const { navBarLocation } = useSettingsStore();
-	const { guildSettings } = useGuildSettingsStore();
-
-	const membersBarOpen = guildId ? !guildSettings[guildId]?.memberBarHidden : false;
-
-	const [files] = useState<{ name: string; url: string }[]>([]);
+	const [files, setFiles] = useState<{ name: string; type: "image" | "file"; file: File; id: string; }[]>([]);
 	const [state, setState] = useState<("replying" | "mentioning")[]>([]);
-
 	const { getChannel, updateChannel } = usePerChannelStore();
 	const { getMessage } = useMessageStore();
-
-	const channelIdRef = useRef<string>(channelId);
 
 	const [replyingAuthor, setReplyingAuthor] = useState<{
 		user: User | null;
 		member: Member | null;
-		roleColor: { color: string | null; id: string } | null;
+		roleColor: { color: string | null; id: string; } | null;
 	}>({
 		member: null,
 		user: null,
 		roleColor: null,
 	});
 
-	const [startedTypingAt, setStartedTypingAt] = useState(0);
-	const [lastTypedAt, setLastTypedAt] = useState(0);
-	const [lastSentTypingAt, setLastSentTypingAt] = useState(0);
 	const [content, setContent] = useState("");
 
-	const { isTyping, sendUserIsTyping, sentTypingEvent, shouldSendTypingEvent } = useTypingIndicator({
-		lastSentTypingAt,
-		lastTypedAt,
-		setLastSentTypingAt,
-		setLastTypedAt,
-		setStartedTypingAt,
-		startedTypingAt,
+	const { sendUserIsTyping, sentTypingEvent, shouldSendTypingEvent } = useTypingIndicator({
+		onTypingStart: () => { },
+		onTypingStop: () => { }
 	});
 
-	useEffect(() => {
-		const gotChannel = getChannel(channelId);
 
-		let shouldUpdatingLastTyping = false;
-		let shouldUpdateStartedTyping = false;
-		let shouldUpdateLastSentTyping = false;
+	// useEffect(() => {
+	// 	const gotChannel = getChannel(channelId);
 
-		if (gotChannel.lastTyped !== lastTypedAt) {
-			shouldUpdatingLastTyping = true;
-		}
+	// 	let shouldUpdatingLastTyping = false;
+	// 	let shouldUpdateStartedTyping = false;
+	// 	let shouldUpdateLastSentTyping = false;
 
-		if (gotChannel.lastTypingSent !== lastSentTypingAt) {
-			shouldUpdateLastSentTyping = true;
-		}
+	// 	if (gotChannel.lastTyped !== lastTypedAt) {
+	// 		shouldUpdatingLastTyping = true;
+	// 	}
 
-		if (gotChannel.typingStarted !== startedTypingAt) {
-			shouldUpdateStartedTyping = true;
-		}
+	// 	if (gotChannel.lastTypingSent !== lastSentTypingAt) {
+	// 		shouldUpdateLastSentTyping = true;
+	// 	}
 
-		updateChannel(channelId, {
-			...(shouldUpdatingLastTyping ? { lastTyped: lastTypedAt } : {}),
-			...(shouldUpdateLastSentTyping ? { lastTypingSent: lastSentTypingAt } : {}),
-			...(shouldUpdateStartedTyping ? { typingStarted: startedTypingAt } : {}),
-		});
-	}, [startedTypingAt, lastTypedAt, lastSentTypingAt]);
+	// 	if (gotChannel.typingStarted !== startedTypingAt) {
+	// 		shouldUpdateStartedTyping = true;
+	// 	}
+
+	// 	updateChannel(channelId, {
+	// 		...(shouldUpdatingLastTyping ? { lastTyped: lastTypedAt } : {}),
+	// 		...(shouldUpdateLastSentTyping ? { lastTypingSent: lastSentTypingAt } : {}),
+	// 		...(shouldUpdateStartedTyping ? { typingStarted: startedTypingAt } : {}),
+	// 	});
+	// }, [startedTypingAt, lastTypedAt, lastSentTypingAt]);
 
 	const { api } = useAPIStore();
 
@@ -131,7 +135,7 @@ const MessageContainer = ({
 		if (shouldSendTypingEvent) {
 			sendType(channelId).then(() => sentTypingEvent());
 		}
-	}, [isTyping, shouldSendTypingEvent]);
+	}, [shouldSendTypingEvent]);
 
 	const [signal, setSignal] = useState<number>(0);
 	// ? the users usernames / nickname
@@ -146,14 +150,12 @@ const MessageContainer = ({
 	const { getContent, setContent: setMsgContent } = useContentStore();
 
 	useEffect(() => {
-		channelIdRef.current = channelId;
-
 		const channel = getChannel(channelId);
 
 		setContent(getContent(channelId) ?? "");
-		setLastSentTypingAt(channel.lastTypingSent);
-		setLastTypedAt(channel.lastTyped);
-		setStartedTypingAt(channel.typingStarted);
+		// setLastSentTypingAt(channel.lastTypingSent);
+		// setLastTypedAt(channel.lastTyped);
+		// setStartedTypingAt(channel.typingStarted);
 
 		const filteredTypingUsers = channel.typingUsers.filter((user) => user.started > Date.now() - 7000);
 
@@ -168,7 +170,7 @@ const MessageContainer = ({
 			.filter((typing) => typing.id !== useUserStore.getState().getCurrentUser()?.id)
 			.map((typing) => {
 				const user = useUserStore.getState().getUser(typing.id);
-				const member = guildId ? useMemberStore.getState().getMember(guildId, typing.id) : null;
+				const member = hubId ? useMemberStore.getState().getMember(hubId, typing.id) : null;
 
 				return member
 					? member.nickname ?? user?.globalNickname ?? user?.username
@@ -190,12 +192,12 @@ const MessageContainer = ({
 
 		if (foundReply) {
 			const fetchedAuthor = useUserStore.getState().getUser(foundReply.authorId);
-			const fetchedMember = guildId ? useMemberStore.getState().getMember(guildId, foundReply.authorId) ?? null : null;
+			const fetchedMember = hubId ? useMemberStore.getState().getMember(hubId, foundReply.authorId) ?? null : null;
 
-			let roleData: { color: string; id: string } | null = null;
+			let roleData: { color: string; id: string; } | null = null;
 
 			if (fetchedMember) {
-				const roles = useRoleStore.getState().getRoles(guildId ?? "");
+				const roles = useRoleStore.getState().getRoles(hubId ?? "");
 				const topColorRole = fetchedMember.roles
 					.map((roleId) => roles.find((role) => role.id === roleId))
 					.filter((role) => role !== undefined && role.color !== 0)
@@ -214,9 +216,9 @@ const MessageContainer = ({
 				roleColor: roleData,
 			});
 		}
-	}, [channelId, guildId, signal]);
+	}, [channelId, hubId, signal]);
 
-	const [mentionTypes] = useState<{ type: string; name: string; color: number; id: string; avatar?: string }[]>([
+	const [mentionTypes] = useState<{ type: string; name: string; color: number; id: string; avatar?: string; }[]>([
 		// 	{
 		// 	type: "role",
 		// 	name: "test",
@@ -231,25 +233,45 @@ const MessageContainer = ({
 		// }
 	]);
 
+	const fileRef = useRef<HTMLInputElement>(null);
+
+	const onCloseReply = useCallback(() => {
+		setState((prev) => prev.filter((v) => v !== "replying"));
+
+		setReplyingAuthor({
+			member: null,
+			user: null,
+			roleColor: null,
+		});
+
+		const channel = getChannel(channelId);
+
+		usePerChannelStore.getState().updateChannel(channelId, {
+			currentStates: channel.currentStates.filter((state) => state !== "replying") ?? [],
+			editingStateId: null,
+		});
+	}, [channelId, state]);
+
 	return (
 		<div
 			className="flex h-screen flex-col overflow-x-hidden"
 			style={{
-				maxHeight: navBarLocation === NavBarLocation.Bottom ? "calc(100vh - 8rem)" : "calc(100vh - 4rem)",
+				// maxHeight: navBarLocation === NavBarLocation.Bottom ? "calc(100vh - 6rem)" : "calc(100vh - 4rem)",
+				maxHeight: "calc(100vh - 4rem)",
 			}}
 		>
 			{children}
 			<div
 				className={cn(
-					"mb-0 ml-2 w-full",
+					"mb-0 ml-2 w-full pr-6",
 					// membersBarOpen ? "max-w-[calc(100vw-28rem)]" : "max-w-[calc(100vw-19rem)]"
-					membersBarOpen
-						? navBarLocation === NavBarLocation.Bottom
-							? "max-w-[calc(100vw-28rem)]"
-							: "max-w-[calc(100vw-32rem)]"
-						: navBarLocation === NavBarLocation.Bottom
-							? "max-w-[calc(100vw-15rem)]"
-							: "max-w-[calc(100vw-19rem)]",
+					// membersBarOpen
+					// 	? navBarLocation === NavBarLocation.Bottom
+					// 		? "max-w-[calc(100vw-28rem)]"
+					// 		: "max-w-[calc(100vw-32rem)]"
+					// 	: navBarLocation === NavBarLocation.Bottom
+					// 		? "max-w-[calc(100vw-15rem)]"
+					// 		: "max-w-[calc(100vw-19rem)]",
 				)}
 			>
 				{mentionTypes.length > 0 && (
@@ -281,13 +303,13 @@ const MessageContainer = ({
 					</div>
 				)}
 				{state.includes("replying") && (
-					<div className="ml-1 flex w-full select-none rounded-md rounded-b-none bg-lightAccent dark:bg-darkAccent">
+					<div className="ml-1 flex w-full select-none rounded-xl rounded-b-none bg-lightAccent dark:bg-darkAccent">
 						<div className="p-2">
 							{t("messageContainer.replying")}{" "}
 							<span
 								className="font-semibold text-white"
 								style={{
-									color: guildId
+									color: hubId
 										? replyingAuthor.member
 											? replyingAuthor.roleColor?.color
 												? `#${replyingAuthor.roleColor.color}`
@@ -298,8 +320,8 @@ const MessageContainer = ({
 							>
 								{replyingAuthor.member
 									? replyingAuthor.member.nickname ??
-										replyingAuthor.user?.globalNickname ??
-										replyingAuthor.user?.username
+									replyingAuthor.user?.globalNickname ??
+									replyingAuthor.user?.username
 									: replyingAuthor.user?.globalNickname ?? replyingAuthor.user?.username}
 							</span>
 						</div>
@@ -309,22 +331,7 @@ const MessageContainer = ({
 									size={22}
 									color="#acaebf"
 									className="cursor-pointer"
-									onClick={() => {
-										setState((prev) => prev.filter((v) => v !== "replying"));
-
-										setReplyingAuthor({
-											member: null,
-											user: null,
-											roleColor: null,
-										});
-
-										const channel = getChannel(channelIdRef.current);
-
-										usePerChannelStore.getState().updateChannel(channelIdRef.current, {
-											currentStates: channel.currentStates.filter((state) => state !== "replying") ?? [],
-											editingStateId: null,
-										});
-									}}
+									onClick={onCloseReply}
 								/>
 							</Tooltip>
 						</div>
@@ -333,22 +340,30 @@ const MessageContainer = ({
 
 				<div
 					className={cn(
-						"ml-1 max-h-96 w-full overflow-y-auto overflow-x-hidden rounded-lg bg-gray-800 px-4 py-1",
+						"ml-1 max-h-96 w-full overflow-y-auto overflow-x-hidden rounded-md bg-gray-800 px-4 py-1",
 						state.includes("replying") ? "rounded-t-none" : "",
 					)}
 				>
 					<div className="mb-3 mt-2">
 						{files.length > 0 && (
-							<div className="mb-4 mt-4 flex flex-wrap justify-start gap-2">
+							<div className="mb-4  flex flex-wrap justify-start gap-2">
 								{files.map((file, index) => (
-									<FileComponent key={index} fileName={file.name} imageUrl={file.url} />
+									<FileComponent
+										key={index}
+										fileName={file.name}
+										type={file.type}
+										file={file.file}
+										onDelete={() => {
+											setFiles((old) => old.filter((f) => f.id !== file.id));
+										}}
+										onEdit={() => { }}
+									/>
 								))}
 								<Divider className="mt-2" />
 							</div>
 						)}
-						<div className={cn("flex items-center", isReadOnly ? "cursor-not-allowed opacity-45" : "")}>
+						<div className={cn("flex align-middle justify-center", isReadOnly ? "cursor-not-allowed opacity-45" : "")}>
 							<div className="relative mr-4 cursor-pointer">
-								{/*// todo: File select */}
 								<CirclePlus
 									size={22}
 									color="#acaebf"
@@ -356,39 +371,42 @@ const MessageContainer = ({
 									onClick={() => {
 										if (isReadOnly) return;
 
-										// setFiles((old) => [
-										// 	...old,
-										// 	{
-										// 		name: "test.png",
-										// 		url: "/icon-1.png",
-										// 	},
-										// ]);
+										fileRef.current?.click();
 									}}
 								/>
-								{!isReadOnly && (
-									<input
-										type="file"
-										title="Files"
-										className="absolute inset-0 h-full w-full !cursor-pointer opacity-0"
-										multiple
-										onChange={(e) => {
-											for (const file of e.target.files ?? []) {
-												console.log(file.name, file.size);
-											}
-										}}
-									/>
-								)}
+								<input
+									type="file"
+									title="Files"
+									className="absolute mm-hw-0 bottom-0 right-0 opacity-0"
+									multiple
+									ref={fileRef}
+									onChange={(e) => {
+										for (const file of e.target.files ?? []) {
+											console.log(file.name, file.size);
+
+											setFiles((old) => [
+												...old,
+												{
+													name: file.name,
+													type: file.type.startsWith("image") ? "image" : "file",
+													file,
+													id: snowflake.generate(),
+													url: file.type.startsWith("image") ? URL.createObjectURL(file) : null,
+												}
+											]);
+										}
+									}}
+								/>
 							</div>
 							<SlateEditor
 								sendMessage={(msg) => {
 									sendMessage(msg);
 
-									setContent("");
 									setMsgContent(channelId, "");
 								}}
 								placeholder={placeholder}
 								isReadOnly={isReadOnly}
-								initialText={content}
+								// initialText={content}
 								readOnlyMessage={t("messageContainer.readOnly")}
 								onType={(text) => {
 									if (isReadOnly) return;
@@ -396,8 +414,9 @@ const MessageContainer = ({
 									setContent(text);
 									setMsgContent(channelId, text);
 
-									sendUserIsTyping();
+									sendUserIsTyping(text);
 								}}
+								onResize={onResize}
 							/>
 							<div className="ml-4 flex gap-2">
 								<SmilePlus size={22} color="#acaebf" className={cn(isReadOnly ? "" : "cursor-pointer")} />
@@ -428,13 +447,13 @@ const MessageContainer = ({
 									? t("messageContainer.typing.singular", { user: typingUsers[0] })
 									: typingUsers.length === 2
 										? t("messageContainer.typing.double", {
-												user1: typingUsers[0],
-												user2: typingUsers[1],
-											})
+											user1: typingUsers[0],
+											user2: typingUsers[1],
+										})
 										: t("messageContainer.typing.multiple", {
-												users: typingUsers.slice(0, 2).join(", "),
-												count: typingUsers.length - 2,
-											})}
+											users: typingUsers.slice(0, 2).join(", "),
+											count: typingUsers.length - 2,
+										})}
 							</span>
 						</>
 					)}

@@ -35,33 +35,33 @@ const CreateChannelModal = ({
 	const { t } = useTranslationStore();
 
 	const mappings = {
-		[Constants.channelTypes.GuildCategory]: {
-			name: t("channelTypes.guildCategory.name"),
-			description: t("channelTypes.guildCategory.description"),
+		[Constants.channelTypes.HubCategory]: {
+			name: t("channelTypes.hubCategory.name"),
+			description: t("channelTypes.hubCategory.description"),
 		},
-		[Constants.channelTypes.GuildText]: {
-			name: t("channelTypes.guildText.name"),
-			description: t("channelTypes.guildText.description"),
+		[Constants.channelTypes.HubText]: {
+			name: t("channelTypes.hubText.name"),
+			description: t("channelTypes.hubText.description"),
 		},
-		[Constants.channelTypes.GuildVoice]: {
-			name: t("channelTypes.guildVoice.name"),
-			description: t("channelTypes.guildVoice.description"),
+		[Constants.channelTypes.HubVoice]: {
+			name: t("channelTypes.hubVoice.name"),
+			description: t("channelTypes.hubVoice.description"),
 		},
-		[Constants.channelTypes.GuildNews]: {
-			name: t("channelTypes.guildNews.name"),
-			description: t("channelTypes.guildNews.description"),
+		[Constants.channelTypes.HubNews]: {
+			name: t("channelTypes.hubNews.name"),
+			description: t("channelTypes.hubNews.description"),
 		},
-		[Constants.channelTypes.GuildNewMember]: {
-			name: t("channelTypes.guildNewMember.name"),
-			description: t("channelTypes.guildNewMember.description"),
+		[Constants.channelTypes.HubNewMember]: {
+			name: t("channelTypes.hubNewMember.name"),
+			description: t("channelTypes.hubNewMember.description"),
 		},
-		[Constants.channelTypes.GuildMarkdown]: {
-			name: t("channelTypes.guildMarkdown.name"),
-			description: t("channelTypes.guildMarkdown.description"),
+		[Constants.channelTypes.HubMarkdown]: {
+			name: t("channelTypes.hubMarkdown.name"),
+			description: t("channelTypes.hubMarkdown.description"),
 		},
-		[Constants.channelTypes.GuildRules]: {
-			name: t("channelTypes.guildRules.name"),
-			description: t("channelTypes.guildRules.description"),
+		[Constants.channelTypes.HubRules]: {
+			name: t("channelTypes.hubRules.name"),
+			description: t("channelTypes.hubRules.description"),
 		},
 	};
 
@@ -80,7 +80,7 @@ const CreateChannelModal = ({
 	const [descriptionError, setDescriptionError] = useState<string | null>(null);
 
 	return (
-		<Modal
+        (<Modal
 			isOpen={isOpen}
 			onOpenChange={() => {
 				onOpenChange();
@@ -89,7 +89,7 @@ const CreateChannelModal = ({
 			size="xl"
 			className="w-[30rem]"
 		>
-			<ModalContent className="overflow-hidden">
+            <ModalContent className="overflow-hidden">
 				<ModalHeader className="flex flex-col gap-1 text-center">
 					<h1>Create a channel</h1>
 					<p className="text-sm text-gray-500">{tab === 0 ? "Choose a channel type" : "Fill out channel details"}</p>
@@ -192,8 +192,8 @@ const CreateChannelModal = ({
 					</Button>
 				</ModalFooter>
 			</ModalContent>
-		</Modal>
-	);
+        </Modal>)
+    );
 };
 
 export default CreateChannelModal;

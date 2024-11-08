@@ -289,7 +289,7 @@ const OverView = () => {
 											},
 										}}
 										isHighlighted={false}
-										inGuild={false}
+										inHub={false}
 										mentionsUser={false}
 										replyMessage={null}
 										isButtonDisabled
@@ -331,7 +331,7 @@ const OverView = () => {
 										}}
 										isButtonDisabled
 										isHighlighted={false}
-										inGuild={false}
+										inHub={false}
 										mentionsUser={false}
 										replyMessage={null}
 									/>

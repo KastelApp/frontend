@@ -136,7 +136,7 @@ const EditUser = ({
 	};
 
 	return (
-		<Modal
+        (<Modal
 			isOpen={isOpen}
 			onOpenChange={onOpenChange}
 			placement="top-center"
@@ -144,7 +144,7 @@ const EditUser = ({
 			isKeyboardDismissDisabled
 			hideCloseButton
 		>
-			<ModalContent>
+            <ModalContent>
 				<ModalHeader className="flex flex-col gap-1">Edit User</ModalHeader>
 				<ModalBody>
 					<div>
@@ -263,8 +263,8 @@ const EditUser = ({
 					</Button>
 				</ModalFooter>
 			</ModalContent>
-		</Modal>
-	);
+        </Modal>)
+    );
 };
 
 export default EditUser;

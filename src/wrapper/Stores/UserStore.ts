@@ -29,7 +29,13 @@ export interface User {
 		 * The user has no bio, do not make a API request (only set after initial fetch)
 		 */
 		bioless: boolean;
+		/**
+		 * The last time we fetched, every hour the cache is invalidated
+		 */
+		lastFetch?: number;
 	};
+	mutualFriends?: string[];
+	mutualHubs?: string[];
 }
 
 export interface UpdateUser {
@@ -77,6 +83,7 @@ export interface UserStore {
 	}>;
 	updateUser(user: Partial<User>): void;
 	getAvatarUrl(userId: string, hash: string | null, options?: ImageOptions): string | null;
+	fetchProfile(userId: string): Promise<void>;
 }
 
 export const useUserStore = create<UserStore>((set, get) => ({
@@ -153,7 +160,7 @@ export const useUserStore = create<UserStore>((set, get) => ({
 
 		const [request, error] = await safePromise(api.get<unknown, User>(`/users/${userId}`));
 
-		if (error || !request) {
+		if (error || !request || request.status === 500) {
 			return null;
 		}
 
@@ -186,7 +193,7 @@ export const useUserStore = create<UserStore>((set, get) => ({
 			}),
 		);
 
-		if (error || !request) {
+		if (error || !request || request.status === 500) {
 			return {
 				success: false,
 				errors: {
@@ -280,7 +287,7 @@ export const useUserStore = create<UserStore>((set, get) => ({
 		};
 	},
 	updateUser: (user) => {
-		const gotUser = get().getUser(user.id!);
+		const gotUser = get().getUser(user?.id ?? "");
 
 		if (!gotUser) {
 			Logger.error("Failed to get user", "UserStore | updateUser()");
@@ -298,4 +305,50 @@ export const useUserStore = create<UserStore>((set, get) => ({
 	},
 	getAvatarUrl: (userId, hash, options = { format: "webp", size: 256 }) =>
 		hash ? `${process.env.ICON_CDN}/avatar/${userId}/${hash}?size=${options.size}&format=${options.format}` : null,
+	fetchProfile: async (userId) => {
+
+		const user = get().getUser(userId);
+
+		if (!user) {
+			Logger.error("Failed to get user", "UserStore | fetchProfile()");
+		
+			return;
+		}
+
+		if (Date.now() - (user.metaData.lastFetch ?? 0) < 3600000) { // 1 hour
+			return;
+		}
+
+		const api = useAPIStore.getState().api;
+
+		const profile = await api.get<
+			unknown,
+			{
+				// TODO: Add connections (Discord, Twitter (X), Github, Steam, Spotify (Not sure if we can do this one), Reddit, Youtube, Twitch)
+				bio: string | null;
+				connections: unknown[];
+				mutualFriends: string[];
+				mutualHubs: string[];
+			}
+		>({
+			url: `/users/${userId}/profile`,
+		});
+
+		if (profile.ok && profile.status === 200) {
+			get().updateUser({
+				bio: profile.body.bio,
+				id: userId,
+				metaData: {
+					bioless: typeof profile.body.bio !== "string",
+					lastFetch: Date.now(),
+				},
+				mutualFriends: profile.body.mutualFriends,
+				mutualHubs: profile.body.mutualHubs,
+			});
+
+			return;
+		}
+
+		Logger.error("Failed to fetch profile", "UserStore | fetchProfile()");
+	}
 }));

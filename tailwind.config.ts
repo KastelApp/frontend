@@ -166,6 +166,39 @@ const config = {
 				},
 			});
 		}),
+		plugin(({ addUtilities, theme, e }) => {
+			const spacing = theme("spacing"); // Tailwind's default spacing values
+			const newUtilities: Record<string, Record<string, string>> = {};
+
+			if (!spacing) {
+				return;
+			}
+
+			Object.keys(spacing).forEach((key) => {
+				newUtilities[`.mm-h-${e(key)}`] = {
+					minHeight: spacing[key],
+					maxHeight: spacing[key],
+					height: spacing[key],
+				};
+
+				newUtilities[`.mm-w-${e(key)}`] = {
+					minWidth: spacing[key],
+					maxWidth: spacing[key],
+					width: spacing[key],
+				};
+
+				newUtilities[`.mm-hw-${e(key)}`] = {
+					minWidth: spacing[key],
+					maxWidth: spacing[key],
+					minHeight: spacing[key],
+					maxHeight: spacing[key],
+					width: spacing[key],
+					height: spacing[key],
+				}
+			});
+
+			addUtilities(newUtilities);
+		})
 	],
 } satisfies Config;
 

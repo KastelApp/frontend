@@ -1,3 +1,4 @@
+import cn from "@/utils/cn.ts";
 import { modalStore } from "@/wrapper/Stores/GlobalModalStore.ts";
 import { Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from "@nextui-org/react";
 import { memo } from "react";
@@ -9,9 +10,6 @@ const ModalQueue = memo(() => {
 
 	return (
 		<>
-			{sortedModalQueue.length > 0 && (
-				<div className="fixed inset-0 z-[100] h-screen w-screen bg-overlay/50 backdrop-opacity-disabled" />
-			)}
 			{sortedModalQueue.map((item) => (
 				<Modal
 					key={item.id}
@@ -27,11 +25,15 @@ const ModalQueue = memo(() => {
 					isKeyboardDismissDisabled={!(item.closable ?? true)}
 					size={item.props?.modalSize}
 					className={item.props?.classNames?.modal}
-					hideCloseButton={item.allowCloseByButton !== true && !(item.closable ?? true)}
-					backdrop={"transparent"}
+					hideCloseButton={item.hideCloseButton ?? (item.allowCloseByButton !== true && !(item.closable ?? true))}
+					backdrop={"blur"}
 					classNames={{
-						wrapper: "z-[101]",
+						...item.props?.classNames,
+						body: cn(item.props?.classNames?.body, "bg-darkAccent"),
+						header: cn(item.props?.classNames?.header, "bg-darkAccent"),
+						footer: cn(item.props?.classNames?.footer, "bg-darkAccent"),
 					}}
+					radius={item.props?.radius}
 				>
 					<ModalContent className={item.props?.classNames?.content}>
 						{item.title && <ModalHeader className={item.props?.classNames?.header}>{item.title}</ModalHeader>}

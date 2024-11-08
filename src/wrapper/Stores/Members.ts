@@ -1,7 +1,7 @@
 import { create } from "zustand";
 
 export interface Member {
-	guildId: string;
+	hubId: string;
 	joinedAt: Date;
 	nickname: string | null;
 	owner: boolean;
@@ -13,9 +13,9 @@ export interface Member {
 export interface MemberStore {
 	members: Member[];
 	addMember(member: Member): void;
-	removeMember(guildId: string, userId: string): void;
-	getMember(guildId: string, userId: string): Member | undefined;
-	getMembers(guildId: string): Member[];
+	removeMember(hubId: string, userId: string): void;
+	getMember(hubId: string, userId: string): Member | undefined;
+	getMembers(hubId: string): Member[];
 }
 
 export const useMemberStore = create<MemberStore>((set, get) => ({
@@ -25,12 +25,12 @@ export const useMemberStore = create<MemberStore>((set, get) => ({
 
 		const foundMember =
 			currentMembers.find(
-				(currentMember) => currentMember.userId === member.userId && currentMember.guildId === member.guildId,
+				(currentMember) => currentMember.userId === member.userId && currentMember.hubId === member.hubId,
 			) ?? {};
 
 		set({
 			members: [
-				...currentMembers,
+				...currentMembers.filter((currentMember) => currentMember.userId !== member.userId || currentMember.hubId !== member.hubId),
 				{
 					...foundMember,
 					...member,
@@ -38,9 +38,9 @@ export const useMemberStore = create<MemberStore>((set, get) => ({
 			],
 		});
 	},
-	removeMember: (guildId, userId) =>
-		set({ members: get().members.filter((member) => member.userId !== userId && member.guildId !== guildId) }),
-	getMember: (guildId, userId) =>
-		get().members.find((member) => member.userId === userId && member.guildId === guildId),
-	getMembers: (guildId) => get().members.filter((member) => member.guildId === guildId),
+	removeMember: (hubId, userId) =>
+		set({ members: get().members.filter((member) => member.userId !== userId && member.hubId !== hubId) }),
+	getMember: (hubId, userId) =>
+		get().members.find((member) => member.userId === userId && member.hubId === hubId),
+	getMembers: (hubId) => get().members.filter((member) => member.hubId === hubId),
 }));

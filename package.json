@@ -10,7 +10,6 @@
     "prepublish": "bun run format && bun run lint"
   },
   "dependencies": {
-    "@million/lint": "0.0.73",
     "@nextui-org/react": "2.4.6",
     "@radix-ui/react-context-menu": "^2.2.1",
     "@radix-ui/react-label": "^2.1.0",
@@ -40,6 +39,7 @@
     "react": "18.3.1",
     "react-color-palette": "^7.2.2",
     "react-dom": "18.3.1",
+    "react-scroll": "^1.9.0",
     "react-syntax-highlighter": "^15.5.0",
     "react-tracked": "^2.0.0",
     "react-turnstile": "^1.1.3",
@@ -63,6 +63,7 @@
     "@types/pako": "^2.0.3",
     "@types/react": "18.3.3",
     "@types/react-dom": "18.3.0",
+    "@types/react-scroll": "^1.8.10",
     "@types/react-syntax-highlighter": "^15.5.13",
     "@types/slate": "^0.47.16",
     "@typescript-eslint/eslint-plugin": "^7.11.0",
@@ -70,6 +71,7 @@
     "eslint": "8.48.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-prefer-arrow": "^1.2.3",
+    "eslint-plugin-react-compiler": "^19.0.0-beta-8a03594-20241020",
     "prettier": "3.3.3",
     "prettier-plugin-tailwindcss": "^0.6.6"
   },

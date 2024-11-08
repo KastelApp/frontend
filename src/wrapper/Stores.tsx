@@ -6,12 +6,12 @@ import Translation from "@/utils/Translation.ts";
 import {
 	APIStore,
 	ClientStore,
-	GuildSettings,
-	GuildSettingsStore,
+	HubSettings,
+	HubSettingsStore,
 	IsReadyStore,
+	StoredSettings,
 	SelectedTabStore,
 	SettingsStore,
-	StoredSettingsStore,
 	TokenStore,
 	TranslationKeys,
 	TranslationStore,
@@ -19,57 +19,46 @@ import {
 import API from "./API.ts";
 import Client from "./Client.ts";
 import MessageMarkDown from "@/components/Message/Markdown/MarkDown.tsx";
+import { ReactEditor } from "slate-react";
 
 // todo: migrate this to @wrapper/Stores
 export const useSettingsStore = create<SettingsStore>((set) => ({
 	emojiPack: EmojiPack.Twemoji,
 	language: "en-US",
 	navBarLocation: NavBarLocation.Bottom,
-	guildOrder: [],
+	hubOrder: [],
 	privacy: 0,
 	theme: Theme.Dark,
 	isSideBarOpen: true,
 	setEmojiPack: (emojiPack: EmojiPack) => set({ emojiPack }),
 	setLanguage: (language: string) => set({ language }),
 	setNavBarLocation: (navBarLocation: NavBarLocation) => set({ navBarLocation }),
-	setGuildOrder: (
-		guildOrder: {
-			guildId: string;
+	setHubOrder: (
+		hubOrder: {
+			hubId: string;
 			position: number;
 		}[],
-	) => set({ guildOrder }),
+	) => set({ hubOrder }),
 	setPrivacy: (privacy: number) => set({ privacy }),
 	setTheme: (theme: Theme) => set({ theme }),
 	setIsSideBarOpen: (isSideBarOpen: boolean) => set({ isSideBarOpen }),
 }));
 
-export const useStoredSettingsStore = create(
-	persist<StoredSettingsStore>(
-		(set) => ({
-			mobilePopupIgnored: false,
-			setMobilePopupIgnored: (mobilePopupIgnored: boolean) => set({ mobilePopupIgnored }),
-		}),
-		{
-			name: "stored-settings",
-		},
-	),
-);
-
-export const useGuildSettingsStore = createTrackedSelector(
+export const useHubSettingsStore = createTrackedSelector(
 	create(
-		persist<GuildSettingsStore>(
+		persist<HubSettingsStore>(
 			(set) => ({
-				guildSettings: {},
-				setGuildSettings: (guildId: string, guildSettings: GuildSettings) =>
+				hubSettings: {},
+				setHubSettings: (hubId: string, hubSettings: HubSettings) =>
 					set((state) => ({
-						guildSettings: {
-							...state.guildSettings,
-							[guildId]: guildSettings,
+						hubSettings: {
+							...state.hubSettings,
+							[hubId]: hubSettings,
 						},
 					})),
 			}),
 			{
-				name: "guild-settings",
+				name: "hub-settings",
 			},
 		),
 	),
@@ -150,4 +139,38 @@ export const useIsReady = create<IsReadyStore>((set) => ({
 export const useClientStore = create<ClientStore>((set) => ({
 	client: new Client(),
 	setClient: (client: Client) => set({ client }),
+}));
+
+export const useStoredSettingsStore = create(
+	persist<StoredSettings>(
+		(set) => ({
+			isChannelsOpen: false,
+			isMobile: false,
+			isDmsOpen: false,
+			isHubsOpen: false,
+			isMembersOpen: false,
+			navbarPosition: 0,
+			mobilePopupIgnored: false,
+			setMobilePopupIgnored: (mobilePopupIgnored: boolean) => set({ mobilePopupIgnored }),
+			setIsMobile: (isMobile: boolean) => set({ isMobile }),
+			setIsChannelsOpen: (isChannelsOpen: boolean) => set({ isChannelsOpen }),
+			setIsDmsOpen: (isDmsOpen: boolean) => set({ isDmsOpen }),
+			setIsHubsOpen: (isHubsOpen: boolean) => set({ isHubsOpen }),
+			setIsMembersOpen: (isMembersOpen: boolean) => set({ isMembersOpen }),
+			setNavbarPosition: (navbarPosition: number) => set({ navbarPosition }),
+		}),
+		{
+			name: "stored-settings",
+		},
+	),
+);
+
+export interface EditorStore {
+	editor: ReactEditor | null;
+	setEditor: (editor: ReactEditor) => void;
+};
+
+export const useEditorStore = create<EditorStore>((set) => ({
+	editor: null,
+	setEditor: (editor) => set({ editor }),
 }));

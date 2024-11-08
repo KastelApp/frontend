@@ -2,7 +2,7 @@ import { create } from "zustand";
 import { useAPIStore } from "../Stores.tsx";
 import safePromise from "@/utils/safePromise.ts";
 import { ErrorResponseData } from "@/types/http/error.ts";
-import { useGuildStore } from "@/wrapper/Stores/GuildStore.ts";
+import { useHubStore } from "@/wrapper/Stores/HubStore.ts";
 import { useChannelStore } from "@/wrapper/Stores/ChannelStore.ts";
 import { useUserStore } from "@/wrapper/Stores/UserStore.ts";
 import { inviteFlags } from "@/utils/Constants.ts";
@@ -10,7 +10,7 @@ import { inviteFlags } from "@/utils/Constants.ts";
 export interface BaseInvite {
 	type: number;
 	code: string;
-	guild: {
+	hub: {
 		id: string;
 		name: string;
 		icon: string | null;
@@ -42,7 +42,7 @@ export interface BaseInvite {
 export interface Invite {
 	type: number;
 	code: string;
-	guildId: string | null;
+	hubId: string | null;
 	channelId: string | null;
 	creatorId: string | null;
 	uses: number;
@@ -57,7 +57,7 @@ export interface InviteStore {
 	addInvite(invite: Invite): void;
 	removeInvite(code: string): void;
 	getInvite(code: string): Invite | null;
-	joinInvite(code: string): Promise<"MaxGuildsReached" | "Banned" | "AlreadyIn" | "InvalidInvite" | "Success">;
+	joinInvite(code: string): Promise<"MaxHubsReached" | "Banned" | "AlreadyIn" | "InvalidInvite" | "Success">;
 	fetchInvite(code: string): Promise<Invite | null>;
 }
 
@@ -93,8 +93,8 @@ export const useInviteStore = create<InviteStore>((set, get) => ({
 				ErrorResponseData<
 					BaseInvite,
 					{
-						guild: {
-							code: "MaxGuildsReached" | "Banned" | "AlreadyIn";
+						hub: {
+							code: "MaxHubsReached" | "Banned" | "AlreadyIn";
 							message: string;
 						};
 						invite: {
@@ -112,7 +112,7 @@ export const useInviteStore = create<InviteStore>((set, get) => ({
 
 		if ("errors" in res.body) {
 			// ? If we are banned but the invite is already in the store we can just mark it as banned
-			if (res.body.errors.guild.code === "Banned") {
+			if (res.body.errors.hub.code === "Banned") {
 				const invite = get().getInvite(code);
 
 				if (!invite) return "Banned";
@@ -125,15 +125,15 @@ export const useInviteStore = create<InviteStore>((set, get) => ({
 				return "Banned";
 			}
 
-			return res.body.errors?.guild?.code ?? res.body.errors?.invite?.code ?? "InvalidInvite";
+			return res.body.errors?.hub?.code ?? res.body.errors?.invite?.code ?? "InvalidInvite";
 		}
 
 		// ? we add the partials
-		useGuildStore.getState().addGuild(res.body.guild, true);
+		useHubStore.getState().addHub(res.body.hub, true);
 		if (res.body.channel)
 			useChannelStore.getState().addChannel({
 				...res.body.channel,
-				guildId: res.body.guild.id,
+				hubId: res.body.hub.id,
 			});
 
 		if (res.body.creator) useUserStore.getState().addUser(res.body.creator);
@@ -141,7 +141,7 @@ export const useInviteStore = create<InviteStore>((set, get) => ({
 		get().addInvite({
 			type: res.body.type,
 			code: res.body.code,
-			guildId: res.body.guild.id,
+			hubId: res.body.hub.id,
 			channelId: res.body.channel?.id ?? null,
 			creatorId: res.body.creator?.id ?? "",
 			uses: res.body.uses,
@@ -171,8 +171,8 @@ export const useInviteStore = create<InviteStore>((set, get) => ({
 				ErrorResponseData<
 					BaseInvite,
 					{
-						guild: {
-							code: "MaxGuildsReached" | "Banned" | "AlreadyIn";
+						hub: {
+							code: "MaxHubsReached" | "Banned" | "AlreadyIn";
 							message: string;
 						};
 						invite: {
@@ -194,7 +194,7 @@ export const useInviteStore = create<InviteStore>((set, get) => ({
 				code,
 				creatorId: null,
 				expiresAt: null,
-				guildId: null,
+				hubId: null,
 				maxUses: 0,
 				uses: 0,
 				valid: false,
@@ -207,7 +207,7 @@ export const useInviteStore = create<InviteStore>((set, get) => ({
 				code,
 				creatorId: null,
 				expiresAt: null,
-				guildId: null,
+				hubId: null,
 				maxUses: 0,
 				uses: 0,
 				valid: false,
@@ -216,12 +216,12 @@ export const useInviteStore = create<InviteStore>((set, get) => ({
 
 		// ? we add the partials
 
-		if (res.body.guild) useGuildStore.getState().addGuild(res.body.guild, true);
+		if (res.body.hub) useHubStore.getState().addHub(res.body.hub, true);
 
 		if (res.body.channel)
 			useChannelStore.getState().addChannel({
 				...res.body.channel,
-				guildId: res.body.guild.id,
+				hubId: res.body.hub.id,
 			});
 
 		if (res.body.creator) useUserStore.getState().addUser(res.body.creator);
@@ -229,7 +229,7 @@ export const useInviteStore = create<InviteStore>((set, get) => ({
 		get().addInvite({
 			type: res.body.type,
 			code: res.body.code,
-			guildId: res.body.guild.id,
+			hubId: res.body.hub.id,
 			channelId: res.body.channel?.id ?? null,
 			creatorId: res.body.creator?.id ?? "",
 			uses: res.body.uses,
@@ -242,7 +242,7 @@ export const useInviteStore = create<InviteStore>((set, get) => ({
 		return {
 			type: res.body.type,
 			code: res.body.code,
-			guildId: res.body.guild.id,
+			hubId: res.body.hub.id,
 			channelId: res.body.channel?.id ?? null,
 			creatorId: res.body.creator?.id ?? "",
 			uses: res.body.uses,

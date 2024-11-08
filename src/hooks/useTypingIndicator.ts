@@ -1,19 +1,25 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 
 interface TypingIndicator {
 	isTyping: boolean;
-	sendUserIsTyping: () => void;
-	sentTypingEvent: () => void;
+	sendUserIsTyping: (content: string) => void;
 	shouldSendTypingEvent: boolean;
+	sentTypingEvent: () => void;
 }
 
 interface Props {
-	startedTypingAt: number;
-	setStartedTypingAt: (time: number) => void;
-	lastTypedAt: number;
-	setLastTypedAt: (time: number) => void;
-	lastSentTypingAt: number;
-	setLastSentTypingAt: (time: number) => void;
+	onTypingStart: () => void;
+	onTypingStop: () => void;
+	/**
+	 * How often shouldSendTyping is set to true
+	 */
+	typingEventInterval?: number;
+	/**
+	 * How long until we class the user as typing / not typing
+	 */
+	typingTimeout?: number;
+
+	miscTimeout?: number;
 }
 
 /**
@@ -26,103 +32,113 @@ interface Props {
  * When the user stops typing there's a 3 second delay before `isTyping` is set to false
  */
 const useTypingIndicator = ({
-	lastSentTypingAt,
-	lastTypedAt,
-	setLastSentTypingAt,
-	setLastTypedAt,
-	setStartedTypingAt,
-	startedTypingAt,
+	onTypingStart,
+	onTypingStop,
+	typingTimeout = 750,
+	typingEventInterval = 7000,
+	miscTimeout = 3000,
 }: Props): TypingIndicator => {
 	const [isTyping, setIsTyping] = useState(false);
 	const [shouldSendTypingEvent, setShouldSendTypingEvent] = useState(false);
+	const [lastTyped, setLastTyped] = useState<number>(0);
+	const [startedTyping, setStartedTyping] = useState<number>(0);
+	const [lastSentTyping, setLastSentTyping] = useState<number>(0);
+	const timeout = useRef<NodeJS.Timeout | null>(null);
+	const initialTimeout = useRef<NodeJS.Timeout | null>(null);
 
-	const resetStartedTypingAtRef = useRef<NodeJS.Timeout | null>(null);
-	const lastTypedRef = useRef<number>(lastTypedAt);
-	const shouldSendTypingEventRef = useRef<boolean>(shouldSendTypingEvent);
-	const startedTypingAtRef = useRef<number>(startedTypingAt);
-	const lastSentTypingAtRef = useRef<number>(lastSentTypingAt);
-	const isTypingRef = useRef<boolean>(isTyping);
-
-	useEffect(() => {
-		lastTypedRef.current = lastTypedAt;
-		shouldSendTypingEventRef.current = shouldSendTypingEvent;
-		startedTypingAtRef.current = startedTypingAt;
-		lastSentTypingAtRef.current = lastSentTypingAt;
-		isTypingRef.current = isTyping;
-	}, [lastTypedAt, shouldSendTypingEvent, startedTypingAt, lastSentTypingAt, isTyping]);
-
-	const sendUserIsTyping = () => {
-		if (resetStartedTypingAtRef.current) {
-			clearTimeout(resetStartedTypingAtRef.current);
-		}
-
-		resetStartedTypingAtRef.current = setTimeout(() => {
-			setStartedTypingAt(0);
+	const sentTypingEvent = useCallback((force: boolean = false) => {
+		if (force || shouldSendTypingEvent) {
 			setShouldSendTypingEvent(false);
-		}, 3000);
-
-		setLastTypedAt(Date.now());
-
-		if (startedTypingAtRef.current === 0) {
-			setStartedTypingAt(Date.now());
+			setLastSentTyping(Date.now());
 		}
+	}, [shouldSendTypingEvent]);
 
-		if (startedTypingAtRef.current > 0 && Date.now() - startedTypingAtRef.current > 3000) {
-			setIsTyping(true);
+	// ? When we start typing, we have to wait exactly 1s (typingTimeout) before we set isTyping to true. BUT if its been miscTimeout since we last typed, we have to restart the waiting period
+
+	// if its been more then typingTimeout since we last sent a typing event, we should send one
+	const customSendShouldSendTypingEvent = useCallback(() => {
+		if (Date.now() - lastSentTyping > typingEventInterval) {
+			setShouldSendTypingEvent(true);
 		}
-	};
+	}, [lastSentTyping, typingEventInterval]);
 
-	const resetShouldSendTypingEvent = useRef<NodeJS.Timeout | null>(null);
+	const sendUserIsTyping = useCallback((content: string) => {
+		console.log(content.length, content);
 
-	const sentTypingEvent = () => {
-		if (!shouldSendTypingEventRef.current) return;
+		if (content.length === 0) {
+			setIsTyping(false);
+			setLastTyped(0);
+			setStartedTyping(0);
 
-		setShouldSendTypingEvent(false);
-		setLastSentTypingAt(Date.now());
-
-		if (resetShouldSendTypingEvent.current) {
-			clearTimeout(resetShouldSendTypingEvent.current);
-		}
-
-		resetShouldSendTypingEvent.current = setTimeout(() => {
-			if (Date.now() - lastTypedRef.current < 2000) {
-				setShouldSendTypingEvent(true);
+			if (initialTimeout.current) {
+				clearTimeout(initialTimeout.current);
 			}
-		}, 7000);
-	};
+
+			return;
+		}
+
+		if (isTyping) {
+			setLastTyped(Date.now());
+			return;
+		}
+
+		if (Date.now() - lastTyped > miscTimeout) {
+			setStartedTyping(Date.now());
+			setLastTyped(Date.now());
+
+			if (initialTimeout.current) {
+				clearTimeout(initialTimeout.current);
+			}
+
+			initialTimeout.current = setTimeout(() => {
+				setIsTyping(true);
+				onTypingStart();
+				customSendShouldSendTypingEvent();
+			}, 2000);
+
+			return;
+		}
+
+		if (Date.now() - startedTyping > typingTimeout) {
+			setIsTyping(true);
+			onTypingStart();
+			// setShouldSendTypingEvent(true);
+		}
+	}, [isTyping, lastTyped, miscTimeout, onTypingStart, startedTyping, typingTimeout]);
 
 	useEffect(() => {
-		const checkinterval = setInterval(() => {
-			if (Date.now() - lastTypedRef.current > 3000) {
+		if (isTyping) {
+			timeout.current = setTimeout(() => {
 				setIsTyping(false);
-			}
-
-			if (
-				isTypingRef.current === true &&
-				startedTypingAtRef.current !== 0 &&
-				Date.now() - startedTypingAtRef.current > 3000 &&
-				(lastSentTypingAtRef.current !== 0 ? Date.now() - lastSentTypingAtRef.current >= 7000 : true)
-			) {
-				setShouldSendTypingEvent(true);
-			} else {
-				setShouldSendTypingEvent(false);
-			}
-		}, 100);
+				onTypingStop();
+			}, typingTimeout);
+		} else {
+			clearTimeout(timeout.current!);
+		}
 
 		return () => {
-			clearInterval(checkinterval);
-
-			if (resetStartedTypingAtRef.current) {
-				clearTimeout(resetStartedTypingAtRef.current);
-			}
-
-			if (resetShouldSendTypingEvent.current) {
-				clearTimeout(resetShouldSendTypingEvent.current);
-			}
+			clearTimeout(timeout.current!);
 		};
-	}, []);
+	}, [isTyping, onTypingStop, typingTimeout]);
 
-	return { isTyping, sendUserIsTyping, sentTypingEvent, shouldSendTypingEvent };
+	useEffect(() => {
+		if (isTyping) {
+			const interval = setInterval(() => {
+				setShouldSendTypingEvent(true);
+			}, typingEventInterval);
+
+			return () => {
+				clearInterval(interval);
+			};
+		}
+	}, [isTyping, typingEventInterval]);
+
+	return {
+		isTyping,
+		sendUserIsTyping,
+		shouldSendTypingEvent,
+		sentTypingEvent,
+	};
 };
 
 export default useTypingIndicator;

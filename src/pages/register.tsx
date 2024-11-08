@@ -18,6 +18,7 @@ import NextLink from "next/link";
 import { useClientStore, useIsReady, useTokenStore, useTranslationStore } from "@/wrapper/Stores.tsx";
 import { useRouter } from "next/router";
 import onEnter from "@/utils/onEnter.ts";
+import { Routes } from "@/utils/Routes.ts";
 
 const Register = () => {
 	const [isVisible, setIsVisible] = useState(false);
@@ -174,7 +175,7 @@ const Register = () => {
 		setIsReady(false);
 
 		setTimeout(() => {
-			router.push("/app");
+			router.push(Routes.app());
 		}, 1000);
 	};
 
@@ -288,7 +289,7 @@ const Register = () => {
 									</Button>
 								</div>
 								<div className="mt-4 flex justify-between">
-									<Link href="/login" color="primary" className="text-sm" as={NextLink}>
+									<Link href={Routes.login()} color="primary" className="text-sm" as={NextLink}>
 										{t("register.login")}
 									</Link>
 								</div>

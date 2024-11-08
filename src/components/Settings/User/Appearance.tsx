@@ -37,11 +37,11 @@ const Appearance = () => {
 
                     <div>
                         <h2 className="text-lg font-semibold mb-2">NavBar Location</h2>
-                        <p className="mb-2 text-sm text-gray-400">Changes where the Guild & DM's are placed.</p>
+                        <p className="mb-2 text-sm text-gray-400">Changes where the Hub & DM's are placed.</p>
                         <RadioGroup value={navbarLocation} onValueChange={setNavbarLocation} className="space-y-2">
                             {[
-                                { value: "left", label: "Left: Guild list is on the left side." },
-                                { value: "bottom", label: "Bottom: Guild list is on the bottom." },
+                                { value: "left", label: "Left: Hub list is on the left side." },
+                                { value: "bottom", label: "Bottom: Hub list is on the bottom." },
                             ].map(({ value, label }) => (
                                 <div key={value} id={value} className="w-full bg-charcoal-700 rounded-md flex mb-1 p-2">
                                     <Radio className="min-w-full items-center cursor-pointer" value={value} classNames={{

@@ -10,7 +10,7 @@ import { usePerChannelStore } from "@/wrapper/Stores/ChannelStore.ts";
 import { useTranslationStore } from "@/wrapper/Stores.tsx";
 import formatDate from "@/utils/formatDate.ts";
 import { Invite } from "@/wrapper/Stores/InviteStore.ts";
-import { Guild } from "@/wrapper/Stores/GuildStore.ts";
+import { Hub } from "@/wrapper/Stores/HubStore.ts";
 import { Role } from "@/wrapper/Stores/RoleStore.ts";
 import RichEmbed from "@/components/Message/Embeds/RichEmbed.tsx";
 import IFrameEmbed from "@/components/Message/Embeds/IFrameEmbed.tsx";
@@ -22,11 +22,12 @@ import VideoEmbed from "@/components/Message/Embeds/Video.tsx";
 import PopOverData from "@/components/Popovers/PopoverData.tsx";
 // import ReactionBox from "@/components/Message/Reaction.tsx";
 import UserTag from "@/components/UserTag.tsx";
+import LiveDate from "@/components/LiveDate.tsx";
 
 export type CustomizedMessage = Omit<MessageType, "invites"> & {
 	invites: (
 		| (Invite & {
-			guild: Guild | null;
+			hub: Hub | null;
 		})
 		| null
 	)[];
@@ -50,7 +51,7 @@ export interface MessageProps {
 		member: (Omit<Member, "roles"> & { roles: Role[]; }) | null;
 		roleColor: { color: string | null; id: string; } | null;
 	} | null;
-	inGuild: boolean;
+	inHub: boolean;
 	isDeleteable?: boolean;
 	isReplyable?: boolean;
 	isEditable?: boolean;
@@ -67,7 +68,7 @@ const Message = ({
 	isHighlighted: highlighted,
 	mentionsUser,
 	replyMessage,
-	inGuild,
+	inHub,
 	isDeleteable = false,
 	isEditable = false,
 	isReplyable = false,
@@ -76,9 +77,11 @@ const Message = ({
 	isParent = false,
 }: MessageProps) => {
 	const { t } = useTranslationStore();
-	const formattedDate = formatDate(message.creationDate);
 	const phishing = (message.flags & Constants.messageFlags.Phishing) === Constants.messageFlags.Phishing;
 	const [open, setOpen] = useState(false);
+
+	const getAvatarUrl = useUserStore((s) => s.getAvatarUrl);
+	const getDefaultAvatar = useUserStore((s) => s.getDefaultAvatar);
 
 	return (
 		<>
@@ -105,7 +108,7 @@ const Message = ({
 			{(!phishing || open) && (
 				<div
 					className={cn(
-						"group relative w-full max-w-full transition-all duration-300 ease-in hover:bg-msg-hover",
+						"group relative w-full max-w-full transition-colors duration-300 ease-in hover:bg-msg-hover outline-none",
 						className,
 						isParent && "mt-2",
 						mentionsUser && "bg-mention hover:bg-mention-hover",
@@ -131,10 +134,10 @@ const Message = ({
 								<div className="flex cursor-pointer items-center">
 									<Avatar
 										src={
-											useUserStore.getState().getAvatarUrl(replyMessage.user.id, replyMessage.user.avatar, {
+											getAvatarUrl(replyMessage.user.id, replyMessage.user.avatar, {
 												format: "webp",
 												size: 32,
-											}) ?? useUserStore.getState().getDefaultAvatar(replyMessage.user.id ?? "")
+											}) ?? getDefaultAvatar(replyMessage.user.id ?? "")
 										}
 										alt="User Avatar"
 										className="h-4 w-4 cursor-pointer rounded-full"
@@ -146,7 +149,7 @@ const Message = ({
 											// ? If the user is not in the server anymore then the color should be gray
 											// ? BUT if we are not in a server at all, then the color should be white
 											// ? white = CFDBFF
-											color: inGuild
+											color: inHub
 												? replyMessage.member
 													? replyMessage.roleColor?.color
 														? `#${replyMessage.roleColor.color}`
@@ -177,8 +180,8 @@ const Message = ({
 							<PopOverData user={message.author.user} member={message.author.member} onlyChildren={isButtonDisabled}>
 								<Avatar
 									src={
-										useUserStore.getState().getAvatarUrl(message.authorId, message.author.user.avatar) ??
-										useUserStore.getState().getDefaultAvatar(message.author.user.id ?? "")
+										getAvatarUrl(message.authorId, message.author.user.avatar) ??
+										getDefaultAvatar(message.author.user.id ?? "")
 									}
 									alt="User Avatar"
 									className="ml-2 mt-1 max-h-9 min-h-9 min-w-9 max-w-9 cursor-pointer rounded-full"
@@ -186,9 +189,9 @@ const Message = ({
 								/>
 							</PopOverData>
 						)}
-						<div className="relative ml-2 flex w-full flex-col">
+						<div className={cn("relative ml-2 flex w-full flex-col", isGrouped && "ml-4")}>
 							{!isGrouped && (
-								<div>
+								<div className="flex">
 									<PopOverData
 										user={message.author.user}
 										member={message.author.member}
@@ -198,7 +201,7 @@ const Message = ({
 											className="inline cursor-pointer text-white"
 											style={{
 												// ? same as above
-												color: inGuild
+												color: inHub
 													? message.author.member
 														? message.author.roleColor?.color
 															? `#${message.author.roleColor.color}`
@@ -215,16 +218,18 @@ const Message = ({
 											{message.author.user.isBot ? t("tags.bot") : t("tags.system")}
 										</UserTag>
 									)}
-									<Tooltip content={formatDate(message.creationDate, false, true)} placement="top" delay={500}>
-										<span className="ml-1 mt-1 select-none text-2xs text-gray-400">{formattedDate}</span>
+									<Tooltip content={formatDate(message.creationDate, "dayTime")} placement="top" delay={500}>
+										<span className="ml-1 mt-1 select-none text-2xs text-gray-400">
+											<LiveDate date={message.creationDate} format="relative" />
+										</span>
 									</Tooltip>
 								</div>
 							)}
-							<div className="flex items-center">
+							<div className="flex items-start">
 								{isGrouped && (
-									<Tooltip content={formatDate(message.creationDate, false, true)} placement="top" delay={500}>
-										<div className="mr-2 flex min-w-9 max-w-9 select-none text-3xs text-gray-400 transition-opacity opacity-0 duration-300 ease-in-out group-hover:opacity-100">
-											{formatDate(message.creationDate, true)}
+									<Tooltip content={formatDate(message.creationDate, "dayTime")} placement="top" delay={500}>
+										<div className="mr-2 flex w-fit select-none text-3xs text-gray-400 transition-opacity opacity-0 duration-300 ease-in-out group-hover:opacity-100">
+											{formatDate(message.creationDate, "short")}
 										</div>
 									</Tooltip>
 								)}
@@ -245,14 +250,14 @@ const Message = ({
 									if (!invite) {
 										return (
 											<div key={index} className="mt-2 inline-block max-w-full overflow-hidden">
-												<InviteEmbed invite={null} skeleton />
+												<InviteEmbed invite={null} skeleton userId={message.author.user.id} />
 											</div>
 										);
 									}
 
 									return (
 										<div key={index} className="mt-2 inline-block max-w-full overflow-hidden">
-											<InviteEmbed invite={invite} />
+											<InviteEmbed invite={invite} userId={message.author.user.id} />
 										</div>
 									);
 								})}
@@ -269,8 +274,7 @@ const Message = ({
 										</div>
 									))}
 
-								<div className="flex space-x-1">
-									{/* <ReactionBox icon="👍" count={15} />
+								{/* <div className="flex space-x-1">
 									<ReactionBox icon="👍" count={15} />
 									<ReactionBox icon="👍" count={15} />
 									<ReactionBox icon="👍" count={15} />
@@ -279,13 +283,14 @@ const Message = ({
 									<ReactionBox icon="👍" count={15} />
 									<ReactionBox icon="👍" count={15} />
 									<ReactionBox icon="👍" count={15} />
-									<ReactionBox icon="👍" count={15} /> */}
-								</div>
+									<ReactionBox icon="👍" count={15} />
+									<ReactionBox icon="👍" count={15} />
+								</div> */}
 							</div>
 						</div>
 					</div>
 					{!isButtonDisabled && (
-						<div className="absolute right-0 top-[-1rem] z-10 mr-2 hidden items-center gap-2 rounded-md bg-gray-800 p-1 group-hover:flex hover:flex">
+						<div className="absolute right-0 top-[-1rem] mr-2 hidden items-center gap-2 rounded-md bg-gray-800 p-1 group-hover:flex hover:flex">
 							<Tooltip content="Reply">
 								<Reply
 									size={18}

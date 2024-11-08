@@ -20,6 +20,7 @@ import onEnter from "@/utils/onEnter.ts";
 import TwoFa from "@/components/Modals/TwoFa.tsx";
 import safePromise from "@/utils/safePromise.ts";
 import { modalStore } from "@/wrapper/Stores/GlobalModalStore.ts";
+import { Routes } from "@/utils/Routes.ts";
 
 const Login = () => {
 	const [isVisible, setIsVisible] = useState(false);
@@ -140,7 +141,7 @@ const Login = () => {
 		setIsReady(false);
 
 		setTimeout(() => {
-			router.push("/app");
+			router.push(Routes.app());
 		}, 750);
 	};
 
@@ -208,7 +209,7 @@ const Login = () => {
 									</Button>
 								</div>
 								<div className="mt-4 flex justify-between">
-									<Link href="/register" color="primary" className="text-sm" as={NextLink} tabIndex={4}>
+									<Link href={Routes.register()} color="primary" className="text-sm" as={NextLink} tabIndex={4}>
 										{t("login.register")}
 									</Link>
 									<Button

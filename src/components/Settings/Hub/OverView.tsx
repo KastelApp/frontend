@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Input, Avatar, Badge, Select, SelectSection, SelectItem, Textarea, Divider } from "@nextui-org/react";
 import { X } from "lucide-react";
 import { useUserStore } from "@/wrapper/Stores/UserStore.ts";
-import { useGuildStore } from "@/wrapper/Stores/GuildStore.ts";
+import { useHubStore } from "@/wrapper/Stores/HubStore.ts";
 import { useChannelStore } from "@/wrapper/Stores/ChannelStore.ts";
 import SaveChanges from "@/components/SaveChanges.tsx";
 import Tooltip from "@/components/Tooltip.tsx";
@@ -14,20 +14,20 @@ import arrayify from "@/utils/arrayify.ts";
 
 const Overview = () => {
 	const router = useRouter();
-	const [guildId] = arrayify(router.query?.slug);
-	const guild = useGuildStore((s) => s.getGuild(guildId));
+	const [hubId] = arrayify(router.query?.slug);
+	const hub = useHubStore((s) => s.getHub(hubId));
 
 	const {
 		isDirty,
 		reset,
 		save,
 		changelogChannel,
-		guildDescription,
-		guildName,
+		hubDescription,
+		hubName,
 		invitesDisabled,
 		joinMessageChannel,
 		maintenanceMode,
-		sendGuildChangelog,
+		sendHubChangelog,
 		sendLeaveMessage,
 		sendUserChangelog,
 		sendWelcomeMessage,
@@ -41,9 +41,9 @@ const Overview = () => {
 		sendLeaveMessage: false,
 		changelogChannel: "",
 		sendUserChangelog: false,
-		sendGuildChangelog: false,
-		guildName: guild?.name ?? "",
-		guildDescription: guild?.description ?? "",
+		sendHubChangelog: false,
+		hubName: hub?.name ?? "",
+		hubDescription: hub?.description ?? "",
 	});
 
 	const [loading, setLoading] = useState(false);
@@ -52,12 +52,12 @@ const Overview = () => {
 	const user = getCurrentUser()!;
 	const { getChannels } = useChannelStore();
 
-	const channels = getChannels(guildId).filter((channel) => channel.type === Constants.channelTypes.GuildText);
+	const channels = getChannels(hubId).filter((channel) => channel.type === Constants.channelTypes.HubText);
 
 	return (
 		<div className="mr-2 rounded-lg bg-lightAccent dark:bg-darkAccent">
 			<div className="flex flex-col p-4">
-				<h1 className="text-2xl font-semibold">Guild Overview</h1>
+				<h1 className="text-2xl font-semibold">Hub Overview</h1>
 				<div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-5">
 					<div className="col-span-1 flex flex-col items-center sm:col-span-1">
 						<Tooltip content="Remove Icon" placement="right" delay={750} className="select-none">
@@ -86,54 +86,54 @@ const Overview = () => {
 								</div>
 							</Badge>
 						</Tooltip>
-						<p className="mt-2 text-sm text-gray-500">Upload a guild icon.</p>
+						<p className="mt-2 text-sm text-gray-500">Upload a hub icon.</p>
 					</div>
 					<div className="col-span-1 flex flex-col sm:col-span-2">
 						<Input
-							label="Guild Name"
-							placeholder="Enter a guild name"
+							label="Hub Name"
+							placeholder="Enter a hub name"
 							className="w-full"
-							description="The name of your guild."
-							value={guildName.state}
+							description="The name of your hub."
+							value={hubName.state}
 							onChange={(e) => {
-								guildName.set(e.target.value);
+								hubName.set(e.target.value);
 							}}
 						/>
 					</div>
 					<div className="col-span-1 flex flex-col sm:col-span-2">
 						<Textarea
-							label="Guild Description"
-							placeholder="Enter a guild description"
+							label="Hub Description"
+							placeholder="Enter a hub description"
 							className="w-full"
-							description="The description of your guild."
+							description="The description of your hub."
 							maxRows={3}
-							value={guildDescription.state}
+							value={hubDescription.state}
 							onChange={(e) => {
-								guildDescription.set(e.target.value);
+								hubDescription.set(e.target.value);
 							}}
 						/>
 					</div>
 				</div>
 
 				<Divider className="mb-8 mt-8" />
-				<h2 className="text-xl font-semibold">Guild Features</h2>
+				<h2 className="text-xl font-semibold">Hub Features</h2>
 				<div className="mt-4 flex flex-col">
 					<SwitchOption
 						title="Maintenance Mode"
-						description="Stop's all non-staff members from accessing the guild."
+						description="Stop's all non-staff members from accessing the hub."
 						value={maintenanceMode.state}
 						setValue={maintenanceMode.set}
 					/>
 					<SwitchOption
 						title="Disable Invites"
-						description="Prevents new members from joining the guild."
+						description="Prevents new members from joining the hub."
 						value={invitesDisabled.state}
 						setValue={invitesDisabled.set}
 					/>
 					{isStaff(user?.id ?? "") && (
 						<SwitchOption
-							title="Internal Staff Guild (Staff Only)"
-							description="Only staff members (with the staff flag) can access the guild."
+							title="Internal Staff Hub (Staff Only)"
+							description="Only staff members (with the staff flag) can access the hub."
 							value={staffOnly.state}
 							setValue={staffOnly.set}
 						/>
@@ -162,13 +162,13 @@ const Overview = () => {
 					<div className="mb-2 flex flex-col">
 						<SwitchOption
 							title="Send Welcome Message"
-							description="Send a welcome message when someone joins the guild."
+							description="Send a welcome message when someone joins the hub."
 							value={sendWelcomeMessage.state}
 							setValue={sendWelcomeMessage.set}
 						/>
 						<SwitchOption
 							title="Send Leave Message"
-							description="Send a leave message when someone leaves the guild."
+							description="Send a leave message when someone leaves the hub."
 							value={sendLeaveMessage.state}
 							setValue={sendLeaveMessage.set}
 						/>
@@ -197,9 +197,9 @@ const Overview = () => {
 							setValue={sendUserChangelog.set}
 						/>
 						<SwitchOption
-							title="Send Guild Changelog"
-							value={sendGuildChangelog.state}
-							setValue={sendGuildChangelog.set}
+							title="Send Hub Changelog"
+							value={sendHubChangelog.state}
+							setValue={sendHubChangelog.set}
 						/>
 					</div>
 				</div>

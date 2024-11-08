@@ -9,6 +9,7 @@ import { useEffect, useState } from "react";
 import NextLink from "next/link";
 import Logger from "@/utils/Logger.ts";
 import arrayify from "@/utils/arrayify.ts";
+import { Routes } from "@/utils/Routes.ts";
 
 const Reset = () => {
 	const router = useRouter();
@@ -49,13 +50,13 @@ const Reset = () => {
 		);
 
 		if (!validated || error) {
-			router.push("/login");
+			router.push(Routes.login());
 
 			return;
 		}
 
 		if (validated.status !== 204) {
-			router.push("/login");
+			router.push(Routes.login());
 
 			return;
 		}
@@ -125,7 +126,7 @@ const Reset = () => {
 
 		setToken(reset.body.token);
 
-		router.push("/app");
+		router.push(Routes.app());
 	};
 
 	const handlePasswordChange = (value: string) => {
@@ -162,7 +163,7 @@ const Reset = () => {
 		if (!router.isReady) return;
 
 		if (!requestId || !token) {
-			router.push("/login");
+			router.push(Routes.login());
 
 			return;
 		}
@@ -253,7 +254,7 @@ const Reset = () => {
 									</div>
 									<div className="mt-4 flex justify-between">
 										<Link
-											href="/login"
+											href={Routes.login()}
 											color="primary"
 											className="text-sm"
 											as={NextLink}

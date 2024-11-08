@@ -43,10 +43,9 @@ const parseFor = (rules: SimpleMarkdown.ReactRules, returnAst = false) => {
 	);
 };
 
-const createRules = (rule: SimpleMarkdown.ReactRules, message?: CustomizedMessage) => {
+const createRules = (rule: SimpleMarkdown.ReactRules, message?: CustomizedMessage): SimpleMarkdown.ReactRules => {
 	const {
 		paragraph,
-		// url,
 		link,
 		codeBlock,
 		inlineCode,
@@ -160,11 +159,23 @@ const createRules = (rule: SimpleMarkdown.ReactRules, message?: CustomizedMessag
 				return <p key={state.key}>{recurseOutput(node.content, state)}</p>;
 			},
 		},
-	};
+	} as unknown as SimpleMarkdown.ReactRules;
 };
 
-const MessageMarkDown = ({ children, message }: { children: string; message?: CustomizedMessage; }) => {
-	const renderer = parseFor(createRules(customRules as never, message) as never)(children, true, {
+const MessageMarkDown = ({ children, message, disabledRules }: { children: string; message?: CustomizedMessage; disabledRules?: ("link" | "autolink" | "url" | "code" | "blockquote" | "heading" | "list" | "inlineCode" | "paragraph" | "all")[] }) => {
+	const createdRules = createRules(customRules as never, message);
+
+	for (const rule of disabledRules ?? []) {
+		if (rule === "all") {
+			return <>{children}</>;
+		}
+
+		// @ts-expect-error -- ignore this
+		delete createdRules[rule];
+	}
+
+
+	const renderer = parseFor(createdRules)(children, true, {
 		message: message,
 	});
 

@@ -10,32 +10,28 @@ const getInviteCodes = (message: string, discordOnly = false) => {
 	const currentDomain = window.location.host;
 
 	const patterns = [
-		/https:\/\/kastelapp\.com\/invite\/([\w-]+)/g,
-		/(^|\s)kastelapp\.com\/invite\/([\w-]+)/g,
-		/https:\/\/development\.kastelapp\.com\/invite\/([\w-]+)/g,
-		/(^|\s)development\.kastelapp\.com\/invite\/([\w-]+)/g,
-		/https:\/\/kastel\.dev\/([\w-]+)/g,
-		/(^|\s)kastel\.dev\/([\w-]+)/g,
-		new RegExp(`https://${currentDomain.replace(".", "\\.")}/invite/([\\w-]+)`, "g"),
-		new RegExp(`(^|\\s)${currentDomain.replace(".", "\\.")}/invite/([\\w-]+)`, "g"),
+		/(?:https:\/\/|(^|\s))kastelapp\.com\/invite\/([\w-]+)/g,
+		/(?:https:\/\/|(^|\s))development\.kastelapp\.com\/invite\/([\w-]+)/g,
+		/(?:https:\/\/|(^|\s))kstl\.app\/invite\/([\w-]+)/g,
+		new RegExp(`(?:https://|(^|\\s))${currentDomain.replace(".", "\\.")}/invite/([\\w-]+)`, "g")
 	];
 
 	const discordPatterns = [
-		/https:\/\/discord\.gg\/([\w-]+)/g,
-		/(^|\s)discord\.gg\/([\w-]+)/g,
-		/https:\/\/discord\.com\/invite\/([\w-]+)/g,
-		/(^|\s)discord\.com\/invite\/([\w-]+)/g,
+		/(?:https:\/\/|(^|\s))discord\.gg\/([\w-]+)/g,
+		/(?:https:\/\/|(^|\s))discord\.com\/invite\/([\w-]+)/g
 	];
 
 	for (const pattern of discordOnly ? discordPatterns : patterns) {
 		let match;
 
 		while ((match = pattern.exec(message)) !== null) {
-			inviteCodes.push(match[1].trim() || match[2].trim());
+			const code = match[2] || match[1];
+			if (code) inviteCodes.push(code.trim());
 		}
 	}
 
 	return inviteCodes;
 };
+
 
 export default getInviteCodes;

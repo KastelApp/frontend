@@ -1,86 +1,160 @@
 import { Avatar, Button, Chip } from "@nextui-org/react";
 import cn from "@/utils/cn.ts";
 import { Skeleton } from "@nextui-org/react";
-import { useTranslationStore } from "@/wrapper/Stores.tsx";
+import { useEditorStore, useTranslationStore } from "@/wrapper/Stores.tsx";
 import { Invite } from "@/wrapper/Stores/InviteStore.ts";
-import { Guild } from "@/wrapper/Stores/GuildStore.ts";
+import { Hub } from "@/wrapper/Stores/HubStore.ts";
+import { useCallback } from "react";
+import { Editor, Transforms } from "slate";
+import { ReactEditor } from "slate-react";
 
 const InviteEmbed = ({
-	invite,
-	skeleton,
+  invite,
+  skeleton,
+  userId
 }: {
-	invite:
-		| (Invite & {
-				guild: Guild | null;
-		  })
-		| null;
-	skeleton?: boolean;
+  invite:
+  | (Invite & {
+    hub: Hub | null;
+  })
+  | null;
+  skeleton?: boolean;
+  userId?: string;
 }) => {
-	const { t } = useTranslationStore();
+  const { t } = useTranslationStore();
+  const { editor } = useEditorStore();
 
-	// const currentGuild = {
-	//     name: "Kastel Development",
-	//     owner: true,
-	//     icon: {
-	//         text: "Official & Partnered",
-	//         icon: <BadgeCheck size={18} color="#17c964" strokeWidth={3} />,
-	//     }
-	// };
+  const addAsk = useCallback(() => {
+    if (!editor) return;
 
-	return (
-		<div className="inline-block min-w-[28rem] max-w-[28rem] select-none rounded-md bg-lightAccent dark:bg-darkAccent">
-			{!skeleton && (
-				<p className={cn("pl-3 pr-3 pt-3", !invite?.valid ? "text-danger" : "text-white")}>
-					{invite?.valid ? t("guilds.invites.validInvite") : t("guilds.invites.invalidInvite")}
-				</p>
-			)}
-			{skeleton && <Skeleton className="ml-3 mt-3 max-h-4 min-h-4 max-w-64 cursor-pointer rounded-lg pl-3 pr-3 pt-3" />}
-			<div className="flex items-center p-3">
-				{!skeleton && (
-					<Avatar
-						name={invite?.guild?.name ?? "Invalid Invite"}
-						src={"/icon-1.png"}
-						className="max-h-10 min-h-10 min-w-10 max-w-10 rounded-xl"
-						imgProps={{ className: "transition-none" }}
-					/>
-				)}
-				{skeleton && (
-					<Skeleton className="ml-2 mt-1 max-h-10 min-h-10 min-w-10 max-w-10 transform cursor-pointer rounded-xl transition-all duration-300 ease-in-out hover:scale-95" />
-				)}
-				<div className="ml-3 flex flex-col">
-					<div className="flex items-center gap-1">
-						{!skeleton && (
-							<p className={cn("max-w-52 truncate font-semibold", !invite?.valid ? "text-danger" : "text-white")}>
-								{invite?.valid ? invite.guild!.name : "Invalid Invite"}
-							</p>
-						)}
-						{skeleton && (
-							<Skeleton className="max-h-4 min-h-4 cursor-pointer rounded-lg" style={{ minWidth: 60, maxWidth: 60 }} />
-						)}
-						{/* {currentGuild.icon && (
-                            <Tooltip content={currentGuild.icon.text} showArrow>
-                                <div>{currentGuild.icon.icon}</div>
-                            </Tooltip>
-                        )} */}
-					</div>
-					<div className="flex">
-						{invite?.valid && (
-							<>
-								{/* <Chip variant="dot" color="success" className="border-0 p-0 text-white">{invite.guild.members.online} {t("guilds.online")}</Chip> */}
-								<Chip variant="dot" color="secondary" className="border-0 p-0 text-white">
-									{invite.guild!.memberCount} {t("guilds.members")}
-								</Chip>
-							</>
-						)}
-						{!invite?.valid && <p className="text-white">Try asking for a new invite.</p>}
-					</div>
-				</div>
-				<Button className="ml-auto h-8 rounded-md" color="success" isDisabled={!invite?.valid}>
-					{t("guilds.invites.join")}
-				</Button>
-			</div>
-		</div>
-	);
+    Transforms.insertText(editor, `Hey <@${userId}>, may I get a new invite?`);
+
+    const endPoint = Editor.end(editor, []);
+
+    Transforms.select(editor, endPoint);
+    ReactEditor.focus(editor);
+  }, [editor, userId]);
+
+  const buttonOnClick = useCallback(async () => {
+    if (skeleton) return;
+
+    if (!invite?.hub) {
+      addAsk();
+
+      return;
+    }
+  }, [invite, addAsk, skeleton]);
+
+  if (skeleton) {
+    return (
+      <div className="p-3 bg-darkAccent rounded-lg shadow-md max-w-[calc(100%-1rem)] md:max-w-sm md:mm-h-28 mm-h-40">
+        <h2 className="text-medium font-semibold mb-3">
+          <Skeleton className="w-64 h-6 rounded-md" />
+        </h2>
+
+        <div className="grid grid-cols-[auto,1fr] md:grid-cols-[auto,1fr,auto] gap-2 items-center">
+          <div className="row-span-2">
+            <Skeleton className="rounded-xl mm-hw-10 mb-2" />
+          </div>
+
+          <div className="flex flex-col justify-center">
+            <span className="text-sm ml-1">
+              <Skeleton className="w-32 h-5 rounded-md" />
+            </span>
+            <div className="flex">
+              <Skeleton className="w-10 h-4 rounded-md ml-1 mt-1" />
+              <Skeleton className="w-10 h-4 rounded-md ml-1 mt-1" />
+            </div>
+          </div>
+
+          <div className="hidden md:block ml-auto mt-2">
+            <Skeleton className="rounded-md">
+              <Button size="sm" >
+                {t("hubs.invites.join")}
+              </Button>
+            </Skeleton>
+          </div>
+        </div>
+
+        <div className="mt-3 md:hidden">
+          <Skeleton className="rounded-md">
+            <Button
+              size="sm"
+              className="w-full"
+              isLoading
+            >
+              {t("hubs.invites.join")}
+            </Button>
+          </Skeleton>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="p-3 bg-darkAccent rounded-lg shadow-md max-w-[calc(100%-1rem)] md:max-w-sm  md:mm-h-28 mm-h-40">
+      <h2 className={cn("text-medium font-semibold mb-3", !invite?.valid && "text-danger")}>
+        {invite?.valid ? t("hubs.invites.validInvite") : t("hubs.invites.invalidInvite")}
+      </h2>
+
+      <div className="grid grid-cols-[auto,1fr] md:grid-cols-[auto,1fr,auto] gap-2 items-center">
+        <div className="row-span-2">
+          <Avatar
+            src="/icon-1.png"
+            alt="Avatar"
+            className="rounded-xl mm-hw-10 mb-2"
+            imgProps={{ className: "transition-none" }}
+          />
+        </div>
+
+        <div className="flex flex-col justify-center">
+          {invite?.hub ? (
+            <>
+              <p className="text-sm ml-1">{invite.hub.name}</p>
+              <div className="flex">
+                <Chip
+                  variant="dot"
+                  color="success"
+                  size="sm"
+                  className="border-0 p-0 text-white"
+                >
+                  30 {t("hubs.online")}
+                </Chip>
+                <Chip
+                  variant="dot"
+                  color="secondary"
+                  size="sm"
+                  className="border-0 p-0 text-white"
+                >
+                  {invite.hub.memberCount} {t("hubs.members")}
+                </Chip>
+              </div>
+            </>
+          ) : (
+            <p className="text-sm mt-2 ml-1 text-danger">Invalid Invite</p>
+          )}
+        </div>
+
+        <div className="hidden md:block ml-auto mt-2">
+          <Button color={invite?.hub ? "success" : "danger"} size="sm" variant="flat" onClick={buttonOnClick}>
+            {invite?.hub ? t("hubs.invites.join") : t("hubs.invites.invalid")}
+          </Button>
+        </div>
+      </div>
+
+      <div className="mt-3 md:hidden">
+        <Button
+          color={invite?.hub ? "success" : "danger"}
+          size="sm"
+          variant="flat"
+          className="w-full"
+          onClick={buttonOnClick}
+        >
+          {invite?.hub ? t("hubs.invites.join") : t("hubs.invites.invalid")}
+        </Button>
+      </div>
+    </div>
+  );
 };
 
 export default InviteEmbed;

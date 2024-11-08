@@ -1,7 +1,7 @@
 import { ReadyPayload } from "@/types/payloads/ready.ts";
 import {
-	GuildMemberAddPayload,
-	GuildMemberChunkPayload,
+	HubMemberAddPayload,
+	HubMemberChunkPayload,
 	MessageCreatePayload,
 	PresencesUpdatePayload,
 	TypingPayload,
@@ -16,18 +16,18 @@ export interface EventPayload {
 		| "MessageCreate"
 		| "MessageUpdate"
 		| "PresencesUpdate"
-		| "GuildCreate"
-		| "GuildMemberAdd"
-		| "GuildDelete"
-		| "GuildMemberChunk"
-		| "GuildMemberRemove"
+		| "HubCreate"
+		| "HubMemberAdd"
+		| "HubDelete"
+		| "HubMemberChunk"
+		| "HubMemberRemove"
 		| "MessageDelete";
 	data:
 		| TypingPayload
 		| MessageCreatePayload
 		| PresencesUpdatePayload
-		| GuildMemberAddPayload
-		| GuildMemberChunkPayload
+		| HubMemberAddPayload
+		| HubMemberChunkPayload
 		| Record<string, unknown>
 		| ReadyPayload
 		| HelloPayload

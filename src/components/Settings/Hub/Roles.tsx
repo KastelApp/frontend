@@ -149,12 +149,12 @@ const ColorPicker = ({ selectedRole }: { selectedRole: Role }) => {
 const Roles = () => {
 	const router = useRouter();
 
-	const [currentGuildId] = arrayify(router.query?.slug);
+	const [currentHubId] = arrayify(router.query?.slug);
 
 	const roleRef = useRef(
 		useRoleStore
 			.getState()
-			.getRoles(currentGuildId)
+			.getRoles(currentHubId)
 			.sort((a, b) => a.position - b.position)
 			.reverse(),
 	);
@@ -162,7 +162,7 @@ const Roles = () => {
 	useEffect(() => {
 		const roleSubscribe = useRoleStore.subscribe((s) => {
 			const roles = s
-				.getRoles(currentGuildId)
+				.getRoles(currentHubId)
 				.sort((a, b) => a.position - b.position)
 				.reverse();
 

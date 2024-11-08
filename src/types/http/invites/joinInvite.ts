@@ -1,7 +1,7 @@
 export interface JoinInvitePayload {
 	type: number;
 	code: string;
-	guild: {
+	hub: {
 		id: string;
 		name: string;
 		icon: string | null;

@@ -29,7 +29,7 @@ export interface GlobalModal {
 	 */
 	priority?: number;
 	/**
-	 * Just identifies itself, do stuff like "guildChannelDescription" etc but we accept anything
+	 * Just identifies itself, do stuff like "hubChannelDescription" etc but we accept anything
 	 */
 	id: IDType;
 	/**
@@ -41,9 +41,15 @@ export interface GlobalModal {
 	 * Even if closable is false, you can still close the modal by clicking the close button
 	 */
 	allowCloseByButton?: boolean;
+	
+	/**
+	 * Lets you hide the close button
+	 */
+	hideCloseButton?: boolean;
 
 	props?: {
 		modalSize?: "xs" | "sm" | "md" | "lg" | "xl" | "2xl" | "3xl" | "4xl" | "5xl" | "full";
+		radius?: "sm" | "md" | "lg" | "none";
 		classNames?: {
 			modal?: string;
 			header?: string;

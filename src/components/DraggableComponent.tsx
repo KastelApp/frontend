@@ -8,9 +8,9 @@ interface DraggableProps<T> {
 	 */
 	render: (item: T, index: number) => JSX.Element;
 	/**
-	 * Runs when the items are dropped, returns the new items array
+	 * Runs when the items are dropped, returns the new items array as well as the item that was dropped.
 	 */
-	onDrop: (items: T[], prev: T[]) => void;
+	onDrop: (items: T[], prev: T[], droppedItem: T) => void;
 
 	/**
 	 * Runs when the user starts dragging an item
@@ -42,6 +42,12 @@ interface DraggableProps<T> {
 	 * Disables the ghost element
 	 */
 	disableGhostElement?: boolean;
+	/**
+	 * If we should move items at the bottom to the top.
+	 * 
+	 * Defaults to false
+	 */
+	moveBottomToTop?: boolean;
 	className?: string;
 }
 
@@ -60,6 +66,7 @@ const Draggables = <T,>({
 	disableGhostElement,
 	onDrag,
 	onDragStop,
+	moveBottomToTop = false,
 }: DraggableProps<T>) => {
 	const [draggingIndex, setDraggingIndex] = useState<number | null>(null);
 	const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
@@ -114,7 +121,7 @@ const Draggables = <T,>({
 				dragOverPosition === "above" || dragOverPosition === "left" ? dragOverIndex : dragOverIndex + 1;
 			updatedItems.splice(dropPosition > draggingIndex ? dropPosition - 1 : dropPosition, 0, removed);
 			setDragItems(updatedItems);
-			onDrop(updatedItems, oldDropItems);
+			onDrop(updatedItems, oldDropItems, removed);
 		}
 		setDraggingIndex(null);
 		setDragOverIndex(null);
@@ -140,9 +147,16 @@ const Draggables = <T,>({
 			const oldDropItems = [...dragItems];
 			const updatedItems = [...dragItems];
 			const [removed] = updatedItems.splice(draggingIndex, 1);
-			updatedItems.push(removed);
+			// updatedItems.push(removed);
+
+			if (moveBottomToTop) {
+				updatedItems.unshift(removed);
+			} else {
+				updatedItems.push(removed);
+			}
+
 			setDragItems(updatedItems);
-			onDrop(updatedItems, oldDropItems);
+			onDrop(updatedItems, oldDropItems, removed);
 		}
 		setDraggingIndex(null);
 		setDragOverIndex(null);

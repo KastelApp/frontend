@@ -1,6 +1,8 @@
 import Websocket from "../Websocket.ts";
 import { EventPayload } from "@/types/payloads/event.ts";
 import Logger from "@/utils/Logger.ts";
+import hubCreate from "@/wrapper/gateway/Events/hubCreate.ts";
+import hubMemberAdd from "@/wrapper/gateway/Events/hubMemberAdd.ts";
 import messageCreate from "@/wrapper/gateway/Events/messageCreate.ts";
 import messageDelete from "@/wrapper/gateway/Events/messageDelete.ts";
 import messageUpdate from "@/wrapper/gateway/Events/messageUpdate.ts";
@@ -49,25 +51,25 @@ const event = (ws: Websocket, data: unknown) => {
 			break;
 		}
 
-		case "GuildCreate": {
+		case "HubCreate": {
+			hubCreate(ws, data.data);
+
+			break;
+		}
+
+		case "HubDelete": {
 			console.log(ws, data.data);
 
 			break;
 		}
 
-		case "GuildDelete": {
-			console.log(ws, data.data);
+		case "HubMemberAdd": {
+			hubMemberAdd(ws, data.data);
 
 			break;
 		}
 
-		case "GuildMemberAdd": {
-			console.log(ws, data.data);
-
-			break;
-		}
-
-		case "GuildMemberChunk": {
+		case "HubMemberChunk": {
 			console.log(ws, data.data);
 
 			break;
@@ -79,7 +81,7 @@ const event = (ws: Websocket, data: unknown) => {
 			break;
 		}
 
-		case "GuildMemberRemove": {
+		case "HubMemberRemove": {
 			console.log(ws, data.data);
 
 			break;

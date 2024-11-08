@@ -1,7 +1,8 @@
 import ImageGrid from "@/components/ImageGrid.tsx";
-import { Avatar, Card, CardBody, CardFooter, CardHeader, Image } from "@nextui-org/react";
+import { Avatar, Image, User } from "@nextui-org/react";
 import Link from "next/link";
 import cn from "@/utils/cn.ts";
+import MessageMarkDown from "@/components/Message/Markdown/MarkDown.tsx";
 
 interface EmbedFiles {
 	name?: string;
@@ -14,9 +15,9 @@ interface EmbedFiles {
 }
 
 interface EmbedFooter {
-	text: string;
-	iconUrl: string;
-	timestamp: string;
+	text?: string;
+	iconUrl?: string;
+	timestamp?: string;
 }
 
 interface EmbedField {
@@ -69,7 +70,7 @@ interface Embed {
 	provider?: EmbedProvider;
 }
 
-const RichEmbed = ({ embed }: { embed: Embed }) => {
+const RichEmbed = ({ embed }: { embed: Embed; }) => {
 	const HyperLinkPossibly = ({
 		url,
 		children,
@@ -108,93 +109,94 @@ const RichEmbed = ({ embed }: { embed: Embed }) => {
 	}
 
 	return (
-		<div
-			style={{
-				borderLeft: `4px solid #${embed.color?.toString(16) ?? "000000"}`,
-			}}
-			className="inline-block w-auto rounded-md"
-		>
-			<Card
-				shadow="sm"
-				radius="none"
-				className="min-h-0 min-w-0 max-w-[430px] rounded-md bg-lightAccent dark:bg-darkAccent"
-			>
-				{(embed.title || embed.author?.name || embed.thumbnail?.url) && (
-					<CardHeader className="mr-3 p-0 pl-3 pt-3">
-						<div className="flex flex-col items-start gap-2 text-white">
-							{embed.author?.name && (
-								<HyperLinkPossibly url={embed.author.url} noColor={embed.author.url === undefined}>
-									<div>
-										{embed.author.iconUrl && <Avatar src={embed.author.iconUrl} className="h-6 w-6 rounded-full" />}
-										<p className="max-w-md truncate font-bold">{embed.author.name}</p>
-									</div>
-								</HyperLinkPossibly>
-							)}
-							{embed.title && (
-								<HyperLinkPossibly url={embed.url}>
-									<p className="mb-2 max-w-md truncate">{embed.title}</p>
-								</HyperLinkPossibly>
-							)}
-						</div>
-						{embed.thumbnail?.url && (
-							<div className="ml-4 mr-4">
-								<Image
-									src={embed.thumbnail.url}
-									alt="Thumbnail"
-									className="max-h-20 min-h-20 min-w-20 max-w-20 rounded-md"
-								/>
-							</div>
-						)}
-					</CardHeader>
-				)}
-				<CardBody className="mr-3 p-0 pl-4 pr-2">
-					{embed.description && (
-						<p className="max-w-xl overflow-hidden whitespace-pre-line break-words text-sm text-white">
-							{embed.description}
-						</p>
+		<div style={{
+			borderLeft: `4px solid #${embed.color?.toString(16) ?? "000000"}`,
+		}} className="inline-block w-auto rounded-md bg-darkAccent max-w-[calc(100%-1rem)] md:max-w-md ">
+			{(embed.title || embed.author?.name || embed.thumbnail?.url) && (
+				<header className="mr-3 pl-3 pt-3 flex flex-col items-start gap-2 text-white">
+					{embed.author?.name && (
+						<HyperLinkPossibly url={embed.author.url} noColor>
+							<User
+								name={embed.author.name}
+								avatarProps={{
+									src: embed.author.iconUrl,
+									className: "h-6 w-6 rounded-full",
+									imgProps: {
+										referrerPolicy: "no-referrer",
+									},
+								}}
+								className="max-w-md truncate font-bold"
+								classNames={{
+									name: "text-xs",
+								}}
+							/>
+						</HyperLinkPossibly>
 					)}
-					<div className="mt-2">
-						{groupedFields.map((group, groupIndex) => (
-							<div key={groupIndex} className="mb-2 flex flex-wrap">
-								{group.map((field, fieldIndex) => (
-									<span key={fieldIndex} className={cn("mr-2", field.inline ? "max-w-xs" : "max-w-lg")}>
-										<strong className="text-md text-white">{field.name}</strong>
-										<p className="text-sm text-white">{field.value}</p>
-									</span>
-								))}
-							</div>
-						))}
-					</div>
-					{embed.files && (
-						<ImageGrid
-							images={embed.files.map((file) => ({
-								url: file.url,
-								name: file.name,
-								thumbHash: file.thumbHash,
-							}))}
+
+					{embed.title && (
+						<HyperLinkPossibly url={embed.url}>
+							<p className="mb-2">{embed.title}</p>
+						</HyperLinkPossibly>
+					)}
+
+					{embed.thumbnail?.url && (
+						<Image
+							src={embed.thumbnail.url}
+							alt="Thumbnail"
+							className="mm-hw-20 rounded-md ml-4 mr-4"
+							referrerPolicy="no-referrer"
 						/>
 					)}
-				</CardBody>
-				{(embed.footer?.text || embed.footer?.timestamp) && (
-					<CardFooter className="mr-3">
-						<div className="flex items-center justify-between text-xs text-white">
-							{embed.footer.iconUrl && (
-								<>
-									<Avatar src={embed.footer.iconUrl} className="h-6 w-6 rounded-full" />
-									<span className="ml-1.5 mr-1 select-none">•</span>
-								</>
-							)}
-							{embed.footer.text && (
-								<span>
-									{embed.footer.text}
-									<span className="ml-1 mr-1 select-none">•</span>
-								</span>
-							)}
-							{embed.footer.timestamp && <p>{new Date(embed.footer.timestamp).toLocaleString()}</p>}
-						</div>
-					</CardFooter>
+				</header>
+			)}
+
+			<div className="mr-3 pl-3">
+				{embed.description && (
+					<p className="max-w-lg overflow-hidden whitespace-pre-line break-words text-sm text-white">
+						<MessageMarkDown>
+							{embed.description}
+						</MessageMarkDown>
+					</p>
 				)}
-			</Card>
+				<div className="mt-2">
+					{groupedFields.map((group, groupIndex) => (
+						<div key={groupIndex} className="mb-2 flex flex-wrap">
+							{group.map((field, fieldIndex) => (
+								<span key={fieldIndex} className={cn("mr-2", field.inline ? "max-w-xs" : "max-w-lg")}>
+									<strong className="text-md text-white">{field.name}</strong>
+									<p className="text-sm text-white">{field.value}</p>
+								</span>
+							))}
+						</div>
+					))}
+				</div>
+				{embed.files && (
+					<ImageGrid
+						images={embed.files.map((file) => ({
+							url: file.url,
+							name: file.name,
+							thumbHash: file.thumbHash,
+						}))}
+					/>
+				)}
+			</div>
+			{(embed.footer?.text || embed.footer?.iconUrl || embed.footer?.timestamp) && (
+				<div className="flex items-center text-xs text-white ml-3 mb-3">
+					{embed.footer.iconUrl && (
+						<>
+							<Avatar src={embed.footer.iconUrl} className="h-6 w-6 rounded-full" />
+							<span className="ml-1.5 mr-1 select-none">•</span>
+						</>
+					)}
+					{embed.footer.text && (
+						<span>
+							{embed.footer.text}
+							<span className="ml-1 mr-1 select-none">•</span>
+						</span>
+					)}
+					{embed.footer.timestamp && <p>{new Date(embed.footer.timestamp).toLocaleString()}</p>}
+				</div>
+			)}
 		</div>
 	);
 };

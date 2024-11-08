@@ -27,8 +27,8 @@ export interface SettingsStore {
 	language: string;
 	privacy: number;
 	theme: Theme;
-	guildOrder: {
-		guildId: string;
+	hubOrder: {
+		hubId: string;
 		position: number;
 	}[];
 	navBarLocation: NavBarLocation;
@@ -37,9 +37,9 @@ export interface SettingsStore {
 	setLanguage: (language: string) => void;
 	setPrivacy: (privacy: number) => void;
 	setTheme: (theme: Theme) => void;
-	setGuildOrder: (
-		guildOrder: {
-			guildId: string;
+	setHubOrder: (
+		hubOrder: {
+			hubId: string;
 			position: number;
 		}[],
 	) => void;
@@ -48,19 +48,14 @@ export interface SettingsStore {
 	setIsSideBarOpen: (isSideBarOpen: boolean) => void;
 }
 
-export interface StoredSettingsStore {
-	mobilePopupIgnored: boolean;
-	setMobilePopupIgnored: (mobilePopupIgnored: boolean) => void;
-}
-
-export interface GuildSettings {
+export interface HubSettings {
 	memberBarHidden: boolean;
 	lastChannelId: string | null;
 }
 
-export interface GuildSettingsStore {
-	guildSettings: Record<string, GuildSettings>;
-	setGuildSettings: (guildId: string, guildSettings: GuildSettings) => void;
+export interface HubSettingsStore {
+	hubSettings: Record<string, HubSettings>;
+	setHubSettings: (hubId: string, hubSettings: HubSettings) => void;
 }
 
 export interface SelectedTabStore {
@@ -103,4 +98,21 @@ export interface IsReadyStore {
 export interface ClientStore {
 	client: Client;
 	setClient: (client: Client) => void;
+}
+
+export interface StoredSettings {
+	isHubsOpen: boolean;
+	isDmsOpen: boolean;
+	isChannelsOpen: boolean;
+	isMembersOpen: boolean;
+	isMobile: boolean;
+	navbarPosition: number;
+	mobilePopupIgnored: boolean;
+	setMobilePopupIgnored: (mobilePopupIgnored: boolean) => void;
+	setIsHubsOpen: (isHubsOpen: boolean) => void;
+	setIsDmsOpen: (isDmsOpen: boolean) => void;
+	setIsChannelsOpen: (isChannelsOpen: boolean) => void;
+	setIsMembersOpen: (isMembersOpen: boolean) => void;
+	setNavbarPosition: (navbarPosition: number) => void;
+	setIsMobile: (isMobile: boolean) => void;
 }

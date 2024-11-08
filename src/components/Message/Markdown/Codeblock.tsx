@@ -12,12 +12,13 @@ interface CodeblockProps {
 const Codeblock = ({ language, code }: CodeblockProps) => {
 	return (
 		<div className="group relative w-full">
-			<SyntaxHighlighter language={getLanguageFromExtension(language)} style={oneDark as never}>
+			{/* @ts-expect-error -- Unsure what the issue here is */}
+			<SyntaxHighlighter wrapLongLines language={getLanguageFromExtension(language)} style={oneDark as never}>
 				{code}
 			</SyntaxHighlighter>
 			<Tooltip content={"Copy"}>
 				<Copy
-					className="absolute right-1 top-1 hidden cursor-pointer text-white group-hover:block"
+					className="absolute right-1 top-1 cursor-pointer text-white active:scale-95"
 					size={18}
 					onClick={() => {
 						navigator.clipboard.writeText(code);

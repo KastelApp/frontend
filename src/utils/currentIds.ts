@@ -1,7 +1,7 @@
-const getCurrentGuildId = () => {
+const getCurrentHubId = () => {
 	if (typeof window === "undefined") return null;
 
-	const match = window.location.pathname.match(/\/app\/guilds\/(\d+)/);
+	const match = window.location.pathname.match(/\/app\/hubs\/(\d+)/);
 
 	if (!match) return null;
 
@@ -11,11 +11,11 @@ const getCurrentGuildId = () => {
 const getCurrentChannelId = () => {
 	if (typeof window === "undefined") return null;
 
-	const match = window.location.pathname.match(/\/app\/guilds\/\d+\/channels\/(\d+)/);
+	const match = window.location.pathname.match(/\/app\/hubs\/\d+\/channels\/(\d+)/);
 
 	if (!match) return null;
 
 	return match[1];
 };
 
-export { getCurrentGuildId, getCurrentChannelId };
+export { getCurrentHubId, getCurrentChannelId };

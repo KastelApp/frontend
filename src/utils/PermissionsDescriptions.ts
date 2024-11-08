@@ -11,17 +11,17 @@ type PermissionKey = PermissionKeys[keyof PermissionKeys] | "Administrator";
 const permissionsDescriptions = {
 	simple: {
 		groups: {
-			ManageGuild: {
+			ManageHub: {
 				permissions: [
-					"ManageGuildName",
-					"ManageGuildDescription",
-					"ManageGuildIcon",
+					"ManageHubName",
+					"ManageHubDescription",
+					"ManageHubIcon",
 					"ToggleMaintenance",
 					"AddBots",
 					"ViewAuditLog",
 					"ManageVanity",
 				],
-				label: "Manage Guild",
+				label: "Manage Hub",
 				description: "Allows the user to manage the server, including changing settings and viewing audit logs.",
 			},
 			ManageRoles: {
@@ -129,20 +129,20 @@ const permissionsDescriptions = {
 	},
 	advanced: {
 		groups: {
-			ManageGuildName: {
-				permissions: ["ManageGuildName"],
-				label: "Change Guild Name",
-				description: "Allows the user to change the guild name.",
+			ManageHubName: {
+				permissions: ["ManageHubName"],
+				label: "Change Hub Name",
+				description: "Allows the user to change the hub name.",
 			},
-			ManageGuildDescription: {
-				permissions: ["ManageGuildDescription"],
-				label: "Change Guild Description",
-				description: "Allows the user to change the guild description.",
+			ManageHubDescription: {
+				permissions: ["ManageHubDescription"],
+				label: "Change Hub Description",
+				description: "Allows the user to change the hub description.",
 			},
-			ManageGuildIcon: {
-				permissions: ["ManageGuildIcon"],
-				label: "Change Guild Icon",
-				description: "Allows the user to change the guild icon.",
+			ManageHubIcon: {
+				permissions: ["ManageHubIcon"],
+				label: "Change Hub Icon",
+				description: "Allows the user to change the hub icon.",
 			},
 			ToggleMaintenance: {
 				permissions: ["ToggleMaintenance"],
@@ -152,7 +152,7 @@ const permissionsDescriptions = {
 			AddBots: {
 				permissions: ["AddBots"],
 				label: "Add Bots",
-				description: "Allows the user to add bots to the guild.",
+				description: "Allows the user to add bots to the hub.",
 			},
 			ViewAuditLog: {
 				permissions: ["ViewAuditLog"],
@@ -162,7 +162,7 @@ const permissionsDescriptions = {
 			ManageVanity: {
 				permissions: ["ManageVanity"],
 				label: "Manage Vanity",
-				description: "Allows the user to manage the guild's vanity URL.",
+				description: "Allows the user to manage the hub's vanity URL.",
 			},
 			RoleName: {
 				permissions: ["ManageRoleName"],

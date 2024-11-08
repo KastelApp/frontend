@@ -14,6 +14,7 @@ import DifferentTesting from "../Settings/User/DifferentTesting.tsx";
 import getClientVersion from "@/utils/getClientVersion.ts";
 import Appearance from "@/components/Settings/User/Appearance.tsx";
 import Language from "@/components/Settings/User/Language.tsx";
+import { Routes } from "@/utils/Routes.ts";
 
 const UserOptions = ({
 	children,
@@ -64,7 +65,7 @@ const UserOptions = ({
 			case "logout": {
 				setToken(null);
 
-				router.push("/login");
+				router.push(Routes.login());
 
 				// todo: handle better cleanup
 
@@ -239,20 +240,7 @@ const UserOptions = ({
 					</div>
 				}
 			/>
-			<div
-				// ? yeah yeah, it add's useless code but I do not care
-				onContextMenu={(e) => {
-					if (type !== "context") return;
 
-					e.preventDefault();
-
-					setDropdownOpen(!dropdownOpen);
-
-					if (!dropdownOpen) {
-						setStatusOpen(false);
-					}
-				}}
-			>
 				<CustomStatus isOpen={isOpen} onOpenChange={onOpenChange} onClose={onClose} />
 				<Dropdown
 					placement={orientation === "vertical" ? "right" : "top"}
@@ -268,9 +256,10 @@ const UserOptions = ({
 						}
 					}}
 					isOpen={dropdownOpen}
+					className="bg-darkAccent"
 				>
 					<DropdownTrigger>
-						<button className="outline-none">{children}</button>
+						{children}
 					</DropdownTrigger>
 					<DropdownMenu aria-label="Static Actions" onAction={handleAction}>
 						<DropdownItem
@@ -283,6 +272,7 @@ const UserOptions = ({
 									className={cn("transition-transform duration-300", statusOpen ? "rotate-90" : "")}
 								/>
 							}
+							className="hover:bg-charcoal-700 transition-colors duration-300 ease-in-out"
 						>
 							<p>Status</p>
 							<p className={cn("mt-1 text-xs", status === "Online" ? "text-success" : status === "Idle" ? "text-warning" : status === "DND" ? "text-danger" : "text-gray-500")}>{status}</p>
@@ -339,17 +329,17 @@ const UserOptions = ({
 							</motion.div>
 						</DropdownItem>
 
-						<DropdownItem closeOnSelect={true} key="customStatus" variant="flat">
+						<DropdownItem closeOnSelect={true} key="customStatus" variant="flat" className="hover:bg-charcoal-700 transition-colors duration-300 ease-in-out">
 							<p>{t("customStatus")}</p>
 							<p className="text-xs text-gray-500">My Custom Status</p>
 						</DropdownItem>
-						<DropdownItem key="settings" variant="flat" endContent={<Settings size={20} />}>
+						<DropdownItem key="settings" variant="flat" endContent={<Settings size={20} />} className="hover:bg-charcoal-700 transition-colors duration-300 ease-in-out">
 							{t("settings.settings")}
 						</DropdownItem>
 						<DropdownItem
 							key="logout"
 							variant="flat"
-							className="text-danger"
+							className="text-danger transition-colors duration-300 ease-in-out"
 							color="danger"
 							endContent={<LogOut size={20} />}
 						>
@@ -357,7 +347,6 @@ const UserOptions = ({
 						</DropdownItem>
 					</DropdownMenu>
 				</Dropdown>
-			</div>
 		</>
 	);
 };

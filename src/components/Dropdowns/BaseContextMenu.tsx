@@ -51,7 +51,7 @@ export interface BaseContextMenuProps {
 
 /**
  * ContextMenu is used for a few things, this is just a helper to mimic the context menu
- * Main use is for guilds, messages and member context menu's
+ * Main use is for hubs, messages and member context menu's
  */
 const BaseContextMenu = ({
 	values,

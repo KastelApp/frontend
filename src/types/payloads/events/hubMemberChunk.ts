@@ -1,6 +1,6 @@
 import { Member } from "../ready.ts";
 
-export interface GuildMemberChunkPayload {
-	guildId: string;
+export interface HubMemberChunkPayload {
+	hubId: string;
 	members: Member[];
 }

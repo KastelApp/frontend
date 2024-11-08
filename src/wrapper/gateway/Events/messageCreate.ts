@@ -4,8 +4,9 @@ import Logger from "@/utils/Logger.ts";
 import playSound from "@/utils/soundPlayer.ts";
 import Websocket from "@/wrapper/gateway/Websocket.ts";
 import { useChannelStore, usePerChannelStore } from "@/wrapper/Stores/ChannelStore.ts";
+import { useInviteStore } from "@/wrapper/Stores/InviteStore.ts";
 import { useMemberStore } from "@/wrapper/Stores/Members.ts";
-import { MessageStates, useMessageStore } from "@/wrapper/Stores/MessageStore.ts";
+import { MessageContext, MessageStates, useMessageStore } from "@/wrapper/Stores/MessageStore.ts";
 import { useUserStore } from "@/wrapper/Stores/UserStore.ts";
 
 const isMessageCreate = (payload: unknown): payload is MessageCreatePayload => {
@@ -35,8 +36,8 @@ const messageCreate = async (ws: Websocket, payload: unknown) => {
 
 	const currentMemberId = useUserStore.getState().getCurrentUser()?.id;
 	const perChannel = usePerChannelStore.getState().getChannel(payload.channelId);
-	const guildId = useChannelStore.getState().getGuildId(payload.channelId);
-	const member = guildId ? useMemberStore.getState().getMember(guildId, payload.author.id) : null;
+	const hubId = useChannelStore.getState().getHubId(payload.channelId);
+	const member = hubId ? useMemberStore.getState().getMember(hubId, payload.author.id) : null;
 
 	if (payload.mentions.users.includes(currentMemberId ?? "")) {
 		playSound("mention", 0.5);
@@ -53,6 +54,14 @@ const messageCreate = async (ws: Websocket, payload: unknown) => {
 			typingStarted: 0,
 			lastTyped: 0
 		})
+	}
+
+	useChannelStore.getState().editChannel(payload.channelId, {
+		lastMessageId: payload.id,
+	})
+
+	for (const invite of invites) {
+		useInviteStore.getState().fetchInvite(invite);
 	}
 
 	useMessageStore.getState().addMessage(
@@ -81,6 +90,7 @@ const messageCreate = async (ws: Websocket, payload: unknown) => {
 			discordInvites,
 			pinned: payload.pinned,
 			state: MessageStates.Sent,
+			context: MessageContext.Gateway
 		},
 		true,
 	);

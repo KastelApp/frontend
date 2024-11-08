@@ -6,19 +6,33 @@ const settings = {
 	maxMessageSize: 2000,
 	maxUsernameLength: 32,
 	maxNicknameLength: 32,
-	maxGuildNameLength: 100,
+	maxHubNameLength: 100,
 	maxChannelNameLength: 100,
 	maxRoleNameLength: 100,
 };
 
-const guildFeatures = ["Partnered", "Verified", "Official", "Maintenance"];
-
-export enum GuildFeatures {
+export enum HubFeatures {
 	Partnered = "Partnered",
 	Verified = "Verified",
 	Official = "Official",
 	Maintenance = "Maintenance",
 }
+
+export enum WebSocketErrorCodes {
+	UnknownError = 4000,
+	InvalidToken = 4001,
+	AccountUnAvailable = 4002,
+	InvalidOpCode = 4003,
+	InvalidPayload = 1007,
+	InternalServerError = 1011,
+	Unauthorized = 4004,
+	AlreadyAuthorized = 4005,
+	InvalidSequence = 4006,
+	HeartbeatTimeout = 4007,
+	InvalidVersion = 4008,
+	InvalidEncoding = 4009,
+  }
+  
 
 const allowedMentions: {
 	All?: number;
@@ -35,7 +49,7 @@ const allowedMentions: {
 
 allowedMentions.All = allowedMentions.Everyone | allowedMentions.Here | allowedMentions.Roles | allowedMentions.Users;
 
-const guildMemberFlags = {
+const hubMemberFlags = {
 	Left: 1 << 0,
 	In: 1 << 1,
 	Kicked: 1 << 2,
@@ -45,13 +59,13 @@ const guildMemberFlags = {
 };
 
 const channelTypes = {
-	GuildCategory: 1 << 0,
-	GuildText: 1 << 1,
-	GuildNews: 1 << 2,
-	GuildRules: 1 << 3,
-	GuildVoice: 1 << 4,
-	GuildNewMember: 1 << 5,
-	GuildMarkdown: 1 << 6,
+	HubCategory: 1 << 0,
+	HubText: 1 << 1,
+	HubNews: 1 << 2,
+	HubRules: 1 << 3,
+	HubVoice: 1 << 4,
+	HubNewMember: 1 << 5,
+	HubMarkdown: 1 << 6,
 	Dm: 1 << 10,
 	GroupChat: 1 << 11,
 };
@@ -80,10 +94,10 @@ const messageFlags = {
 };
 
 const inviteFlags = {
-	Normal: 1 << 0, // invite for a guild channel
+	Normal: 1 << 0, // invite for a hub channel
 	GroupChat: 1 << 1, // invite for a gdm
 	FriendLink: 1 << 2, // This lets you "add" a friend rather then having them send you a friend request, this is an instant friend
-	Vanity: 1 << 3, // This is a vanity invite (like kastelapp.com/invite/kastel) Undeleatable 1 per guild
+	Vanity: 1 << 3, // This is a vanity invite (like kastelapp.com/invite/kastel) Undeleatable 1 per hub
 };
 
 const publicFlags = {
@@ -126,16 +140,16 @@ const permissions = {
 		int: 1n << 0n,
 		group: "role", // ? Groups = role, channel, both. role = Permissions only supported for a role (and not a channel permission override) channel = Permissions only supported for a channel (and not a role) both = Permissions supported for both
 		subPermissions: {
-			A: 0n,
+			Administrator: 0n,
 		}, // ? It has them all already
 	},
-	Guild: {
+	Hub: {
 		int: 1n << 1n,
 		group: "role",
 		subPermissions: {
-			ManageGuildName: 1n << 0n,
-			ManageGuildDescription: 1n << 1n,
-			ManageGuildIcon: 1n << 2n,
+			ManageHubName: 1n << 0n,
+			ManageHubDescription: 1n << 1n,
+			ManageHubIcon: 1n << 2n,
 			ToggleMaintenance: 1n << 3n,
 			AddBots: 1n << 4n,
 			ViewAuditLog: 1n << 5n,
@@ -151,7 +165,7 @@ const permissions = {
 			ManageRolePosition: 1n << 2n,
 			ManageRolePermissions: 1n << 3n,
 			CreateRole: 1n << 4n,
-			DeleteRole: 1n << 5n,
+			DeleteRole: 1n << 5n
 		},
 	},
 	Channels: {
@@ -188,6 +202,8 @@ const permissions = {
 			MemberDeafen: 1n << 1n,
 			MemberMove: 1n << 2n,
 			MemberVoice: 1n << 3n,
+			CanMentionRoles: 1n << 4n, // ? if you can mention any role even if its not mentionable excluding @everyone and @here
+			CanMentionEveryone: 1n << 5n, // ? if you can mention @everyone and @here
 		},
 	},
 	Emojis: {
@@ -267,12 +283,12 @@ const opCodes = {
 	ready: 2,
 	heartbeat: 3,
 	presenceUpdate: 4,
-	// ? When a guild gets large enough, we do not want to continuously send the entire guild to the client, so when the client starts up the guild will appear as "unavailable"
-	// ? Then if the user clicks on the guild, we'll request the guild data, Upsides to this is less memory usage for large guilds, downside to this is when the user clicks on the guild, there will be a slight delay before the guild is loaded
-	// ? Soution to that is possibly store (client side) guilds they access actively, and if one of the guilds is unavailable, we'll request the guild data in the background on startup
-	requestGuild: 5,
-	// ? Like discords, once the guild gets enough members you'll only receive the top 200 members, then as you scroll down it requests more members
-	requestGuildMembers: 6,
+	// ? When a hub gets large enough, we do not want to continuously send the entire hub to the client, so when the client starts up the hub will appear as "unavailable"
+	// ? Then if the user clicks on the hub, we'll request the hub data, Upsides to this is less memory usage for large hubs, downside to this is when the user clicks on the hub, there will be a slight delay before the hub is loaded
+	// ? Soution to that is possibly store (client side) hubs they access actively, and if one of the hubs is unavailable, we'll request the hub data in the background on startup
+	requestHub: 5,
+	// ? Like discords, once the hub gets enough members you'll only receive the top 200 members, then as you scroll down it requests more members
+	requestHubMembers: 6,
 	resume: 7,
 	heartbeatAck: 8,
 	hello: 9,
@@ -283,8 +299,8 @@ const userSendCodes = [
 	opCodes.identify,
 	opCodes.heartbeat,
 	opCodes.presenceUpdate,
-	opCodes.requestGuild,
-	opCodes.requestGuildMembers,
+	opCodes.requestHub,
+	opCodes.requestHubMembers,
 	opCodes.resume,
 ];
 
@@ -309,10 +325,9 @@ export default {
 	privateFlags,
 	permissions,
 	relationshipFlags,
-	guildMemberFlags,
+	hubMemberFlags,
 	messageFlags,
 	publicFlags,
-	guildFeatures,
 	permissionOverrideTypes,
 	inviteFlags,
 	statusTypes,
@@ -332,10 +347,9 @@ export {
 	privateFlags,
 	permissions,
 	relationshipFlags,
-	guildMemberFlags,
+	hubMemberFlags,
 	messageFlags,
 	publicFlags,
-	guildFeatures,
 	permissionOverrideTypes,
 	inviteFlags,
 	statusTypes,

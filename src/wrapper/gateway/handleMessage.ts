@@ -7,7 +7,7 @@ import { HelloPayload } from "@/types/payloads/hello.ts";
 import event from "./Events/Event.ts";
 import { EmojiPack, NavBarLocation, ReadyPayload, Theme } from "@/types/payloads/ready.ts";
 import { useUserStore } from "../Stores/UserStore.ts";
-import { useGuildStore } from "../Stores/GuildStore.ts";
+import { useHubStore } from "../Stores/HubStore.ts";
 import { useChannelStore } from "../Stores/ChannelStore.ts";
 import { useMemberStore } from "../Stores/Members.ts";
 import { useRoleStore } from "../Stores/RoleStore.ts";
@@ -108,33 +108,33 @@ const handleMessage = async (ws: Websocket, data: unknown) => {
 				isGhost: true,
 			});
 
-			for (const guild of data.guilds) {
-				useGuildStore.getState().addGuild({
-					name: guild.name,
-					unavailable: guild.unavailable,
-					ownerId: guild.owner.id,
-					maxMembers: guild.maxMembers,
-					id: guild.id,
-					icon: guild.icon,
-					flags: guild.flags,
-					features: guild.features,
-					description: guild.description,
-					coOwners: guild.coOwners.map((coOwner) => coOwner.id),
-					channelProperties: guild.channelProperties,
-					memberCount: guild.memberCount,
+			for (const hub of data.hubs) {
+				useHubStore.getState().addHub({
+					name: hub.name,
+					unavailable: hub.unavailable,
+					ownerId: hub.owner.id,
+					maxMembers: hub.maxMembers,
+					id: hub.id,
+					icon: hub.icon,
+					flags: hub.flags,
+					features: hub.features,
+					description: hub.description,
+					coOwners: hub.coOwners.map((coOwner) => coOwner.id),
+					channelProperties: hub.channelProperties,
+					memberCount: hub.memberCount,
 				});
 
-				for (const channel of guild.channels) {
+				for (const channel of hub.channels) {
 					useChannelStore.getState().addChannel({
 						...channel,
-						guildId: guild.id,
+						hubId: hub.id,
 					});
 				}
 
-				for (const member of guild.members) {
+				for (const member of hub.members) {
 					useMemberStore.getState().addMember({
 						...member,
-						guildId: guild.id,
+						hubId: hub.id,
 						joinedAt: new Date(member.joinedAt),
 						userId: member.user.id,
 						nickname: member.nickname || null,
@@ -155,10 +155,10 @@ const handleMessage = async (ws: Websocket, data: unknown) => {
 					});
 				}
 
-				for (const role of guild.roles) {
+				for (const role of hub.roles) {
 					useRoleStore.getState().addRole({
 						...role,
-						guildId: guild.id,
+						hubId: hub.id,
 						hoisted: role.hoist,
 					});
 				}
@@ -167,7 +167,7 @@ const handleMessage = async (ws: Websocket, data: unknown) => {
 			// useSettingsStore.setState((state) => {
 			useSettingsStore.getState().setEmojiPack(data.settings.emojiPack as EmojiPack);
 			useSettingsStore.getState().setLanguage(data.settings.language);
-			useSettingsStore.getState().setGuildOrder(data.settings.guildOrder);
+			useSettingsStore.getState().setHubOrder(data.settings.hubOrder);
 			useSettingsStore.getState().setPrivacy(data.settings.privacy);
 			useSettingsStore.getState().setTheme(data.settings.theme as Theme);
 			useSettingsStore.getState().setNavBarLocation(data.settings.navBarLocation as NavBarLocation);

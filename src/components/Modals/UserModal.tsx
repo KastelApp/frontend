@@ -1,164 +1,139 @@
 import AllBadges from "@/badges/AllBadges.tsx";
 import {
-	Modal,
-	ModalContent,
-	ModalBody,
 	Button,
 	Badge,
 	Avatar,
 	Divider,
-	Card,
-	CardBody,
-	useDisclosure,
+	Tabs,
+	Tab,
+	Spinner,
 } from "@nextui-org/react";
-import { EllipsisVertical } from "lucide-react";
-import BaseContextMenu from "../Dropdowns/BaseContextMenu.tsx";
+import { Ellipsis, Send } from "lucide-react";
 import { User, useUserStore } from "@/wrapper/Stores/UserStore.ts";
+import { Member } from "@/wrapper/Stores/Members.ts";
+import UserTag from "@/components/UserTag.tsx";
+import { useTranslationStore } from "@/wrapper/Stores.tsx";
+import MessageMarkDown from "@/components/Message/Markdown/MarkDown.tsx";
+import cn from "@/utils/cn.ts";
+import { useEffect, useState } from "react";
+import { useRelationshipsStore } from "@/wrapper/Stores/RelationshipsStore.ts";
 
-const UserModal = ({ isOpen, onClose, user }: { isOpen: boolean; onClose: () => void; user: User }) => {
-	const userId = useUserStore((s) => s.getCurrentUser()?.id);
+const UserModal = ({ user, member }: { user: User; member?: Member; }) => {
+	const hasBanner = true;
 
-	if (!user) return null;
+	const { t } = useTranslationStore();
+	const getAvatarUrl = useUserStore((s) => s.getAvatarUrl);
+	const getDefaultAvatar = useUserStore((s) => s.getDefaultAvatar);
+	const fetchProfile = useUserStore((s) => s.fetchProfile);
+	const relationships = useRelationshipsStore((s) => s.getFriendRelationships());
+	const [loading, setLoading] = useState(!user.metaData.bioless);
+	const foundFriend = relationships.find((r) => r.userId === user.id);
 
-	return (
-		<>
-			<Modal
-				size={"2xl"}
-				isOpen={isOpen}
-				onClose={onClose}
-				hideCloseButton
-				placement="top-center"
-				className="z-50 w-[100vw]"
-			>
-				<ModalContent>
-					<ModalBody>
-						<div className="w-full min-w-full rounded-lg p-0">
-							<div>
-								<div className="flex items-end justify-between p-2">
-									<div className="flex items-end justify-between">
-										<Badge
-											content={""}
-											placement="bottom-right"
-											className="mb-2 mr-2 h-6 w-6"
-											// color={
-											// 	member.status === "online"
-											// 		? "success"
-											// 		: member.status === "idle"
-											// 			? "warning"
-											// 			: member.status === "dnd"
-											// 				? "danger"
-											// 				: "default"
-											// }
-											color="success"
-										>
-											<Avatar
-												src={
-													useUserStore.getState().getAvatarUrl(user.id, user.avatar) ??
-													useUserStore.getState().getDefaultAvatar(user.id)
-												}
-												alt="User Avatar"
-												className="mt-4 h-24 w-24"
-												imgProps={{
-													className: "transition-none",
-												}}
-											/>
-										</Badge>
-										<div>
-											<AllBadges privateFlags={user.flags} publicFlags={user.publicFlags} size={20} />
-										</div>
-									</div>
-									{userId !== user.id && (
-										<div className="flex items-start justify-start">
-											<Button
-												color="success"
-												className="max-h-8 min-h-8 min-w-36 max-w-36 rounded-md text-charcoal-600"
-												radius="none"
-											>
-												Send Friend Request
-											</Button>
-											<BaseContextMenu
-												inverse
-												values={[
-													{
-														label: "Block",
-														props: {
-															color: "danger",
-															variant: "flat",
-															className: "text-danger",
-														},
-													},
-												]}
-												placement="right"
-											>
-												<EllipsisVertical size={24} className="mt-1 cursor-pointer" />
-											</BaseContextMenu>
-										</div>
-									)}
-								</div>
-								<Divider className="mb-4 mt-2" />
-								<div>
-									<Card className="mb-2 mt-2" isBlurred>
-										<CardBody className="max-h-[85vh] overflow-y-auto">
-											<div>
-												<p className="text-xl font-semibold text-white">{user.username}</p>
-												<p className="text-sm text-gray-300">
-													{user.username}#{user.tag}
-												</p>
-												{/* {member.customStatus && <p className="text-gray-200 text-md mt-2">{member.customStatus}</p>} */}
-											</div>
-											{user.bio && (
-												<>
-													<Divider className="mt-2" />
-													<div className="mt-2">
-														<span className="font-bold text-white">About Me</span>
-														<p className="overflow-hidden whitespace-pre-line break-words text-gray-300">{user.bio}</p>
-													</div>
-												</>
-											)}
-										</CardBody>
-									</Card>
-								</div>
-							</div>
-						</div>
-					</ModalBody>
-				</ModalContent>
-			</Modal>
-		</>
-	);
-};
+	useEffect(() => {
+		if (loading) {
+			fetchProfile(user.id).then(() => {
+				setTimeout(() => {
+					setLoading(false);
+				}, 75);
+			});
+		}
+	}, []);
 
-const ControlledUserModal = ({
-	children,
-	onClick,
-	className,
-	user,
-}: {
-	children: React.ReactNode;
-	onClick?: () => void;
-	className?: string;
-	user: User;
-}) => {
-	const { isOpen, onOpen, onClose } = useDisclosure();
+	if (loading) {
+		return <Spinner />;
+	}
+
 
 	return (
-		<>
-			<div
-				onClick={() => {
-					onOpen();
+		<div className="z-[200]">
+			{hasBanner && (
+				<div>
+					<div
+						className="relative h-36 bg-cover bg-center min-w-72 rounded-t-lg"
+						style={{ backgroundImage: "url(https://placehold.co/2048x2048)" }}
+					/>
 
-					if (onClick) {
-						onClick();
-					}
-				}}
-				className={className}
-			>
-				{children}
+					<Ellipsis className="absolute top-1 right-1 cursor-pointer bg-darkAccent/50 rounded-lg p-1" />
+				</div>
+			)}
+
+			<div className="relative flex p-2 z-50 items-center ">
+				<Badge
+					content={""}
+					placement="bottom-right"
+					color="success"
+					className=" mb-3 mr-1 mm-hw-5"
+				>
+					<Avatar
+						src={getAvatarUrl(user.id, user.avatar) ?? getDefaultAvatar(user.id)}
+						alt="User Avatar"
+						className={cn("inset-0 mm-hw-20 border-3 border-transparent rounded-full", hasBanner ? "-mt-10 " : "mb-0")}
+						imgProps={{ className: "transition-none" }}
+					/>
+				</Badge>
+				<div className="rounded-md">
+					<AllBadges privateFlags={user.flags} publicFlags={user.publicFlags} size={18} />
+				</div>
+
+				{!user.isClient && (
+					<div className="ml-auto flex items-center justify-center">
+						{!foundFriend && (
+							<Button size="sm" variant="flat" color="success">
+								Send Friend Request
+							</Button>
+						)}
+						<Button size="sm" variant="flat" color="primary" className="min-w-8 ml-1 px-2 flex items-center justify-center">
+							<Send size={16} className="text-primary" />
+							{foundFriend && "Send a message"}
+						</Button>
+					</div>
+				)}
 			</div>
-			<UserModal isOpen={isOpen} onClose={onClose} user={user} />
-		</>
+
+			<div className="max-h-[85vh] overflow-y-auto p-3">
+				<div>
+					<span className="text-lg font-semibold text-white flex items-center">
+						{member?.nickname ?? user.globalNickname ?? user.username}
+						{(user.isBot || user.isSystem) && (
+							<UserTag>
+								{user.isBot ? t("tags.bot") : t("tags.system")}
+							</UserTag>
+						)}
+					</span>
+					<p className="text-sm text-gray-300">
+						{user.username}#{user.tag}
+					</p>
+				</div>
+			</div>
+
+			<Divider className="mt-2" />
+			<Tabs size="sm" classNames={{
+				tab: "px-1 bg-background",
+				tabList: "bg-background",
+				cursor: "dark:bg-charcoal-500",
+				panel: "ml-3 mr-3 rounded-md mb-3 bg-background mt-1"
+			}} radius="sm" className="items-center justify-center align-middle flex mt-2">
+				<Tab title="Profile" className="overflow-hidden whitespace-pre-wrap break-words text-white text-sm">
+					<MessageMarkDown disabledRules={["heading"]}>
+						{user.bio ?? "No bio set."}
+					</MessageMarkDown>
+				</Tab>
+				{!user.isClient && (
+					<Tab title={`Mutual Friends ${user.mutualFriends && user.mutualFriends?.length > 0 && `(${user.mutualFriends})`}`} isDisabled>
+						{JSON.stringify(user.mutualFriends)}
+					</Tab>
+				)}
+				{!user.isClient && (
+					<Tab title={`Mutual Hubs ${user.mutualHubs && user.mutualHubs.length > 0 && `(${user.mutualHubs})`}`} isDisabled>
+						{JSON.stringify(user.mutualHubs)}
+					</Tab>
+				)}
+				<Tab title="Connections" isDisabled>
+					hi4
+				</Tab>
+			</Tabs>
+		</div>
 	);
 };
 
 export default UserModal;
-
-export { ControlledUserModal };

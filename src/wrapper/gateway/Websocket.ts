@@ -3,8 +3,19 @@ import handleMessage from "./handleMessage.ts";
 import { opCodes } from "@/utils/Constants.ts";
 import pako from "pako";
 import { encoding } from "@/types/ws.ts";
+import EventEmitter from "@/wrapper/EventEmitter.ts";
 
-class Websocket {
+interface Websocket {
+	on(event: "ready", listener: () => void): this;
+	on(event: "open", listener: () => void): this;
+	on(event: "close", listener: (code: number, reason: string) => void): this;
+
+	emit(event: "ready"): boolean;
+	emit(event: "open"): boolean;
+	emit(event: "close", code: number, reason: string): boolean;
+}
+
+class Websocket extends EventEmitter {
 	#token: string | null;
 
 	public GATEWAY_URL = process.env.API_WS_URL || "ws://localhost:62240";
@@ -31,6 +42,8 @@ class Websocket {
 	#listeners = new Map<string, ((...args: unknown[]) => void)[]>();
 
 	public constructor(token: string) {
+		super();
+
 		this.#token = token;
 
 		this.sessionWorker.onmessage = (event) => {
@@ -56,26 +69,6 @@ class Websocket {
 				});
 			}
 		};
-	}
-
-	public on(event: string, listener: () => void) {
-		const current = this.#listeners.get(event) || [];
-
-		current.push(listener);
-
-		this.#listeners.set(event, current);
-	}
-
-	public off(event: string) {
-		this.#listeners.delete(event);
-	}
-
-	public emit(event: string, ...args: unknown[]) {
-		const listeners = this.#listeners.get(event);
-
-		if (!listeners) return;
-
-		listeners.forEach((listener) => listener(...args));
 	}
 
 	public get token() {
@@ -129,11 +122,23 @@ class Websocket {
 
 			this.reconnect();
 
-			this.emit("close");
+			this.emit("close", close.code, close.reason);
 		};
 	}
 
+	private willReconnect = true;
+
+	public stopReconnect() {
+		this.willReconnect = false;
+	}
+
 	public async reconnect() {
+		if (!this.willReconnect) {
+			Logger.warn("Reconnect was stopped", "Wrapper | WebSocket");
+
+			return;
+		}
+
 		if (this.ws) {
 			this.ws.close();
 
@@ -146,6 +151,12 @@ class Websocket {
 
 		// ? The timeout is in-case we get into an infinite loop of reconnecting, we don't want to flood tons of requests
 		await new Promise((resolve) => setTimeout(resolve, 1500));
+
+		if (!this.willReconnect) {
+			Logger.warn("Reconnect was stopped", "Wrapper | WebSocket");
+
+			return;
+		}
 
 		this.connect();
 	}

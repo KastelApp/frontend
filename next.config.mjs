@@ -1,6 +1,4 @@
-// import MillionLint from "@million/lint";
 import gitInfo from "./src/gitinfo.mjs";
-import { next } from "@million/lint";
 
 const fetchedData = gitInfo();
 
@@ -10,16 +8,6 @@ const sha = (process.env.CF_PAGES_COMMIT_SHA ?? fetchedData.gitCommitHash).slice
 const nextConfig = {
 	reactStrictMode: false,
 	productionBrowserSourceMaps: true, // ? NOTE: this is temporary. At a later point in time this will be staff only (i.e the source maps being available)
-	rewrites: async () => {
-		// ? We are fine with users going to /app/guilds/*
-		// ? but if they access just /app/guilds we want to redirect them to /app
-		return [
-			{
-				source: "/app/guilds",
-				destination: "/app",
-			},
-		];
-	},
 	redirects: async () => {
 		// ? There's a few spots we want to redirect, depending on the environment
 		// ? For example, if we are in production we want to redirect /playground to /404 since its a dev only route
@@ -55,23 +43,7 @@ const nextConfig = {
 	},
 	typescript: {
 		ignoreBuildErrors: true,
-	},
-	images: {
-		remotePatterns: [
-			{
-				protocol: "https",
-				hostname: "opengraph.githubassets.com",
-				port: "",
-				pathname: "/**",
-			},
-		],
-	},
+	}
 };
 
-// ? Million lint disabled for now due to internal issues with nextui, tho I have a arg you can provide to enable it again (since it only affects the dropdown)
-// export default next({ rsc: true, optimizeDOM: true, telemetry: false })(nextConfig);
-// export default nextConfig;
-
-export default process.env.MILLION === "true"
-	? next({ rsc: true, optimizeDOM: true, telemetry: false })(nextConfig)
-	: nextConfig;
+export default nextConfig

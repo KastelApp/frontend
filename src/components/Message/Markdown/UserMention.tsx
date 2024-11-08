@@ -11,12 +11,12 @@ import { defaultRules } from "simple-markdown";
 const UserMention = ({ userId }: { userId: string; }) => {
 	const foundUser = useUserStore((state) => state.getUser(userId));
 	const router = useRouter();
-	const [guildId] = arrayify(router.query?.slug);
-	const foundMember = useMemberStore((state) => (guildId ? state.getMember(guildId, userId) : null));
+	const [hubId] = arrayify(router.query?.slug);
+	const foundMember = useMemberStore((state) => (hubId ? state.getMember(hubId, userId) : null));
 	const name = foundUser
 		? `@${foundMember?.nickname ?? foundUser.globalNickname ?? foundUser.username}`
 		: `<@${userId}>`;
-	const roles = useRoleStore((state) => (guildId ? state.getRoles(guildId) : null)) ?? [];
+	const roles = useRoleStore((state) => (hubId ? state.getRoles(hubId) : null)) ?? [];
 	const topRole = foundMember?.roles
 		.map((roleId) => roles.find((role) => role.id === roleId))
 		.filter((role) => role !== undefined && role.color !== 0)
@@ -56,7 +56,7 @@ const UserMention = ({ userId }: { userId: string; }) => {
 
 export const userMention = {
 	order: defaultRules.paragraph.order,
-	match: (source: string) => /^<@(\d+)>/.exec(source),
+	match: (source: string) => /^<@!?(\d+)>/.exec(source),
 	parse: ([, id]: [unknown, string]) => ({ id }),
 	react: ({ id }: { id: string; }, _: unknown, state: { key: string; }) => <UserMention userId={id} key={state.key} />,
 };

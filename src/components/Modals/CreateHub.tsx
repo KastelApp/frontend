@@ -3,12 +3,12 @@ import { useEffect, useState } from "react";
 import { ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
 
-const JoinGuild = ({ setSection }: { setSection: (section: "join" | "create" | "home") => void }) => {
+const JoinHub = ({ setSection }: { setSection: (section: "join" | "create" | "home") => void }) => {
 	return (
 		<>
 			<ModalHeader className="flex flex-col gap-1 text-center">
-				<h1>Join a Guild</h1>
-				<p className="text-sm text-gray-500">Enter an invite link to join a guild</p>
+				<h1>Join a Hub</h1>
+				<p className="text-sm text-gray-500">Enter an invite link to join a hub</p>
 			</ModalHeader>
 			<ModalBody>
 				<Input autoFocus label="Invite Link" placeholder="https://kastelapp.com/invite/f5HgvkRbVP" variant="bordered" />
@@ -37,12 +37,12 @@ const JoinGuild = ({ setSection }: { setSection: (section: "join" | "create" | "
 	);
 };
 
-const HomeGuild = ({ setSection }: { setSection: (section: "join" | "create" | "home") => void }) => {
+const HomeHub = ({ setSection }: { setSection: (section: "join" | "create" | "home") => void }) => {
 	return (
 		<>
 			<ModalHeader className="flex flex-col gap-1 text-center">
-				<h1>Join or Create a Guild</h1>
-				<p className="text-sm text-gray-500">A guild is where you can chat with friends and play games together</p>
+				<h1>Join or Create a Hub</h1>
+				<p className="text-sm text-gray-500">A hub is where you can chat with friends and play games together</p>
 			</ModalHeader>
 			<ModalBody>
 				<div className="mb-4 grid grid-cols-1 justify-start gap-2">
@@ -55,7 +55,7 @@ const HomeGuild = ({ setSection }: { setSection: (section: "join" | "create" | "
 						}}
 						className="mb-4 flex items-center justify-between"
 					>
-						<span className="text-lg">Create Guild</span>
+						<span className="text-lg">Create Hub</span>
 						<ArrowRight />
 					</Button>
 					<Button
@@ -67,7 +67,7 @@ const HomeGuild = ({ setSection }: { setSection: (section: "join" | "create" | "
 						}}
 						className="flex items-center justify-between"
 					>
-						<span className="text-lg">Join Guild</span>
+						<span className="text-lg">Join Hub</span>
 						<ArrowRight />
 					</Button>
 				</div>
@@ -76,12 +76,12 @@ const HomeGuild = ({ setSection }: { setSection: (section: "join" | "create" | "
 	);
 };
 
-const CreateGuild = ({ setSection }: { setSection: (section: "join" | "create" | "home") => void }) => {
+const CreateHub = ({ setSection }: { setSection: (section: "join" | "create" | "home") => void }) => {
 	return (
 		<>
 			<ModalHeader className="flex flex-col gap-1 text-center">
-				<h1>Create a Guild</h1>
-				<p className="text-sm text-gray-500">Create a guild to chat with friends and play games together</p>
+				<h1>Create a Hub</h1>
+				<p className="text-sm text-gray-500">Create a hub to chat with friends and play games together</p>
 			</ModalHeader>
 			<ModalBody>
 				<div className="mb-2 flex justify-center">
@@ -91,11 +91,11 @@ const CreateGuild = ({ setSection }: { setSection: (section: "join" | "create" |
 								<Avatar src="/icon-1.png" size="lg" />
 							</Badge>
 						</div>
-						<p className="mt-2 text-sm text-gray-500">Upload a guild icon</p>
+						<p className="mt-2 text-sm text-gray-500">Upload a hub icon</p>
 					</div>
 				</div>
-				<Input autoFocus label="Guild Name" placeholder="My Awesome Guild" variant="bordered" />
-				<Input label="Guild Description" placeholder="A place to chat and play games" variant="bordered" />
+				<Input autoFocus label="Hub Name" placeholder="My Awesome Hub" variant="bordered" />
+				<Input label="Hub Description" placeholder="A place to chat and play games" variant="bordered" />
 				<div className="mt-2 flex justify-between">
 					<Button
 						color="danger"
@@ -114,7 +114,7 @@ const CreateGuild = ({ setSection }: { setSection: (section: "join" | "create" |
 		</>
 	);
 };
-const GuildModal = ({ isOpen, onOpenChange }: { isOpen: boolean; onOpenChange: () => void; onClose: () => void }) => {
+const HubModal = ({ isOpen, onOpenChange }: { isOpen: boolean; onOpenChange: () => void; onClose: () => void }) => {
 	const [section, setSection] = useState<"join" | "create" | "home">("home");
 
 	const [animationDirection, setAnimationDirection] = useState<"left" | "right">("left");
@@ -153,11 +153,11 @@ const GuildModal = ({ isOpen, onOpenChange }: { isOpen: boolean; onOpenChange: (
 					transition={{ duration: 0.4 }}
 				>
 					{section === "home" ? (
-						<HomeGuild setSection={setSection} />
+						<HomeHub setSection={setSection} />
 					) : section === "join" ? (
-						<JoinGuild setSection={setSection} />
+						<JoinHub setSection={setSection} />
 					) : (
-						<CreateGuild setSection={setSection} />
+						<CreateHub setSection={setSection} />
 					)}
 				</motion.div>
 			</ModalContent>
@@ -165,4 +165,4 @@ const GuildModal = ({ isOpen, onOpenChange }: { isOpen: boolean; onOpenChange: (
 	);
 };
 
-export default GuildModal;
+export default HubModal;

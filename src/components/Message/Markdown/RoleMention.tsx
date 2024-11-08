@@ -7,17 +7,17 @@ import { defaultRules } from "simple-markdown";
 
 const RoleMention = ({ roleId }: { roleId: string }) => {
     const router = useRouter();
-	const [guildId] = arrayify(router.query?.slug);
+	const [hubId] = arrayify(router.query?.slug);
 
     const foundRole = useRoleStore((state) => {
-        const role = state.getRole(["@everyone", "@here"].includes(roleId) ? guildId : roleId);
+        const role = state.getRole(["@everyone", "@here"].includes(roleId) ? hubId : roleId);
 
-        if (!role || role.guildId !== guildId) return null;
+        if (!role || role.hubId !== hubId) return null;
 
         return role;
     });
 
-    const name = foundRole?.name ? `@${foundRole.name}` : `<@&${roleId}>`;
+    const name = roleId === "@here" ? "@here" : foundRole?.name ? `@${foundRole.name}` : `<@&${roleId}>`;
     const color = foundRole?.color ? foundRole.color === 0 ? "CFDBFF" : foundRole.color.toString(16) : "CFDBFF"
 
     return (
@@ -37,7 +37,7 @@ const RoleMention = ({ roleId }: { roleId: string }) => {
 
 export const roleMention = {
 	order: defaultRules.paragraph.order,
-    match: (source: string) => /^<@&(\d+)>|^@(everyone|here)$/.exec(source),
+    match: (source: string) => /^<@&(\d+)>|^@(everyone|here)/.exec(source),
 	parse: ([enh, id]: [unknown, string]) => ({ id: id ?? enh }),
 	react: ({ id }: { id: string }, _: unknown, state: { key: string }) => (
 		<RoleMention roleId={id} key={state.key} />

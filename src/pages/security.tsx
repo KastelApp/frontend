@@ -25,7 +25,7 @@ const SecurityPage = () => {
                                 <li>All vulnerabilities must be reported within 24 hours of discovery</li>
                                 <li>Do not attempt to exploit vulnerabilities beyond proof of concept</li>
                                 <li>Respect the privacy of our users and do not access or modify user data</li>
-                                <li>Please keep testing limited to accounts and guilds you own or have permission to test on</li>
+                                <li>Please keep testing limited to accounts and hubs you own or have permission to test on</li>
                             </ul>
                         </section>
 

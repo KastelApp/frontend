@@ -12,6 +12,7 @@ import {
 } from "@nextui-org/react";
 import { useIsReady, useTokenStore, useTranslationStore } from "@/wrapper/Stores.tsx";
 import NextLink from "next/link";
+import { Routes } from "@/utils/Routes.ts";
 
 const TopHeader = () => {
 	const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -83,19 +84,19 @@ const TopHeader = () => {
 				{!token ? (
 					<>
 						<NavbarItem>
-							<Link href="/login" as={NextLink}>
+							<Link href={Routes.login()} as={NextLink}>
 								{t("home.navbar.login")}
 							</Link>
 						</NavbarItem>
 						<NavbarItem className="hidden lg:flex">
-							<Button as={NextLink} color="primary" href="/register" variant="flat">
+							<Button as={NextLink} color="primary" href={Routes.register()} variant="flat">
 								{t("home.navbar.signup")}
 							</Button>
 						</NavbarItem>
 					</>
 				) : (
 					<NavbarItem>
-						<Button as={NextLink} color="primary" href="/app" variant="flat" onClick={() => {
+						<Button as={NextLink} color="primary" href={Routes.app()} variant="flat" onClick={() => {
 							setIsReady(false);
 						}}>
 							{t("home.navbar.app")}

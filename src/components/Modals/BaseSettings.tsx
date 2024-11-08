@@ -48,7 +48,7 @@ const Section = ({
 };
 
 /**
- * This is a helper made to make creating setting modals easier, only two spots using this right now are user and guild settings
+ * This is a helper made to make creating setting modals easier, only two spots using this right now are user and hub settings
  */
 const BaseSettings = ({
 	isOpen,
