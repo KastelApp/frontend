@@ -23,8 +23,11 @@ import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuTrigger } 
 import { Copy, Pen, Pin, Reply, Trash2 } from "lucide-react";
 import { Divider } from "@nextui-org/react";
 import { Routes } from "@/utils/Routes.ts";
+import { ReactEditor } from "slate-react";
+import { useEditorStore } from "@/wrapper/Stores.tsx";
 
 const skelliedMessages = Array.from({ length: 30 }, (_, i) => <SkellyMessage key={i} />);
+
 
 /**
  * This is for TextBased Channel's, i.e DM's, Hub Text Channels, etc.
@@ -51,6 +54,7 @@ const TextBasedChannel = () => {
     const createMessage = useMessageStore((state) => state.createMessage);
     const getPerChannel = usePerChannelStore((state) => state.getChannel);
     const updatePerChannel = usePerChannelStore((state) => state.updateChannel);
+    const editor = useEditorStore((state) => state.editor)
 
     useEffect(() => {
         const memberSubscription = useMemberStore.subscribe(() => setSignal((prev) => prev + 1));
@@ -60,6 +64,14 @@ const TextBasedChannel = () => {
         const hubSubscription = useHubStore.subscribe(() => setSignal((prev) => prev + 1));
         const inviteSubscription = useInviteStore.subscribe(() => setSignal((prev) => prev + 1));
 
+        const onGlobalType = () => {
+            if (!editor) return;
+
+            ReactEditor.focus(editor!);
+        }
+
+        window.addEventListener("keydown", onGlobalType);
+
         return () => {
             memberSubscription();
             roleSubscription();
@@ -67,6 +79,7 @@ const TextBasedChannel = () => {
             userSubscription();
             inviteSubscription();
             hubSubscription();
+            window.removeEventListener("keydown", onGlobalType);
         };
     }, []);
 

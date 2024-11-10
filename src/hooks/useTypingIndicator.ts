@@ -63,8 +63,6 @@ const useTypingIndicator = ({
 	}, [lastSentTyping, typingEventInterval]);
 
 	const sendUserIsTyping = useCallback((content: string) => {
-		console.log(content.length, content);
-
 		if (content.length === 0) {
 			setIsTyping(false);
 			setLastTyped(0);

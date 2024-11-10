@@ -105,7 +105,7 @@ export interface ScrollableProps<T extends BaseType> {
     /**
      * The ref of the div that contains the items, This is so we can handle scrolling stuff
      */
-    ref: React.RefObject<HTMLDivElement>;
+    ref: React.RefObject<HTMLDivElement | null>;
 }
 
 /**
