@@ -16,7 +16,7 @@ interface ExperimentProps {
  */
 const ExperimentItem: React.FC<ExperimentItemProps> = ({ children }) => {
 	// ! While we don't use experiment, priority or isDefault, they are required since we use it in the root Experiment component
-	return <>{children}</>;
+	return children;
 };
 
 // ? Just so we can locate the component in the tree

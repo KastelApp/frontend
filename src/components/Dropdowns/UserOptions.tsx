@@ -294,7 +294,7 @@ const UserOptions = ({
 									size="sm"
 									color="success"
 								>
-									{t("statusTypes.offline")}
+									{t("statusTypes.online")}
 								</Chip>
 								<Chip
 									onClick={() => handleStatus("Idle")}

@@ -56,6 +56,12 @@ const TextBasedChannel = () => {
     const updatePerChannel = usePerChannelStore((state) => state.updateChannel);
     const editor = useEditorStore((state) => state.editor)
 
+    const focusEditor = useCallback(() => {
+        if (!editor) return;
+
+        ReactEditor.focus(editor);
+    }, [editor]);
+
     useEffect(() => {
         const memberSubscription = useMemberStore.subscribe(() => setSignal((prev) => prev + 1));
         const userSubscription = useUserStore.subscribe(() => setSignal((prev) => prev + 1));
@@ -64,13 +70,6 @@ const TextBasedChannel = () => {
         const hubSubscription = useHubStore.subscribe(() => setSignal((prev) => prev + 1));
         const inviteSubscription = useInviteStore.subscribe(() => setSignal((prev) => prev + 1));
 
-        const onGlobalType = () => {
-            if (!editor) return;
-
-            ReactEditor.focus(editor!);
-        }
-
-        window.addEventListener("keydown", onGlobalType);
 
         return () => {
             memberSubscription();
@@ -79,9 +78,16 @@ const TextBasedChannel = () => {
             userSubscription();
             inviteSubscription();
             hubSubscription();
-            window.removeEventListener("keydown", onGlobalType);
         };
     }, []);
+
+    useEffect(() => {
+        window.addEventListener("keydown", focusEditor);
+
+        return () => {
+            window.removeEventListener("keydown", focusEditor);
+        };
+    }, [focusEditor])
 
     const [fetching, setFetching] = useState(false);
     const [cooldown, setCooldown] = useState(false);
