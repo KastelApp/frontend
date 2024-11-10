@@ -204,7 +204,7 @@ const Login = () => {
 									/>
 								</div>
 								<div className="mt-8">
-									<Button onClick={login} size="md" color="primary" variant="flat" className="w-full" tabIndex={3}>
+									<Button onPress={login} size="md" color="primary" variant="flat" className="w-full" tabIndex={3}>
 										{loading ? <LoaderCircle className="custom-animate-spin text-white" /> : t("login.button")}
 									</Button>
 								</div>
@@ -218,7 +218,7 @@ const Login = () => {
 										color="primary"
 										className="bg-transparent text-sm transition-opacity hover:bg-transparent hover:opacity-80"
 										tabIndex={5}
-										onClick={async () => {
+										onPress={async () => {
 											if (loading) return;
 
 											if (!email || !email.includes("@") || !email.includes(".")) {
@@ -249,7 +249,7 @@ const Login = () => {
 															<p className="text-lg">{t("error.internalServerError")}</p>
 
 															<Button
-																onClick={() => {
+																onPress={() => {
 																	modalStore.getState().closeModal("super-rare-error-[forgot]");
 																}}
 																className="mb-4 mt-4"
@@ -275,7 +275,7 @@ const Login = () => {
 														<p className="text-lg">{t("login.forgot.modal.message")}</p>
 
 														<Button
-															onClick={() => {
+															onPress={() => {
 																modalStore.getState().closeModal("forgot-success");
 															}}
 															className="mb-4 mt-4"

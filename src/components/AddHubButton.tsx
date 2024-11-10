@@ -11,7 +11,7 @@ const AddHubButton = memo(({ orientation = "vertical" }: { orientation?: "vertic
 		<>
 			<HubModal isOpen={isOpen} onOpenChange={onOpenChange} onClose={onClose} />
 			<NavBarIcon
-				onClick={() => {
+				onPress={() => {
 					onOpenChange();
 				}}
 				icon={<Plus className="mt-1.5" color="#acaebf" absoluteStrokeWidth />}

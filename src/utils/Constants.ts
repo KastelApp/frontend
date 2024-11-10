@@ -13,6 +13,9 @@ const settings = {
 
 	maxChannelNameLength: 100,
 	maxRoleNameLength: 100,
+
+	maxBioLength: 1024,
+	maxShortBioLength: 256
 };
 
 export enum HubFeatures {

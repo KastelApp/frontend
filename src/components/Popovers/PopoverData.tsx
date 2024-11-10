@@ -71,7 +71,7 @@ const PopOverData = ({
 							user: user,
 							member: member ?? null,
 						}}
-						onClick={() => {
+						onPress={() => {
 							modalStore.getState().createModal({
 								id: `user-modal-${user.id}`,
 								body: <UserModal user={user} />,

@@ -19,6 +19,7 @@ export interface User {
 	mfaEnabled: boolean;
 	mfaVerified: boolean;
 	bio: string | null;
+	shortBio: string | null;
 	isClient: boolean;
 	isSystem: boolean;
 	isGhost: boolean;
@@ -48,6 +49,7 @@ export interface UpdateUser {
 	tag?: string;
 	password?: string;
 	newPassword?: string;
+	shortBio?: string | null;
 }
 
 interface ImageOptions {
@@ -100,6 +102,7 @@ export const useUserStore = create<UserStore>((set, get) => ({
 					...{
 						avatar: null,
 						bio: null,
+						shortBio: null,
 						email: null,
 						emailVerified: false,
 						flags: "0",
@@ -119,6 +122,8 @@ export const useUserStore = create<UserStore>((set, get) => ({
 						metaData: {
 							bioless: false,
 						},
+						mutualFriends: [],
+						mutualHubs: []
 					},
 					...foundUser,
 					...user,
@@ -326,6 +331,7 @@ export const useUserStore = create<UserStore>((set, get) => ({
 			{
 				// TODO: Add connections (Discord, Twitter (X), Github, Steam, Spotify (Not sure if we can do this one), Reddit, Youtube, Twitch)
 				bio: string | null;
+				shortBio: string | null;
 				connections: unknown[];
 				mutualFriends: string[];
 				mutualHubs: string[];
@@ -337,6 +343,7 @@ export const useUserStore = create<UserStore>((set, get) => ({
 		if (profile.ok && profile.status === 200) {
 			get().updateUser({
 				bio: profile.body.bio,
+				shortBio: profile.body.shortBio,
 				id: userId,
 				metaData: {
 					bioless: typeof profile.body.bio !== "string",

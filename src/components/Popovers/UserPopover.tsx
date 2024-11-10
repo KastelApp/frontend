@@ -1,5 +1,6 @@
 import AllBadges from "@/badges/AllBadges.tsx";
 import ContextMenuHandler from "@/components/ContextMenuHandler.tsx";
+import MessageMarkDown from "@/components/Message/Markdown/MarkDown.tsx";
 import UserTag from "@/components/UserTag.tsx";
 import { useTranslationStore } from "@/wrapper/Stores.tsx";
 import { Member } from "@/wrapper/Stores/Members.ts";
@@ -11,13 +12,13 @@ import { useEffect, useState } from "react";
 
 const UserPopover = ({
 	member,
-	onClick,
+	onPress,
 }: {
 	member: {
 		member: (Omit<Member, "roles"> & { roles: Role[]; }) | null;
 		user: User;
 	};
-	onClick?: () => void;
+	onPress?: () => void;
 }) => {
 	const hasBanner = true;
 
@@ -58,7 +59,7 @@ const UserPopover = ({
 				>
 					<div
 						className="group relative cursor-pointer transition-opacity duration-300 ease-in-out -mt-10"
-						onClick={onClick}
+						onClick={onPress}
 					>
 						<Avatar
 							src={getAvatarUrl(member.user.id, member.user.avatar) ?? getDefaultAvatar(member.user.id)}
@@ -92,13 +93,15 @@ const UserPopover = ({
 							{member.user.username}#{member.user.tag}
 						</p>
 					</div>
-					{(member.user.bio || (member.member && member.member.roles.length > 1)) && <Divider className="mt-2" />}
-					{member.user.bio && (
-						<div className="mt-2">
+					{(member.user.shortBio || (member.member && member.member.roles.length > 1)) && <Divider className="mt-2" />}
+					{member.user.shortBio && (
+						<div className="mt-2 flex flex-col">
 							<span className="font-bold text-white">About Me</span>
-							<p className="mt-2 overflow-hidden whitespace-pre-line break-words text-gray-300">
-								{member.user.bio}
-							</p>
+							<span className="mt-2 overflow-hidden whitespace-pre-line break-words text-gray-300">
+								<MessageMarkDown disabledRules={["code", "heading", "list"]}>
+									{member.user.shortBio}
+								</MessageMarkDown>
+							</span>
 						</div>
 					)}
 					{member.member && member.member.roles.length > 1 && (
@@ -112,10 +115,10 @@ const UserPopover = ({
 									return (
 										<ContextMenuHandler identifier="role" key={role.id} items={[{
 											label: <p className="text-danger">Remove role</p>,
-											onClick: () => console.log("Remove Role"),
+											onPress: () => console.log("Remove Role"),
 										}, {
 											label: "Copy Role ID",
-											onClick: () => {
+											onPress: () => {
 												navigator.clipboard.writeText(role.id);
 											}
 										}]}>

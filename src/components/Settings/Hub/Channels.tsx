@@ -91,7 +91,7 @@ const HubChannels = ({
                         radius="sm"
                         startContent={<Search size={20} />}
                     />
-                    <Button className="ml-2" variant="flat" onClick={() => setIsEditing(!isEditing)}>
+                    <Button className="ml-2" variant="flat" onPress={() => setIsEditing(!isEditing)}>
                         {isEditing ? "Edit Mode" : "Normal Mode"}
                     </Button>
 

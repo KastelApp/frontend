@@ -17,7 +17,7 @@ export interface ContextMenuProps {
 	label: React.ReactNode;
 	subValues?: Omit<ContextMenuProps, "subValues">[];
 	divider?: boolean;
-	onClick?: (e: Event) => void;
+	onPress?: (e: Event) => void;
 	checkBox?: boolean;
 	checked?: boolean;
 	preventCloseOnClick?: boolean;
@@ -29,24 +29,24 @@ const ContextItemHandler = ({
 	isCheckBox,
 	isChecked,
 	className,
-	onClick,
+	onPress,
 }: {
 	isCheckBox?: boolean;
 	isChecked?: boolean;
 	children: React.ReactNode;
 	className?: string;
-	onClick?: (e: Event) => void;
+	onPress?: (e: Event) => void;
 }) => {
 	if (isCheckBox) {
 		return (
-			<ContextMenuCheckboxItem checked={isChecked} className={cn("text-white", className)} onSelect={onClick}>
+			<ContextMenuCheckboxItem checked={isChecked} className={cn("text-white", className)} onSelect={onPress}>
 				{children}
 			</ContextMenuCheckboxItem>
 		);
 	}
 
 	return (
-		<ContextMenuItem className={className} onSelect={onClick}>
+		<ContextMenuItem className={className} onSelect={onPress}>
 			{children}
 		</ContextMenuItem>
 	);
@@ -77,12 +77,12 @@ const ContextMenuHandler = ({
 									isCheckBox={item.checkBox}
 									isChecked={item.checked}
 									key={index}
-									onClick={(event) => {
+									onPress={(event) => {
 										if (item.preventCloseOnClick) {
 											event.preventDefault();
 										}
 
-										item.onClick?.(event);
+										item.onPress?.(event);
 									}}
 									className="flex cursor-pointer"
 								>
@@ -106,12 +106,12 @@ const ContextMenuHandler = ({
 												isCheckBox={subItem.checkBox}
 												isChecked={subItem.checked}
 												key={subIndex}
-												onClick={(event) => {
+												onPress={(event) => {
 													if (subItem.preventCloseOnClick) {
 														event.preventDefault();
 													}
 
-													subItem.onClick?.(event);
+													subItem.onPress?.(event);
 												}}
 												className="flex cursor-pointer"
 											>

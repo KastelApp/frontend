@@ -43,7 +43,7 @@ const SecurityPage = () => {
                             <p className="text-lg mb-4">
                                 If you want to report a vulnerability, please click the button below:
                             </p>
-                            <Button size="lg" color="primary" variant="flat" className="w-full sm:w-auto" onClick={() => {
+                            <Button size="lg" color="primary" variant="flat" className="w-full sm:w-auto" onPress={() => {
                                 modalStore.getState().createModal({
                                     id: "report-vulnerability",
                                     closable: false,

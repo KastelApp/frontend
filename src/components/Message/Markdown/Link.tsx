@@ -70,7 +70,7 @@ const Link = (props: React.JSX.IntrinsicElements["a"] & { phishingMessage?: bool
 								<>
 									<Button
 										variant="flat"
-										onClick={() => {
+										onPress={() => {
 											modalStore.getState().closeModal(`nontrusted-link-${href}`);
 										}}
 									>
@@ -80,7 +80,7 @@ const Link = (props: React.JSX.IntrinsicElements["a"] & { phishingMessage?: bool
 										<Button
 											color="primary"
 											variant="flat"
-											onClick={() => {
+											onPress={() => {
 												if (checkboxRef.current?.checked) {
 													useTrustedDomainStore.getState().addTrustedDomain(href);
 												}

@@ -94,7 +94,7 @@ const MemberItem =
 								},
 								{
 									label: "Copy User ID",
-									onClick: () => {
+									onPress: () => {
 										navigator.clipboard.writeText(member.user.id);
 									},
 								},

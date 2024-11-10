@@ -165,7 +165,7 @@ const Init = ({
 						You're on a mobile device, this site is not optimized for mobile yet. Please use a desktop device or
 						download our mobile app.
 					</p>
-					<Button size="sm" variant="bordered" color="primary" onClick={() => setMobilePopupIgnored(true)}>
+					<Button size="sm" variant="bordered" color="primary" onPress={() => setMobilePopupIgnored(true)}>
 						I understand
 					</Button>
 				</div>

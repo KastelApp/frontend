@@ -59,17 +59,17 @@ const Step = ({
 	danger,
 	isSelected,
 	isComplete,
-	onClick,
+	onPress,
 }: Steps & {
 	isSelected?: boolean;
 	isComplete?: boolean;
 	index: number;
-	onClick?: () => void;
+	onPress?: () => void;
 }) => {
 	return (
 		<div
-			className={cn("flex items-center justify-center gap-2", onClick ? "cursor-pointer" : "")}
-			onClick={onClick}
+			className={cn("flex items-center justify-center gap-2", onPress ? "cursor-pointer" : "")}
+			onClick={onPress}
 		>
 			<CheckStep stepNumber={index} isComplete={isComplete} isDanger={danger} isSelected={isSelected} />
 			<p className="text-white">{title}</p>
@@ -97,7 +97,7 @@ const Steps = ({
 					{...step}
 					isSelected={isFinished ? false : step.id === currentSelected}
 					isComplete={isFinished === true ? true : steps.findIndex((step) => step.id === currentSelected) > index}
-					onClick={setStep ? () => setStep(step.id) : undefined}
+					onPress={setStep ? () => setStep(step.id) : undefined}
 				/>
 			))}
 		</div>
@@ -137,7 +137,7 @@ const InitialSignup = () => {
 						<div className="flex items-center justify-center gap-4">
 							<Button
 								color="danger"
-								onClick={() => {
+								onPress={() => {
 									if (currentStep === steps[0].id) {
 										return;
 									}
@@ -157,7 +157,7 @@ const InitialSignup = () => {
 							</Button>
 							<Button
 								color="success"
-								onClick={() => {
+								onPress={() => {
 									if (currentStep === steps[steps.length - 1].id) {
 										setIsFinished(true);
 										return;

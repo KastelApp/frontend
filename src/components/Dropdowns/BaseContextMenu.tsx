@@ -39,10 +39,10 @@ export interface BaseContextMenuProps {
 			label: string;
 			startContent?: React.ReactElement;
 			endContent?: React.ReactElement;
-			onClick: (modal: ModalOptions) => void;
+			onPress: (modal: ModalOptions) => void;
 			props?: DropdownItemProps;
 		}[];
-		onClick?: (modal: ModalOptions) => void;
+		onPress?: (modal: ModalOptions) => void;
 	}[];
 	children?: React.ReactElement | React.ReactElement[];
 	inverse?: boolean; // ? if it requires you to actually rightclick or to function as a normal dropdown
@@ -105,9 +105,9 @@ const BaseContextMenu = ({
 				onAction={(key) => {
 					const found = values[key as number];
 
-					if (!found.onClick) return;
+					if (!found.onPress) return;
 
-					found.onClick({
+					found.onPress({
 						close: () => {
 							onClose();
 						},
@@ -141,8 +141,8 @@ const BaseContextMenu = ({
 									{value.subValues.map((subValue, subIndex) => (
 										<DropdownItem
 											key={subIndex}
-											onClick={() => {
-												subValue.onClick({
+											onPress={() => {
+												subValue.onPress({
 													close: () => {
 														setData({
 															isOpen: false,

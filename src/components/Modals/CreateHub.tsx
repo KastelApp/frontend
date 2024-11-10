@@ -107,12 +107,12 @@ const JoinHub = ({ setSection, onOpenChange }: { setSection: (section: "join" | 
 					<Button
 						color="danger"
 						variant="flat"
-						onClick={() => setSection("home")}
+						onPress={() => setSection("home")}
 						isDisabled={isSaving}
 					>
 						Back
 					</Button>
-					<Button color="success" variant="flat" isDisabled={isSaving} onClick={() => {
+					<Button color="success" variant="flat" isDisabled={isSaving} onPress={() => {
 						if (!invite.state) {
 							invite.setError("Invite link is required");
 
@@ -143,7 +143,7 @@ const HomeHub = ({ setSection }: { setSection: (section: "join" | "create" | "ho
 						size="lg"
 						color="primary"
 						variant="flat"
-						onClick={() => setSection("create")}
+						onPress={() => setSection("create")}
 						className="mb-4 flex items-center justify-between"
 					>
 						<span className="text-lg">Create Hub</span>
@@ -153,7 +153,7 @@ const HomeHub = ({ setSection }: { setSection: (section: "join" | "create" | "ho
 						size="lg"
 						color="primary"
 						variant="flat"
-						onClick={() => setSection("join")}
+						onPress={() => setSection("join")}
 						className="flex items-center justify-between"
 					>
 						<span className="text-lg">Join Hub</span>
@@ -296,12 +296,12 @@ const CreateHub = ({ setSection, onOpenChange }: { setSection: (section: "join" 
 					<Button
 						color="danger"
 						variant="flat"
-						onClick={() => setSection("home")}
+						onPress={() => setSection("home")}
 						isDisabled={isSaving}
 					>
 						Back
 					</Button>
-					<Button color="success" variant="flat" onClick={() => {
+					<Button color="success" variant="flat" onPress={() => {
 						let hasError = false;
 
 						if (name.state.length < settings.minHubNameLength || name.state.length > settings.maxHubNameLength) {

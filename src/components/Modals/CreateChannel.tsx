@@ -163,7 +163,7 @@ const CreateChannelModal = ({
 					<Button
 						color="danger"
 						variant="flat"
-						onClick={() => {
+						onPress={() => {
 							if (tab === 0) {
 								onOpenChange();
 							} else {
@@ -176,7 +176,7 @@ const CreateChannelModal = ({
 					<Button
 						color="success"
 						variant="flat"
-						onClick={() => {
+						onPress={() => {
 							if (tab === 0) {
 								setTab(1);
 							} else {

@@ -168,7 +168,7 @@ const Hubs = () => {
                                 <div className="flex flex-col items-center justify-center w-full h-full text-white text-2xl font-semibold">
                                     <h3 className="text-white text-lg font-semibold">Join or Create a Hub</h3>
                                     <p className="text-gray-300 text-sm">Discover and join communities that share your interests.</p>
-                                    <Button size="sm" className="mt-4" variant="flat" color="primary" onClick={() => {
+                                    <Button size="sm" className="mt-4" variant="flat" color="primary" onPress={() => {
                                         onOpenChange();
                                     }}>
                                         Join or Create

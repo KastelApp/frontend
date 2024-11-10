@@ -136,7 +136,7 @@ const InviteEmbed = ({
         </div>
 
         <div className="hidden md:block ml-auto mt-2">
-          <Button color={invite?.hub ? "success" : "danger"} size="sm" variant="flat" onClick={buttonOnClick}>
+          <Button color={invite?.hub ? "success" : "danger"} size="sm" variant="flat" onPress={buttonOnClick}>
             {invite?.hub ? t("hubs.invites.join") : t("hubs.invites.invalid")}
           </Button>
         </div>
@@ -148,7 +148,7 @@ const InviteEmbed = ({
           size="sm"
           variant="flat"
           className="w-full"
-          onClick={buttonOnClick}
+          onPress={buttonOnClick}
         >
           {invite?.hub ? t("hubs.invites.join") : t("hubs.invites.invalid")}
         </Button>

@@ -5,7 +5,7 @@ import SaveChanges from "@/components/SaveChanges.tsx";
 import Tooltip from "@/components/Tooltip.tsx";
 import Constants from "@/utils/Constants.ts";
 import { modalStore } from "@/wrapper/Stores/GlobalModalStore.ts";
-import { MessageStates } from "@/wrapper/Stores/MessageStore.ts";
+import { MessageContext, MessageStates } from "@/wrapper/Stores/MessageStore.ts";
 import { useUserStore } from "@/wrapper/Stores/UserStore.ts";
 import { Avatar, Badge, Button, Card, CardBody, Divider, useDisclosure } from "@nextui-org/react";
 import { Pencil, TriangleAlert, X } from "lucide-react";
@@ -45,7 +45,7 @@ const OverView = () => {
 							<Button
 								color="primary"
 								className="mt-4"
-								onClick={() => {
+								onPress={() => {
 									modalStore.getState().closeModal("avatar-too-large");
 								}}
 							>
@@ -72,7 +72,7 @@ const OverView = () => {
 							<Button
 								color="primary"
 								className="mt-4"
-								onClick={() => {
+								onPress={() => {
 									modalStore.getState().closeModal("avatar-invalid-type");
 								}}
 							>
@@ -160,7 +160,7 @@ const OverView = () => {
 									variant="flat"
 									className="max-h-8 min-h-8 min-w-16 max-w-16 rounded-md"
 									radius="none"
-									onClick={() => {
+									onPress={() => {
 										onOpenChange();
 									}}
 								>
@@ -225,6 +225,12 @@ const OverView = () => {
 											<p className="text-md overflow-hidden whitespace-pre-line break-words">{user?.bio || "N/A"}</p>
 										</div>
 									</div>
+									<div className="mb-4 flex items-center justify-between">
+										<div>
+											<p className="text-lg font-semibold">Short About Me</p>
+											<p className="text-md overflow-hidden whitespace-pre-line break-words">{user?.shortBio || "N/A"}</p>
+										</div>
+									</div>
 								</CardBody>
 							</Card>
 						</div>
@@ -287,6 +293,7 @@ const OverView = () => {
 												member: null,
 												roleColor: null,
 											},
+											context: MessageContext.Unknown
 										}}
 										isHighlighted={false}
 										inHub={false}
@@ -328,6 +335,7 @@ const OverView = () => {
 												member: null,
 												roleColor: null,
 											},
+											context: MessageContext.Unknown
 										}}
 										isButtonDisabled
 										isHighlighted={false}
@@ -372,7 +380,7 @@ const OverView = () => {
 									<Button
 										color="primary"
 										className="mt-4"
-										onClick={() => {
+										onPress={() => {
 											modalStore.getState().closeModal("avatar-failed");
 										}}
 									>

@@ -10,7 +10,7 @@ interface StateFormProps<T> {
 	 * Set a new state
 	 * @param newState The new state
 	 */
-	set: (newState: T) => void;
+	set: (newState: React.SetStateAction<T>) => void;
 	/**
 	 * Reset to the initial state
 	 */
@@ -45,7 +45,7 @@ const useStateForm = <T = unknown>(initialState: T): StateFormProps<T> => {
 	const [intState, setInitialState] = useState<T>(initialState);
 	const [error, setError] = useState<string | null>(null);
 
-	const set = (newState: T) => {
+	const set = (newState: React.SetStateAction<T>) => {
 		setState(newState);
 	};
 
@@ -72,6 +72,7 @@ interface MultiFormState {
 	isSaving: boolean;
 	save: () => Promise<void>;
 	reset: () => void;
+	clearAllErrors: () => void;
 }
 
 interface FormState<T> {
@@ -115,7 +116,7 @@ const useMultiFormState = <InputBaseType extends Record<string, unknown>>(
 	const [isSaving, setIsSaving] = useState(false);
 
 	const save = useCallback(async () => {
-		if (hasError || isSaving) {
+		if (isSaving) { // ! darkerink: It's up to the developer to handle if there's an error or not imo, easier that way
 			return;
 		}
 
@@ -134,8 +135,14 @@ const useMultiFormState = <InputBaseType extends Record<string, unknown>>(
 		}
 	}, [state, keys]);
 
+	const clearAllErrors = useCallback(() => {
+		for (const key of keys) {
+			state[key].clearError();
+		}
+	}, [state, keys]);
 
-	return { ...state, isDirty, save, reset, hasError, isSaving };
+
+	return { ...state, isDirty, save, reset, hasError, isSaving, clearAllErrors };
 };
 
 export default useStateForm;

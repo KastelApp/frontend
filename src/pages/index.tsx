@@ -111,7 +111,7 @@ const HomePage = () => {
 						Built for communities, gamers, and teams who demand more from their chat platform.
 					</p>
 					<div className="flex flex-col sm:flex-row justify-center gap-4 mb-12">
-						<Button size="lg" variant="flat" color="primary" href={token ? Routes.app() : Routes.register()} as={Link} onClick={() => {
+						<Button size="lg" variant="flat" color="primary" href={token ? Routes.app() : Routes.register()} as={Link} onPress={() => {
 							if (token) setIsReady(false);
 						}}>
 							{token ? "Open App" : "Start chatting for free"}
@@ -156,7 +156,7 @@ const HomePage = () => {
 
 			<div className="text-center py-20">
 				<h2 className="text-4xl font-bold mb-8">Ready to elevate your chat experience?</h2>
-				<Button size="lg" variant="flat" color="primary" href={token ? Routes.app() : Routes.register()} as={Link} onClick={() => {
+				<Button size="lg" variant="flat" color="primary" href={token ? Routes.app() : Routes.register()} as={Link} onPress={() => {
 					if (token) setIsReady(false);
 				}}>
 					{token ? "Open App" : "Join Kastel today"}

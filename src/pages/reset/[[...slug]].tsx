@@ -248,7 +248,7 @@ const Reset = () => {
 										/>
 									</div>
 									<div className="mt-8">
-										<Button onClick={onReset} size="md" color="primary" variant="flat" className="w-full" tabIndex={3}>
+										<Button onPress={onReset} size="md" color="primary" variant="flat" className="w-full" tabIndex={3}>
 											{loading ? <LoaderCircle className="custom-animate-spin text-white" /> : t("reset.button")}
 										</Button>
 									</div>
@@ -259,7 +259,7 @@ const Reset = () => {
 											className="text-sm"
 											as={NextLink}
 											tabIndex={4}
-											onClick={async () => {
+											onPress={async () => {
 												const [, err] = await safePromise(
 													client.api.del<{
 														id: string;

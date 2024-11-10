@@ -178,13 +178,13 @@ const ChannelSidebar = ({ currentChannelId, currentHubId }: { currentHubId: stri
         {
             name: "Invite Friends",
             icon: <UserRound size={20} color="#acaebf" />,
-            onClick: () => { },
+            onPress: () => { },
             end: true, // ? if end is true, then we have a divider
         },
         {
             name: "Hub Settings",
             icon: <Settings size={20} color="#acaebf" />,
-            onClick: () => {
+            onPress: () => {
                 onOpenChangeHubSettings();
             },
             end: false,
@@ -192,7 +192,7 @@ const ChannelSidebar = ({ currentChannelId, currentHubId }: { currentHubId: stri
         {
             name: "Create Channel",
             icon: <Hash size={20} color="#acaebf" />,
-            onClick: () => {
+            onPress: () => {
                 // channelonOpenChange();
             },
             end: false,
@@ -200,7 +200,7 @@ const ChannelSidebar = ({ currentChannelId, currentHubId }: { currentHubId: stri
         {
             name: "Change Nickname",
             icon: <Pencil size={20} color="#acaebf" />,
-            onClick: () => {
+            onPress: () => {
                 // onOpenChange();
             },
             end: true,
@@ -208,7 +208,7 @@ const ChannelSidebar = ({ currentChannelId, currentHubId }: { currentHubId: stri
         {
             name: "Leave Hub",
             icon: <X size={20} color="#acaebf" />,
-            onClick: () => {
+            onPress: () => {
                 // onOpenChangeConfirmLeave();
             },
             end: false,
@@ -310,7 +310,7 @@ const ChannelSidebar = ({ currentChannelId, currentHubId }: { currentHubId: stri
                                 id: "delete",
                                 disabled: false,
                                 danger: true,
-                                onClick: () => {
+                                onPress: () => {
                                     // onOpenChangeConfirmDelete();
                                 },
                             },
@@ -347,7 +347,7 @@ const ChannelSidebar = ({ currentChannelId, currentHubId }: { currentHubId: stri
                             const found = dropdownItems[k as number];
 
                             if (found) {
-                                found.onClick();
+                                found.onPress();
                             }
                         }}
                     >

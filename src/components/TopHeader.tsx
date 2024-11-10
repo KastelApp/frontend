@@ -96,7 +96,7 @@ const TopHeader = () => {
 					</>
 				) : (
 					<NavbarItem>
-						<Button as={NextLink} color="primary" href={Routes.app()} variant="flat" onClick={() => {
+						<Button as={NextLink} color="primary" href={Routes.app()} variant="flat" onPress={() => {
 							setIsReady(false);
 						}}>
 							{t("home.navbar.app")}

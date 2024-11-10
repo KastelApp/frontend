@@ -54,7 +54,7 @@ const PopUpImage = ({
 
 	return (
 		<>
-			<ImageGrid images={images ?? []} onClick={() => onOpen()} />
+			<ImageGrid images={images ?? []} onPress={() => onOpen()} />
 			<Modal
 				isOpen={isOpen}
 				onOpenChange={onClose}

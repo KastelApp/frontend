@@ -15,7 +15,7 @@ const NavBarIcon = memo(
 		badgeContent,
 		badgePosition,
 		href,
-		onClick,
+		onPress,
 		delay,
 		hasUnReadMessages,
 		isActive,
@@ -33,7 +33,7 @@ const NavBarIcon = memo(
 		badgeColor?: "default" | "primary" | "secondary" | "success" | "warning" | "danger";
 		badgePosition?: "top-right" | "top-left" | "bottom-right" | "bottom-left";
 		href?: string;
-		onClick?: () => void;
+		onPress?: () => void;
 		delay?: number;
 		contextMenuItemsProps?: ContextMenuProps[];
 		hasUnReadMessages?: boolean;
@@ -98,7 +98,7 @@ const NavBarIcon = memo(
 						/>
 					)}
 					<ContextMenuHandler items={contextMenuItemsProps} className={contextMenuClassName}>
-						<div onClick={onClick}>
+						<div onClick={onPress}>
 							<LinkWrapper href={href}>
 								<Badge
 									content={badgeContent}

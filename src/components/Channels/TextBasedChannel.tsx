@@ -522,7 +522,7 @@ const TextBasedChannel = () => {
                         <ContextMenuContent className="w-40">
                             {msg.isReplyable && (
                                 <ContextMenuItem
-                                    onClick={() => {
+                                onClick={() => {
                                         // updateChannel(channelId, {
                                         //     currentStates: [...getChannel(channelId).currentStates, "replying"],
                                         //     replyingStateId: message.message.id,

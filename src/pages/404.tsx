@@ -22,7 +22,7 @@ const FourOhFour = () => {
 							<Button href="/" as={Link} size="lg" variant="flat" color="primary">
 								{t("error.forohfor.buttons.home")}
 							</Button>
-							<Button onClick={() => router.back()} className="ml-4" size="lg" variant="flat" color="success">
+							<Button onPress={() => router.back()} className="ml-4" size="lg" variant="flat" color="success">
 								{t("error.forohfor.buttons.back")}
 							</Button>
 						</div>

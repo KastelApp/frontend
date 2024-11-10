@@ -9,11 +9,11 @@ interface Image {
 
 const ImageGrid = ({
 	images,
-	onClick,
+	onPress,
 	style,
 }: {
 	images: Image[];
-	onClick?: () => void;
+	onPress?: () => void;
 	style?: React.CSSProperties;
 }) => {
 	return (
@@ -24,8 +24,8 @@ const ImageGrid = ({
 						src={images[0].url}
 						alt="Image"
 						thumbhash={images[0].thumbHash ?? undefined}
-						className={cn("max-h-56 max-w-96 rounded-none", onClick && "cursor-pointer")}
-						onClick={onClick}
+						className={cn("max-h-56 max-w-96 rounded-none", onPress && "cursor-pointer")}
+						onClick={onPress}
 						style={style} // ? only takes affect on the first one for now
 					/>
 				</div>
@@ -38,9 +38,9 @@ const ImageGrid = ({
 							<UnLazyImage
 								src={img.url}
 								alt={`Image ${index + 1}`}
-								className={cn("rounded-none", onClick && "cursor-pointer")}
+								className={cn("rounded-none", onPress && "cursor-pointer")}
 								thumbhash={img.thumbHash ?? undefined}
-								onClick={onClick}
+								onClick={onPress}
 							/>
 						</div>
 					))}
@@ -53,7 +53,7 @@ const ImageGrid = ({
 						<UnLazyImage
 							src={images[0].url}
 							alt="Large Image"
-							className={cn("h-full rounded-none", onClick && "cursor-pointer")}
+							className={cn("h-full rounded-none", onPress && "cursor-pointer")}
 						/>
 					</div>
 					<div className="ml-1 flex flex-col justify-between gap-y-1">
@@ -62,9 +62,9 @@ const ImageGrid = ({
 								src={img.url}
 								alt={`Small Image ${index + 1}`}
 								key={index}
-								className={cn("max-h-24 max-w-60 rounded-none", onClick && "cursor-pointer")}
+								className={cn("max-h-24 max-w-60 rounded-none", onPress && "cursor-pointer")}
 								thumbhash={img.thumbHash ?? undefined}
-								onClick={onClick}
+								onClick={onPress}
 							/>
 						))}
 					</div>
@@ -78,8 +78,8 @@ const ImageGrid = ({
 							<UnLazyImage
 								src={img.url}
 								alt={`Image ${index + 1}`}
-								className={cn("rounded-none", onClick && "cursor-pointer")}
-								onClick={onClick}
+								className={cn("rounded-none", onPress && "cursor-pointer")}
+								onClick={onPress}
 							/>
 						</div>
 					))}
