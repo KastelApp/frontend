@@ -1,10 +1,9 @@
 import { Avatar, Tooltip } from "@nextui-org/react";
-import { memo, useState } from "react";
+import { useState } from "react";
 import { Pen, Reply, Trash2, Ellipsis } from "lucide-react";
 import InviteEmbed from "./Embeds/InviteEmbed.tsx";
 import { MessageStates, Message as MessageType, useMessageStore } from "@/wrapper/Stores/MessageStore.ts";
 import { User, useUserStore } from "@/wrapper/Stores/UserStore.ts";
-import fastDeepEqual from "fast-deep-equal";
 import { Member } from "@/wrapper/Stores/Members.ts";
 import { usePerChannelStore } from "@/wrapper/Stores/ChannelStore.ts";
 import { useTranslationStore } from "@/wrapper/Stores.tsx";
@@ -331,9 +330,13 @@ const Message = ({
 	);
 };
 
-export default memo(Message, (prev, next) => {
-	const prevFunctionless = Object.fromEntries(Object.entries(prev).filter(([, value]) => typeof value !== "function"));
-	const nextFunctionless = Object.fromEntries(Object.entries(next).filter(([, value]) => typeof value !== "function"));
+export default Message;
 
-	return fastDeepEqual(prevFunctionless, nextFunctionless);
-});
+// ! Leaving the code behind for future refrence, in development you will defo have issues i.e it being slow etc, but in production it will be fine
+// ! due to react 19's new compiler
+// export default memo(Message, (prev, next) => {
+// 	const prevFunctionless = Object.fromEntries(Object.entries(prev).filter(([, value]) => typeof value !== "function"));
+// 	const nextFunctionless = Object.fromEntries(Object.entries(next).filter(([, value]) => typeof value !== "function"));
+
+// 	return fastDeepEqual(prevFunctionless, nextFunctionless);
+// });

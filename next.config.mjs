@@ -1,4 +1,5 @@
 import gitInfo from "./src/gitinfo.mjs";
+import nextAnalzyer from "@next/bundle-analyzer";
 
 const fetchedData = gitInfo();
 
@@ -46,4 +47,8 @@ const nextConfig = {
 	}
 };
 
-export default nextConfig
+const withBundleAnalyzer = nextAnalzyer({
+	enabled: process.env.ANALYZE === "true",
+});
+
+export default withBundleAnalyzer(nextConfig);

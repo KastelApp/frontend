@@ -32,6 +32,8 @@ const MemberItem =
 		const { t } = useTranslationStore();
 		const [typing, setTyping] = useState(false);
 		const { getChannel } = usePerChannelStore();
+		const getAvatarUrl = useUserStore((s) => s.getAvatarUrl);
+		const getDefaultAvatar = useUserStore((s) => s.getDefaultAvatar);	
 
 		useEffect(() => {
 			const channel = getChannel(channelId);
@@ -59,7 +61,7 @@ const MemberItem =
 
 		return (
 			<>
-				<PopOverData member={member.member} user={member.user}>
+				<PopOverData member={member.member} user={member.user} key={member.user.id}>
 					<div>
 						<ContextMenuHandler
 							items={[
@@ -121,8 +123,8 @@ const MemberItem =
 									>
 										<Avatar
 											src={
-												useUserStore.getState().getAvatarUrl(member.user.id, member.user.avatar) ??
-												useUserStore.getState().getDefaultAvatar(member.user.id)
+												getAvatarUrl(member.user.id, member.user.avatar) ??
+												getDefaultAvatar(member.user.id)
 											}
 											size="sm"
 											imgProps={{ className: "transition-none" }}
