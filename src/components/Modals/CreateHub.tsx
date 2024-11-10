@@ -229,7 +229,8 @@ const CreateHub = ({ setSection, onOpenChange }: { setSection: (section: "join" 
 							"SendMessages",
 							"UseChatFormatting",
 							"ViewMessageHistory",
-							"UseExternalEmojis"
+							"UseExternalEmojis",
+							"ViewChannels"
 						]).normizedBits,
 					}]
 				}
