@@ -119,12 +119,12 @@ const UserModal = ({ user, member }: { user: User; member?: Member; }) => {
 					</MessageMarkDown>
 				</Tab>
 				{!user.isClient && (
-					<Tab title={`Mutual Friends ${user.mutualFriends && user.mutualFriends?.length > 0 && `(${user.mutualFriends})`}`} isDisabled>
+					<Tab title={`Mutual Friends ${(user.mutualFriends && user.mutualFriends?.length > 0) ?  `(${user.mutualFriends.length})` : ""}`}>
 						{JSON.stringify(user.mutualFriends)}
 					</Tab>
 				)}
 				{!user.isClient && (
-					<Tab title={`Mutual Hubs ${user.mutualHubs && user.mutualHubs.length > 0 && `(${user.mutualHubs})`}`} isDisabled>
+					<Tab title={`Mutual Hubs ${(user.mutualHubs && user.mutualHubs.length > 0) ?  `(${user.mutualHubs.length})` : ""}`}>
 						{JSON.stringify(user.mutualHubs)}
 					</Tab>
 				)}
