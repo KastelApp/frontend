@@ -6,7 +6,11 @@ const settings = {
 	maxMessageSize: 2000,
 	maxUsernameLength: 32,
 	maxNicknameLength: 32,
+
 	maxHubNameLength: 100,
+	minHubNameLength: 2,
+	maxHubDescriptionLength: 300,
+
 	maxChannelNameLength: 100,
 	maxRoleNameLength: 100,
 };

@@ -1,8 +1,9 @@
+import HubModal from "@/components/Modals/CreateHub.tsx";
 import { Routes } from "@/utils/Routes.ts";
 import { useHubSettingsStore, useTranslationStore } from "@/wrapper/Stores.tsx";
 import { useChannelStore } from "@/wrapper/Stores/ChannelStore.ts";
 import { Hub, useHubStore } from "@/wrapper/Stores/HubStore.ts";
-import { Avatar, Badge, Button, Chip, cn, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Tab, Tabs } from "@nextui-org/react";
+import { Avatar, Badge, Button, Chip, cn, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Tab, Tabs, useDisclosure } from "@nextui-org/react";
 import { MoreHorizontal } from "lucide-react";
 import Link from "next/link";
 import { useCallback } from "react";
@@ -144,9 +145,12 @@ const Hubs = () => {
         });
     }, [hubs, hubSettings]);
 
+    const { isOpen, onOpenChange } = useDisclosure()
+
     return (
         <>
             <div />
+            <HubModal isOpen={isOpen} onOpenChange={onOpenChange} />
             <div className="w-full h-full">
                 <Tabs className="flex justify-center"
                 
@@ -164,7 +168,9 @@ const Hubs = () => {
                                 <div className="flex flex-col items-center justify-center w-full h-full text-white text-2xl font-semibold">
                                     <h3 className="text-white text-lg font-semibold">Join or Create a Hub</h3>
                                     <p className="text-gray-300 text-sm">Discover and join communities that share your interests.</p>
-                                    <Button size="sm" className="mt-4" variant="flat" color="primary">
+                                    <Button size="sm" className="mt-4" variant="flat" color="primary" onClick={() => {
+                                        onOpenChange();
+                                    }}>
                                         Join or Create
                                     </Button>
                                 </div>

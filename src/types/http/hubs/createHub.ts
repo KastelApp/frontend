@@ -1,3 +1,5 @@
+import { HubFeatures } from "@/utils/Constants.ts";
+
 export interface CreateHubOptions {
 	description?: string | null;
 	channels?: {
@@ -30,6 +32,6 @@ export interface CreateHubOptions {
 	}[];
 	template?: string;
 	name: string;
-	features: ("Partnered" | "Verified" | "Official" | "Maintenance" | "InternalStaffHub")[];
+	features: HubFeatures[];
 	id?: string;
 }

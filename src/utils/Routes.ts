@@ -14,3 +14,11 @@ export const Routes = {
 } satisfies {
     [r: string]: (...arg: never[]) => string;
 }
+
+// eslint-disable-next-line @typescript-eslint/naming-convention
+export const Endpoints = {
+    createHub: () => "/hubs",
+    invite: (invite: string) => `/invites/${invite}`,
+} satisfies {
+    [r: string]: (...arg: never[]) => string;
+}
