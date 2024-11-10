@@ -54,11 +54,7 @@ const formatDate = (date: Date, format: DateFormat = "relative"): string => {
 		case "relative": {
 			const diffDays = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60 * 24));
 
-			if (diffDays < 0) {
-				return `Tomorrow at ${date.toLocaleTimeString("en-US", timeOptions)}`;
-			}
-
-			if (diffDays === 0) {
+			if (diffDays <= 0) {
 				return `Today at ${date.toLocaleTimeString("en-US", timeOptions)}`;
 			} else if (diffDays === 1) {
 				return `Yesterday at ${date.toLocaleTimeString("en-US", timeOptions)}`;

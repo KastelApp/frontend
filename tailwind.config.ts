@@ -29,8 +29,30 @@ const config = {
 				lightText: "#000B2E",
 				darkBackground: "#161922",
 				lightBackground: "#DDE0E9",
-				primary: "#008DA5",
-				secondary: "#9AA9E0",
+				primary: {
+					100: "#cce8ed",
+					200: "#99d1db",
+					300: "#66bbc9",
+					400: "#33a4b7",
+					500: "#008da5",
+					600: "#007184",
+					700: "#005563",
+					800: "#003842",
+					900: "#001c21",
+					DEFAULT: "#008da5",
+				},
+				secondary: {
+					100: "#ebeef9",
+					200: "#d7ddf3",
+					300: "#c2cbec",
+					400: "#aebae6",
+					500: "#9aa9e0",
+					600: "#7b87b3",
+					700: "#5c6586",
+					800: "#3e445a",
+					900: "#1f222d",
+					DEFAULT: "#9AA9E0",
+				},
 				darkAccent: "#101319",
 				lightAccent: "#E6E9EF",
 				mention: "hsl(40, 86%, 57%, 0.1)",
@@ -194,7 +216,7 @@ const config = {
 					maxHeight: spacing[key],
 					width: spacing[key],
 					height: spacing[key],
-				}
+				};
 			});
 
 			addUtilities(newUtilities);

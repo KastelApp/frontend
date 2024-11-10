@@ -12,19 +12,22 @@ const LiveDate = ({
     format = "relative"
 }: LiveDateProps) => {
     const [formattedDate, setFormattedDate] = useState(() => formatDate(date, format));
-    const updateRef = useRef<number | null>(null);
-  
-    const updateFormattedDate = () => {
-      setFormattedDate(formatDate(date, format));
-      updateRef.current = requestAnimationFrame(updateFormattedDate);
-    };
+    const updateRef = useRef<NodeJS.Timeout | null>(null);
   
     useEffect(() => {
-      updateRef.current = requestAnimationFrame(updateFormattedDate);
+        const diff = Date.now() - date.getTime();
+        const timeout = diff < 60 * 1000 ? 1000 : 10 * 1000;
 
-      return () => {
-        if (updateRef.current !== null) cancelAnimationFrame(updateRef.current);
-      };
+        const updateFormattedDate = () => {
+            setFormattedDate(formatDate(date, format));
+            updateRef.current = setTimeout(updateFormattedDate, timeout);
+        };
+
+        updateFormattedDate();
+
+        return () => {
+            if (updateRef.current !== null) clearTimeout(updateRef.current);
+        };
     }, [date, format]);
   
     return <>{formattedDate}</>;
