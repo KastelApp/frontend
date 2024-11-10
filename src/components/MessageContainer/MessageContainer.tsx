@@ -76,7 +76,8 @@ const MessageContainer = ({
 	const { t } = useTranslationStore();
 	const [files, setFiles] = useState<{ name: string; type: "image" | "file"; file: File; id: string; }[]>([]);
 	const [state, setState] = useState<("replying" | "mentioning")[]>([]);
-	const { getChannel, updateChannel } = usePerChannelStore();
+	const getPerChannel = usePerChannelStore((state) => state.getChannel);
+    const updatePerChannel = usePerChannelStore((state) => state.updateChannel);
 	const { getMessage } = useMessageStore();
 
 	const [replyingAuthor, setReplyingAuthor] = useState<{
@@ -150,7 +151,7 @@ const MessageContainer = ({
 	const { getContent, setContent: setMsgContent } = useContentStore();
 
 	useEffect(() => {
-		const channel = getChannel(channelId);
+		const channel = getPerChannel(channelId);
 
 		setContent(getContent(channelId) ?? "");
 		// setLastSentTypingAt(channel.lastTypingSent);
@@ -160,7 +161,7 @@ const MessageContainer = ({
 		const filteredTypingUsers = channel.typingUsers.filter((user) => user.started > Date.now() - 7000);
 
 		if (filteredTypingUsers.length !== channel.typingUsers.length) {
-			updateChannel(channelId, {
+			updatePerChannel(channelId, {
 				typingUsers: filteredTypingUsers,
 			});
 		}
@@ -244,12 +245,12 @@ const MessageContainer = ({
 			roleColor: null,
 		});
 
-		const channel = getChannel(channelId);
+		const perChannel = getPerChannel(channelId);
 
-		usePerChannelStore.getState().updateChannel(channelId, {
-			currentStates: channel.currentStates.filter((state) => state !== "replying") ?? [],
-			editingStateId: null,
-		});
+		updatePerChannel(channelId, {
+            replyingStateId: null,
+            currentStates: perChannel.currentStates.filter((s) => s !== "replying"),
+        });
 	}, [channelId, state]);
 
 	return (
