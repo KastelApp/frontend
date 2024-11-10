@@ -120,7 +120,7 @@ const LeftNavBar = () => {
 
 
     return (
-        <div className="h-screen flex flex-col py-3 overflow-hidden">
+        <div className="h-screen flex flex-col py-3 overflow-hidden bg-darkAccent">
             <Link href={Routes.app()} className={"group transition-all duration-300 ease-in-out px-3 mb-3 flex items-center ml-2 rounded-md cursor-pointer hover:bg-charcoal-600 mr-2"}>
                 <div className=" group-active:scale-[.98] flex items-center">
                     <Button variant="ghost" size="icon" className={"rounded-3xl group-hover:rounded-xl transition-all duration-300 ease-in-out mm-hw-10 p-0 bg-gray-600 group-hover:bg-gray-700 -ml-2"}>
