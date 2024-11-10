@@ -108,7 +108,7 @@ const Message = ({
 			{(!phishing || open) && (
 				<div
 					className={cn(
-						"group relative w-full max-w-full transition-colors duration-300 ease-in hover:bg-msg-hover outline-none",
+						"group relative w-full max-w-full transition-colors duration-300 ease-in hover:bg-msg-hover outline-none pl-2",
 						className,
 						isParent && "mt-2",
 						mentionsUser && "bg-mention hover:bg-mention-hover",
@@ -225,10 +225,10 @@ const Message = ({
 									</Tooltip>
 								</div>
 							)}
-							<div className="flex items-start">
+							<div className="flex">
 								{isGrouped && (
 									<Tooltip content={formatDate(message.creationDate, "dayTime")} placement="top" delay={500}>
-										<div className="mr-2 flex w-fit select-none text-3xs text-gray-400 transition-opacity opacity-0 duration-300 ease-in-out group-hover:opacity-100">
+										<div className="-ml-4 flex select-none text-3xs text-gray-400 transition-opacity opacity-0 duration-300 ease-in-out group-hover:opacity-100">
 											{formatDate(message.creationDate, "short")}
 										</div>
 									</Tooltip>
@@ -240,6 +240,7 @@ const Message = ({
 											? "text-red-500"
 											: "",
 										message.state === MessageStates.Sending ? "text-gray-400" : "",
+										isGrouped && "ml-5"
 									)}
 								>
 									<MessageMarkDown message={message}>{message.content}</MessageMarkDown>
