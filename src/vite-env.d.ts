@@ -5,6 +5,7 @@ interface ImportMetaEnv {
     readonly VITE_API_URL: string
     readonly VITE_GATEWAY_URL: string
     readonly VITE_CDN_URL: string
+    readonly VITE_MEDIA_URL: string
     readonly VITE_WRAPPER_VERSION: string; // ? this is for the API & Gateway
     readonly VITE_IS_DESKTOP: boolean;
     readonly VITE_CLOUDFLARE_TURNSTILE_SITE_KEY: string; 
