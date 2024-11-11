@@ -1,12 +1,12 @@
-// import { snowflake } from "@/utils/Constants.ts";
+// import { snowflake } from "@/data/constants.ts";
 import { defaultRules } from "simple-markdown";
-import { findEmoji } from "@/utils/parser.ts";
+// import { findEmoji } from "@/utils/parser.ts";
 
 const Emoji = ({
   id,
   isAnimated,
   name,
-  isCustom
+  // isCustom
 }: {
   name: string;
   id: string | null;
@@ -14,7 +14,8 @@ const Emoji = ({
   isCustom: boolean;
 }) => {
   // const isSnowflake = snowflake.validate(name);
-  const foundEmoji = !isCustom ? findEmoji(name, "name") : null;
+  // const foundEmoji = !isCustom ? findEmoji(name, "name") : null;
+  const foundEmoji = null;
 
   console.log(id, name, isAnimated, foundEmoji);
 

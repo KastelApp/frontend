@@ -12,7 +12,6 @@ interface CodeblockProps {
 const Codeblock = ({ language, code }: CodeblockProps) => {
 	return (
 		<div className="group relative w-full">
-			{/* @ts-expect-error -- Unsure what the issue here is */}
 			<SyntaxHighlighter wrapLongLines language={getLanguageFromExtension(language)} style={oneDark as never}>
 				{code}
 			</SyntaxHighlighter>

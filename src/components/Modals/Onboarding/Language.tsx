@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { US, DE } from "country-flag-icons/react/3x2";
 import { Select, SelectItem } from "@nextui-org/react";
-import Link from "next/link";
+import Link from "@/components/Link.tsx";
 
 interface SupportedLanguages {
 	language: string;

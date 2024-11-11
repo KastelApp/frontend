@@ -1,4 +1,4 @@
-import { Embed } from "@/components/Message/Embeds/RichEmbed.tsx";
+import { Embed } from "@/types/embed.ts";
 
 const VideoEmbed = ({ embed }: { embed: Embed }) => {
 	const firstFile = embed.files?.[0];

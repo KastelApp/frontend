@@ -45,9 +45,9 @@ interface MixedOptions {
 }
 
 class API {
-	public API_URL: string = process.env.API_URL || "http://localhost:62250";
+	public API_URL: string = import.meta.env.VITE_API_URL || "http://localhost:62250";
 
-	public VERSION: string = process.env.API_VERSION || "1";
+	public VERSION: string = import.meta.env.VITE_WRAPPER_VERSION || "1";
 
 	private URL_CHECK_REGEX: RegExp = /^(https?:|\/{2}|\.+\/)/;
 
@@ -147,6 +147,7 @@ class API {
 				status: fetched.status,
 				body,
 				text,
+				// @ts-expect-error -- It indeed does have entries! unsure why its complaining
 				headers: Object.fromEntries(fetched.headers.entries()),
 				blob,
 				ok: fetched.status < 500,

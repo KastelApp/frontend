@@ -1,9 +1,9 @@
 import LeftNavBar from "@/components/NavBars/LeftNavBar.tsx";
 import useEasyResizable from "@/hooks/useEasyResizable.tsx";
+import { useRouter } from "@/hooks/useRouter.ts";
 import cn from "@/utils/cn.ts";
 import { Routes } from "@/utils/Routes.ts";
 import { useStoredSettingsStore } from "@/wrapper/Stores.tsx";
-import { useRouter } from "next/router";
 import { useEffect } from "react";
 
 const AppLayout = ({ children }: { children?: React.ReactElement | React.ReactElement[]; }) => {

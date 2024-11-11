@@ -1,10 +1,10 @@
 import { Image, User } from "@nextui-org/react";
-import Link from "next/link";
-import type { Embed } from "../RichEmbed.tsx";
 import { useState } from "react";
 import { Play } from "lucide-react";
 import cn from "@/utils/cn.ts";
 import { UnLazyImage } from "@unlazy/react";
+import Link from "@/components/Link.tsx";
+import { Embed } from "@/types/embed.ts";
 
 const PreIframe = ({ children, embed }: { children: React.ReactNode; embed: Embed }) => {
 	const [iframeInview, setiframeInview] = useState<boolean>(false);
@@ -52,7 +52,7 @@ const YoutubeIFrameEmbed = ({ embed }: { embed: Embed; }) => {
 		noColor?: boolean;
 	}) => {
 		return url ? (
-			<Link href={url} passHref className={!noColor ? "text-blue-500" : ""} target="_blank">
+			<Link href={url} className={!noColor ? "text-blue-500" : ""} target="_blank">
 				{children}
 			</Link>
 		) : (

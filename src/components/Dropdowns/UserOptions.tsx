@@ -7,14 +7,13 @@ import CustomStatus from "../Modals/CustomStatus.tsx";
 import OverView from "../Settings/User/Overview.tsx";
 import BaseSettings from "../Modals/BaseSettings.tsx";
 import { Section } from "@/types/settings.ts";
-import { useRouter } from "next/router";
 import { useTokenStore, useTranslationStore } from "@/wrapper/Stores.tsx";
 import { useUserStore } from "@/wrapper/Stores/UserStore.ts";
 import DifferentTesting from "../Settings/User/DifferentTesting.tsx";
-import getClientVersion from "@/utils/getClientVersion.ts";
 import Appearance from "@/components/Settings/User/Appearance.tsx";
 import Language from "@/components/Settings/User/Language.tsx";
 import { Routes } from "@/utils/Routes.ts";
+import { useRouter } from "@/hooks/useRouter.ts";
 
 const UserOptions = ({
 	children,
@@ -221,7 +220,9 @@ const UserOptions = ({
 		});
 	}, []);
 
-	const { channel, version, hash } = getClientVersion();
+	const channel = import.meta.env.VITE_GIT_BRANCH;
+	const version = import.meta.env.VITE_WRAPPER_VERSION;
+	const hash = import.meta.env.VITE_GIT_COMMIT;
 
 	return (
 		<>

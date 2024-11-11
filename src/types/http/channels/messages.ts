@@ -1,4 +1,4 @@
-import type { Embed } from "@/components/Message/Embeds/RichEmbed.tsx";
+import { Embed } from "@/types/embed.ts";
 
 export interface Message {
 	id: string;

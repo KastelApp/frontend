@@ -4,6 +4,8 @@ import ChannelSidebar from "@/components/NavBars/ChannelNavBar.tsx";
 import ChannelTopNavbar from "@/components/NavBars/ChannelTopNavbar.tsx";
 import MembersNavBar from "@/components/NavBars/MemberNavBar/MembersNavBar.tsx";
 import HubChannels from "@/components/Settings/Hub/Channels.tsx";
+import { useRouter } from "@/hooks/useRouter.ts";
+import AppLayout from "@/layouts/AppLayout.tsx";
 import arrayify from "@/utils/arrayify.ts";
 import cn from "@/utils/cn.ts";
 import Logger from "@/utils/Logger.ts";
@@ -11,15 +13,15 @@ import { Routes } from "@/utils/Routes.ts";
 import { useHubSettingsStore, useStoredSettingsStore } from "@/wrapper/Stores.tsx";
 import { useChannelStore } from "@/wrapper/Stores/ChannelStore.ts";
 import { useHubStore } from "@/wrapper/Stores/HubStore.ts";
-import { useRouter } from "next/router";
 import { useEffect } from "react";
 
 const HubPages = () => {
 	const router = useRouter();
-	const [hubId, part, channelId, messageId] = arrayify(router.query?.slug);
+	const [hubId, part, channelId, messageId] = arrayify(router.params?.slug);
 	const inHub = useHubStore((state) => state.getHub(hubId));
 	const channel = useChannelStore((state) => state.getChannel(channelId));
-	const { setHubSettings, hubSettings } = useHubSettingsStore();
+	const getHubSettings = useHubSettingsStore((state) => state.getHubSettings);
+	const setHubSettings = useHubSettingsStore((state) => state.setHubSettings);
 
 	useEffect(() => {
 		if (!router.isReady) return;
@@ -53,10 +55,9 @@ const HubPages = () => {
 		if (channelId) {
 			setHubSettings(hubId, {
 				lastChannelId: channelId,
-				memberBarHidden: hubSettings[hubId]?.memberBarHidden ?? false,
 			});
 		}
-	}, [router, hubId, channelId, part, messageId]);
+	}, [router, hubId, channelId, part, messageId, getHubSettings, setHubSettings]);
 
 	const { setIsChannelsOpen, setIsMembersOpen, setIsHubsOpen, isChannelsOpen, isHubsOpen, isMembersOpen, isMobile } = useStoredSettingsStore();
 
@@ -84,7 +85,7 @@ const HubPages = () => {
 
 
 	return (
-		<>
+		<AppLayout>
 			<div className={cn("h-full")}>
 				<div className={cn(isChannelsOpen && isMobile ? "fixed top-0 left-16 bottom-0 z-10" : "h-screen")}>
 					{isChannelsOpen && <ChannelSidebar currentChannelId={channelId} currentHubId={hubId} />}
@@ -112,10 +113,9 @@ const HubPages = () => {
 
 				</div>
 			</div>
-		</>
+		</AppLayout>
+
 	);
 };
-
-HubPages.shouldHaveLayout = true;
 
 export default HubPages;

@@ -1,13 +1,13 @@
+import { useRouter } from "@/hooks/useRouter.ts";
 import arrayify from "@/utils/arrayify.ts";
 import cn from "@/utils/cn.ts";
 import hexOpacity from "@/utils/hexOpacity.ts";
 import { useRoleStore } from "@/wrapper/Stores/RoleStore.ts";
-import { useRouter } from "next/router";
 import { defaultRules } from "simple-markdown";
 
 const RoleMention = ({ roleId }: { roleId: string }) => {
     const router = useRouter();
-	const [hubId] = arrayify(router.query?.slug);
+	const [hubId] = arrayify(router.params?.slug);
 
     const foundRole = useRoleStore((state) => {
         const role = state.getRole(["@everyone", "@here"].includes(roleId) ? hubId : roleId);

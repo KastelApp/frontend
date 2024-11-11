@@ -1,4 +1,4 @@
-import { relationshipFlags } from "@/utils/Constants.ts";
+import { relationshipFlags } from "@/data/constants.ts";
 import { create } from "zustand";
 
 export interface Relationship {

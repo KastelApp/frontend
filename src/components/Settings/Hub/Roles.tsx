@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import {
 	Tabs,
 	Tab,
@@ -10,17 +10,16 @@ import {
 	Popover,
 	PopoverTrigger,
 	PopoverContent,
+	Tooltip,
 } from "@nextui-org/react";
 import { useColor, ColorPicker as CustomColorPicker, ColorService } from "react-color-palette";
 import { Trash } from "lucide-react";
-import PermissionsDescriptions from "@/utils/PermissionsDescriptions.ts";
-import { useRouter } from "next/router";
+import PermissionsDescriptions from "@/data/PermissionsDescriptions.ts";
 import { Role, useRoleStore } from "@/wrapper/Stores/RoleStore.ts";
-import deepEqual from "fast-deep-equal";
 import SaveChanges from "@/components/SaveChanges.tsx";
 import Permissions from "@/wrapper/Permissions.ts";
-import Tooltip from "@/components/Tooltip.tsx";
 import arrayify from "@/utils/arrayify.ts";
+import { useRouter } from "@/hooks/useRouter.ts";
 
 const generateRgbAndHsv = (color: string) => {
 	return {
@@ -149,34 +148,8 @@ const ColorPicker = ({ selectedRole }: { selectedRole: Role }) => {
 const Roles = () => {
 	const router = useRouter();
 
-	const [currentHubId] = arrayify(router.query?.slug);
-
-	const roleRef = useRef(
-		useRoleStore
-			.getState()
-			.getRoles(currentHubId)
-			.sort((a, b) => a.position - b.position)
-			.reverse(),
-	);
-
-	useEffect(() => {
-		const roleSubscribe = useRoleStore.subscribe((s) => {
-			const roles = s
-				.getRoles(currentHubId)
-				.sort((a, b) => a.position - b.position)
-				.reverse();
-
-			if (deepEqual(roles, roleRef.current)) return;
-
-			roleRef.current = roles;
-		});
-
-		return () => {
-			roleSubscribe();
-		};
-	}, []);
-
-	const roles = roleRef.current;
+	const [currentHubId] = arrayify(router.params?.slug);
+	const roles = useRoleStore((state) => state.getRoles(currentHubId));
 
 	const [selectedRole, setSelectedRole] = useState(roles[0]);
 	const [advancedMode, setAdvancedMode] = useState(false);

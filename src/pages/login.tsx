@@ -13,14 +13,12 @@ import {
 import { useEffect, useState } from "react";
 import { EyeIcon, EyeOffIcon, LoaderCircle } from "lucide-react";
 import { useClientStore, useIsReady, useTokenStore, useTranslationStore } from "@/wrapper/Stores.tsx";
-import SEO from "@/components/SEO.tsx";
-import NextLink from "next/link";
-import { useRouter } from "next/router";
-import onEnter from "@/utils/onEnter.ts";
 import TwoFa from "@/components/Modals/TwoFa.tsx";
 import safePromise from "@/utils/safePromise.ts";
 import { modalStore } from "@/wrapper/Stores/GlobalModalStore.ts";
 import { Routes } from "@/utils/Routes.ts";
+import { useRouter } from "@/hooks/useRouter.ts";
+import NextLink from "@/components/Link.tsx";
 
 const Login = () => {
 	const [isVisible, setIsVisible] = useState(false);
@@ -146,9 +144,6 @@ const Login = () => {
 	};
 
 	return (
-		<>
-			<SEO title={"Login"} />
-
 			<HomeLayout>
 				<div className="flex items-center justify-center">
 					<Card className="mt-32 flex w-full max-w-md items-center justify-center bg-lightAccent p-8 dark:bg-darkAccent">
@@ -199,7 +194,7 @@ const Login = () => {
 										minLength={4}
 										maxLength={72}
 										isInvalid={!!passwordError}
-										onKeyUp={onEnter(login)}
+										// onKeyUp={onEnter(login)}
 										tabIndex={2}
 									/>
 								</div>
@@ -311,7 +306,6 @@ const Login = () => {
 				</Modal>
 				<TwoFa isOpen={isOpen} onOpenChange={onOpenChange} onClose={onClose} />
 			</HomeLayout>
-		</>
 	);
 };
 

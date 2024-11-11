@@ -1,6 +1,6 @@
 import SpotifyEmbed from "@/components/Message/Embeds/IFrameEmbeds/Spotify.tsx";
-import { Embed } from "./RichEmbed.tsx";
 import YoutubeIFrameEmbed from "@/components/Message/Embeds/IFrameEmbeds/Youtube.tsx";
+import { Embed } from "@/types/embed.ts";
 
 const IFrameEmbed = ({ embed }: { embed: Embed }) => {
 	if (embed.iframeSource?.provider === "Youtube") {

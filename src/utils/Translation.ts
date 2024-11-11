@@ -221,10 +221,10 @@ class Translation {
 				if (englishCurrent[k]) {
 					current = englishCurrent[k] as TranslationType;
 
-					if (process.env.NODE_ENV === "development")
+					if (import.meta.env.MODE === "development")
 						console.warn(`Translation key "${key}" is missing in ${lang}, defaulting to english (${k})`);
 				} else {
-					if (process.env.NODE_ENV === "development")
+					if (import.meta.env.MODE === "development")
 						console.warn(`Translation key "${key}" is missing in ${lang} and english (${k})`);
 
 					return key;

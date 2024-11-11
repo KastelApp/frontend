@@ -1,17 +1,17 @@
 import PopOverData from "@/components/Popovers/PopoverData.tsx";
+import { useRouter } from "@/hooks/useRouter.ts";
 import arrayify from "@/utils/arrayify.ts";
 import cn from "@/utils/cn.ts";
 import hexOpacity from "@/utils/hexOpacity.ts";
 import { useMemberStore } from "@/wrapper/Stores/Members.ts";
 import { useRoleStore } from "@/wrapper/Stores/RoleStore.ts";
 import { useUserStore } from "@/wrapper/Stores/UserStore.ts";
-import { useRouter } from "next/router";
 import { defaultRules } from "simple-markdown";
 
 const UserMention = ({ userId }: { userId: string; }) => {
 	const foundUser = useUserStore((state) => state.getUser(userId));
 	const router = useRouter();
-	const [hubId] = arrayify(router.query?.slug);
+	const [hubId] = arrayify(router.params?.slug);
 	const foundMember = useMemberStore((state) => (hubId ? state.getMember(hubId, userId) : null));
 	const name = foundUser
 		? `@${foundMember?.nickname ?? foundUser.globalNickname ?? foundUser.username}`

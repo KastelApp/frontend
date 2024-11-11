@@ -1,8 +1,6 @@
 import { useAPIStore, useClientStore, useIsReady, useStoredSettingsStore, useTokenStore } from "@/wrapper/Stores.tsx";
-import { useRouter } from "next/router";
 import { useEffect } from "react";
 import Loading from "./Loading.tsx";
-import AppLayout from "@/layouts/AppLayout.tsx";
 import { useRelationshipsStore, Relationship as RelationshipState } from "@/wrapper/Stores/RelationshipsStore.ts";
 import Logger from "@/utils/Logger.ts";
 import { Relationship } from "@/types/http/user/relationships.ts";
@@ -10,15 +8,15 @@ import { useUserStore } from "@/wrapper/Stores/UserStore.ts";
 import { usePerChannelStore } from "@/wrapper/Stores/ChannelStore.ts";
 import { Button } from "@nextui-org/react";
 import ModalQueue from "@/components/Modals/ModalQueue.tsx";
-import { WebSocketErrorCodes } from "@/utils/Constants.ts";
+import { WebSocketErrorCodes } from "@/data/constants.ts";
 import Client from "@/wrapper/Client.ts";
 import { Routes } from "@/utils/Routes.ts";
+import { useRouter } from "@/hooks/useRouter.ts";
 
 const Init = ({
 	children,
-	shouldHaveLayout = false,
 }: {
-	children?: React.ReactElement | React.ReactElement[];
+	children?: React.ReactNode;
 	shouldHaveLayout?: boolean;
 }) => {
 	const { token, setToken } = useTokenStore();
@@ -29,6 +27,7 @@ const Init = ({
 	const { addRelationship } = useRelationshipsStore();
 	const { channels } = usePerChannelStore();
 	const { mobilePopupIgnored, setMobilePopupIgnored, isMobile } = useStoredSettingsStore();
+	const currentUser = useUserStore((s) => s.getCurrentUser());
 
 	useEffect(() => {
 		// eslint-disable-next-line react-compiler/react-compiler -- This is fine only because its a class.
@@ -68,6 +67,7 @@ const Init = ({
 	}, [channels]);
 
 	useEffect(() => {
+		console.log(router.pathname);
 		if (blacklistedTokenPaths.some((path) => router.pathname.match(path) || path === router.pathname) && token) {
 			router.push(Routes.app());
 
@@ -157,6 +157,10 @@ const Init = ({
 
 	}, [router.pathname]);
 
+	if (router.pathname.startsWith("/app") && !currentUser) {
+		return <Loading />;
+	}
+
 	return (
 		<>
 			{isMobile && !mobilePopupIgnored && (
@@ -170,7 +174,7 @@ const Init = ({
 					</Button>
 				</div>
 			)}
-			{!isReady ? <Loading /> : <>{shouldHaveLayout ? <AppLayout>{children}</AppLayout> : children}</>}
+			{!isReady ? <Loading /> : children}
 			<ModalQueue />
 		</>
 	);

@@ -1,12 +1,16 @@
 import { useEffect, useState } from "react";
 import cn from "@/utils/cn.ts";
 
+interface DraggableItemProps { // in the future we might add more props
+	draggable: boolean;
+}
+
 interface DraggableProps<T> {
 	items: T[];
 	/**
 	 * Render {@link items}
 	 */
-	render: (item: T, index: number) => JSX.Element;
+	render: (item: T, index: number, props: DraggableItemProps) => JSX.Element;
 	/**
 	 * Runs when the items are dropped, returns the new items array as well as the item that was dropped.
 	 */
@@ -196,7 +200,9 @@ const Draggables = <T,>({
 							: "",
 					)}
 				>
-					{render(item, index)}
+					{render(item, index, {
+						draggable: true
+					})}
 				</div>
 			))}
 			{!disableGhostElement && (

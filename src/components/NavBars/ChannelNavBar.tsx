@@ -1,20 +1,20 @@
 import { motion } from "framer-motion";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
 import { ChevronDown, ChevronRight, Hash, Mail, Pencil, Settings, Store, UserRound, X } from "lucide-react";
 import { Divider, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Image, Tooltip, useDisclosure } from "@nextui-org/react";
 import { useChannelStore } from "@/wrapper/Stores/ChannelStore.ts";
 import { useHubStore } from "@/wrapper/Stores/HubStore.ts";
 import { useEffect, useState } from "react";
-import Constants, { channelTypes, snowflake } from "@/utils/Constants.ts";
+import Constants, { channelTypes, snowflake } from "@/data/constants.ts";
 import ChannelIcon from "@/components/ChannelIcon.tsx";
 import Draggables from "@/components/DraggableComponent.tsx";
-import Link from "next/link";
 import cn from "@/utils/cn.ts";
 import BaseSettings from "@/components/Modals/BaseSettings.tsx";
 import Overview from "@/components/Settings/Hub/OverView.tsx";
 import Roles from "@/components/Settings/Hub/Roles.tsx";
 import { Routes } from "@/utils/Routes.ts";
+import Link from "@/components/Link.tsx";
+import { ScrollArea } from "@radix-ui/react-scroll-area";
 
 export interface ChannelType {
     name: string;
@@ -38,6 +38,7 @@ export const Channel = ({
     hasUnreadMessages,
     isActive,
     link,
+    ...props
 }: {
     text: string;
     startContent?: React.ReactNode;
@@ -48,10 +49,10 @@ export const Channel = ({
     hasUnreadMessages?: boolean;
     isActive?: boolean;
     link?: string;
-}) => {
+} & Record<string, unknown>) => {
     const LinkMaybe = ({ children }: { children: React.ReactNode; }) =>
         link ? (
-            <Link href={link} passHref className="item-drag">
+            <Link href={link} className="item-drag w-full" {...props}>
                 {children}
             </Link>
         ) : (
@@ -59,17 +60,17 @@ export const Channel = ({
         );
 
     return (
-        <div className="first:mt-2 group">
+        <div className="first:mt-2 group" {...props}>
             <LinkMaybe>
                 <>
                     <div
                         className={cn(
-                            "mb-1 flex cursor-pointer items-center gap-1 rounded-md p-1 text-white transition-all duration-75 ease-in-out",
+                            "mb-1 flex cursor-pointer items-center gap-1 rounded-md p-1 text-white transition-all duration-75 ease-in-out w-full",
                             !shouldHideHover ? "hover:bg-slate-500/25" : "hover:text-slate-400",
                             isActive ? "!bg-slate-500/50" : "",
                         )}
                     >
-                        {hasUnreadMessages && <div className="absolute left-1 h-2 w-1 rounded-r-lg bg-white" />}
+                        {hasUnreadMessages && <div className="absolute -left-1 h-2 w-1 rounded-r-lg bg-white" />}
                         {startContent}
                         <p className={cn("truncate text-sm", hasUnreadMessages ? "font-bold" : "")}>{text}</p>
                         {endContent && (
@@ -493,7 +494,7 @@ const ChannelSidebar = ({ currentChannelId, currentHubId }: { currentHubId: stri
                             setDraggableOptions({});
                         }}
                         {...draggableOptions}
-                        render={(channel) => (
+                        render={(channel, _, props) => (
                             <Channel
                                 text={channel.name}
                                 endContent={
@@ -519,6 +520,7 @@ const ChannelSidebar = ({ currentChannelId, currentHubId }: { currentHubId: stri
                                 link={channel.link}
                                 no-drag={channel.type === channelTypes.HubCategory}
                                 key={channel.id}
+                                {...props}
                             />
                         )}
                     />

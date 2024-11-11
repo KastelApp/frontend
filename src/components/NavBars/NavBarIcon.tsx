@@ -1,10 +1,9 @@
 import ContextMenuHandler, { ContextMenuProps } from "@/components/ContextMenuHandler.tsx";
 import { Badge, Tooltip } from "@nextui-org/react";
-import Link from "next/link";
-import { memo } from "react";
 import cn from "@/utils/cn.ts";
+import Link from "@/components/Link.tsx";
 
-const NavBarIcon = memo(
+const NavBarIcon =
 	({
 		icon,
 		description,
@@ -48,16 +47,16 @@ const NavBarIcon = memo(
 		const width = `w-${size}`;
 		const height = `h-${size}`;
 
-		const LinkWrapper = ({ children, href }: { href?: string; children: React.ReactNode }): React.ReactNode =>
+		const LinkWrapper = ({ children, href }: { href?: string; children: React.ReactNode; }): React.ReactNode =>
 			href ? (
-				<Link href={href} passHref className="item-drag">
+				<Link href={href} className="item-drag">
 					{children}
 				</Link>
 			) : (
 				children
 			);
 
-		const TooltipOrNot = ({ children }: { children: React.ReactNode }): React.ReactNode =>
+		const TooltipOrNot = ({ children }: { children: React.ReactNode; }): React.ReactNode =>
 			description ? (
 				<Tooltip
 					content={description}
@@ -115,7 +114,6 @@ const NavBarIcon = memo(
 				</div>
 			</TooltipOrNot>
 		);
-	},
-);
+	};
 
 export { NavBarIcon };

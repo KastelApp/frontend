@@ -1,4 +1,4 @@
-import Constants from "@/utils/Constants.ts";
+import Constants from "@/data/constants.ts";
 import { Button, Input, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Textarea } from "@nextui-org/react";
 import { useState } from "react";
 import { RadioGroup, Radio, cn, RadioProps } from "@nextui-org/react";

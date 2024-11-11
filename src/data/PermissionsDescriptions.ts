@@ -1,4 +1,4 @@
-import { permissions } from "@/utils/Constants.ts";
+import { permissions } from "@/data/constants.ts";
 
 type PermissionKeys = {
 	[K in keyof typeof permissions]: keyof (typeof permissions)[K]["subPermissions"];

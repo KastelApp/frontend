@@ -2,7 +2,7 @@ import ChannelIcon from "@/components/ChannelIcon.tsx";
 import LiveDate from "@/components/LiveDate.tsx";
 import { ChannelType } from "@/components/NavBars/ChannelNavBar.tsx";
 import cn from "@/utils/cn.ts";
-import { channelTypes, snowflake } from "@/utils/Constants.ts";
+import { channelTypes, snowflake } from "@/data/constants.ts";
 import { Routes } from "@/utils/Routes.ts";
 import { useChannelStore, usePerChannelStore } from "@/wrapper/Stores/ChannelStore.ts";
 import { useHubStore } from "@/wrapper/Stores/HubStore.ts";

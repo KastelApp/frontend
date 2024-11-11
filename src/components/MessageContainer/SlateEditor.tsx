@@ -11,7 +11,7 @@ import withMentions from "./plugins/withMentions.tsx";
 import { getLength, toggleTextWithMarkdown } from "./SlateUtils.ts";
 import Element from "./renderers/Element.tsx";
 import withCustomDelete, { TypeNode } from "./plugins/withCustomDelete.tsx";
-import Constants from "@/utils/Constants.ts";
+import Constants from "@/data/constants.ts";
 import { useEditorStore } from "@/wrapper/Stores.tsx";
 
 const convertSTringToDescendantText = (text: string) => {
@@ -240,17 +240,12 @@ const SlateEditor = ({
 
 						sendMessage(text);
 
-						editor.children.map(() => {
-							Transforms.delete(editor, { at: [0] });
-						});
-
-						editor.children = [
-							{
-								// @ts-expect-error -- Unsure how to fix these types
-								type: "paragraph",
-								children: [{ text: "" }],
-							},
-						];
+						Transforms.delete(editor, {
+							at: {
+								anchor: Editor.start(editor, []),
+								focus: Editor.end(editor, []),
+							}
+						})
 
 						// ? refocus
 						// note: Editor.focus(editor) does not seem to work, unsure why, this is a hack / workaround which works

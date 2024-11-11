@@ -11,7 +11,7 @@ import ListItem from "@/components/Message/Markdown/ListItem.tsx";
 import Codeblock from "@/components/Message/Markdown/Codeblock.tsx";
 import { Code } from "@nextui-org/react";
 import type { CustomizedMessage } from "@/components/Message/Message.tsx";
-import Constants from "@/utils/Constants.ts";
+import Constants from "@/data/constants.ts";
 
 const parseFor = (rules: SimpleMarkdown.ReactRules, returnAst = false) => {
 	const parser = SimpleMarkdown.parserFor(rules);

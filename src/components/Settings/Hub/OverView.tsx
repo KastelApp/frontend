@@ -1,20 +1,19 @@
 import { useState } from "react";
-import { Input, Avatar, Badge, Select, SelectSection, SelectItem, Textarea, Divider } from "@nextui-org/react";
+import { Input, Avatar, Badge, Select, SelectSection, SelectItem, Textarea, Divider, Tooltip } from "@nextui-org/react";
 import { X } from "lucide-react";
 import { useUserStore } from "@/wrapper/Stores/UserStore.ts";
 import { useHubStore } from "@/wrapper/Stores/HubStore.ts";
 import { useChannelStore } from "@/wrapper/Stores/ChannelStore.ts";
 import SaveChanges from "@/components/SaveChanges.tsx";
-import Tooltip from "@/components/Tooltip.tsx";
 import SwitchOption from "@/components/SwitchOption.tsx";
-import { useRouter } from "next/router";
-import Constants from "@/utils/Constants.ts";
+import Constants from "@/data/constants.ts";
 import { useMultiFormState } from "@/hooks/useStateForm.ts";
 import arrayify from "@/utils/arrayify.ts";
+import { useRouter } from "@/hooks/useRouter.ts";
 
 const Overview = () => {
 	const router = useRouter();
-	const [hubId] = arrayify(router.query?.slug);
+	const [hubId] = arrayify(router.params?.slug);
 	const hub = useHubStore((s) => s.getHub(hubId));
 
 	const {
@@ -50,9 +49,7 @@ const Overview = () => {
 
 	const { isStaff, getCurrentUser } = useUserStore();
 	const user = getCurrentUser()!;
-	const { getChannels } = useChannelStore();
-
-	const channels = getChannels(hubId).filter((channel) => channel.type === Constants.channelTypes.HubText);
+	const channels = useChannelStore((s) => s.getChannels(hubId).filter((c) => c.type === Constants.channelTypes.HubText));
 
 	return (
 		<div className="mr-2 rounded-lg bg-lightAccent dark:bg-darkAccent">

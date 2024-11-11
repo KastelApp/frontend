@@ -1,5 +1,4 @@
-import { Link } from "@nextui-org/react";
-import NextLink from "next/link";
+import Link from "@/components/Link.tsx";
 
 const Footer = () => {
 	const year = new Date().getFullYear();
@@ -20,18 +19,18 @@ const Footer = () => {
 									<Link
 										href="https://support.kastelapp.com/"
 										className="hover:text-blue-500 hover:underline"
-										as={NextLink}
+										isDisabled
 									>
 										Support
 									</Link>
 								</li>
 								<li>
-									<Link href="/report" className="hover:text-blue-500 hover:underline" as={NextLink}>
+									<Link href="/report" className="hover:text-blue-500 hover:underline" isDisabled>
 										Reporting
 									</Link>
 								</li>
 								<li>
-									<Link href="/security" className="hover:text-blue-500 hover:underline" as={NextLink}>
+									<Link href="/security" className="hover:text-blue-500 hover:underline">
 										Report a Vulnerability
 									</Link>
 								</li>
@@ -44,7 +43,7 @@ const Footer = () => {
 									<Link
 										href="https://github.com/orgs/KastelApp/discussions"
 										className="hover:text-blue-500 hover:underline"
-										as={NextLink}
+										isDisabled
 									>
 										Blog
 									</Link>
@@ -53,7 +52,7 @@ const Footer = () => {
 									<Link
 										href="https://kastelapp.com/invite/plaza"
 										className="hover:text-blue-500 hover:underline"
-										as={NextLink}
+										isDisabled
 									>
 										Kastel Plaza
 									</Link>
@@ -62,13 +61,13 @@ const Footer = () => {
 									<Link
 										href="https://kastelapp.com/invite/developers"
 										className="hover:text-blue-500 hover:underline"
-										as={NextLink}
+										isDisabled
 									>
 										Kastel Developers
 									</Link>
 								</li>
 								<li className="mb-1">
-									<Link href="/acknowledgements" className="hover:text-blue-500 hover:underline" as={NextLink}>
+									<Link href="/acknowledgements" className="hover:text-blue-500 hover:underline" isDisabled>
 										Acknowledgements
 									</Link>
 								</li>
@@ -82,7 +81,6 @@ const Footer = () => {
 										href="https://github.com/KastelApp"
 										target="_blank"
 										className="hover:text-blue-500 hover:underline"
-										as={NextLink}
 									>
 										GitHub
 									</Link>
@@ -92,7 +90,6 @@ const Footer = () => {
 										href="https://kastel.dev/docs"
 										target="_blank"
 										className="hover:text-blue-500 hover:underline"
-										as={NextLink}
 									>
 										Documentation
 									</Link>
@@ -102,7 +99,6 @@ const Footer = () => {
 										href="https://kastel.dev/"
 										target="_blank"
 										className="hover:text-blue-500 hover:underline"
-										as={NextLink}
 									>
 										Bots
 									</Link>
@@ -113,12 +109,12 @@ const Footer = () => {
 							<h2 className="mb-2 text-sm font-semibold uppercase text-white">Legal</h2>
 							<ul className="font-medium text-gray-400">
 								<li className="mb-1">
-									<Link href="/privacy" className="hover:text-blue-500 hover:underline" as={NextLink}>
+									<Link href="/privacy" className="hover:text-blue-500 hover:underline">
 										Privacy Policy
 									</Link>
 								</li>
 								<li>
-									<Link href="/terms" className="hover:text-blue-500 hover:underline" as={NextLink}>
+									<Link href="/terms" className="hover:text-blue-500 hover:underline">
 										Terms &amp; Conditions
 									</Link>
 								</li>
@@ -130,7 +126,7 @@ const Footer = () => {
 				<div className="sm:flex sm:items-center sm:justify-between">
 					<span className="text-sm text-gray-400 sm:text-center">
 						© {year}{" "}
-						<Link href="https://kastelapp.com" className="hover:text-blue-500 hover:underline" as={NextLink}>
+						<Link href="https://kastelapp.com" className="hover:text-blue-500 hover:underline">
 							Kastel
 						</Link>
 						. All Rights Reserved.
@@ -139,8 +135,7 @@ const Footer = () => {
 						<Link
 							href="https://x.com/KastelApp"
 							target="_blank"
-							className="hover: ms-5 text-gray-500 hover:text-white"
-							as={NextLink}
+							className="hover:ms-5 text-gray-500 hover:text-white"
 						>
 							<svg
 								className="h-4 w-4"
@@ -160,7 +155,7 @@ const Footer = () => {
 						<Link
 							href="https://github.com/KastelApp"
 							target="_blank"
-							className="hover: ms-5 text-gray-500 hover:text-white"
+							className="hover:ms-5 text-gray-500 hover:text-white"
 						>
 							<svg
 								className="h-4 w-4"

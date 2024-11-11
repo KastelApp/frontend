@@ -1,11 +1,9 @@
-interface RawEventEmitter<T extends EventMap<T> = DefaultEventMap> extends NodeJS.EventEmitter<T> {}
-type EventMap<T> = Record<keyof T, unknown[]> | DefaultEventMap;
-type DefaultEventMap = [never];
+import type { EventEmitter as EventEmitterType } from "node:events" 
 
 /**
  * I've had some issues where nextjs throws an error when using the EventEmitter from "node:events" module, so I just remade it.
  */
-class EventEmitter implements RawEventEmitter {
+class EventEmitter implements EventEmitterType {
     private _listeners: Map<string | symbol, ((...args: unknown[]) => void)[]> = new Map();
     private _maxListeners = 10;
 
@@ -45,7 +43,7 @@ class EventEmitter implements RawEventEmitter {
         return this._maxListeners;
     }
 
-    // eslint-disable-next-line @typescript-eslint/ban-types
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
     public listenerCount(eventName: string | symbol, listener?: Function | undefined): number {
         const listeners = this._listeners.get(eventName);
 
@@ -56,7 +54,7 @@ class EventEmitter implements RawEventEmitter {
         return listeners.filter((l) => l === listener).length;
     }
 
-    // eslint-disable-next-line @typescript-eslint/ban-types
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
     public listeners(eventName: string | symbol): Function[] {
         const listeners = this._listeners.get(eventName);
 
@@ -103,7 +101,7 @@ class EventEmitter implements RawEventEmitter {
         return this.prependListener(eventName, once);
     }
 
-    // eslint-disable-next-line @typescript-eslint/ban-types
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
     public rawListeners(eventName: string | symbol): Function[] {
         return this.listeners(eventName);
     }

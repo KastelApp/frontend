@@ -498,7 +498,11 @@ const useScrollable = <T extends BaseType>({
         if (!hasMoreBottom) {
             setRenderedItems((prev) => {
                 if (prev.length >= maxRenderedItems) {
-                    direction === "down" ? prev.shift() : prev.pop();
+                    if (direction === "down") {
+                        prev.shift();
+                    } else {
+                        prev.pop();
+                    }
                 }
 
                 return direction === "down" ? [...prev, item].sort(sortItems) : [item, ...prev].sort(sortItems);

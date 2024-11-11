@@ -1,6 +1,6 @@
 import Logger from "@/utils/Logger.ts";
 import handleMessage from "./handleMessage.ts";
-import { opCodes } from "@/utils/Constants.ts";
+import { opCodes } from "@/data/constants.ts";
 import pako from "pako";
 import { encoding } from "@/types/ws.ts";
 import EventEmitter from "@/wrapper/EventEmitter.ts";
@@ -18,12 +18,12 @@ interface Websocket {
 class Websocket extends EventEmitter {
 	#token: string | null;
 
-	public GATEWAY_URL = process.env.API_WS_URL || "ws://localhost:62240";
+	public GATEWAY_URL = import.meta.env.VITE_GATEWAY_URL || "ws://localhost:62240";
 
-	public VERSION: string = process.env.API_VERSION || "1";
+	public VERSION: string = import.meta.env.VITE_WRAPPER_VERSION || "1";
 
 	// ? in development environments, we use json to make it easier to debug else we use zlib to compress the data
-	public ENCODING: encoding = process.env.NODE_ENV === "development" ? "json" : "zlib";
+	public ENCODING: encoding = import.meta.env.MODE === "development" ? "json" : "zlib";
 
 	private ws: WebSocket | null = null;
 
@@ -38,8 +38,6 @@ class Websocket extends EventEmitter {
 	public sessionWorker: Worker = new Worker("/workers/interval.worker.js");
 
 	public sequence: number = 0;
-
-	#listeners = new Map<string, ((...args: unknown[]) => void)[]>();
 
 	public constructor(token: string) {
 		super();

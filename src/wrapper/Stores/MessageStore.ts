@@ -1,16 +1,15 @@
-import type { Embed } from "@/components/Message/Embeds/RichEmbed.tsx";
 import { create } from "zustand";
 import { useAPIStore } from "../Stores.tsx";
 import Logger from "@/utils/Logger.ts";
 import { CreateMessageOptions, Message as MessageData } from "@/types/http/channels/messages.ts";
-import { usePerChannelStore } from "./ChannelStore.ts";
 import getInviteCodes from "@/utils/getInviteCodes.ts";
 import { useUserStore } from "./UserStore.ts";
 import fastDeepEqual from "fast-deep-equal";
-import { allowedMentions, fakeUserIds, messageFlags, snowflake } from "@/utils/Constants.ts";
+import { allowedMentions, fakeUserIds, messageFlags, snowflake } from "@/data/constants.ts";
 import safePromise from "@/utils/safePromise.ts";
 import { isErrorResponse } from "@/types/http/error.ts";
 import { useInviteStore } from "@/wrapper/Stores/InviteStore.ts";
+import { Embed } from "@/types/embed.ts";
 
 export enum MessageStates {
 	/**
@@ -90,7 +89,6 @@ export interface MessageStore {
 	deleteMessage(id: string): Promise<void>;
 	createMessage(channelId: string, options: Partial<Message>): Promise<void>;
 	editMessage(messageId: string, options: Partial<Message>, noApi?: boolean): void;
-	replyToMessage(channelId: string, messageId: string, options: Partial<Message>): void;
 	fetchMessages(
 		channelId: string,
 		options?: {
@@ -342,13 +340,6 @@ export const useMessageStore = create<MessageStore>((set, get) => ({
 		set({
 			messages: get().messages.map((message) => (message.id === messageId ? { ...message, ...options } : message)),
 		});
-	},
-	replyToMessage: (channelId, messageId, options) => {
-		const message = get().messages.find((message) => message.id === messageId);
-
-		if (!message) return;
-
-		console.log("Replying to message", message, options);
 	},
 	fetchMessages: async (channelId, options) => {
 		const api = useAPIStore.getState().api;

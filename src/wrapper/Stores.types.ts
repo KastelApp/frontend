@@ -51,11 +51,13 @@ export interface SettingsStore {
 export interface HubSettings {
 	memberBarHidden: boolean;
 	lastChannelId: string | null;
+	hubId: string;
 }
 
 export interface HubSettingsStore {
-	hubSettings: Record<string, HubSettings>;
-	setHubSettings: (hubId: string, hubSettings: HubSettings) => void;
+	hubSettings: HubSettings[];
+	setHubSettings: (hubId: string, hubSettings: Partial<Omit<HubSettings, "hubId">>) => void;
+	getHubSettings: (hubId: string) => HubSettings | undefined;
 }
 
 export interface SelectedTabStore {

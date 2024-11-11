@@ -1,8 +1,8 @@
 import { modalStore } from "@/wrapper/Stores/GlobalModalStore.ts";
 import { useTrustedDomainStore } from "@/wrapper/Stores/TrustedDomainStore.ts";
 import { Button, Checkbox } from "@nextui-org/react";
-import NextLink from "next/link";
 import { useRef } from "react";
+import NextLink from "@/components/Link.tsx";
 
 const Link = (props: React.JSX.IntrinsicElements["a"] & { phishingMessage?: boolean }) => {
 	let href = props.href;
@@ -29,7 +29,6 @@ const Link = (props: React.JSX.IntrinsicElements["a"] & { phishingMessage?: bool
 	return (
 		<NextLink
 			href={href ?? ""}
-			passHref
 			className="text-blue-500 hover:underline"
 			target={href?.startsWith("http") ? "_blank" : ""}
 			onClick={(e) => {

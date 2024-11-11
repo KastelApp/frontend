@@ -1,7 +1,6 @@
 import { Theme, EmojiPack, NavBarLocation } from "@/types/payloads/ready.ts";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { createTrackedSelector } from "react-tracked";
 import Translation from "@/utils/Translation.ts";
 import {
 	APIStore,
@@ -44,32 +43,38 @@ export const useSettingsStore = create<SettingsStore>((set) => ({
 	setIsSideBarOpen: (isSideBarOpen: boolean) => set({ isSideBarOpen }),
 }));
 
-export const useHubSettingsStore = createTrackedSelector(
-	create(
-		persist<HubSettingsStore>(
-			(set) => ({
-				hubSettings: {},
-				setHubSettings: (hubId: string, hubSettings: HubSettings) =>
-					set((state) => ({
-						hubSettings: {
-							...state.hubSettings,
-							[hubId]: hubSettings,
-						},
-					})),
-			}),
-			{
-				name: "hub-settings",
-			},
-		),
-	),
-);
+export const useHubSettingsStore = create(
+	persist<HubSettingsStore>(
+		(set, get) => ({
+			hubSettings: [],
+			setHubSettings: (hubId: string, hubSettings: Partial<Omit<HubSettings, "hubId">>) => {
+				const currentHubSettings = get().hubSettings;
+				const foundHub = currentHubSettings.find((hub) => hub.hubId === hubId) ?? { hubId, memberBarHidden: false, lastChannelId: null };
 
-export const useSelectedTab = createTrackedSelector(
-	create<SelectedTabStore>((set) => ({
-		selectedTab: "friends",
-		setSelectedTab: (selectedTab: string | null) => set({ selectedTab }),
-	})),
-);
+				const newHubSettings = {
+					...foundHub,
+					...hubSettings,
+				};
+
+				set({
+					hubSettings: [
+						...currentHubSettings.filter((hub) => hub.hubId !== hubId),
+						newHubSettings as HubSettings,
+					]
+				})
+			},
+			getHubSettings: (hubId: string) => get().hubSettings.find((hub) => hub.hubId === hubId),
+		}),
+		{
+			name: "hub-settings",
+		},
+	),
+)
+
+export const useSelectedTab = create<SelectedTabStore>((set) => ({
+	selectedTab: "friends",
+	setSelectedTab: (selectedTab: string | null) => set({ selectedTab }),
+}))
 
 // ? The reason we don't use "createTrackedSelector" here is we still want to update components when something like the current language changes, without requiring it in the component
 // ? There's a few other things we want to do that as well (i.e settings etc)

@@ -135,8 +135,7 @@ export const useUserStore = create<UserStore>((set, get) => ({
 		const foundCurrentUser = get().users.find((user) => user.isClient);
 
 		if (!foundCurrentUser) {
-			Logger.error("No current user found, dumping users", "UserStore | getCurrentUser()");
-			console.log(get().users);
+			Logger.error("No current user found. Possibly an issue.", "UserStore | getCurrentUser()");
 
 			return null;
 		}
@@ -309,7 +308,7 @@ export const useUserStore = create<UserStore>((set, get) => ({
 		});
 	},
 	getAvatarUrl: (userId, hash, options = { format: "webp", size: 256 }) =>
-		hash ? `${process.env.ICON_CDN}/avatar/${userId}/${hash}?size=${options.size}&format=${options.format}` : null,
+		hash ? `${import.meta.env.VITE_CDN_URL}/avatar/${userId}/${hash}?size=${options.size}&format=${options.format}` : null,
 	fetchProfile: async (userId) => {
 
 		const user = get().getUser(userId);

@@ -2,7 +2,7 @@ import safeParse from "@/utils/safeParse.ts";
 import Websocket from "./Websocket.ts";
 import { EventPayload } from "@/types/payloads/event.ts";
 import Logger from "@/utils/Logger.ts";
-import Constants, { opCodes } from "@/utils/Constants.ts";
+import Constants, { opCodes } from "@/data/constants.ts";
 import { HelloPayload } from "@/types/payloads/hello.ts";
 import event from "./Events/Event.ts";
 import { EmojiPack, NavBarLocation, ReadyPayload, Theme } from "@/types/payloads/ready.ts";
@@ -25,7 +25,7 @@ const handleMessage = async (ws: Websocket, data: unknown) => {
 		return;
 	}
 
-	if (process.env.NODE_ENV === "development") {
+	if (import.meta.env.MODE === "development") {
 		Logger.info("Received Payload", "Gateway | HandleMessage");
 
 		console.log(typeof decompressed === "string" ? JSON.parse(decompressed) : decompressed);
@@ -138,6 +138,7 @@ const handleMessage = async (ws: Websocket, data: unknown) => {
 						joinedAt: new Date(member.joinedAt),
 						userId: member.user.id,
 						nickname: member.nickname || null,
+						status: "online"
 					});
 
 					const flagFields = new FlagFields(member.user.flags, "0");

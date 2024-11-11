@@ -2,7 +2,7 @@ import StaffBadge from "./Staff.tsx";
 import BugHunterLevel1 from "./BugHunter1.tsx";
 import BugHunterLevel2 from "./BugHunter2.tsx";
 import BugHunterLevel3 from "./BugHunter3.tsx";
-import { publicFlags } from "@/utils/Constants.ts";
+import { publicFlags } from "@/data/constants.ts";
 import Contributor from "@/badges/Contributor.tsx";
 import Moderator from "@/badges/Moderator.tsx";
 import Partner from "@/badges/Partner.tsx";

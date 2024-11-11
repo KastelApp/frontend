@@ -1,4 +1,4 @@
-import { HubFeatures } from "@/utils/Constants.ts";
+import { HubFeatures } from "@/data/constants.ts";
 
 export interface CreateHubOptions {
 	description?: string | null;

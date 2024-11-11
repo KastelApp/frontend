@@ -1,9 +1,8 @@
 import { useUserStore } from "@/wrapper/Stores/UserStore.ts";
-import { Button, Input, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Textarea } from "@nextui-org/react";
+import { Button, Input, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Textarea, Tooltip } from "@nextui-org/react";
 import { Check, LoaderCircle, X } from "lucide-react";
 import { useState } from "react";
-import Tooltip from "../Tooltip.tsx";
-import { settings } from "@/utils/Constants.ts";
+import { settings } from "@/data/constants.ts";
 import { useMultiFormState } from "@/hooks/useStateForm.ts";
 
 const EditUser = ({

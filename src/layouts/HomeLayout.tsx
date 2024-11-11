@@ -1,6 +1,6 @@
+import { confettiDark } from "@/assets/confetti.tsx";
 import Footer from "@/components/Footer.tsx";
 import TopHeader from "@/components/TopHeader.tsx";
-import { confettiDark } from "@/components/confetti.tsx";
 import cn from "@/utils/cn.ts";
 
 const HomeLayout = ({ children, className, disableBackgroundImage = false }: { children?: React.ReactNode; className?: string; disableBackgroundImage?: boolean }) => {

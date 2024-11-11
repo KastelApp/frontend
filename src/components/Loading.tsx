@@ -1,5 +1,5 @@
+import { confettiDark } from "@/assets/confetti.tsx";
 import Logo from "@/badges/Logo.tsx";
-import { confettiDark } from "./confetti.tsx";
 import { useEffect, useState } from "react";
 
 interface Quote {

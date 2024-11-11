@@ -1,11 +1,11 @@
+import Link from "@/components/Link.tsx";
 import HomeLayout from "@/layouts/HomeLayout.tsx";
 import { modalStore } from "@/wrapper/Stores/GlobalModalStore.ts";
 import { Avatar, Button } from "@nextui-org/react";
-import Link from "next/link";
 
 const SecurityPage = () => {
     const topReporters = [
-        { username: "darkerink", avatar: "https://profile-photos.hackerone-user-content.com/variants/qaj9dannoh67fk4jpiqc9t4ntb72/66555439a92cf3e7dc0339d5fb79b6624a23d8919c96c34859e2df0522f0278e" }
+        { username: "darkerink", avatar: "https://h1avatar.darkerink.workers.dev/proxy/darkerink" }
     ];
 
     return (

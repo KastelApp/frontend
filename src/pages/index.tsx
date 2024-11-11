@@ -5,9 +5,9 @@ import { motion, useAnimation } from "framer-motion";
 import { useInView } from "react-intersection-observer";
 import HomeLayout from "@/layouts/HomeLayout.tsx";
 import { Image, Button } from "@nextui-org/react";
-import Link from "next/link";
 import { useIsReady, useTokenStore } from "@/wrapper/Stores.tsx";
 import { Routes } from "@/utils/Routes.ts";
+import Link from "@/components/Link.tsx";
 
 const FeatureSection = ({ title, description, icon, imageUrl, reverse = false, learnMore, id }: {
 	title: string;
@@ -52,7 +52,7 @@ const FeatureSection = ({ title, description, icon, imageUrl, reverse = false, l
 			>
 				<div className="w-full md:w-1/2">
 					<div className="text-primary mb-4">{icon}</div>
-					<Link className="text-3xl font-bold mb-4" href={`#${fixedId}`} passHref>
+					<Link className="text-3xl font-bold mb-4" href={`#${fixedId}`}>
 						<h2>{title}</h2>
 					</Link>
 					<p className="text-gray-400 mb-6">{description}</p>

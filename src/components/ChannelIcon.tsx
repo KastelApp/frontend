@@ -1,4 +1,4 @@
-import { channelTypes } from "@/utils/Constants.ts";
+import { channelTypes } from "@/data/constants.ts";
 import { BookA, Hash, NotebookPen, Volume2 } from "lucide-react";
 
 const ChannelIcon = ({ type, size = 18, className }: { type: number; size?: number; className?: string }) => {

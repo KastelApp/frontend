@@ -3,15 +3,15 @@ import StaffBadge from "./Staff.tsx";
 import BugHunterLevel1 from "./BugHunter1.tsx";
 import BugHunterLevel2 from "./BugHunter2.tsx";
 import BugHunterLevel3 from "./BugHunter3.tsx";
-import { badgeOrder, publicFlags as pubFlags } from "@/utils/Constants.ts";
+import { badgeOrder, publicFlags as pubFlags } from "@/data/constants.ts";
 import Sponsor from "./Sponsor.tsx";
-import Tooltip from "@/components/Tooltip.tsx";
 import Moderator from "@/badges/Moderator.tsx";
 import Contributor from "@/badges/Contributor.tsx";
 import Partner from "@/badges/Partner.tsx";
 import BotBadge from "@/badges/BotBadge.tsx";
 import { useTranslationStore } from "@/wrapper/Stores.tsx";
 import cn from "@/utils/cn.ts";
+import { Tooltip } from "@nextui-org/react";
 
 /**
  * Just a small helper component to display all badges a user has.

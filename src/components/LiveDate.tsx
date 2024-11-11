@@ -1,7 +1,6 @@
 import { DateFormat, formatDate } from "@/utils/formatDate.ts";
 import { useEffect, useRef, useState } from "react";
 
-
 interface LiveDateProps {
     date: Date;
     format?: DateFormat

@@ -5,7 +5,7 @@ import { useMemberStore } from "./Members.ts";
 import { useRoleStore } from "./RoleStore.ts";
 import PermissionHandler from "../PermissionHandler.ts";
 import Logger from "@/utils/Logger.ts";
-import { channelTypes } from "@/utils/Constants.ts";
+import { channelTypes } from "@/data/constants.ts";
 import { persist } from "zustand/middleware";
 import deepMerge from "@/utils/deepMerge.ts";
 

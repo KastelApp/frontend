@@ -1,17 +1,16 @@
-import { useRouter } from "next/router";
+import { useRouter } from "@/hooks/useRouter.ts";
+import AppLayout from "@/layouts/AppLayout.tsx";
 
 const DmPages = () => {
 	const router = useRouter();
-	
-    console.log(router.query?.slug)
+
+	console.log(router.params?.slug);
 
 	return (
-		<>
-		Coming Soon™️
-		</>
+		<AppLayout>
+			<>Coming Soon™️</>
+		</AppLayout>
 	);
 };
-
-DmPages.shouldHaveLayout = true;
 
 export default DmPages;

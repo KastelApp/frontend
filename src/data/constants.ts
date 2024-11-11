@@ -1,5 +1,3 @@
-/* eslint-disable import/no-anonymous-default-export */
-
 import Snowflake from "@/utils/Snowflake.ts";
 
 const settings = {

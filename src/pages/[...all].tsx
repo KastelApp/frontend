@@ -1,18 +1,15 @@
+import Link from "@/components/Link.tsx";
+import { useRouter } from "@/hooks/useRouter.ts";
 import HomeLayout from "@/layouts/HomeLayout.tsx";
 import { useTranslationStore } from "@/wrapper/Stores.tsx";
 import { Button } from "@nextui-org/react";
-import Link from "next/link";
-import { useRouter } from "next/router";
-import SEO from "@/components/SEO.tsx";
 
 const FourOhFour = () => {
 	const router = useRouter();
-
 	const { t } = useTranslationStore();
 
 	return (
 		<>
-			<SEO title={"Page Not Found"} />
 			<HomeLayout>
 				<div className="flex items-center justify-center bg-cover py-32 text-white">
 					<div className="text-center">

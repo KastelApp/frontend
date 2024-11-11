@@ -14,7 +14,7 @@ import { Role } from "@/wrapper/Stores/RoleStore.ts";
 import RichEmbed from "@/components/Message/Embeds/RichEmbed.tsx";
 import IFrameEmbed from "@/components/Message/Embeds/IFrameEmbed.tsx";
 import MessageMarkDown from "@/components/Message/Markdown/MarkDown.tsx";
-import Constants from "@/utils/Constants.ts";
+import Constants from "@/data/constants.ts";
 import cn from "@/utils/cn.ts";
 import ImageEmbed from "@/components/Message/Embeds/Image.tsx";
 import VideoEmbed from "@/components/Message/Embeds/Video.tsx";
@@ -188,7 +188,7 @@ const Message = ({
 								/>
 							</PopOverData>
 						)}
-						<div className={cn("relative ml-2 flex w-full flex-col", isGrouped && "ml-4")}>
+						<div className={cn("relative ml-2 flex w-full flex-col", isGrouped && "ml-8")}>
 							{!isGrouped && (
 								<div className="flex">
 									<PopOverData
@@ -224,10 +224,10 @@ const Message = ({
 									</Tooltip>
 								</div>
 							)}
-							<div className="flex">
+							<div className="flex relative">
 								{isGrouped && (
 									<Tooltip content={formatDate(message.creationDate, "dayTime")} placement="top" delay={500}>
-										<div className="-ml-4 flex select-none text-3xs text-gray-400 transition-opacity opacity-0 duration-300 ease-in-out group-hover:opacity-100">
+										<div className="absolute flex -ml-8 select-none text-3xs text-gray-400 transition-opacity opacity-0 duration-300 ease-in-out group-hover:opacity-100">
 											{formatDate(message.creationDate, "short")}
 										</div>
 									</Tooltip>

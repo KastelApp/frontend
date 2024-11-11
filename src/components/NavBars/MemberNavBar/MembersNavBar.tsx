@@ -1,15 +1,14 @@
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
 import { ChevronRight, ChevronDown } from "lucide-react";
 import cn from "@/utils/cn.ts";
 import { useEffect, useRef, useState } from "react";
-import { useRouter } from "next/router";
 import { Role, useRoleStore } from "@/wrapper/Stores/RoleStore.ts";
 import { Member, useMemberStore } from "@/wrapper/Stores/Members.ts";
 import { User, useUserStore } from "@/wrapper/Stores/UserStore.ts";
 import deepEqual from "fast-deep-equal";
 import arrayify from "@/utils/arrayify.ts";
 import MemberItem from "@/components/NavBars/MemberNavBar/MemberItem.tsx";
+import { useRouter } from "@/hooks/useRouter.ts";
 
 interface Section {
     name: string; // ? two defaults, "offline" and "online"
@@ -34,7 +33,7 @@ const MembersNavBar = ({
     className?: string;
 }) => {
     const router = useRouter();
-    const [currentHubId, , channelId] = arrayify(router.query?.slug);
+    const [currentHubId, , channelId] = arrayify(router.params?.slug);
     const { getUser } = useUserStore();
     const roleRef = useRef<Role[] | null>(null);
     const memberRef = useRef<Member[] | null>(null);
@@ -314,7 +313,7 @@ const MembersNavBar = ({
 
     return (
         <div className={cn("w-60 bg-darkAccent ", className)}>
-            <ScrollArea className="flex-grow">
+            <div className="flex-grow">
                 <div className="p-2">
                     {sections.map((section) => (
                         <div key={section.id} className="mb-4">
@@ -356,7 +355,7 @@ const MembersNavBar = ({
                         </div>
                     ))}
                 </div>
-            </ScrollArea>
+            </div>
         </div>
     );
 };

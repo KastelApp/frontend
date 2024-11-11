@@ -1,4 +1,4 @@
-import { permissionOverrideTypes } from "@/utils/Constants.ts";
+import { permissionOverrideTypes } from "@/data/constants.ts";
 import Permissions, { PermissionKey } from "./Permissions.ts";
 import { Channel } from "./Stores/ChannelStore.ts";
 import { Role } from "./Stores/RoleStore.ts";

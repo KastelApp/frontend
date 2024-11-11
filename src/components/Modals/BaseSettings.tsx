@@ -102,7 +102,6 @@ const BaseSettings = ({
 										<Section
 											title={section.title}
 											key={section.title}
-											// eslint-disable-next-line react/no-children-prop
 											children={section.children}
 											setSection={setSelectedSection}
 										/>

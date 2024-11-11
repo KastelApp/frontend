@@ -5,7 +5,7 @@ import { ErrorResponseData } from "@/types/http/error.ts";
 import { useHubStore } from "@/wrapper/Stores/HubStore.ts";
 import { useChannelStore } from "@/wrapper/Stores/ChannelStore.ts";
 import { useUserStore } from "@/wrapper/Stores/UserStore.ts";
-import { inviteFlags } from "@/utils/Constants.ts";
+import { inviteFlags } from "@/data/constants.ts";
 
 export interface BaseInvite {
 	type: number;

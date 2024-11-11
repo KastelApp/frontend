@@ -1,5 +1,5 @@
-import { Embed } from "@/components/Message/Embeds/RichEmbed.tsx";
 import PopUpImage from "@/components/PopUpImage.tsx";
+import { Embed } from "@/types/embed.ts";
 
 const ImageEmbed = ({ embed }: { embed: Embed }) => {
 	const firstFile = embed.files?.[0];

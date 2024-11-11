@@ -1,6 +1,6 @@
 import { X, Pen, CirclePlus, SendHorizontal, SmilePlus, FileIcon } from "lucide-react";
 import SlateEditor from "./SlateEditor.tsx";
-import { Avatar, Divider, Image } from "@nextui-org/react";
+import { Avatar, Divider, Image, Tooltip } from "@nextui-org/react";
 import TypingDots from "./TypingDats.tsx";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useContentStore, usePerChannelStore } from "@/wrapper/Stores/ChannelStore.ts";
@@ -9,11 +9,10 @@ import { Member, useMemberStore } from "@/wrapper/Stores/Members.ts";
 import { useMessageStore } from "@/wrapper/Stores/MessageStore.ts";
 import { useRoleStore } from "@/wrapper/Stores/RoleStore.ts";
 import { useAPIStore, useTranslationStore } from "@/wrapper/Stores.tsx";
-import Tooltip from "../Tooltip.tsx";
 import useTypingIndicator from "@/hooks/useTypingIndicator.ts";
 import hexOpacity from "@/utils/hexOpacity.ts";
 import cn from "@/utils/cn.ts";
-import { snowflake } from "@/utils/Constants.ts";
+import { snowflake } from "@/data/constants.ts";
 
 const FileComponent = ({ fileName, type, onDelete, onEdit, file }: { fileName?: string; type: "image" | "file"; file: File; onDelete: () => void; onEdit: () => void; }) => {
 	const url = URL.createObjectURL(file);
@@ -382,7 +381,7 @@ const MessageContainer = ({
 									multiple
 									ref={fileRef}
 									onChange={(e) => {
-										for (const file of e.target.files ?? []) {
+										for (const file of (e?.target?.files ?? []) as File[]) {
 											console.log(file.name, file.size);
 
 											setFiles((old) => [

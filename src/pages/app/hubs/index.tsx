@@ -1,11 +1,12 @@
+import Link from "@/components/Link.tsx";
 import HubModal from "@/components/Modals/CreateHub.tsx";
+import AppLayout from "@/layouts/AppLayout.tsx";
 import { Routes } from "@/utils/Routes.ts";
 import { useHubSettingsStore, useTranslationStore } from "@/wrapper/Stores.tsx";
 import { useChannelStore } from "@/wrapper/Stores/ChannelStore.ts";
 import { Hub, useHubStore } from "@/wrapper/Stores/HubStore.ts";
 import { Avatar, Badge, Button, Chip, cn, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Tab, Tabs, useDisclosure } from "@nextui-org/react";
 import { MoreHorizontal } from "lucide-react";
-import Link from "next/link";
 import { useCallback } from "react";
 
 interface HubCardProps {
@@ -111,8 +112,8 @@ const HubCard = ({
 };
 
 const Hubs = () => {
-    const { hubs } = useHubStore();
-    const { hubSettings } = useHubSettingsStore();
+    const hubs = useHubStore((s) => s.hubs);
+    const getHubSettings = useHubSettingsStore((s) => s.getHubSettings);
     const { getChannelsWithValidPermissions, getTopChannel } = useChannelStore();
 
     const mappedHubs = useCallback(() => {
@@ -120,7 +121,7 @@ const Hubs = () => {
             let mentions = 0;
 
             const gotChannels = getChannelsWithValidPermissions(hub.id);
-            const foundHubSettings = hubSettings[hub.id];
+            const foundHubSettings = getHubSettings(hub.id);
 
             for (const channel of gotChannels) {
                 const foundChannel = hub.channelProperties.find(
@@ -140,27 +141,27 @@ const Hubs = () => {
                     href={foundHubSettings?.lastChannelId
                         ? Routes.hubChannel(hub.id, foundHubSettings.lastChannelId) : topChannel ?
                             Routes.hubChannel(hub.id, topChannel.id) : Routes.hub(hub.id)}
-        />
+                />
             );
         });
-    }, [hubs, hubSettings]);
+    }, [hubs, getHubSettings]);
 
-    const { isOpen, onOpenChange } = useDisclosure()
+    const { isOpen, onOpenChange } = useDisclosure();
 
     return (
-        <>
+        <AppLayout>
             <div />
             <HubModal isOpen={isOpen} onOpenChange={onOpenChange} />
             <div className="w-full h-full">
                 <Tabs className="flex justify-center"
-                
 
-                classNames={{
-                    tab: "bg-darkAccent",
-                    tabList: "bg-darkAccent",
-                    cursor: "dark:bg-charcoal-500",
-                    panel: "rounded-md "    
-                }}
+
+                    classNames={{
+                        tab: "bg-darkAccent",
+                        tabList: "bg-darkAccent",
+                        cursor: "dark:bg-charcoal-500",
+                        panel: "rounded-md "
+                    }}
                 >
                     <Tab title="My Hubs">
                         <div className="pl-4 pr-4 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
@@ -184,10 +185,8 @@ const Hubs = () => {
                     </Tab>
                 </Tabs>
             </div>
-        </>
+        </AppLayout>
     );
 };
-
-Hubs.shouldHaveLayout = true;
 
 export default Hubs;

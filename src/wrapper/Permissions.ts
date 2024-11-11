@@ -8,7 +8,7 @@
  * ? PermissionOverrides still will have "allow" and "deny" properties, but they now will be an array of arrays of strings (BigInts)
  */
 
-import { permissions } from "@/utils/Constants.ts";
+import { permissions } from "@/data/constants.ts";
 import FlagUtils from "@/utils/FlagUtils.ts";
 
 type hasType = "all" | "some";

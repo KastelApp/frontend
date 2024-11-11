@@ -1,6 +1,7 @@
 import { create } from "zustand";
 
 export interface Member {
+    status: string; // todo: remove
 	hubId: string;
 	joinedAt: Date;
 	nickname: string | null;

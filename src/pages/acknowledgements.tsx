@@ -1,7 +1,6 @@
 import HomeLayout from "@/layouts/HomeLayout.tsx";
 import { useTranslationStore } from "@/wrapper/Stores.tsx";
 import { Avatar, Card } from "@nextui-org/react";
-import SEO from "@/components/SEO.tsx";
 
 interface NormalAcknowledgementData {
 	name: string;
@@ -17,7 +16,7 @@ interface Library {
 	description: string;
 }
 
-const AcknowledgementCard = ({ data }: { data: NormalAcknowledgementData[] }) => {
+const AcknowledgementCard = ({ data }: { data: NormalAcknowledgementData[]; }) => {
 	return (
 		<div className="grid grid-cols-4 gap-4">
 			{data.map((person, index) => (
@@ -32,7 +31,7 @@ const AcknowledgementCard = ({ data }: { data: NormalAcknowledgementData[] }) =>
 	);
 };
 
-const Libraries = ({ data }: { data: Library[] }) => {
+const Libraries = ({ data }: { data: Library[]; }) => {
 	return (
 		<div className="grid max-h-[44rem] grid-cols-2 gap-4 overflow-auto">
 			{data.map((library, index) => (
@@ -55,34 +54,30 @@ const Acknowledgements = () => {
 	const contributors: NormalAcknowledgementData[] = [];
 
 	const libraries: Library[] = [];
-
 	const { t } = useTranslationStore();
 
 	return (
-		<>
-			<SEO title={"Acknowledgements"} />
-			<HomeLayout>
-				<div className="container mx-auto flex flex-col gap-4 p-4">
-					<div className="text-center">
-						<h2 className="mb-4 text-2xl font-bold">{t("acknowledgements.staff.title")}</h2>
-						<p className="text-gray-400">{t("acknowledgements.staff.message")}</p>
-					</div>
-					<AcknowledgementCard data={kastelStaff} />
-
-					<div className="mt-8 text-center">
-						<h2 className="mb-4 text-2xl font-bold">{t("acknowledgements.contributors.title")}</h2>
-						<p className="text-gray-400">{t("acknowledgements.contributors.message")}</p>
-					</div>
-					<AcknowledgementCard data={contributors} />
-
-					<div className="mt-8 text-center">
-						<h2 className="mb-4 text-2xl font-bold">{t("acknowledgements.libraries.title")}</h2>
-						<p className="text-gray-400">{t("acknowledgements.libraries.message")}</p>
-					</div>
-					<Libraries data={libraries} />
+		<HomeLayout>
+			<div className="container mx-auto flex flex-col gap-4 p-4">
+				<div className="text-center">
+					<h2 className="mb-4 text-2xl font-bold">{t("acknowledgements.staff.title")}</h2>
+					<p className="text-gray-400">{t("acknowledgements.staff.message")}</p>
 				</div>
-			</HomeLayout>
-		</>
+				<AcknowledgementCard data={kastelStaff} />
+
+				<div className="mt-8 text-center">
+					<h2 className="mb-4 text-2xl font-bold">{t("acknowledgements.contributors.title")}</h2>
+					<p className="text-gray-400">{t("acknowledgements.contributors.message")}</p>
+				</div>
+				<AcknowledgementCard data={contributors} />
+
+				<div className="mt-8 text-center">
+					<h2 className="mb-4 text-2xl font-bold">{t("acknowledgements.libraries.title")}</h2>
+					<p className="text-gray-400">{t("acknowledgements.libraries.message")}</p>
+				</div>
+				<Libraries data={libraries} />
+			</div>
+		</HomeLayout>
 	);
 };
 

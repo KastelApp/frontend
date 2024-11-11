@@ -1,28 +1,27 @@
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
 import { Search, MessageSquare, LayoutGrid, InboxIcon } from "lucide-react";
 import { Avatar, Badge, Divider, Tooltip } from "@nextui-org/react";
 import { useHubSettingsStore } from "@/wrapper/Stores.tsx";
 import { useHubStore } from "@/wrapper/Stores/HubStore.ts";
 import { useChannelStore } from "@/wrapper/Stores/ChannelStore.ts";
-import { useRouter } from "next/router";
 import arrayify from "@/utils/arrayify.ts";
 import { useUserStore } from "@/wrapper/Stores/UserStore.ts";
 import { useCallback } from "react";
 import Draggables from "@/components/DraggableComponent.tsx";
-import { snowflake } from "@/utils/Constants.ts";
-import Link from "next/link";
+import { snowflake } from "@/data/constants.ts";
 import cn from "@/utils/cn.ts";
 import UserOptions from "@/components/Dropdowns/UserOptions.tsx";
 import { Routes } from "@/utils/Routes.ts";
+import { useRouter } from "@/hooks/useRouter.ts";
+import Link from "@/components/Link.tsx";
 
 const LeftNavBar = () => {
     const { hubs } = useHubStore();
-    const { hubSettings } = useHubSettingsStore();
+    const getHubSettings = useHubSettingsStore((s) => s.getHubSettings);
     const { getChannelsWithValidPermissions, getTopChannel } = useChannelStore();
     const router = useRouter();
 
-    const [hubId] = arrayify(router.query?.slug);
+    const [hubId] = arrayify(router.params?.slug);
     const currentUser = useUserStore((s) => s.getCurrentUser());
     const orientation = "vertical";
     const getAvatarUrl = useUserStore((s) => s.getAvatarUrl);
@@ -34,12 +33,12 @@ const LeftNavBar = () => {
                 disableGhostElement
                 items={hubs.filter((hub) => !hub.unavailable && !hub.partial)}
                 onDrop={console.log}
-                render={(item, index) => {
+                render={(item, index, props) => {
                     let hasUnread = false;
                     let mentions = 0;
 
                     const gotChannels = getChannelsWithValidPermissions(item.id);
-                    const foundHubSettings = hubSettings[item.id];
+                    const foundHubSettings = getHubSettings(item.id)
 
                     for (const channel of gotChannels) {
                         const foundChannel = item.channelProperties.find(
@@ -72,6 +71,7 @@ const LeftNavBar = () => {
                             href={foundHubSettings?.lastChannelId
                                 ? Routes.hubChannel(item.id, foundHubSettings.lastChannelId) : topChannel ?
                                     Routes.hubChannel(item.id, topChannel.id) : Routes.hub(item.id)}
+                            {...props}
                         >
                             <div
                                 className={cn(
@@ -163,9 +163,9 @@ const LeftNavBar = () => {
                     )}
                 />
             </Link>
-            <ScrollArea className="flex-grow w-full pr-2">
+            <div className="flex-grow w-full pr-2">
                 {mappedHubs()}
-            </ScrollArea>
+            </div>
             <Divider className="my-3 bg-gray-700" />
             <div className={"group transition-all duration-300 ease-in-out px-3 mb-3 flex items-center ml-2 rounded-md cursor-pointer hover:bg-charcoal-600 mr-2 active:scale-[.98]"}>
                 <Button variant="ghost" size="icon" className={"rounded-3xl group-hover:rounded-xl transition-all duration-300 ease-in-out mm-hw-10 p-0 bg-gray-600 group-hover:bg-gray-700 -ml-2"}>

@@ -7,12 +7,11 @@ import {
 	NavbarMenuToggle,
 	NavbarMenu,
 	NavbarMenuItem,
-	Link,
 	Button,
 } from "@nextui-org/react";
 import { useIsReady, useTokenStore, useTranslationStore } from "@/wrapper/Stores.tsx";
-import NextLink from "next/link";
 import { Routes } from "@/utils/Routes.ts";
+import Link from "@/components/Link.tsx";
 
 const TopHeader = () => {
 	const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -52,7 +51,7 @@ const TopHeader = () => {
 			<NavbarContent>
 				<NavbarMenuToggle aria-label={isMenuOpen ? "Close menu" : "Open menu"} className="text-white sm:hidden" />
 				<NavbarBrand>
-					<Link className="font-bold text-inherit" href="/" as={NextLink}>
+					<Link className="font-bold text-inherit" href="/">
 						Kastel
 					</Link>
 				</NavbarBrand>
@@ -60,22 +59,22 @@ const TopHeader = () => {
 
 			<NavbarContent className="hidden gap-4 sm:flex" justify="center">
 				<NavbarItem>
-					<Link href="https://kastel.dev" color="foreground" target="_blank" as={NextLink}>
+					<Link href="https://kastel.dev" color="foreground" target="_blank">
 						{t("home.navbar.docs")}
 					</Link>
 				</NavbarItem>
 				<NavbarItem>
-					<Link href="https://github.com/KastelApp" color="foreground" target="_blank" as={NextLink}>
+					<Link href="https://github.com/KastelApp" color="foreground" target="_blank">
 						GitHub
 					</Link>
 				</NavbarItem>
 				<NavbarItem>
-					<Link color="foreground" href="/blog" as={NextLink}>
+					<Link color="foreground" href="/blog" isDisabled>
 						{t("home.navbar.blog")}
 					</Link>
 				</NavbarItem>
 				<NavbarItem>
-					<Link color="foreground" href="#" as={NextLink}>
+					<Link color="foreground" href="#" isDisabled>
 						{t("home.navbar.support")}
 					</Link>
 				</NavbarItem>
@@ -84,19 +83,19 @@ const TopHeader = () => {
 				{!token ? (
 					<>
 						<NavbarItem>
-							<Link href={Routes.login()} as={NextLink}>
+							<Link href={Routes.login()}>
 								{t("home.navbar.login")}
 							</Link>
 						</NavbarItem>
 						<NavbarItem className="hidden lg:flex">
-							<Button as={NextLink} color="primary" href={Routes.register()} variant="flat">
+							<Button color="primary" href={Routes.register()} variant="flat" as={Link}>
 								{t("home.navbar.signup")}
 							</Button>
 						</NavbarItem>
 					</>
 				) : (
 					<NavbarItem>
-						<Button as={NextLink} color="primary" href={Routes.app()} variant="flat" onPress={() => {
+						<Button color="primary" href={Routes.app()} as={Link} variant="flat" onPress={() => {
 							setIsReady(false);
 						}}>
 							{t("home.navbar.app")}
@@ -113,7 +112,6 @@ const TopHeader = () => {
 							href={item.href}
 							size="lg"
 							target={item.newTab ? "_blank" : "_self"}
-							as={NextLink}
 						>
 							{item.title}
 						</Link>

@@ -67,6 +67,7 @@ const useEasyResizable = (opts: UseResizableProps) => {
         onResizeStart: (...args) => {
             if (opts.onResizeStart) opts.onResizeStart(...args);
 
+            // eslint-disable-next-line react-compiler/react-compiler
             document.body.style.cursor = "col-resize";
             document.body.style.userSelect = "none";
         },
@@ -122,7 +123,4 @@ const useEasyResizable = (opts: UseResizableProps) => {
 
 export default useEasyResizable;
 
-export {
-    ResizablePanel,
-    useEasyResizable
-}
+export { ResizablePanel }

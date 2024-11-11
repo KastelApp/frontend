@@ -3,16 +3,16 @@ import { useEffect, useState } from "react";
 import { ArrowRight, LoaderCircle } from "lucide-react";
 import { motion } from "framer-motion";
 import { useUserStore } from "@/wrapper/Stores/UserStore.ts";
-import { channelTypes, settings, snowflake } from "@/utils/Constants.ts";
+import { channelTypes, settings, snowflake } from "@/data/constants.ts";
 import { useMultiFormState } from "@/hooks/useStateForm.ts";
 import { useAPIStore } from "@/wrapper/Stores.tsx";
 import { Endpoints, Routes } from "@/utils/Routes.ts";
 import { CreateHubOptions } from "@/types/http/hubs/createHub.ts";
 import Permissions from "@/wrapper/Permissions.ts";
 import { Hub } from "@/types/payloads/ready.ts";
-import { useRouter } from "next/router";
 import { isErrorResponse } from "@/types/http/error.ts";
 import { JoinInvitePayload } from "@/types/http/invites/joinInvite.ts";
+import { useRouter } from "@/hooks/useRouter.ts";
 
 const JoinHub = ({ setSection, onOpenChange }: { setSection: (section: "join" | "create" | "home") => void; onOpenChange: () => void }) => {
 	const api = useAPIStore((state) => state.api);

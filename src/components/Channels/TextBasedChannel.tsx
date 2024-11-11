@@ -1,6 +1,5 @@
 import MessageContainer from "@/components/MessageContainer/MessageContainer.tsx";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useRouter } from "next/router";
 import { useUserStore } from "@/wrapper/Stores/UserStore.ts";
 import { useMemberStore } from "@/wrapper/Stores/Members.ts";
 import { useRoleStore } from "@/wrapper/Stores/RoleStore.ts";
@@ -16,7 +15,7 @@ import Logger from "@/utils/Logger.ts";
 import PermissionHandler from "@/wrapper/PermissionHandler.ts";
 import Message, { MessageProps } from "@/components/Message/Message.tsx";
 import ChannelIcon from "@/components/ChannelIcon.tsx";
-import { channelTypes } from "@/utils/Constants.ts";
+import { channelTypes } from "@/data/constants.ts";
 import { defer } from "@/utils/defer.ts";
 import { animateScroll } from "react-scroll";
 import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuTrigger } from "@/components/ui/context-menu.tsx";
@@ -25,6 +24,7 @@ import { Divider } from "@nextui-org/react";
 import { Routes } from "@/utils/Routes.ts";
 import { ReactEditor } from "slate-react";
 import { useEditorStore } from "@/wrapper/Stores.tsx";
+import { useRouter } from "@/hooks/useRouter.ts";
 
 const skelliedMessages = Array.from({ length: 30 }, (_, i) => <SkellyMessage key={i} />);
 
@@ -36,9 +36,10 @@ const TextBasedChannel = () => {
     const router = useRouter();
     const [readOnly, setReadOnly] = useState(true); // ? This is just so we know if the user can send messages or not (we prevent any changes / letting them type if so)
     const [, setCanViewMessageHistory] = useState(false); // ? This is so we know if the user can view message history
+    const [canDeleteMessages, setCanDeleteMessages] = useState(false);
     const [fetchedInitial, setFetchedInitial] = useState(false);
     const [signal, setSignal] = useState(0); // ? every time we want a re-render, we increment this value
-    const [hubId, , channelId] = arrayify(router.query?.slug);
+    const [hubId, , channelId] = arrayify(router.params?.slug);
     const ref = useRef<HTMLDivElement>(null);
 
     const channelName = useChannelStore((state) => state.getChannel(channelId)?.name ?? "Unknown Channel");
@@ -56,8 +57,13 @@ const TextBasedChannel = () => {
     const updatePerChannel = usePerChannelStore((state) => state.updateChannel);
     const editor = useEditorStore((state) => state.editor)
 
-    const focusEditor = useCallback(() => {
+    const focusEditor = useCallback((e: KeyboardEvent) => {
         if (!editor) return;
+
+        // ? if they are holding any special key return UNLESS they do ctrl + v which then we still want to focus it
+        if (e.altKey || e.metaKey) return;
+
+        if (e.ctrlKey && e.key !== "v") return;
 
         ReactEditor.focus(editor);
     }, [editor]);
@@ -272,8 +278,8 @@ const TextBasedChannel = () => {
             return;
         }
 
-
         setReadOnly(!permissionHandler.hasChannelPermission(channelId, ["SendMessages"]));
+        setCanDeleteMessages(permissionHandler.hasChannelPermission(channelId, ["ManageMessages"]));
 
         const canViewMessageHistory = permissionHandler.hasChannelPermission(channelId, ["ViewMessageHistory"]);
 
@@ -326,6 +332,7 @@ const TextBasedChannel = () => {
     const createRenderableMessages = useCallback((renderMessages: MessageType[]) => {
         const finishedMsgs: Omit<MessageProps, "className" | "disableButtons" | "id">[] = [];
         const currentUser = getCurrentUser()!;
+        
 
         for (const msg of renderMessages.sort((a, b) => a.creationDate.getTime() - b.creationDate.getTime())) {
             const fetchedAuthor = getUser(msg.authorId);
@@ -434,7 +441,7 @@ const TextBasedChannel = () => {
                 },
                 replyMessage: replyData,
                 isEditable: msg.authorId === currentUser.id,
-                isDeleteable: msg.authorId === currentUser.id, // ? temp until I do the perms
+                isDeleteable: canDeleteMessages || msg.authorId === currentUser.id,
                 isReplyable: msg.state === MessageStates.Sent,
                 isGrouped: shouldGroup,
                 isParent: !shouldGroup,
@@ -442,7 +449,7 @@ const TextBasedChannel = () => {
         }
 
         return finishedMsgs;
-    }, [hubId, messages, roles]);
+    }, [hubId, messages, roles, canDeleteMessages]);
 
     const sendMessage = useCallback((content: string) => {
         if (!content) return;
