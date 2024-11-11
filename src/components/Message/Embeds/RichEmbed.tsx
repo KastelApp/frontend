@@ -5,8 +5,7 @@ import MessageMarkDown from "@/components/Message/Markdown/MarkDown.tsx";
 import { Embed, EmbedField } from "@/types/embed.ts";
 import Link from "@/components/Link.tsx";
 
-
-const RichEmbed = ({ embed }: { embed: Embed; }) => {
+const RichEmbed = ({ embed }: { embed: Embed }) => {
 	const HyperLinkPossibly = ({
 		url,
 		children,
@@ -17,7 +16,7 @@ const RichEmbed = ({ embed }: { embed: Embed; }) => {
 		noColor?: boolean;
 	}) => {
 		return url ? (
-			<Link href={url}  className={!noColor ? "text-blue-500" : ""} target="_blank">
+			<Link href={url} className={!noColor ? "text-blue-500" : ""} target="_blank">
 				{children}
 			</Link>
 		) : (
@@ -45,11 +44,14 @@ const RichEmbed = ({ embed }: { embed: Embed; }) => {
 	}
 
 	return (
-		<div style={{
-			borderLeft: `4px solid #${embed.color?.toString(16) ?? "000000"}`,
-		}} className="inline-block w-auto rounded-md bg-darkAccent max-w-[calc(100%-1rem)] md:max-w-md ">
+		<div
+			style={{
+				borderLeft: `4px solid #${embed.color?.toString(16) ?? "000000"}`,
+			}}
+			className="inline-block w-auto max-w-[calc(100%-1rem)] rounded-md bg-darkAccent md:max-w-md"
+		>
 			{(embed.title || embed.author?.name || embed.thumbnail?.url) && (
-				<header className="mr-3 pl-3 pt-3 flex flex-col items-start gap-2 text-white">
+				<header className="mr-3 flex flex-col items-start gap-2 pl-3 pt-3 text-white">
 					{embed.author?.name && (
 						<HyperLinkPossibly url={embed.author.url} noColor>
 							<User
@@ -79,7 +81,7 @@ const RichEmbed = ({ embed }: { embed: Embed; }) => {
 						<Image
 							src={embed.thumbnail.url}
 							alt="Thumbnail"
-							className="mm-hw-20 rounded-md ml-4 mr-4"
+							className="ml-4 mr-4 rounded-md mm-hw-20"
 							referrerPolicy="no-referrer"
 						/>
 					)}
@@ -89,9 +91,7 @@ const RichEmbed = ({ embed }: { embed: Embed; }) => {
 			<div className="mr-3 pl-3">
 				{embed.description && (
 					<p className="max-w-lg overflow-hidden whitespace-pre-line break-words text-sm text-white">
-						<MessageMarkDown>
-							{embed.description}
-						</MessageMarkDown>
+						<MessageMarkDown>{embed.description}</MessageMarkDown>
 					</p>
 				)}
 				<div className="mt-2">
@@ -117,7 +117,7 @@ const RichEmbed = ({ embed }: { embed: Embed; }) => {
 				)}
 			</div>
 			{(embed.footer?.text || embed.footer?.iconUrl || embed.footer?.timestamp) && (
-				<div className="flex items-center text-xs text-white ml-3 mb-3">
+				<div className="mb-3 ml-3 flex items-center text-xs text-white">
 					{embed.footer.iconUrl && (
 						<>
 							<Avatar src={embed.footer.iconUrl} className="h-6 w-6 rounded-full" />

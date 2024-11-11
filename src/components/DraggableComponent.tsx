@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import cn from "@/utils/cn.ts";
 
-interface DraggableItemProps { // in the future we might add more props
+interface DraggableItemProps {
+	// in the future we might add more props
 	draggable: boolean;
 }
 
@@ -48,7 +49,7 @@ interface DraggableProps<T> {
 	disableGhostElement?: boolean;
 	/**
 	 * If we should move items at the bottom to the top.
-	 * 
+	 *
 	 * Defaults to false
 	 */
 	moveBottomToTop?: boolean;
@@ -201,7 +202,7 @@ const Draggables = <T,>({
 					)}
 				>
 					{render(item, index, {
-						draggable: true
+						draggable: true,
 					})}
 				</div>
 			))}

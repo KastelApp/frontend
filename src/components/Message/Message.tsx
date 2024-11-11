@@ -26,14 +26,14 @@ import LiveDate from "@/components/LiveDate.tsx";
 export type CustomizedMessage = Omit<MessageType, "invites"> & {
 	invites: (
 		| (Invite & {
-			hub: Hub | null;
-		})
+				hub: Hub | null;
+		  })
 		| null
 	)[];
 	author: {
 		user: User;
-		member: (Omit<Member, "roles"> & { roles: Role[]; }) | null;
-		roleColor: { color: string | null; id: string; } | null;
+		member: (Omit<Member, "roles"> & { roles: Role[] }) | null;
+		roleColor: { color: string | null; id: string } | null;
 	};
 };
 
@@ -47,8 +47,8 @@ export interface MessageProps {
 	replyMessage: {
 		user: User;
 		message: MessageType;
-		member: (Omit<Member, "roles"> & { roles: Role[]; }) | null;
-		roleColor: { color: string | null; id: string; } | null;
+		member: (Omit<Member, "roles"> & { roles: Role[] }) | null;
+		roleColor: { color: string | null; id: string } | null;
 	} | null;
 	inHub: boolean;
 	isDeleteable?: boolean;
@@ -107,7 +107,7 @@ const Message = ({
 			{(!phishing || open) && (
 				<div
 					className={cn(
-						"group relative w-full max-w-full transition-colors duration-300 ease-in hover:bg-msg-hover outline-none pl-2",
+						"group relative w-full max-w-full pl-2 outline-none transition-colors duration-300 ease-in hover:bg-msg-hover",
 						className,
 						isParent && "mt-2",
 						mentionsUser && "bg-mention hover:bg-mention-hover",
@@ -213,9 +213,7 @@ const Message = ({
 										</span>
 									</PopOverData>
 									{message.author.user && (message.author.user.isBot || message.author.user.isSystem) && (
-										<UserTag>
-											{message.author.user.isBot ? t("tags.bot") : t("tags.system")}
-										</UserTag>
+										<UserTag>{message.author.user.isBot ? t("tags.bot") : t("tags.system")}</UserTag>
 									)}
 									<Tooltip content={formatDate(message.creationDate, "dayTime")} placement="top" delay={500}>
 										<span className="ml-1 mt-1 select-none text-2xs text-gray-400">
@@ -224,10 +222,10 @@ const Message = ({
 									</Tooltip>
 								</div>
 							)}
-							<div className="flex relative">
+							<div className="relative flex">
 								{isGrouped && (
 									<Tooltip content={formatDate(message.creationDate, "dayTime")} placement="top" delay={500}>
-										<div className="absolute flex -ml-8 select-none text-3xs text-gray-400 transition-opacity opacity-0 duration-300 ease-in-out group-hover:opacity-100">
+										<div className="absolute -ml-8 flex select-none text-3xs text-gray-400 opacity-0 transition-opacity duration-300 ease-in-out group-hover:opacity-100">
 											{formatDate(message.creationDate, "short")}
 										</div>
 									</Tooltip>
@@ -239,7 +237,7 @@ const Message = ({
 											? "text-red-500"
 											: "",
 										message.state === MessageStates.Sending ? "text-gray-400" : "",
-										isGrouped && "ml-5"
+										isGrouped && "ml-5",
 									)}
 								>
 									<MessageMarkDown message={message}>{message.content}</MessageMarkDown>

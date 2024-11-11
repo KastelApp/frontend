@@ -22,35 +22,35 @@ const hubCreate = (ws: Websocket, payload: unknown) => {
 		return;
 	}
 
-    useHubStore.getState().addHub({
-        name: payload.name,
-        unavailable: payload.unavailable,
-        ownerId: payload.ownerId,
-        maxMembers: payload.maxMembers,
-        id: payload.id,
-        icon: payload.icon,
-        flags: payload.flags,
-        features: payload.features,
-        description: payload.description,
-        coOwners: payload.coOwnerIds,
-        channelProperties: [],
-        memberCount: payload.memberCount,
-    });
+	useHubStore.getState().addHub({
+		name: payload.name,
+		unavailable: payload.unavailable,
+		ownerId: payload.ownerId,
+		maxMembers: payload.maxMembers,
+		id: payload.id,
+		icon: payload.icon,
+		flags: payload.flags,
+		features: payload.features,
+		description: payload.description,
+		coOwners: payload.coOwnerIds,
+		channelProperties: [],
+		memberCount: payload.memberCount,
+	});
 
-    for (const channel of payload.channels) {
-        useChannelStore.getState().addChannel({
-            ...channel,
-            hubId: payload.id,
-        });
-    }
+	for (const channel of payload.channels) {
+		useChannelStore.getState().addChannel({
+			...channel,
+			hubId: payload.id,
+		});
+	}
 
-    for (const role of payload.roles) {
-        useRoleStore.getState().addRole({
-            ...role,
-            hubId: payload.id,
-            hoisted: role.hoist,
-        });
-    }
+	for (const role of payload.roles) {
+		useRoleStore.getState().addRole({
+			...role,
+			hubId: payload.id,
+			hoisted: role.hoist,
+		});
+	}
 };
 
 export default hubCreate;

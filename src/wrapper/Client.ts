@@ -7,7 +7,6 @@ import { isErrorResponse } from "@/types/http/error.ts";
 import { ApiRegisterOptions, RegisterResponse } from "@/types/http/auth/register.ts";
 import EventEmitter from "@/wrapper/EventEmitter.ts";
 
-
 interface Client {
 	on(event: "ready", listener: () => void): this;
 	on(event: "close", listener: (code: number, reason: string) => void): this;

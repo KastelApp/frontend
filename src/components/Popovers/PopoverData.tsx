@@ -16,10 +16,10 @@ const PopOverData = ({
 	children: React.ReactElement | React.ReactElement[];
 	user: User;
 	member:
-	| (Omit<Member, "roles"> & {
-		roles: Role[];
-	})
-	| null;
+		| (Omit<Member, "roles"> & {
+				roles: Role[];
+		  })
+		| null;
 	onlyChildren?: boolean;
 }) => {
 	const [isOpen, setIsOpen] = useState(false);
@@ -59,13 +59,11 @@ const PopOverData = ({
 					return false;
 				}}
 				classNames={{
-					trigger: "z-0"
+					trigger: "z-0",
 				}}
 			>
-				<PopoverTrigger>
-					{children}
-				</PopoverTrigger>
-				<PopoverContent className="z-50 px-0 py-0 rounded-lg bg-darkAccent border-3 border-charcoal-700">
+				<PopoverTrigger>{children}</PopoverTrigger>
+				<PopoverContent className="z-50 rounded-lg border-3 border-charcoal-700 bg-darkAccent px-0 py-0">
 					<UserPopover
 						member={{
 							user: user,
@@ -80,10 +78,10 @@ const PopOverData = ({
 									modalSize: "lg",
 									radius: "none",
 									classNames: {
-										body: "p-0"
-									}
+										body: "p-0",
+									},
 								},
-							})
+							});
 							setIsOpen(false);
 						}}
 					/>

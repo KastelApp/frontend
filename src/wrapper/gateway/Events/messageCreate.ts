@@ -52,13 +52,13 @@ const messageCreate = async (ws: Websocket, payload: unknown) => {
 			typingUsers,
 			lastTypingSent: 0,
 			typingStarted: 0,
-			lastTyped: 0
-		})
+			lastTyped: 0,
+		});
 	}
 
 	useChannelStore.getState().editChannel(payload.channelId, {
 		lastMessageId: payload.id,
-	})
+	});
 
 	for (const invite of invites) {
 		useInviteStore.getState().fetchInvite(invite);
@@ -90,7 +90,7 @@ const messageCreate = async (ws: Websocket, payload: unknown) => {
 			discordInvites,
 			pinned: payload.pinned,
 			state: MessageStates.Sent,
-			context: MessageContext.Gateway
+			context: MessageContext.Gateway,
 		},
 		true,
 	);

@@ -83,9 +83,7 @@ const TopHeader = () => {
 				{!token ? (
 					<>
 						<NavbarItem>
-							<Link href={Routes.login()}>
-								{t("home.navbar.login")}
-							</Link>
+							<Link href={Routes.login()}>{t("home.navbar.login")}</Link>
 						</NavbarItem>
 						<NavbarItem className="hidden lg:flex">
 							<Button color="primary" href={Routes.register()} variant="flat" as={Link}>
@@ -95,9 +93,15 @@ const TopHeader = () => {
 					</>
 				) : (
 					<NavbarItem>
-						<Button color="primary" href={Routes.app()} as={Link} variant="flat" onPress={() => {
-							setIsReady(false);
-						}}>
+						<Button
+							color="primary"
+							href={Routes.app()}
+							as={Link}
+							variant="flat"
+							onClick={() => {
+								setIsReady(false);
+							}}
+						>
 							{t("home.navbar.app")}
 						</Button>
 					</NavbarItem>

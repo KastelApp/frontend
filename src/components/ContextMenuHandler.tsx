@@ -87,7 +87,9 @@ const ContextMenuHandler = ({
 									className="flex cursor-pointer"
 								>
 									{item.startContent}
-									<span data-identifier={identifier} className="text-white">{item.label}</span>
+									<span data-identifier={identifier} className="text-white">
+										{item.label}
+									</span>
 									<div className="ml-auto">{item.endContent}</div>
 								</ContextItemHandler>
 								{item.divider && <Divider className="mb-1 mt-1" />}
@@ -116,7 +118,9 @@ const ContextMenuHandler = ({
 												className="flex cursor-pointer"
 											>
 												{subItem.startContent}
-												<span data-identifier={identifier} className="text-white">{item.label}</span>
+												<span data-identifier={identifier} className="text-white">
+													{item.label}
+												</span>
 												<div className="ml-auto">{subItem.endContent}</div>
 											</ContextItemHandler>
 											{subItem.divider && <Divider className="mb-1 mt-1" />}

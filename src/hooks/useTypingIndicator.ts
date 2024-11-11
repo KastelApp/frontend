@@ -46,12 +46,15 @@ const useTypingIndicator = ({
 	const timeout = useRef<NodeJS.Timeout | null>(null);
 	const initialTimeout = useRef<NodeJS.Timeout | null>(null);
 
-	const sentTypingEvent = useCallback((force: boolean = false) => {
-		if (force || shouldSendTypingEvent) {
-			setShouldSendTypingEvent(false);
-			setLastSentTyping(Date.now());
-		}
-	}, [shouldSendTypingEvent]);
+	const sentTypingEvent = useCallback(
+		(force: boolean = false) => {
+			if (force || shouldSendTypingEvent) {
+				setShouldSendTypingEvent(false);
+				setLastSentTyping(Date.now());
+			}
+		},
+		[shouldSendTypingEvent],
+	);
 
 	// ? When we start typing, we have to wait exactly 1s (typingTimeout) before we set isTyping to true. BUT if its been miscTimeout since we last typed, we have to restart the waiting period
 
@@ -62,47 +65,50 @@ const useTypingIndicator = ({
 		}
 	}, [lastSentTyping, typingEventInterval]);
 
-	const sendUserIsTyping = useCallback((content: string) => {
-		if (content.length === 0) {
-			setIsTyping(false);
-			setLastTyped(0);
-			setStartedTyping(0);
+	const sendUserIsTyping = useCallback(
+		(content: string) => {
+			if (content.length === 0) {
+				setIsTyping(false);
+				setLastTyped(0);
+				setStartedTyping(0);
 
-			if (initialTimeout.current) {
-				clearTimeout(initialTimeout.current);
+				if (initialTimeout.current) {
+					clearTimeout(initialTimeout.current);
+				}
+
+				return;
 			}
 
-			return;
-		}
-
-		if (isTyping) {
-			setLastTyped(Date.now());
-			return;
-		}
-
-		if (Date.now() - lastTyped > miscTimeout) {
-			setStartedTyping(Date.now());
-			setLastTyped(Date.now());
-
-			if (initialTimeout.current) {
-				clearTimeout(initialTimeout.current);
+			if (isTyping) {
+				setLastTyped(Date.now());
+				return;
 			}
 
-			initialTimeout.current = setTimeout(() => {
+			if (Date.now() - lastTyped > miscTimeout) {
+				setStartedTyping(Date.now());
+				setLastTyped(Date.now());
+
+				if (initialTimeout.current) {
+					clearTimeout(initialTimeout.current);
+				}
+
+				initialTimeout.current = setTimeout(() => {
+					setIsTyping(true);
+					onTypingStart();
+					customSendShouldSendTypingEvent();
+				}, 2000);
+
+				return;
+			}
+
+			if (Date.now() - startedTyping > typingTimeout) {
 				setIsTyping(true);
 				onTypingStart();
-				customSendShouldSendTypingEvent();
-			}, 2000);
-
-			return;
-		}
-
-		if (Date.now() - startedTyping > typingTimeout) {
-			setIsTyping(true);
-			onTypingStart();
-			// setShouldSendTypingEvent(true);
-		}
-	}, [isTyping, lastTyped, miscTimeout, onTypingStart, startedTyping, typingTimeout]);
+				// setShouldSendTypingEvent(true);
+			}
+		},
+		[isTyping, lastTyped, miscTimeout, onTypingStart, startedTyping, typingTimeout],
+	);
 
 	useEffect(() => {
 		if (isTyping) {

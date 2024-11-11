@@ -86,20 +86,12 @@ const Footer = () => {
 									</Link>
 								</li>
 								<li className="mb-1">
-									<Link
-										href="https://kastel.dev/docs"
-										target="_blank"
-										className="hover:text-blue-500 hover:underline"
-									>
+									<Link href="https://kastel.dev/docs" target="_blank" className="hover:text-blue-500 hover:underline">
 										Documentation
 									</Link>
 								</li>
 								<li className="mb-1">
-									<Link
-										href="https://kastel.dev/"
-										target="_blank"
-										className="hover:text-blue-500 hover:underline"
-									>
+									<Link href="https://kastel.dev/" target="_blank" className="hover:text-blue-500 hover:underline">
 										Bots
 									</Link>
 								</li>
@@ -132,11 +124,7 @@ const Footer = () => {
 						. All Rights Reserved.
 					</span>
 					<div className="mt-4 flex sm:mt-0 sm:justify-center">
-						<Link
-							href="https://x.com/KastelApp"
-							target="_blank"
-							className="hover:ms-5 text-gray-500 hover:text-white"
-						>
+						<Link href="https://x.com/KastelApp" target="_blank" className="text-gray-500 hover:ms-5 hover:text-white">
 							<svg
 								className="h-4 w-4"
 								aria-hidden="true"
@@ -155,7 +143,7 @@ const Footer = () => {
 						<Link
 							href="https://github.com/KastelApp"
 							target="_blank"
-							className="hover:ms-5 text-gray-500 hover:text-white"
+							className="text-gray-500 hover:ms-5 hover:text-white"
 						>
 							<svg
 								className="h-4 w-4"

@@ -123,7 +123,7 @@ export const useUserStore = create<UserStore>((set, get) => ({
 							bioless: false,
 						},
 						mutualFriends: [],
-						mutualHubs: []
+						mutualHubs: [],
 					},
 					...foundUser,
 					...user,
@@ -308,18 +308,20 @@ export const useUserStore = create<UserStore>((set, get) => ({
 		});
 	},
 	getAvatarUrl: (userId, hash, options = { format: "webp", size: 256 }) =>
-		hash ? `${import.meta.env.VITE_CDN_URL}/avatar/${userId}/${hash}?size=${options.size}&format=${options.format}` : null,
+		hash
+			? `${import.meta.env.VITE_CDN_URL}/avatar/${userId}/${hash}?size=${options.size}&format=${options.format}`
+			: null,
 	fetchProfile: async (userId) => {
-
 		const user = get().getUser(userId);
 
 		if (!user) {
 			Logger.error("Failed to get user", "UserStore | fetchProfile()");
-		
+
 			return;
 		}
 
-		if (Date.now() - (user.metaData.lastFetch ?? 0) < 3600000) { // 1 hour
+		if (Date.now() - (user.metaData.lastFetch ?? 0) < 3600000) {
+			// 1 hour
 			return;
 		}
 
@@ -356,5 +358,5 @@ export const useUserStore = create<UserStore>((set, get) => ({
 		}
 
 		Logger.error("Failed to fetch profile", "UserStore | fetchProfile()");
-	}
+	},
 }));

@@ -1,13 +1,13 @@
 const arrayify = <T>(value: T | T[] | undefined): T[] => {
-    if (Array.isArray(value)) {
-        return value;
-    }
+	if (Array.isArray(value)) {
+		return value;
+	}
 
-    if (value === undefined) {
-        return [];
-    }
+	if (value === undefined) {
+		return [];
+	}
 
-    return [value];
-}
+	return [value];
+};
 
 export default arrayify;

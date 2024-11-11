@@ -80,7 +80,7 @@ const CreateChannelModal = ({
 	const [descriptionError, setDescriptionError] = useState<string | null>(null);
 
 	return (
-        (<Modal
+		<Modal
 			isOpen={isOpen}
 			onOpenChange={() => {
 				onOpenChange();
@@ -89,7 +89,7 @@ const CreateChannelModal = ({
 			size="xl"
 			className="w-[30rem]"
 		>
-            <ModalContent className="overflow-hidden">
+			<ModalContent className="overflow-hidden">
 				<ModalHeader className="flex flex-col gap-1 text-center">
 					<h1>Create a channel</h1>
 					<p className="text-sm text-gray-500">{tab === 0 ? "Choose a channel type" : "Fill out channel details"}</p>
@@ -192,8 +192,8 @@ const CreateChannelModal = ({
 					</Button>
 				</ModalFooter>
 			</ModalContent>
-        </Modal>)
-    );
+		</Modal>
+	);
 };
 
 export default CreateChannelModal;

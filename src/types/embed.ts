@@ -65,12 +65,12 @@ interface Embed {
 }
 
 export type {
-    Embed,
-    EmbedAuthor,
-    EmbedField,
-    EmbedFiles,
-    EmbedFooter,
-    EmbedIframeSource,
-    EmbedProvider,
-    EmbedThumbnail
-}
+	Embed,
+	EmbedAuthor,
+	EmbedField,
+	EmbedFiles,
+	EmbedFooter,
+	EmbedIframeSource,
+	EmbedProvider,
+	EmbedThumbnail,
+};

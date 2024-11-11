@@ -18,7 +18,7 @@ const formatDate = (date: Date, format: DateFormat = "relative"): string => {
 	};
 
 	const getRelativeTime = (past: Date): string => {
-		const units: { unit: Intl.RelativeTimeFormatUnit; ms: number; }[] = [
+		const units: { unit: Intl.RelativeTimeFormatUnit; ms: number }[] = [
 			{ unit: "year", ms: 1000 * 60 * 60 * 24 * 365 },
 			{ unit: "month", ms: 1000 * 60 * 60 * 24 * 30 },
 			{ unit: "day", ms: 1000 * 60 * 60 * 24 },
@@ -34,10 +34,7 @@ const formatDate = (date: Date, format: DateFormat = "relative"): string => {
 			const diff = Math.abs(elapsed) / ms;
 			if (diff >= 1) {
 				const roundedDiff = Math.floor(diff) * direction;
-				return new Intl.RelativeTimeFormat("en", { numeric: "auto" }).format(
-					roundedDiff,
-					unit
-				);
+				return new Intl.RelativeTimeFormat("en", { numeric: "auto" }).format(roundedDiff, unit);
 			}
 		}
 		return "Just now";
@@ -75,7 +72,6 @@ const formatDate = (date: Date, format: DateFormat = "relative"): string => {
 		}
 	}
 };
-
 
 export default formatDate;
 

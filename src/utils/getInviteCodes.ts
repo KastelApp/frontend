@@ -13,12 +13,12 @@ const getInviteCodes = (message: string, discordOnly = false) => {
 		/(?:https:\/\/|(^|\s))kastelapp\.com\/invite\/([\w-]+)/g,
 		/(?:https:\/\/|(^|\s))development\.kastelapp\.com\/invite\/([\w-]+)/g,
 		/(?:https:\/\/|(^|\s))kstl\.app\/invite\/([\w-]+)/g,
-		new RegExp(`(?:https://|(^|\\s))${currentDomain.replace(".", "\\.")}/invite/([\\w-]+)`, "g")
+		new RegExp(`(?:https://|(^|\\s))${currentDomain.replace(".", "\\.")}/invite/([\\w-]+)`, "g"),
 	];
 
 	const discordPatterns = [
 		/(?:https:\/\/|(^|\s))discord\.gg\/([\w-]+)/g,
-		/(?:https:\/\/|(^|\s))discord\.com\/invite\/([\w-]+)/g
+		/(?:https:\/\/|(^|\s))discord\.com\/invite\/([\w-]+)/g,
 	];
 
 	for (const pattern of discordOnly ? discordPatterns : patterns) {
@@ -32,6 +32,5 @@ const getInviteCodes = (message: string, discordOnly = false) => {
 
 	return inviteCodes;
 };
-
 
 export default getInviteCodes;

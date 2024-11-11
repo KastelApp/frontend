@@ -1,8 +1,5 @@
 const DmNavBar = () => {
-    return (
-        <div className="w-60 bg-darkAccent flex flex-col h-full">
-        </div>
-    )
-}
+	return <div className="flex h-full w-60 flex-col bg-darkAccent"></div>;
+};
 
 export default DmNavBar;

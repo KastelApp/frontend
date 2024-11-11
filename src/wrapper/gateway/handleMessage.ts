@@ -138,7 +138,7 @@ const handleMessage = async (ws: Websocket, data: unknown) => {
 						joinedAt: new Date(member.joinedAt),
 						userId: member.user.id,
 						nickname: member.nickname || null,
-						status: "online"
+						status: "online",
 					});
 
 					const flagFields = new FlagFields(member.user.flags, "0");

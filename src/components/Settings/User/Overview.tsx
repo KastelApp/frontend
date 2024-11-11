@@ -227,7 +227,9 @@ const OverView = () => {
 									<div className="mb-4 flex items-center justify-between">
 										<div>
 											<p className="text-lg font-semibold">Short About Me</p>
-											<p className="text-md overflow-hidden whitespace-pre-line break-words">{user?.shortBio || "N/A"}</p>
+											<p className="text-md overflow-hidden whitespace-pre-line break-words">
+												{user?.shortBio || "N/A"}
+											</p>
 										</div>
 									</div>
 								</CardBody>
@@ -292,7 +294,7 @@ const OverView = () => {
 												member: null,
 												roleColor: null,
 											},
-											context: MessageContext.Unknown
+											context: MessageContext.Unknown,
 										}}
 										isHighlighted={false}
 										inHub={false}
@@ -334,7 +336,7 @@ const OverView = () => {
 												member: null,
 												roleColor: null,
 											},
-											context: MessageContext.Unknown
+											context: MessageContext.Unknown,
 										}}
 										isButtonDisabled
 										isHighlighted={false}

@@ -15,7 +15,7 @@ const PreIframe = ({ children, embed }: { children: React.ReactNode; embed: Embe
 
 	return (
 		<div
-			className={cn("relative max-w-[400px] w-full aspect-[400/225] mb-4", !iframeInview && "cursor-pointer")}
+			className={cn("relative mb-4 aspect-[400/225] w-full max-w-[400px]", !iframeInview && "cursor-pointer")}
 			onClick={() => {
 				if (!iframeInview) setiframeInview(true);
 			}}
@@ -26,14 +26,12 @@ const PreIframe = ({ children, embed }: { children: React.ReactNode; embed: Embe
 						src={foundYoutubeThumbnail?.url}
 						thumbhash={foundYoutubeThumbnail?.thumbHash ?? undefined}
 						alt="Youtube Thumbnail"
-						className="rounded-md "
+						className="rounded-md"
 					/>
-					<div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 transform z-[2]">
+					<div className="absolute left-1/2 top-1/2 z-[2] -translate-x-1/2 -translate-y-1/2 transform">
 						<Play size={40} className="text-white" />
 					</div>
-					{!iframeInview && (
-						<div className="absolute left-0 top-0 w-full h-full bg-black opacity-50 rounded-md" />
-					)}
+					{!iframeInview && <div className="absolute left-0 top-0 h-full w-full rounded-md bg-black opacity-50" />}
 				</div>
 			)}
 			{iframeInview && children}
@@ -41,7 +39,7 @@ const PreIframe = ({ children, embed }: { children: React.ReactNode; embed: Embe
 	);
 };
 
-const YoutubeIFrameEmbed = ({ embed }: { embed: Embed; }) => {
+const YoutubeIFrameEmbed = ({ embed }: { embed: Embed }) => {
 	const HyperLinkPossibly = ({
 		url,
 		children,
@@ -62,14 +60,15 @@ const YoutubeIFrameEmbed = ({ embed }: { embed: Embed; }) => {
 
 	if (!embed.iframeSource) return null;
 
-	
-
 	return (
-		<div style={{
-			borderLeft: `4px solid #${embed.color?.toString(16) ?? "000000"}`,
-		}} className="inline-block w-auto rounded-md bg-darkAccent max-w-[calc(100%-1rem)] md:max-w-96">
+		<div
+			style={{
+				borderLeft: `4px solid #${embed.color?.toString(16) ?? "000000"}`,
+			}}
+			className="inline-block w-auto max-w-[calc(100%-1rem)] rounded-md bg-darkAccent md:max-w-96"
+		>
 			{(embed.title || embed.author?.name || embed.thumbnail?.url) && (
-				<header className="mr-3 pl-3 pt-3 flex flex-col items-start gap-2 text-white">
+				<header className="mr-3 flex flex-col items-start gap-2 pl-3 pt-3 text-white">
 					{embed.iframeSource.provider && (
 						<p className="text-xs">
 							<HyperLinkPossibly url={"https://youtube.com"} noColor>
@@ -107,7 +106,7 @@ const YoutubeIFrameEmbed = ({ embed }: { embed: Embed; }) => {
 						<Image
 							src={embed.thumbnail.url}
 							alt="Thumbnail"
-							className="mm-hw-20 rounded-md ml-4 mr-4"
+							className="ml-4 mr-4 rounded-md mm-hw-20"
 							referrerPolicy="no-referrer"
 						/>
 					)}

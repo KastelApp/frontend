@@ -13,7 +13,7 @@ const settings = {
 	maxRoleNameLength: 100,
 
 	maxBioLength: 1024,
-	maxShortBioLength: 256
+	maxShortBioLength: 256,
 };
 
 export enum HubFeatures {
@@ -36,8 +36,7 @@ export enum WebSocketErrorCodes {
 	HeartbeatTimeout = 4007,
 	InvalidVersion = 4008,
 	InvalidEncoding = 4009,
-  }
-  
+}
 
 const allowedMentions: {
 	All?: number;
@@ -170,7 +169,7 @@ const permissions = {
 			ManageRolePosition: 1n << 2n,
 			ManageRolePermissions: 1n << 3n,
 			CreateRole: 1n << 4n,
-			DeleteRole: 1n << 5n
+			DeleteRole: 1n << 5n,
 		},
 	},
 	Channels: {

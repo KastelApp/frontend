@@ -67,10 +67,7 @@ const Step = ({
 	onPress?: () => void;
 }) => {
 	return (
-		<div
-			className={cn("flex items-center justify-center gap-2", onPress ? "cursor-pointer" : "")}
-			onClick={onPress}
-		>
+		<div className={cn("flex items-center justify-center gap-2", onPress ? "cursor-pointer" : "")} onClick={onPress}>
 			<CheckStep stepNumber={index} isComplete={isComplete} isDanger={danger} isSelected={isSelected} />
 			<p className="text-white">{title}</p>
 		</div>

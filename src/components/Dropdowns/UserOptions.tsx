@@ -96,23 +96,34 @@ const UserOptions = ({
 					id: "sessions",
 					disabled: true,
 					section: <div>Sessions</div>,
-					endContent: <Chip color="primary" size="sm" variant="bordered" className="mr-2" radius="sm">Coming Soon</Chip>,
+					endContent: (
+						<Chip color="primary" size="sm" variant="bordered" className="mr-2" radius="sm">
+							Coming Soon
+						</Chip>
+					),
 				},
 				{
 					title: "Account Status", // ? i.e if they got any warnings or bans etc
 					id: "accountStatus",
 					disabled: true,
 					section: <div>Account Status</div>,
-					endContent: <Chip color="primary" size="sm" variant="bordered" className="mr-2" radius="sm">Coming Soon</Chip>,
+					endContent: (
+						<Chip color="primary" size="sm" variant="bordered" className="mr-2" radius="sm">
+							Coming Soon
+						</Chip>
+					),
 				},
 				{
 					title: "Privacy & Safety",
 					id: "privacySafety",
 					disabled: true,
 					section: <div>Privacy & Safety</div>,
-					endContent: <Chip color="primary" size="sm" variant="bordered" className="mr-2" radius="sm">Coming Soon</Chip>,
+					endContent: (
+						<Chip color="primary" size="sm" variant="bordered" className="mr-2" radius="sm">
+							Coming Soon
+						</Chip>
+					),
 				},
-
 			],
 		},
 		{
@@ -124,23 +135,35 @@ const UserOptions = ({
 					id: "subscriptions",
 					section: <div>subscriptions</div>,
 					disabled: true,
-					endContent: <Chip color="primary" size="sm" variant="bordered" className="mr-2" radius="sm">Coming Soon</Chip>,
+					endContent: (
+						<Chip color="primary" size="sm" variant="bordered" className="mr-2" radius="sm">
+							Coming Soon
+						</Chip>
+					),
 				},
 				{
 					title: "Gifts",
 					id: "gifts",
 					section: <div>gifts</div>,
 					disabled: true,
-					endContent: <Chip color="primary" size="sm" variant="bordered" className="mr-2" radius="sm">Coming Soon</Chip>,
+					endContent: (
+						<Chip color="primary" size="sm" variant="bordered" className="mr-2" radius="sm">
+							Coming Soon
+						</Chip>
+					),
 				},
 				{
 					title: "Payment",
 					id: "payment",
 					section: <div>payment</div>,
 					disabled: true,
-					endContent: <Chip color="primary" size="sm" variant="bordered" className="mr-2" radius="sm">Coming Soon</Chip>,
-				}
-			]
+					endContent: (
+						<Chip color="primary" size="sm" variant="bordered" className="mr-2" radius="sm">
+							Coming Soon
+						</Chip>
+					),
+				},
+			],
 		},
 		{
 			title: "General",
@@ -150,22 +173,26 @@ const UserOptions = ({
 					title: "Appearance",
 					id: "appearance",
 					section: <Appearance />,
-					disabled: false
+					disabled: false,
 				},
 				{
 					title: "Language",
 					id: "language",
 					section: <Language />,
-					disabled: false
+					disabled: false,
 				},
 				{
 					title: "Notifications",
 					id: "notifications",
 					section: <div>Notifications</div>,
 					disabled: true,
-					endContent: <Chip color="primary" size="sm" variant="bordered" className="mr-2" radius="sm">Coming Soon</Chip>,
-				}
-			]
+					endContent: (
+						<Chip color="primary" size="sm" variant="bordered" className="mr-2" radius="sm">
+							Coming Soon
+						</Chip>
+					),
+				},
+			],
 		},
 		{
 			title: "Advanced",
@@ -176,10 +203,14 @@ const UserOptions = ({
 					id: "publicExperiments",
 					section: <div>Public Experiments</div>,
 					disabled: true,
-					endContent: <Chip color="primary" size="sm" variant="bordered" className="mr-2" radius="sm">Coming Soon</Chip>,
-				}
-			]
-		}
+					endContent: (
+						<Chip color="primary" size="sm" variant="bordered" className="mr-2" radius="sm">
+							Coming Soon
+						</Chip>
+					),
+				},
+			],
+		},
 	]);
 
 	useEffect(() => {
@@ -242,112 +273,133 @@ const UserOptions = ({
 				}
 			/>
 
-				<CustomStatus isOpen={isOpen} onOpenChange={onOpenChange} onClose={onClose} />
-				<Dropdown
-					placement={orientation === "vertical" ? "right" : "top"}
-					closeOnSelect={false}
-					onOpenChange={(isOpen) => {
-						if (type === "normal") {
-							setDropdownOpen(isOpen);
-						}
+			<CustomStatus isOpen={isOpen} onOpenChange={onOpenChange} onClose={onClose} />
+			<Dropdown
+				placement={orientation === "vertical" ? "right" : "top"}
+				closeOnSelect={false}
+				onOpenChange={(isOpen) => {
+					if (type === "normal") {
+						setDropdownOpen(isOpen);
+					}
 
-						if (!isOpen) {
-							setDropdownOpen(false);
-							setStatusOpen(false);
+					if (!isOpen) {
+						setDropdownOpen(false);
+						setStatusOpen(false);
+					}
+				}}
+				isOpen={dropdownOpen}
+				className="bg-darkAccent"
+			>
+				<DropdownTrigger>{children}</DropdownTrigger>
+				<DropdownMenu aria-label="Static Actions" onAction={handleAction}>
+					<DropdownItem
+						closeOnSelect={false}
+						key="changeStatus"
+						variant="flat"
+						endContent={
+							<ArrowRight
+								size={20}
+								className={cn("transition-transform duration-300", statusOpen ? "rotate-90" : "")}
+							/>
 						}
-					}}
-					isOpen={dropdownOpen}
-					className="bg-darkAccent"
-				>
-					<DropdownTrigger>
-						{children}
-					</DropdownTrigger>
-					<DropdownMenu aria-label="Static Actions" onAction={handleAction}>
-						<DropdownItem
-							closeOnSelect={false}
-							key="changeStatus"
-							variant="flat"
-							endContent={
-								<ArrowRight
-									size={20}
-									className={cn("transition-transform duration-300", statusOpen ? "rotate-90" : "")}
-								/>
-							}
-							className="hover:bg-charcoal-700 transition-colors duration-300 ease-in-out"
+						className="transition-colors duration-300 ease-in-out hover:bg-charcoal-700"
+					>
+						<p>Status</p>
+						<p
+							className={cn(
+								"mt-1 text-xs",
+								status === "Online"
+									? "text-success"
+									: status === "Idle"
+										? "text-warning"
+										: status === "DND"
+											? "text-danger"
+											: "text-gray-500",
+							)}
 						>
-							<p>Status</p>
-							<p className={cn("mt-1 text-xs", status === "Online" ? "text-success" : status === "Idle" ? "text-warning" : status === "DND" ? "text-danger" : "text-gray-500")}>{status}</p>
-							<motion.div
-								className="mt-2 grid grid-cols-[repeat(2,minmax(0px,1fr))] items-center"
-								initial="collapsed"
-								animate={statusOpen ? "expanded" : "collapsed"}
-								variants={{
-									collapsed: { height: 0, opacity: 0 },
-									expanded: { height: "auto", opacity: 1 },
-								}}
-								transition={{ duration: 0.3, delay: 0.05 }}
+							{status}
+						</p>
+						<motion.div
+							className="mt-2 grid grid-cols-[repeat(2,minmax(0px,1fr))] items-center"
+							initial="collapsed"
+							animate={statusOpen ? "expanded" : "collapsed"}
+							variants={{
+								collapsed: { height: 0, opacity: 0 },
+								expanded: { height: "auto", opacity: 1 },
+							}}
+							transition={{ duration: 0.3, delay: 0.05 }}
+						>
+							<Chip
+								onClick={() => handleStatus("Online")}
+								variant="flat"
+								className="mb-2 min-w-[60px]"
+								radius="sm"
+								size="sm"
+								color="success"
 							>
-								<Chip
-									onClick={() => handleStatus("Online")}
-									variant="flat"
-									className="mb-2 min-w-[60px]"
-									radius="sm"
-									size="sm"
-									color="success"
-								>
-									{t("statusTypes.online")}
-								</Chip>
-								<Chip
-									onClick={() => handleStatus("Idle")}
-									variant="flat"
-									className="right-2 mb-2 min-w-[60px]"
-									radius="sm"
-									size="sm"
-									color="warning"
-								>
-									{t("statusTypes.idle")}
-								</Chip>
-								<Chip
-									onClick={() => handleStatus("DND")}
-									variant="flat"
-									className="mb-2 min-w-[60px]"
-									radius="sm"
-									size="sm"
-									color="danger"
-								>
-									{t("statusTypes.dnd")}
-								</Chip>
-								<Chip
-									onClick={() => handleStatus("Invisible")}
-									variant="flat"
-									className="right-2 mb-2 min-w-[60px]"
-									radius="sm"
-									size="sm"
-									color="default"
-								>
-									{t("statusTypes.invisible")}
-								</Chip>
-							</motion.div>
-						</DropdownItem>
+								{t("statusTypes.online")}
+							</Chip>
+							<Chip
+								onClick={() => handleStatus("Idle")}
+								variant="flat"
+								className="right-2 mb-2 min-w-[60px]"
+								radius="sm"
+								size="sm"
+								color="warning"
+							>
+								{t("statusTypes.idle")}
+							</Chip>
+							<Chip
+								onClick={() => handleStatus("DND")}
+								variant="flat"
+								className="mb-2 min-w-[60px]"
+								radius="sm"
+								size="sm"
+								color="danger"
+							>
+								{t("statusTypes.dnd")}
+							</Chip>
+							<Chip
+								onClick={() => handleStatus("Invisible")}
+								variant="flat"
+								className="right-2 mb-2 min-w-[60px]"
+								radius="sm"
+								size="sm"
+								color="default"
+							>
+								{t("statusTypes.invisible")}
+							</Chip>
+						</motion.div>
+					</DropdownItem>
 
-						<DropdownItem closeOnSelect={true} key="customStatus" variant="flat" className="hover:bg-charcoal-700 transition-colors duration-300 ease-in-out">
-							<p>{t("customStatus")}</p>
-							<p className="text-xs text-gray-500">My Custom Status</p>
-						</DropdownItem>
-						<DropdownItem key="settings" variant="flat" endContent={<Settings size={20} />} className="hover:bg-charcoal-700 transition-colors duration-300 ease-in-out">
-							{t("settings.settings")}
-						</DropdownItem>
-						<DropdownItem
-							key="logout"
-							variant="flat"
-							className="text-danger transition-colors duration-300 ease-in-out"
-							color="danger"
-							endContent={<LogOut size={20} />}
-						>
-							{t("logout")}
-						</DropdownItem>
-					</DropdownMenu>
-				</Dropdown>
+					<DropdownItem
+						closeOnSelect={true}
+						key="customStatus"
+						variant="flat"
+						className="transition-colors duration-300 ease-in-out hover:bg-charcoal-700"
+					>
+						<p>{t("customStatus")}</p>
+						<p className="text-xs text-gray-500">My Custom Status</p>
+					</DropdownItem>
+					<DropdownItem
+						key="settings"
+						variant="flat"
+						endContent={<Settings size={20} />}
+						className="transition-colors duration-300 ease-in-out hover:bg-charcoal-700"
+					>
+						{t("settings.settings")}
+					</DropdownItem>
+					<DropdownItem
+						key="logout"
+						variant="flat"
+						className="text-danger transition-colors duration-300 ease-in-out"
+						color="danger"
+						endContent={<LogOut size={20} />}
+					>
+						{t("logout")}
+					</DropdownItem>
+				</DropdownMenu>
+			</Dropdown>
 		</>
 	);
 };

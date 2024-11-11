@@ -6,16 +6,18 @@ import { useStoredSettingsStore } from "@/wrapper/Stores.tsx";
 const App = () => {
 	const { isChannelsOpen, isMobile } = useStoredSettingsStore();
 
-
 	return (
 		<AppLayout>
-			<div className={cn(isChannelsOpen ? "mm-w-60" : "mm-w-0", isChannelsOpen && isMobile ? "fixed top-0 left-16 bottom-0 z-10" : "")}>
+			<div
+				className={cn(
+					isChannelsOpen ? "mm-w-60" : "mm-w-0",
+					isChannelsOpen && isMobile ? "fixed bottom-0 left-16 top-0 z-10" : "",
+				)}
+			>
 				<DmNavBar />
 			</div>
 
-			<div className="w-full h-screen">
-				Test
-			</div>
+			<div className="h-screen w-full">Test</div>
 		</AppLayout>
 	);
 };

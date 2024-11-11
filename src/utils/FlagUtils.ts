@@ -30,7 +30,7 @@ class FlagUtils<
 	 * @returns If the bit is present
 	 */
 	public has(bit: bigint | number | keyof (typeof this)["Flags"]) {
-		const bits = typeof bit === "string" ? this.Flags[bit] ?? 0n : BigInt(bit as number);
+		const bits = typeof bit === "string" ? (this.Flags[bit] ?? 0n) : BigInt(bit as number);
 
 		if (bits === 0n) return false; // No bit is able to be 0
 
@@ -43,7 +43,7 @@ class FlagUtils<
 	 * @returns the instance
 	 */
 	public add(bit: bigint | number | keyof (typeof this)["Flags"]): this {
-		const bits = typeof bit === "string" ? this.Flags[bit] ?? 0n : BigInt(bit as number);
+		const bits = typeof bit === "string" ? (this.Flags[bit] ?? 0n) : BigInt(bit as number);
 
 		if (this.has(bits)) return this;
 
@@ -58,7 +58,7 @@ class FlagUtils<
 	 * @returns the instance
 	 */
 	public remove(bit: bigint | number | keyof (typeof this)["Flags"]): this {
-		const bits = typeof bit === "string" ? this.Flags[bit] ?? 0n : BigInt(bit as number);
+		const bits = typeof bit === "string" ? (this.Flags[bit] ?? 0n) : BigInt(bit as number);
 
 		if (!this.has(bits)) return this;
 

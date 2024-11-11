@@ -49,7 +49,11 @@ export const useHubSettingsStore = create(
 			hubSettings: [],
 			setHubSettings: (hubId: string, hubSettings: Partial<Omit<HubSettings, "hubId">>) => {
 				const currentHubSettings = get().hubSettings;
-				const foundHub = currentHubSettings.find((hub) => hub.hubId === hubId) ?? { hubId, memberBarHidden: false, lastChannelId: null };
+				const foundHub = currentHubSettings.find((hub) => hub.hubId === hubId) ?? {
+					hubId,
+					memberBarHidden: false,
+					lastChannelId: null,
+				};
 
 				const newHubSettings = {
 					...foundHub,
@@ -57,11 +61,8 @@ export const useHubSettingsStore = create(
 				};
 
 				set({
-					hubSettings: [
-						...currentHubSettings.filter((hub) => hub.hubId !== hubId),
-						newHubSettings as HubSettings,
-					]
-				})
+					hubSettings: [...currentHubSettings.filter((hub) => hub.hubId !== hubId), newHubSettings as HubSettings],
+				});
 			},
 			getHubSettings: (hubId: string) => get().hubSettings.find((hub) => hub.hubId === hubId),
 		}),
@@ -69,12 +70,12 @@ export const useHubSettingsStore = create(
 			name: "hub-settings",
 		},
 	),
-)
+);
 
 export const useSelectedTab = create<SelectedTabStore>((set) => ({
 	selectedTab: "friends",
 	setSelectedTab: (selectedTab: string | null) => set({ selectedTab }),
-}))
+}));
 
 // ? The reason we don't use "createTrackedSelector" here is we still want to update components when something like the current language changes, without requiring it in the component
 // ? There's a few other things we want to do that as well (i.e settings etc)
@@ -90,7 +91,8 @@ export const useTranslationStore = create(
 
 				set({ currentLanguage: language });
 			},
-			t: (key: TranslationKeys, ...anything: unknown[]) => get().rawTranslation.t(get().currentLanguage, key, ...anything),
+			t: (key: TranslationKeys, ...anything: unknown[]) =>
+				get().rawTranslation.t(get().currentLanguage, key, ...anything),
 			markdownT: (key: TranslationKeys, ...anything: unknown[]) => {
 				const value = get().t(key, anything);
 
@@ -173,7 +175,7 @@ export const useStoredSettingsStore = create(
 export interface EditorStore {
 	editor: ReactEditor | null;
 	setEditor: (editor: ReactEditor) => void;
-};
+}
 
 export const useEditorStore = create<EditorStore>((set) => ({
 	editor: null,

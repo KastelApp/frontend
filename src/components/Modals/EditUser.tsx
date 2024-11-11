@@ -1,5 +1,15 @@
 import { useUserStore } from "@/wrapper/Stores/UserStore.ts";
-import { Button, Input, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Textarea, Tooltip } from "@nextui-org/react";
+import {
+	Button,
+	Input,
+	Modal,
+	ModalBody,
+	ModalContent,
+	ModalFooter,
+	ModalHeader,
+	Textarea,
+	Tooltip,
+} from "@nextui-org/react";
 import { Check, LoaderCircle, X } from "lucide-react";
 import { useState } from "react";
 import { settings } from "@/data/constants.ts";
@@ -18,16 +28,7 @@ const EditUser = ({
 	const [error, setError] = useState<string | null>(null);
 	const { patchUser } = useUserStore();
 
-	const {
-		globalNickname,
-		username,
-		tag,
-		bio,
-		shortBio,
-		isSaving,
-		save,
-		clearAllErrors
-	} = useMultiFormState<{
+	const { globalNickname, username, tag, bio, shortBio, isSaving, save, clearAllErrors } = useMultiFormState<{
 		globalNickname: string | null;
 		username: string;
 		tag: string;
@@ -40,7 +41,13 @@ const EditUser = ({
 		bio: currentUser.bio,
 		shortBio: currentUser.shortBio,
 		save: async (opts) => {
-			console.log({ bio: opts.bio, globalNickname: opts.globalNickname, shortBio: opts.shortBio, tag: opts.tag, username: opts.username });
+			console.log({
+				bio: opts.bio,
+				globalNickname: opts.globalNickname,
+				shortBio: opts.shortBio,
+				tag: opts.tag,
+				username: opts.username,
+			});
 
 			const dataToUpdate = {
 				bio: opts.bio === currentUser.bio ? undefined : opts.bio,
@@ -78,11 +85,11 @@ const EditUser = ({
 			if (updated.errors.unknown) {
 				setError("An unknown error occurred, please try again later.");
 			}
-		}
+		},
 	});
 
 	return (
-		(<Modal
+		<Modal
 			isOpen={isOpen}
 			onOpenChange={onOpenChange}
 			placement="top-center"
@@ -95,11 +102,7 @@ const EditUser = ({
 				<ModalBody>
 					<div>
 						<p className="mb-2 text-lg font-semibold">Personal Information</p>
-						{error && (
-							<div className="mb-2 p-2 bg-danger/10 text-danger text-sm rounded-lg">
-								{error}
-							</div>
-						)}
+						{error && <div className="mb-2 rounded-lg bg-danger/10 p-2 text-sm text-danger">{error}</div>}
 						<Input
 							label="Global Nickname"
 							placeholder={currentUser.globalNickname ?? "Global Nickname"}
@@ -149,7 +152,6 @@ const EditUser = ({
 
 											return;
 										}
-
 
 										tag.set(e);
 									}}
@@ -229,57 +231,69 @@ const EditUser = ({
 					<Button color="danger" variant="flat" onPress={onClose} isDisabled={isSaving}>
 						Cancel
 					</Button>
-					<Button color="success" variant="flat" onPress={() => {
-						let hasError = false;
+					<Button
+						color="success"
+						variant="flat"
+						onPress={() => {
+							let hasError = false;
 
-						if (globalNickname.state && globalNickname.state.length > settings.maxNicknameLength) {
-							globalNickname.setError(`Global Nickname must be less than ${settings.maxNicknameLength} characters.`);
-							hasError = true;
-						}
+							if (globalNickname.state && globalNickname.state.length > settings.maxNicknameLength) {
+								globalNickname.setError(`Global Nickname must be less than ${settings.maxNicknameLength} characters.`);
+								hasError = true;
+							}
 
-						if (username.state && (username.state.length > settings.maxNicknameLength || username.state.length < 3)) {
-							if (username.state.length > settings.maxNicknameLength) username.setError(`Username must be less than ${settings.maxNicknameLength} characters.`);
-							if (username.state.length < 3) username.setError("Username must be more than 3 characters.");
+							if (username.state && (username.state.length > settings.maxNicknameLength || username.state.length < 3)) {
+								if (username.state.length > settings.maxNicknameLength)
+									username.setError(`Username must be less than ${settings.maxNicknameLength} characters.`);
+								if (username.state.length < 3) username.setError("Username must be more than 3 characters.");
 
-							hasError = true;
-						}
+								hasError = true;
+							}
 
-						if (tag.state && (tag.state.length !== 4 || !/^[0-9]*$/.test(tag.state))) {
-							tag.setError("Tag must be 4 numbers.");
+							if (tag.state && (tag.state.length !== 4 || !/^[0-9]*$/.test(tag.state))) {
+								tag.setError("Tag must be 4 numbers.");
 
-							hasError = true;
-						}
+								hasError = true;
+							}
 
-						if (bio.state && bio.state.length > settings.maxBioLength) {
-							bio.setError(`Bio must be less than ${settings.maxBioLength} characters.`);
+							if (bio.state && bio.state.length > settings.maxBioLength) {
+								bio.setError(`Bio must be less than ${settings.maxBioLength} characters.`);
 
-							hasError = true;
-						}
+								hasError = true;
+							}
 
-						if (shortBio.state && shortBio.state.length > settings.maxShortBioLength) {
-							shortBio.setError(`Short Bio must be less than ${settings.maxShortBioLength} characters.`);
+							if (shortBio.state && shortBio.state.length > settings.maxShortBioLength) {
+								shortBio.setError(`Short Bio must be less than ${settings.maxShortBioLength} characters.`);
 
-							hasError = true;
-						}
+								hasError = true;
+							}
 
-						if (username.state === currentUser.username && tag.state === currentUser.tag && bio.state === currentUser.bio && globalNickname.state === currentUser.globalNickname && shortBio.state === currentUser.shortBio) {
-							setError("No changes were made.");
+							if (
+								username.state === currentUser.username &&
+								tag.state === currentUser.tag &&
+								bio.state === currentUser.bio &&
+								globalNickname.state === currentUser.globalNickname &&
+								shortBio.state === currentUser.shortBio
+							) {
+								setError("No changes were made.");
 
-							hasError = true;
-						}
+								hasError = true;
+							}
 
-						if (hasError) return;
+							if (hasError) return;
 
-						clearAllErrors();
-						setError(null);
+							clearAllErrors();
+							setError(null);
 
-						save();
-					}} isDisabled={isSaving}>
+							save();
+						}}
+						isDisabled={isSaving}
+					>
 						{isSaving ? <LoaderCircle className="custom-animate-spin" size={24} /> : "Save"}
 					</Button>
 				</ModalFooter>
 			</ModalContent>
-		</Modal>)
+		</Modal>
 	);
 };
 

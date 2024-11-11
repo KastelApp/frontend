@@ -49,7 +49,9 @@ const Overview = () => {
 
 	const { isStaff, getCurrentUser } = useUserStore();
 	const user = getCurrentUser()!;
-	const channels = useChannelStore((s) => s.getChannels(hubId).filter((c) => c.type === Constants.channelTypes.HubText));
+	const channels = useChannelStore((s) =>
+		s.getChannels(hubId).filter((c) => c.type === Constants.channelTypes.HubText),
+	);
 
 	return (
 		<div className="mr-2 rounded-lg bg-lightAccent dark:bg-darkAccent">
@@ -193,11 +195,7 @@ const Overview = () => {
 							value={sendUserChangelog.state}
 							setValue={sendUserChangelog.set}
 						/>
-						<SwitchOption
-							title="Send Hub Changelog"
-							value={sendHubChangelog.state}
-							setValue={sendHubChangelog.set}
-						/>
+						<SwitchOption title="Send Hub Changelog" value={sendHubChangelog.state} setValue={sendHubChangelog.set} />
 					</div>
 				</div>
 			</div>

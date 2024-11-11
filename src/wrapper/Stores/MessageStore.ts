@@ -37,7 +37,7 @@ export enum MessageStates {
 export enum MessageContext {
 	Unknown,
 	Gateway,
-	API
+	API,
 }
 
 export interface Message {
@@ -350,7 +350,7 @@ export const useMessageStore = create<MessageStore>((set, get) => ({
 			return {
 				success: false,
 				messages: [],
-			}
+			};
 		}
 
 		const newParams = new URLSearchParams();
@@ -379,7 +379,7 @@ export const useMessageStore = create<MessageStore>((set, get) => ({
 			return {
 				success: false,
 				messages: [],
-			}
+			};
 		}
 
 		const msgs: Message[] = [];
@@ -416,7 +416,7 @@ export const useMessageStore = create<MessageStore>((set, get) => ({
 				pinned: message.pinned,
 				state: MessageStates.Sent,
 				context: MessageContext.API,
-			}
+			};
 
 			get().addMessage(msg);
 			msgs.push(msg);
@@ -432,6 +432,6 @@ export const useMessageStore = create<MessageStore>((set, get) => ({
 		return {
 			success: true,
 			messages: msgs,
-		}
+		};
 	},
 }));

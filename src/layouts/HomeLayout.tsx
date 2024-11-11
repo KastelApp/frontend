@@ -3,7 +3,15 @@ import Footer from "@/components/Footer.tsx";
 import TopHeader from "@/components/TopHeader.tsx";
 import cn from "@/utils/cn.ts";
 
-const HomeLayout = ({ children, className, disableBackgroundImage = false }: { children?: React.ReactNode; className?: string; disableBackgroundImage?: boolean }) => {
+const HomeLayout = ({
+	children,
+	className,
+	disableBackgroundImage = false,
+}: {
+	children?: React.ReactNode;
+	className?: string;
+	disableBackgroundImage?: boolean;
+}) => {
 	return (
 		<div
 			style={{

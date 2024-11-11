@@ -13,12 +13,7 @@ import Client from "@/wrapper/Client.ts";
 import { Routes } from "@/utils/Routes.ts";
 import { useRouter } from "@/hooks/useRouter.ts";
 
-const Init = ({
-	children,
-}: {
-	children?: React.ReactNode;
-	shouldHaveLayout?: boolean;
-}) => {
+const Init = ({ children }: { children?: React.ReactNode; shouldHaveLayout?: boolean }) => {
 	const { token, setToken } = useTokenStore();
 	const { client, setClient } = useClientStore();
 	const { api } = useAPIStore();
@@ -148,13 +143,12 @@ const Init = ({
 				setToken(null);
 
 				client.websocket?.stopReconnect();
-				
+
 				setClient(new Client());
 
 				router.push(Routes.login());
 			}
 		});
-
 	}, [router.pathname]);
 
 	if (router.pathname.startsWith("/app") && !currentUser) {

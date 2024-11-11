@@ -116,7 +116,8 @@ const useMultiFormState = <InputBaseType extends Record<string, unknown>>(
 	const [isSaving, setIsSaving] = useState(false);
 
 	const save = useCallback(async () => {
-		if (isSaving) { // ! darkerink: It's up to the developer to handle if there's an error or not imo, easier that way
+		if (isSaving) {
+			// ! darkerink: It's up to the developer to handle if there's an error or not imo, easier that way
 			return;
 		}
 
@@ -140,7 +141,6 @@ const useMultiFormState = <InputBaseType extends Record<string, unknown>>(
 			state[key].clearError();
 		}
 	}, [state, keys]);
-
 
 	return { ...state, isDirty, save, reset, hasError, isSaving, clearAllErrors };
 };

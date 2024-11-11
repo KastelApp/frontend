@@ -39,7 +39,12 @@ const AllBadges = ({
 		);
 
 	return (
-		<div className={cn("flex w-fit max-w-48 flex-wrap justify-end rounded-md p-1", badges.length > 0 ? "bg-[#131315]" : "")}>
+		<div
+			className={cn(
+				"flex w-fit max-w-48 flex-wrap justify-end rounded-md p-1",
+				badges.length > 0 ? "bg-[#131315]" : "",
+			)}
+		>
 			{badges.map((flag, index) => {
 				switch (flag) {
 					case "StaffBadge":
@@ -115,7 +120,7 @@ const AllBadges = ({
 					case "PartnerBadge":
 						return (
 							<div key={index} className="relative w-1/5 flex-none p-1">
-								<Tooltip content={t("badges.partner.tooltip")} >
+								<Tooltip content={t("badges.partner.tooltip")}>
 									<span className="cursor-pointer text-lg text-success hover:opacity-75">
 										<Partner size={size} />
 									</span>

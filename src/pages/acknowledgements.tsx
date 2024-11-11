@@ -16,7 +16,7 @@ interface Library {
 	description: string;
 }
 
-const AcknowledgementCard = ({ data }: { data: NormalAcknowledgementData[]; }) => {
+const AcknowledgementCard = ({ data }: { data: NormalAcknowledgementData[] }) => {
 	return (
 		<div className="grid grid-cols-4 gap-4">
 			{data.map((person, index) => (
@@ -31,7 +31,7 @@ const AcknowledgementCard = ({ data }: { data: NormalAcknowledgementData[]; }) =
 	);
 };
 
-const Libraries = ({ data }: { data: Library[]; }) => {
+const Libraries = ({ data }: { data: Library[] }) => {
 	return (
 		<div className="grid max-h-[44rem] grid-cols-2 gap-4 overflow-auto">
 			{data.map((library, index) => (

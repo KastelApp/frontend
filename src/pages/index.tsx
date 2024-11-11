@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { ArrowRight, MessageSquare } from "lucide-react";
 import { motion, useAnimation } from "framer-motion";
@@ -9,7 +8,15 @@ import { useIsReady, useTokenStore } from "@/wrapper/Stores.tsx";
 import { Routes } from "@/utils/Routes.ts";
 import Link from "@/components/Link.tsx";
 
-const FeatureSection = ({ title, description, icon, imageUrl, reverse = false, learnMore, id }: {
+const FeatureSection = ({
+	title,
+	description,
+	icon,
+	imageUrl,
+	reverse = false,
+	learnMore,
+	id,
+}: {
 	title: string;
 	description: string;
 	icon: React.ReactNode;
@@ -40,7 +47,6 @@ const FeatureSection = ({ title, description, icon, imageUrl, reverse = false, l
 
 	const fixedId = id ?? title.toLowerCase().replaceAll(" ", "-");
 
-
 	return (
 		<div className="odd:bg-darkAccent even:bg-background" id={fixedId}>
 			<motion.div
@@ -48,25 +54,21 @@ const FeatureSection = ({ title, description, icon, imageUrl, reverse = false, l
 				animate={controls}
 				initial="hidden"
 				variants={variants}
-				className={`flex flex-col ${reverse ? "md:flex-row-reverse" : "md:flex-row"} items-center gap-8 py-16 container`}
+				className={`flex flex-col ${reverse ? "md:flex-row-reverse" : "md:flex-row"} container items-center gap-8 py-16`}
 			>
 				<div className="w-full md:w-1/2">
-					<div className="text-primary mb-4">{icon}</div>
-					<Link className="text-3xl font-bold mb-4" href={`#${fixedId}`}>
+					<div className="mb-4 text-primary">{icon}</div>
+					<Link className="mb-4 text-3xl font-bold" href={`#${fixedId}`}>
 						<h2>{title}</h2>
 					</Link>
-					<p className="text-gray-400 mb-6">{description}</p>
+					<p className="mb-6 text-gray-400">{description}</p>
 					{learnMore && (
 						<Button variant="flat" as={Link} href={learnMore.link}>
 							{learnMore.text || "Learn more"} <ArrowRight className="ml-2 h-4 w-4" />
 						</Button>
 					)}
 				</div>
-				<Image
-					src={imageUrl}
-					alt={title}
-					className="rounded-lg shadow-lg max-w-[900px] max-h-96"
-				/>
+				<Image src={imageUrl} alt={title} className="max-h-96 max-w-[900px] rounded-lg shadow-lg" />
 			</motion.div>
 		</div>
 	);
@@ -93,27 +95,30 @@ const HomePage = () => {
 
 	return (
 		<HomeLayout disableBackgroundImage>
-			<div className="text-center py-20">
-				<motion.div
-					initial={{ opacity: 0, y: 20 }}
-					animate={{ opacity: 1, y: 0 }}
-					transition={{ duration: 0.8 }}
-				>
-					<h1 className="text-5xl md:text-7xl font-bold mb-6">
+			<div className="py-20 text-center">
+				<motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}>
+					<h1 className="mb-6 text-5xl font-bold md:text-7xl">
 						Connect, collaborate,
 						<br />
 						<span className="bg-gradient-to-r from-branding-100 to-primary bg-clip-text text-transparent">
 							and create together
 						</span>
 					</h1>
-					<p className="text-xl text-gray-400 mb-8 max-w-2xl mx-auto">
-						Come together with Kastel, the chat platform
-						Built for communities, gamers, and teams who demand more from their chat platform.
+					<p className="mx-auto mb-8 max-w-2xl text-xl text-gray-400">
+						Come together with Kastel, the chat platform Built for communities, gamers, and teams who demand more from
+						their chat platform.
 					</p>
-					<div className="flex flex-col sm:flex-row justify-center gap-4 mb-12">
-						<Button size="lg" variant="flat" color="primary" href={token ? Routes.app() : Routes.register()} as={Link} onPress={() => {
-							if (token) setIsReady(false);
-						}}>
+					<div className="mb-12 flex flex-col justify-center gap-4 sm:flex-row">
+						<Button
+							size="lg"
+							variant="flat"
+							color="primary"
+							href={token ? Routes.app() : Routes.register()}
+							as={Link}
+							onClick={() => {
+								if (token) setIsReady(false);
+							}}
+						>
 							{token ? "Open App" : "Start chatting for free"}
 						</Button>
 						<Button size="lg" variant="flat" isDisabled>
@@ -154,11 +159,18 @@ const HomePage = () => {
 				/> */}
 			</div>
 
-			<div className="text-center py-20">
-				<h2 className="text-4xl font-bold mb-8">Ready to elevate your chat experience?</h2>
-				<Button size="lg" variant="flat" color="primary" href={token ? Routes.app() : Routes.register()} as={Link} onPress={() => {
-					if (token) setIsReady(false);
-				}}>
+			<div className="py-20 text-center">
+				<h2 className="mb-8 text-4xl font-bold">Ready to elevate your chat experience?</h2>
+				<Button
+					size="lg"
+					variant="flat"
+					color="primary"
+					href={token ? Routes.app() : Routes.register()}
+					as={Link}
+					onClick={() => {
+						if (token) setIsReady(false);
+					}}
+				>
 					{token ? "Open App" : "Join Kastel today"}
 				</Button>
 			</div>

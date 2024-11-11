@@ -321,7 +321,7 @@ export const useChannelStore = create<ChannelStore>((set, get) => ({
 		set({
 			channels: [...currentChannels.filter((channel) => channel.id !== channelId), editedChannel],
 		});
-	}
+	},
 }));
 
 export const usePerChannelStore = create<PerChannelStore>((set, get) => ({
@@ -344,8 +344,8 @@ export const usePerChannelStore = create<PerChannelStore>((set, get) => ({
 					hasMoreAfter: false,
 					hasMoreBefore: false,
 					renderedItems: [],
-					scrollPosition: 0
-				}
+					scrollPosition: 0,
+				},
 			} satisfies PerChannel),
 			...get().channels[channelId],
 		};
@@ -365,7 +365,7 @@ export const usePerChannelStore = create<PerChannelStore>((set, get) => ({
 						hasMoreAfter: false,
 						hasMoreBefore: false,
 						renderedItems: [],
-						scrollPosition: 0
+						scrollPosition: 0,
 					},
 					editingStateId: null,
 					replyingStateId: null,

@@ -1,7 +1,7 @@
 import { create } from "zustand";
 
 export interface Member {
-    status: string; // todo: remove
+	status: string; // todo: remove
 	hubId: string;
 	joinedAt: Date;
 	nickname: string | null;
@@ -31,7 +31,9 @@ export const useMemberStore = create<MemberStore>((set, get) => ({
 
 		set({
 			members: [
-				...currentMembers.filter((currentMember) => currentMember.userId !== member.userId || currentMember.hubId !== member.hubId),
+				...currentMembers.filter(
+					(currentMember) => currentMember.userId !== member.userId || currentMember.hubId !== member.hubId,
+				),
 				{
 					...foundMember,
 					...member,
@@ -41,7 +43,6 @@ export const useMemberStore = create<MemberStore>((set, get) => ({
 	},
 	removeMember: (hubId, userId) =>
 		set({ members: get().members.filter((member) => member.userId !== userId && member.hubId !== hubId) }),
-	getMember: (hubId, userId) =>
-		get().members.find((member) => member.userId === userId && member.hubId === hubId),
+	getMember: (hubId, userId) => get().members.find((member) => member.userId === userId && member.hubId === hubId),
 	getMembers: (hubId) => get().members.filter((member) => member.hubId === hubId),
 }));

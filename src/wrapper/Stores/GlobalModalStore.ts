@@ -41,7 +41,7 @@ export interface GlobalModal {
 	 * Even if closable is false, you can still close the modal by clicking the close button
 	 */
 	allowCloseByButton?: boolean;
-	
+
 	/**
 	 * Lets you hide the close button
 	 */

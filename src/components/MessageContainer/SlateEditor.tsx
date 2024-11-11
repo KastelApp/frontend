@@ -39,7 +39,7 @@ const SlateEditor = ({
 	sendMessage,
 	onType,
 	initialText = "",
-	onResize
+	onResize,
 }: {
 	placeholder: string;
 	readOnlyMessage?: string;
@@ -61,8 +61,8 @@ const SlateEditor = ({
 	useEffect(() => {
 		if (editor) return;
 
-		setEditor(withCustomDelete(withMentions(withReact(withHistory(createEditor())))))
-	}, [editor])
+		setEditor(withCustomDelete(withMentions(withReact(withHistory(createEditor())))));
+	}, [editor]);
 
 	// const editor = editorRef.current;
 
@@ -119,7 +119,7 @@ const SlateEditor = ({
 
 	const decorate = useCallback(([node, path]: [Text, number[]]) => {
 		const ranges: {
-			[key: string]: boolean | { path: number[]; offset: number; };
+			[key: string]: boolean | { path: number[]; offset: number };
 		}[] = [];
 
 		if (!Text.isText(node)) {
@@ -244,8 +244,8 @@ const SlateEditor = ({
 							at: {
 								anchor: Editor.start(editor, []),
 								focus: Editor.end(editor, []),
-							}
-						})
+							},
+						});
 
 						// ? refocus
 						// note: Editor.focus(editor) does not seem to work, unsure why, this is a hack / workaround which works

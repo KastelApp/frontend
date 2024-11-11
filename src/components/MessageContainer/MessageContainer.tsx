@@ -14,11 +14,23 @@ import hexOpacity from "@/utils/hexOpacity.ts";
 import cn from "@/utils/cn.ts";
 import { snowflake } from "@/data/constants.ts";
 
-const FileComponent = ({ fileName, type, onDelete, onEdit, file }: { fileName?: string; type: "image" | "file"; file: File; onDelete: () => void; onEdit: () => void; }) => {
+const FileComponent = ({
+	fileName,
+	type,
+	onDelete,
+	onEdit,
+	file,
+}: {
+	fileName?: string;
+	type: "image" | "file";
+	file: File;
+	onDelete: () => void;
+	onEdit: () => void;
+}) => {
 	const url = URL.createObjectURL(file);
 
 	return (
-		<div className="relative mt-2 flex h-44 w-44 flex-col justify-between rounded-md bg-lightAccent dark:bg-darkAccent p-2">
+		<div className="relative mt-2 flex h-44 w-44 flex-col justify-between rounded-md bg-lightAccent p-2 dark:bg-darkAccent">
 			{/* Top-right action buttons */}
 			<div className="absolute right-0.5 top-0.5 z-10 flex gap-2 rounded-md bg-gray-800 p-1">
 				<Tooltip content="Edit File Details">
@@ -33,14 +45,14 @@ const FileComponent = ({ fileName, type, onDelete, onEdit, file }: { fileName?: 
 			<div
 				className={cn(
 					"flex h-full w-full items-center justify-center overflow-hidden rounded-md",
-					type === "image" && "bg-gray-500"
+					type === "image" && "bg-gray-500",
 				)}
 			>
 				{type === "image" ? (
 					<Image
 						src={url!}
 						alt={fileName || "Uploaded file"}
-						className="h-full w-full object-cover z-0 transition-none"
+						className="z-0 h-full w-full object-cover transition-none"
 					/>
 				) : (
 					<FileIcon size={64} color="#acaebf" />
@@ -48,9 +60,7 @@ const FileComponent = ({ fileName, type, onDelete, onEdit, file }: { fileName?: 
 			</div>
 
 			{/* Filename */}
-			<div className="mt-2 truncate text-sm text-white">
-				{fileName || "No file name"}
-			</div>
+			<div className="mt-2 truncate text-sm text-white">{fileName || "No file name"}</div>
 		</div>
 	);
 };
@@ -62,7 +72,7 @@ const MessageContainer = ({
 	sendMessage,
 	channelId,
 	hubId,
-	onResize
+	onResize,
 }: {
 	placeholder: string;
 	children?: React.ReactNode;
@@ -73,16 +83,16 @@ const MessageContainer = ({
 	onResize?: (height: number) => void;
 }) => {
 	const { t } = useTranslationStore();
-	const [files, setFiles] = useState<{ name: string; type: "image" | "file"; file: File; id: string; }[]>([]);
+	const [files, setFiles] = useState<{ name: string; type: "image" | "file"; file: File; id: string }[]>([]);
 	const [state, setState] = useState<("replying" | "mentioning")[]>([]);
 	const getPerChannel = usePerChannelStore((state) => state.getChannel);
-    const updatePerChannel = usePerChannelStore((state) => state.updateChannel);
+	const updatePerChannel = usePerChannelStore((state) => state.updateChannel);
 	const { getMessage } = useMessageStore();
 
 	const [replyingAuthor, setReplyingAuthor] = useState<{
 		user: User | null;
 		member: Member | null;
-		roleColor: { color: string | null; id: string; } | null;
+		roleColor: { color: string | null; id: string } | null;
 	}>({
 		member: null,
 		user: null,
@@ -92,10 +102,9 @@ const MessageContainer = ({
 	const [content, setContent] = useState("");
 
 	const { sendUserIsTyping, sentTypingEvent, shouldSendTypingEvent } = useTypingIndicator({
-		onTypingStart: () => { },
-		onTypingStop: () => { }
+		onTypingStart: () => {},
+		onTypingStop: () => {},
 	});
-
 
 	// useEffect(() => {
 	// 	const gotChannel = getChannel(channelId);
@@ -173,8 +182,8 @@ const MessageContainer = ({
 				const member = hubId ? useMemberStore.getState().getMember(hubId, typing.id) : null;
 
 				return member
-					? member.nickname ?? user?.globalNickname ?? user?.username
-					: user?.globalNickname ?? user?.username;
+					? (member.nickname ?? user?.globalNickname ?? user?.username)
+					: (user?.globalNickname ?? user?.username);
 			})
 			.filter((username) => typeof username === "string");
 
@@ -192,9 +201,9 @@ const MessageContainer = ({
 
 		if (foundReply) {
 			const fetchedAuthor = useUserStore.getState().getUser(foundReply.authorId);
-			const fetchedMember = hubId ? useMemberStore.getState().getMember(hubId, foundReply.authorId) ?? null : null;
+			const fetchedMember = hubId ? (useMemberStore.getState().getMember(hubId, foundReply.authorId) ?? null) : null;
 
-			let roleData: { color: string; id: string; } | null = null;
+			let roleData: { color: string; id: string } | null = null;
 
 			if (fetchedMember) {
 				const roles = useRoleStore.getState().getRoles(hubId ?? "");
@@ -218,7 +227,7 @@ const MessageContainer = ({
 		}
 	}, [channelId, hubId, signal]);
 
-	const [mentionTypes] = useState<{ type: string; name: string; color: number; id: string; avatar?: string; }[]>([
+	const [mentionTypes] = useState<{ type: string; name: string; color: number; id: string; avatar?: string }[]>([
 		// 	{
 		// 	type: "role",
 		// 	name: "test",
@@ -247,9 +256,9 @@ const MessageContainer = ({
 		const perChannel = getPerChannel(channelId);
 
 		updatePerChannel(channelId, {
-            replyingStateId: null,
-            currentStates: perChannel.currentStates.filter((s) => s !== "replying"),
-        });
+			replyingStateId: null,
+			currentStates: perChannel.currentStates.filter((s) => s !== "replying"),
+		});
 	}, [channelId, state]);
 
 	return (
@@ -319,20 +328,15 @@ const MessageContainer = ({
 								}}
 							>
 								{replyingAuthor.member
-									? replyingAuthor.member.nickname ??
-									replyingAuthor.user?.globalNickname ??
-									replyingAuthor.user?.username
-									: replyingAuthor.user?.globalNickname ?? replyingAuthor.user?.username}
+									? (replyingAuthor.member.nickname ??
+										replyingAuthor.user?.globalNickname ??
+										replyingAuthor.user?.username)
+									: (replyingAuthor.user?.globalNickname ?? replyingAuthor.user?.username)}
 							</span>
 						</div>
 						<div className="ml-auto mr-2 flex items-center gap-2">
 							<Tooltip content="Close Reply">
-								<X
-									size={22}
-									color="#acaebf"
-									className="cursor-pointer"
-									onClick={onCloseReply}
-								/>
+								<X size={22} color="#acaebf" className="cursor-pointer" onClick={onCloseReply} />
 							</Tooltip>
 						</div>
 					</div>
@@ -346,7 +350,7 @@ const MessageContainer = ({
 				>
 					<div className="mb-3 mt-2">
 						{files.length > 0 && (
-							<div className="mb-4  flex flex-wrap justify-start gap-2">
+							<div className="mb-4 flex flex-wrap justify-start gap-2">
 								{files.map((file, index) => (
 									<FileComponent
 										key={index}
@@ -356,13 +360,13 @@ const MessageContainer = ({
 										onDelete={() => {
 											setFiles((old) => old.filter((f) => f.id !== file.id));
 										}}
-										onEdit={() => { }}
+										onEdit={() => {}}
 									/>
 								))}
 								<Divider className="mt-2" />
 							</div>
 						)}
-						<div className={cn("flex align-middle justify-center", isReadOnly ? "cursor-not-allowed opacity-45" : "")}>
+						<div className={cn("flex justify-center align-middle", isReadOnly ? "cursor-not-allowed opacity-45" : "")}>
 							<div className="relative mr-4 cursor-pointer">
 								<CirclePlus
 									size={22}
@@ -377,7 +381,7 @@ const MessageContainer = ({
 								<input
 									type="file"
 									title="Files"
-									className="absolute mm-hw-0 bottom-0 right-0 opacity-0"
+									className="absolute bottom-0 right-0 opacity-0 mm-hw-0"
 									multiple
 									ref={fileRef}
 									onChange={(e) => {
@@ -392,7 +396,7 @@ const MessageContainer = ({
 													file,
 													id: snowflake.generate(),
 													url: file.type.startsWith("image") ? URL.createObjectURL(file) : null,
-												}
+												},
 											]);
 										}
 									}}
@@ -447,13 +451,13 @@ const MessageContainer = ({
 									? t("messageContainer.typing.singular", { user: typingUsers[0] })
 									: typingUsers.length === 2
 										? t("messageContainer.typing.double", {
-											user1: typingUsers[0],
-											user2: typingUsers[1],
-										})
+												user1: typingUsers[0],
+												user2: typingUsers[1],
+											})
 										: t("messageContainer.typing.multiple", {
-											users: typingUsers.slice(0, 2).join(", "),
-											count: typingUsers.length - 2,
-										})}
+												users: typingUsers.slice(0, 2).join(", "),
+												count: typingUsers.length - 2,
+											})}
 							</span>
 						</>
 					)}

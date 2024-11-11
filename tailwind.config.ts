@@ -220,7 +220,7 @@ const config = {
 			});
 
 			addUtilities(newUtilities);
-		})
+		}),
 	],
 } satisfies Config;
 
