@@ -188,7 +188,7 @@ const Message = ({
 								/>
 							</PopOverData>
 						)}
-						<div className={cn("relative ml-2 flex w-full flex-col", isGrouped && "ml-8")}>
+						<div className={cn("relative ml-2 flex w-full flex-col", isGrouped && "pl-6")}>
 							{!isGrouped && (
 								<div className="flex">
 									<PopOverData
@@ -243,7 +243,7 @@ const Message = ({
 									<MessageMarkDown message={message}>{message.content}</MessageMarkDown>
 								</div>
 							</div>
-							<div className={cn("flex flex-col", isGrouped && "pl-11")}>
+							<div className={cn("flex flex-col", isGrouped && "pl-5")}>
 								{message.invites.map((invite, index) => {
 									if (!invite) {
 										return (
