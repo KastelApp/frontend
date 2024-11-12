@@ -57,6 +57,7 @@ export interface MessageProps {
 	jumpToMessage?: (msgId: string) => void;
 	isGrouped?: boolean;
 	isParent?: boolean;
+	hadRepliedMessage?: boolean;
 }
 
 const Message = ({
@@ -74,6 +75,7 @@ const Message = ({
 	jumpToMessage,
 	isGrouped = false,
 	isParent = false,
+	hadRepliedMessage = false
 }: MessageProps) => {
 	const { t } = useTranslationStore();
 	const phishing = (message.flags & Constants.messageFlags.Phishing) === Constants.messageFlags.Phishing;
@@ -173,6 +175,23 @@ const Message = ({
 								{replyMessage.message.content}
 							</p>
 						</div>
+					)}
+					{(hadRepliedMessage && !replyMessage) && (
+						// similar to above but just mock data that says "Replying to deleted message" etc
+						<div className="mb-1 ml-4 flex items-center">
+							<Reply
+								size={22}
+								color="#acaebf"
+								className="cursor-pointer"
+								style={{
+									transform: "rotate(180deg) scale(1, -1)",
+								}}
+							/>
+							<p className="ml-2 w-full max-w-[calc(100%-16rem)] cursor-pointer select-none truncate text-2xs text-white italic">
+								{t("messages.replyingToDeletedMessage")}
+							</p>
+
+							</div>
 					)}
 					<div className="flex w-full max-w-full">
 						{!isGrouped && (

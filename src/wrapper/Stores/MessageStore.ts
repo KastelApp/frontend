@@ -308,13 +308,14 @@ export const useMessageStore = create<MessageStore>((set, get) => ({
 				creationDate: new Date(res.body.creationDate),
 				editedDate: res.body.editedDate ? new Date(res.body.editedDate) : null,
 				nonce: res.body.nonce,
-				replyingTo: res.body.replyingTo
-					? "messageId" in res.body.replyingTo
-						? res.body.replyingTo.messageId
-						: "id" in res.body.replyingTo
-							? res.body.replyingTo.id
-							: null
-					: null,
+				// replyingTo: res.body.replyingTo
+				// 	? "messageId" in res.body.replyingTo
+				// 		? res.body.replyingTo.messageId
+				// 		: "id" in res.body.replyingTo
+				// 			? res.body.replyingTo.id
+				// 			: null
+				// 	: null,
+				replyingTo: res.body.replyingTo ? typeof res.body.replyingTo === "string" ? res.body.replyingTo : res.body.replyingTo.id : null,
 				attachments: res.body.attachments,
 				flags: res.body.flags,
 				allowedMentions: res.body.allowedMentions,
@@ -398,13 +399,14 @@ export const useMessageStore = create<MessageStore>((set, get) => ({
 				creationDate: new Date(message.creationDate),
 				editedDate: message.editedDate ? new Date(message.editedDate) : null,
 				nonce: message.nonce,
-				replyingTo: message.replyingTo
-					? "messageId" in message.replyingTo
-						? message.replyingTo.messageId
-						: "id" in message.replyingTo
-							? message.replyingTo.id
-							: null
-					: null,
+				// replyingTo: message.replyingTo
+				// 	? "messageId" in message.replyingTo
+				// 		? message.replyingTo.messageId
+				// 		: "id" in message.replyingTo
+				// 			? message.replyingTo.id
+				// 			: null
+				// 	: null,
+				replyingTo: message.replyingTo ? typeof message.replyingTo === "string" ? message.replyingTo : message.replyingTo.id : null,
 				attachments: message.attachments,
 				flags: message.flags,
 				allowedMentions: message.allowedMentions,

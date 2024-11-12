@@ -215,7 +215,8 @@
 	"messages": {
 		"phishing": "Phishing likely",
 		"showMessage": "Show Message",
-		"hideMessage": "Hide Message"
+		"hideMessage": "Hide Message",
+		"replyingToDeletedMessage": "Original message was deleted."
 	},
 	"statusTypes": {
 		"online": "Online",

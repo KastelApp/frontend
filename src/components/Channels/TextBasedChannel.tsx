@@ -430,6 +430,8 @@ const TextBasedChannel = () => {
 
 				if (msg.replyingTo) shouldGroup = false;
 
+				console.log("AA", msg.replyingTo, msg.replyingTo !== null)
+
 				finishedMsgs.push({
 					inHub: !!hubId || false,
 					mentionsUser: msg.mentions.users.includes(currentUser.id),
@@ -467,6 +469,7 @@ const TextBasedChannel = () => {
 					isReplyable: msg.state === MessageStates.Sent,
 					isGrouped: shouldGroup,
 					isParent: !shouldGroup,
+					hadRepliedMessage: msg.replyingTo !== null,
 				});
 			}
 
