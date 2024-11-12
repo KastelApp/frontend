@@ -55,16 +55,25 @@ export const useHubSettingsStore = create(
 					lastChannelId: null,
 				};
 
-				const newHubSettings = {
-					...foundHub,
-					...hubSettings,
-				};
-
 				set({
-					hubSettings: [...currentHubSettings.filter((hub) => hub.hubId !== hubId), newHubSettings as HubSettings],
-				});
+					hubSettings: [
+						...currentHubSettings.filter((hub) => hub.hubId !== hubId),
+						{
+							...foundHub,
+							...hubSettings,
+						}
+					]
+				})
 			},
-			getHubSettings: (hubId: string) => get().hubSettings.find((hub) => hub.hubId === hubId),
+			getHubSettings: (hubId: string) => {
+				if (!Array.isArray(get().hubSettings)) {
+					set({ hubSettings: [] });
+					
+					return undefined;
+				}
+
+				return get().hubSettings.find((hub) => hub.hubId === hubId);
+			},
 		}),
 		{
 			name: "hub-settings",
