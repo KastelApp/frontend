@@ -170,6 +170,8 @@ const MessageMarkDown = ({
 		| "all"
 	)[];
 }) => {
+	if (children === null) return null;
+
 	const createdRules = createRules(customRules as never, message);
 
 	for (const rule of disabledRules ?? []) {
