@@ -1,7 +1,7 @@
 import { Routes } from "@/utils/Routes.ts";
 import { useChannelStore } from "@/wrapper/Stores/ChannelStore.ts";
 import { Link } from "@nextui-org/react";
-import { defaultRules } from "simple-markdown";
+import { defaultRules } from "@kastelapp/simple-markdown";
 
 const ChannelMention = ({ channelId }: { channelId: string }) => {
 	const foundChannel = useChannelStore((state) => state.getChannel(channelId));

@@ -11,6 +11,7 @@
 		"format": "prettier --write ."
 	},
 	"dependencies": {
+		"@kastelapp/simple-markdown": "^0.7.3",
 		"@nextui-org/react": "^2.5.0-beta.8",
 		"@nextui-org/theme": "^2.3.0-beta.4",
 		"@radix-ui/react-context-menu": "^2.2.2",
@@ -40,7 +41,6 @@
 		"react-router-dom": "^6.28.0",
 		"react-scroll": "^1.9.0",
 		"react-syntax-highlighter": "^15.6.1",
-		"simple-markdown": "^0.7.3",
 		"slate": "^0.110.2",
 		"slate-history": "^0.110.3",
 		"slate-react": "^0.111.0",
@@ -62,6 +62,7 @@
 		"@types/react-dom": "^18.3.1",
 		"@types/react-scroll": "^1.8.10",
 		"@types/react-syntax-highlighter": "^15.5.13",
+		"@types/slate-react": "^0.50.1",
 		"@vitejs/plugin-react-swc": "^3.5.0",
 		"autoprefixer": "^10.4.20",
 		"eslint": "^9.13.0",
@@ -81,8 +82,5 @@
 	"resolutions": {
 		"react": "^19.0.0-rc-5c56b873-20241107",
 		"react-dom": "^19.0.0-rc-5c56b873-20241107"
-	},
-	"patchedDependencies": {
-		"simple-markdown@0.7.3": "patches/simple-markdown@0.7.3.patch"
 	}
 }

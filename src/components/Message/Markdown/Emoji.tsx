@@ -1,5 +1,5 @@
 // import { snowflake } from "@/data/constants.ts";
-import { defaultRules } from "simple-markdown";
+import { defaultRules } from "@kastelapp/simple-markdown";
 // import { findEmoji } from "@/utils/parser.ts";
 
 const Emoji = ({

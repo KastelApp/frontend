@@ -6,7 +6,7 @@ import hexOpacity from "@/utils/hexOpacity.ts";
 import { useMemberStore } from "@/wrapper/Stores/Members.ts";
 import { useRoleStore } from "@/wrapper/Stores/RoleStore.ts";
 import { useUserStore } from "@/wrapper/Stores/UserStore.ts";
-import { defaultRules } from "simple-markdown";
+import { defaultRules } from "@kastelapp/simple-markdown";
 
 const UserMention = ({ userId }: { userId: string }) => {
 	const foundUser = useUserStore((state) => state.getUser(userId));

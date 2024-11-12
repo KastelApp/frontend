@@ -1,6 +1,6 @@
 import memoize from "memoizee";
 import { pipe } from "ramda";
-import SimpleMarkdown, { defaultRules } from "simple-markdown";
+import SimpleMarkdown, { defaultRules } from "@kastelapp/simple-markdown";
 import { customRules } from "./ast.tsx";
 import { astToString, flattenAst } from "@/utils/markdown.ts";
 import Link from "@/components/Message/Markdown/Link.tsx";

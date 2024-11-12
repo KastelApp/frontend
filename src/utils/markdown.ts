@@ -1,4 +1,4 @@
-import { ASTNode } from "simple-markdown";
+import { ASTNode } from "@kastelapp/simple-markdown";
 
 export const flattenAst = (node: SimpleMarkdown.RefNode | ASTNode, parent?: SimpleMarkdown.RefNode) => {
 	if (Array.isArray(node)) {

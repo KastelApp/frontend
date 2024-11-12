@@ -2,7 +2,7 @@ import { channelMention } from "@/components/Message/Markdown/ChannelMention.tsx
 import { emoji } from "@/components/Message/Markdown/Emoji.tsx";
 import { roleMention } from "@/components/Message/Markdown/RoleMention.tsx";
 import { userMention } from "@/components/Message/Markdown/UserMention.tsx";
-import { defaultRules, inlineRegex } from "simple-markdown";
+import { defaultRules, inlineRegex } from "@kastelapp/simple-markdown";
 
 export const customRules = {
 	escape: defaultRules.escape,

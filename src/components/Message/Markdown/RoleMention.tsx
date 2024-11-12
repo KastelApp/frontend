@@ -3,7 +3,7 @@ import arrayify from "@/utils/arrayify.ts";
 import cn from "@/utils/cn.ts";
 import hexOpacity from "@/utils/hexOpacity.ts";
 import { useRoleStore } from "@/wrapper/Stores/RoleStore.ts";
-import { defaultRules } from "simple-markdown";
+import { defaultRules } from "@kastelapp/simple-markdown";
 
 const RoleMention = ({ roleId }: { roleId: string }) => {
 	const router = useRouter();

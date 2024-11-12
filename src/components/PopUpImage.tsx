@@ -1,7 +1,7 @@
 import ImageGrid from "@/components/ImageGrid.tsx";
-import cn from "@/utils/cn.ts";
-import { Link, useDisclosure } from "@nextui-org/react";
-import { Modal, ModalBody, ModalContent } from "@nextui-org/react";
+import { snowflake } from "@/data/constants.ts";
+import { modalStore } from "@/wrapper/Stores/GlobalModalStore.ts";
+import { Link } from "@nextui-org/react";
 import { UnLazyImage } from "@unlazy/react";
 import { useState } from "react";
 
@@ -38,37 +38,30 @@ const repairUrl = (url: string) => {
 };
 
 const PopUpImage = ({
-	// className,
-	classNames,
 	images,
 	name,
 	thumbHash,
 	url,
 }: PopUpImageProps) => {
-	const { isOpen, onClose, onOpen } = useDisclosure();
 	const [currentImage] = useState<number>(0); // ? the index
 
 	if (!images && url) {
 		images = [{ url, thumbHash, name }];
 	}
 
+	console.log(thumbHash, images)
+
 	return (
-		<>
-			<ImageGrid images={images ?? []} onPress={() => onOpen()} />
-			<Modal
-				isOpen={isOpen}
-				onOpenChange={onClose}
-				className={cn(classNames?.modal, "bg-transparent shadow-none")}
-				classNames={{
-					base: " w-auto h-auto",
-				}}
-				size="full"
-			>
-				<ModalContent>
-					<ModalBody>
-						<div className="flex h-[98%] w-[98%] flex-col items-center justify-center">
+		<ImageGrid images={images ?? []} onPress={() => {
+			console.log(images, snowflake)
+			modalStore.getState().createModal({
+				id: `image-${name ?? "image"}`,
+				title: name || "Image",
+				body: (
+					<div className="flex flex-col items-center justify-center">
+						<div className=" h-[95%] w-[95%] flex flex-col items-center justify-center">
 							<UnLazyImage
-								src={repairUrl(images?.[currentImage].url ?? "")}
+								// src={repairUrl(images?.[currentImage].url ?? "")}
 								alt={images?.[currentImage].alt ?? "Image"}
 								thumbhash={images?.[currentImage].thumbHash ?? undefined}
 								className="max-h-[80vh] max-w-[80vw]"
@@ -76,15 +69,24 @@ const PopUpImage = ({
 									width: "auto",
 									height: "auto",
 								}}
+								width={"200px"}
+								height={"200px"}
+								sizes="90px"
 							/>
-							<Link href={repairUrl(images?.[currentImage].url ?? "")} target="_blank" className="mr-auto">
-								Open in browser
-							</Link>
 						</div>
-					</ModalBody>
-				</ModalContent>
-			</Modal>
-		</>
+					</div>
+				),
+				footer: (
+					<Link
+						href={repairUrl(images?.[currentImage].url ?? "")}
+						target="_blank"
+						className="mr-auto"
+					>
+						Open in browser
+					</Link>
+				)
+			});
+		}} />
 	);
 };
 
