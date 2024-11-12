@@ -19,6 +19,9 @@ export default defineConfig({
 		alias: {
 			"@": path.resolve(__dirname, "./src")
 		},
-    dedupe: ["react", "react-dom"],
+		dedupe: ["react", "react-dom"],
 	},
+	build: {
+		sourcemap: "inline"
+	}
 });
