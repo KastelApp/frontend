@@ -15,7 +15,7 @@ const UserPopover = ({
 	onPress,
 }: {
 	member: {
-		member: (Omit<Member, "roles"> & { roles: Role[] }) | null;
+		member: (Omit<Member, "roles"> & { roles: Role[]; }) | null;
 		user: User;
 	};
 	onPress?: () => void;
@@ -62,7 +62,7 @@ const UserPopover = ({
 							className="inset-0 rounded-full border-3 border-transparent mm-hw-20"
 							imgProps={{ className: "transition-none" }}
 						/>
-						<p className="absolute inset-0 !z-20 ml-1 mt-5 hidden w-full min-w-full items-center justify-center text-2xs font-bold text-white group-hover:block">
+						<p className="absolute inset-0 !z-20 ml-2.5 mt-7 hidden w-full min-w-full items-center justify-center text-2xs font-bold text-white group-hover:block">
 							View Profile
 						</p>
 						<div className="absolute inset-0 rounded-full bg-black bg-opacity-0 group-hover:bg-opacity-50"></div>
