@@ -1,3 +1,18 @@
+diff --git a/LICENSE b/LICENSE
+old mode 100644
+new mode 100755
+diff --git a/README.md b/README.md
+old mode 100644
+new mode 100755
+diff --git a/index.js b/index.js
+old mode 100644
+new mode 100755
+diff --git a/package.json b/package.json
+old mode 100644
+new mode 100755
+diff --git a/simple-markdown.d.ts b/simple-markdown.d.ts
+old mode 100644
+new mode 100755
 diff --git a/simple-markdown.js b/simple-markdown.js
 old mode 100644
 new mode 100755
@@ -23,3 +38,6 @@ index d2dbac2b52c502919ee1eb587452dc3bea61a09f..02ae5b3794adbd8a19d6cc7ad55b87d3
      } /* : any */);
      return element;
  };
+diff --git a/simple-markdown.min.js b/simple-markdown.min.js
+old mode 100644
+new mode 100755
