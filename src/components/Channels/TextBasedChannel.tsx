@@ -61,6 +61,7 @@ const TextBasedChannel = () => {
 	const getHub = useHubStore((state) => state.getHub);
 	const createMessage = useMessageStore((state) => state.createMessage);
 	const getPerChannel = usePerChannelStore((state) => state.getChannel);
+	const deleteMessage = useMessageStore((state) => state.deleteMessage);
 	const updatePerChannel = usePerChannelStore((state) => state.updateChannel);
 	const editor = useEditorStore((state) => state.editor);
 
@@ -576,10 +577,12 @@ const TextBasedChannel = () => {
 							{msg.isReplyable && (
 								<ContextMenuItem
 									onClick={() => {
-										// updateChannel(channelId, {
-										//     currentStates: [...getChannel(channelId).currentStates, "replying"],
-										//     replyingStateId: message.message.id,
-										// });
+										const perChannel = getPerChannel(channelId);
+
+										updatePerChannel(channelId, {
+											replyingStateId: msg.message.id,
+											currentStates: [...perChannel.currentStates, "replying"],
+										});
 									}}
 								>
 									Reply
@@ -605,7 +608,9 @@ const TextBasedChannel = () => {
 								<Copy size={18} color="#acaebf" className="ml-auto cursor-pointer" />
 							</ContextMenuItem>
 							{msg.isDeleteable && (
-								<ContextMenuItem className="text-danger">
+								<ContextMenuItem className="text-danger" onClick={() => {
+									deleteMessage(msg.message.id);
+								}}>
 									Delete Message
 									<Trash2 size={18} className={"ml-auto cursor-pointer text-danger"} />
 								</ContextMenuItem>
