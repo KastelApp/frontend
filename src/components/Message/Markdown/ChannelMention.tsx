@@ -1,7 +1,7 @@
 import { Routes } from "@/utils/Routes.ts";
 import { useChannelStore } from "@/wrapper/Stores/ChannelStore.ts";
 import { Link } from "@nextui-org/react";
-import { defaultRules } from "@kastelapp/simple-markdown";
+import simpleMarkdown from "@kastelapp/simple-markdown";
 
 const ChannelMention = ({ channelId }: { channelId: string }) => {
 	const foundChannel = useChannelStore((state) => state.getChannel(channelId));
@@ -16,7 +16,7 @@ const ChannelMention = ({ channelId }: { channelId: string }) => {
 
 	return (
 		<LinkMaybe href={foundChannel ? Routes.hubChannel(foundChannel.hubId, foundChannel.id) : null}>
-			<span className="cursor-pointer rounded-lg bg-branding-300/25 p-1 font-medium text-gray-300 hover:underline">
+			<span className="cursor-pointer rounded-lg bg-branding-300/25 font-medium text-gray-300 hover:underline">
 				{name}
 			</span>
 		</LinkMaybe>
@@ -24,7 +24,7 @@ const ChannelMention = ({ channelId }: { channelId: string }) => {
 };
 
 export const channelMention = {
-	order: defaultRules.paragraph.order,
+	order: simpleMarkdown.defaultRules.paragraph.order,
 	match: (source: string) => /^<#(\d+)>/.exec(source),
 	parse: ([, id]: [unknown, string]) => ({ id }),
 	react: ({ id }: { id: string }, _: unknown, state: { key: string }) => (

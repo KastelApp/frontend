@@ -20,7 +20,9 @@ const App = () => {
 		<ErrorBoundary>
 			<NextUIProvider navigate={router.push}>
 				<NextThemesProvider attribute="class">
-					<Init>{usedRoutes}</Init>
+					<Init>
+						{usedRoutes}
+					</Init>
 				</NextThemesProvider>
 			</NextUIProvider>
 		</ErrorBoundary>

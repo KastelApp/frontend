@@ -2,21 +2,21 @@ import { channelMention } from "@/components/Message/Markdown/ChannelMention.tsx
 import { emoji } from "@/components/Message/Markdown/Emoji.tsx";
 import { roleMention } from "@/components/Message/Markdown/RoleMention.tsx";
 import { userMention } from "@/components/Message/Markdown/UserMention.tsx";
-import { defaultRules, inlineRegex } from "@kastelapp/simple-markdown";
+import SimpleMarkdown from "@kastelapp/simple-markdown";
 
 export const customRules = {
-	escape: defaultRules.escape,
-	em: defaultRules.em,
-	paragraph: defaultRules.paragraph,
-	newline: defaultRules.newline,
-	url: defaultRules.url,
-	strong: defaultRules.strong,
-	link: defaultRules.link,
-	br: defaultRules.br,
-	u: defaultRules.u,
-	inlineCode: defaultRules.inlineCode,
+	escape: SimpleMarkdown.defaultRules.escape,
+	em: SimpleMarkdown.defaultRules.em,
+	paragraph: SimpleMarkdown.defaultRules.paragraph,
+	newline: SimpleMarkdown.defaultRules.newline,
+	url: SimpleMarkdown.defaultRules.url,
+	strong: SimpleMarkdown.defaultRules.strong,
+	link: SimpleMarkdown.defaultRules.link,
+	br: SimpleMarkdown.defaultRules.br,
+	u: SimpleMarkdown.defaultRules.u,
+	inlineCode: SimpleMarkdown.defaultRules.inlineCode,
 	heading: {
-		...defaultRules.heading,
+		...SimpleMarkdown.defaultRules.heading,
 		match: (source: string, state: SimpleMarkdown.State) => {
 			const prevCaptureStr = state.prevCapture === null ? "" : state.prevCapture[0];
 			const isStartOfLineCapture = /(?:^|\n)( *)$/.exec(prevCaptureStr);
@@ -30,11 +30,11 @@ export const customRules = {
 		},
 	},
 	autolink: {
-		...defaultRules.autolink,
-		match: inlineRegex(/^<(https?:\/\/[^ >]+)>/),
+		...SimpleMarkdown.defaultRules.autolink,
+		match: SimpleMarkdown.inlineRegex(/^<(https?:\/\/[^ >]+)>/),
 	},
 	blockQuote: {
-		...defaultRules.blockQuote,
+		...SimpleMarkdown.defaultRules.blockQuote,
 		match: (source: string, { prevCapture }: { prevCapture: string }) =>
 			/^$|\n *$/.test(prevCapture ?? "")
 				? /^( *>>> +([\s\S]*))|^( *>(?!>>) +[^\n]*(\n *>(?!>>) +[^\n]*)*\n?)/.exec(source)
@@ -44,7 +44,7 @@ export const customRules = {
 		}),
 	},
 	codeBlock: {
-		order: defaultRules.codeBlock.order,
+		order: SimpleMarkdown.defaultRules.codeBlock.order,
 		match: (source: string) => {
 			const match = /^```(([A-z0-9-]+?)\n+)?\n*([^]+?)\n*```/.exec(source);
 

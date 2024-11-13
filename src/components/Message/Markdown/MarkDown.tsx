@@ -1,6 +1,6 @@
 import memoize from "memoizee";
 import { pipe } from "ramda";
-import SimpleMarkdown, { defaultRules } from "@kastelapp/simple-markdown";
+import SimpleMarkdown, { ReactRules, ReactNodeOutput } from "@kastelapp/simple-markdown";
 import { customRules } from "./ast.tsx";
 import { astToString, flattenAst } from "@/utils/markdown.ts";
 import Link from "@/components/Message/Markdown/Link.tsx";
@@ -13,7 +13,7 @@ import { Code } from "@nextui-org/react";
 import type { CustomizedMessage } from "@/components/Message/Message.tsx";
 import Constants from "@/data/constants.ts";
 
-const parseFor = (rules: SimpleMarkdown.ReactRules, returnAst = false) => {
+const parseFor = (rules: ReactRules, returnAst = false) => {
 	const parser = SimpleMarkdown.parserFor(rules);
 	const renderer = SimpleMarkdown.outputFor(rules, "react");
 
@@ -38,16 +38,16 @@ const parseFor = (rules: SimpleMarkdown.ReactRules, returnAst = false) => {
 	);
 };
 
-const createRules = (rule: SimpleMarkdown.ReactRules, message?: CustomizedMessage): SimpleMarkdown.ReactRules => {
+const createRules = (rule: ReactRules, message?: CustomizedMessage): ReactRules => {
 	const { paragraph, link, codeBlock, inlineCode, blockQuote, heading } = rule;
 
 	return {
-		...defaultRules,
+		...SimpleMarkdown.defaultRules,
 		...rule,
 		heading: {
 			...heading,
 			react: (
-				node: SimpleMarkdown.RefNode & { level: number },
+				node: ReactNodeOutput & { level: number },
 				recurseOutput: (content: unknown, state: unknown) => React.ReactElement,
 				state: { key: string },
 			) => {
@@ -59,7 +59,7 @@ const createRules = (rule: SimpleMarkdown.ReactRules, message?: CustomizedMessag
 
 				const Heading = sizes[node.level.toString() as keyof typeof sizes] || H3Heading;
 
-				return <Heading key={state.key}>{recurseOutput(node.content, state)}</Heading>;
+				return <Heading key={state.key}>{recurseOutput((node as unknown as { content: unknown }).content, state)}</Heading>;
 			},
 		},
 		link: {
@@ -70,7 +70,7 @@ const createRules = (rule: SimpleMarkdown.ReactRules, message?: CustomizedMessag
 				state: { key: string },
 			) => (
 				<Link
-					title={node.title || astToString(node.content!)}
+					title={node.title || astToString((node as unknown as { content: SimpleMarkdown.RefNode }).content)}
 					href={SimpleMarkdown.sanitizeUrl(node.target)!}
 					target="_blank"
 					rel="noreferrer"
@@ -96,7 +96,7 @@ const createRules = (rule: SimpleMarkdown.ReactRules, message?: CustomizedMessag
 			),
 		},
 		list: {
-			...defaultRules.list,
+			...SimpleMarkdown.defaultRules.list,
 			react: (
 				node: SimpleMarkdown.RefNode & { ordered: boolean; items: unknown[] },
 				recurseOutput: (content: unknown, state: unknown) => React.ReactElement,
@@ -147,7 +147,7 @@ const createRules = (rule: SimpleMarkdown.ReactRules, message?: CustomizedMessag
 				return <p key={state.key}>{recurseOutput(node.content, state)}</p>;
 			},
 		},
-	} as unknown as SimpleMarkdown.ReactRules;
+	} as unknown as ReactRules;
 };
 
 const MessageMarkDown = ({

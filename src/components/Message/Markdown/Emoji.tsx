@@ -1,5 +1,5 @@
 // import { snowflake } from "@/data/constants.ts";
-import { defaultRules } from "@kastelapp/simple-markdown";
+import SimpleMarkdown from "@kastelapp/simple-markdown";
 // import { findEmoji } from "@/utils/parser.ts";
 
 const Emoji = ({
@@ -23,7 +23,7 @@ const Emoji = ({
 };
 
 export const emoji = {
-	order: defaultRules.text.order,
+	order: SimpleMarkdown.defaultRules.text.order,
 	match: (source: string) => /^<(a?):([^\s:]+):(\d+)>|^:([^\s:]+):/g.exec(source),
 	parse: (match: string[]) => ({
 		isAnimated: Boolean(match[1]),

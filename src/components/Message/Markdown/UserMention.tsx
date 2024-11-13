@@ -6,7 +6,7 @@ import hexOpacity from "@/utils/hexOpacity.ts";
 import { useMemberStore } from "@/wrapper/Stores/Members.ts";
 import { useRoleStore } from "@/wrapper/Stores/RoleStore.ts";
 import { useUserStore } from "@/wrapper/Stores/UserStore.ts";
-import { defaultRules } from "@kastelapp/simple-markdown";
+import SimpleMarkdown from "@kastelapp/simple-markdown";
 
 const UserMention = ({ userId }: { userId: string }) => {
 	const foundUser = useUserStore((state) => state.getUser(userId));
@@ -39,7 +39,7 @@ const UserMention = ({ userId }: { userId: string }) => {
 			}
 		>
 			<span
-				className={cn("cursor-pointer rounded-lg p-1 font-medium hover:underline")}
+				className={cn("cursor-pointer rounded-lg font-medium hover:underline")}
 				style={{
 					backgroundColor: color ? `${hexOpacity(`#${color}`, 0.25)}` : undefined,
 					color: color ? `#${color}` : undefined,
@@ -52,7 +52,7 @@ const UserMention = ({ userId }: { userId: string }) => {
 };
 
 export const userMention = {
-	order: defaultRules.paragraph.order,
+	order: SimpleMarkdown.defaultRules.paragraph.order,
 	match: (source: string) => /^<@!?(\d+)>/.exec(source),
 	parse: ([, id]: [unknown, string]) => ({ id }),
 	react: ({ id }: { id: string }, _: unknown, state: { key: string }) => <UserMention userId={id} key={state.key} />,

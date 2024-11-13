@@ -3,7 +3,7 @@ import arrayify from "@/utils/arrayify.ts";
 import cn from "@/utils/cn.ts";
 import hexOpacity from "@/utils/hexOpacity.ts";
 import { useRoleStore } from "@/wrapper/Stores/RoleStore.ts";
-import { defaultRules } from "@kastelapp/simple-markdown";
+import SimpleMarkdown from "@kastelapp/simple-markdown";
 
 const RoleMention = ({ roleId }: { roleId: string }) => {
 	const router = useRouter();
@@ -22,7 +22,7 @@ const RoleMention = ({ roleId }: { roleId: string }) => {
 
 	return (
 		<span
-			className={cn("rounded-lg p-1 font-medium hover:underline")}
+			className={cn("rounded-lg font-medium hover:underline")}
 			style={{
 				backgroundColor: color ? `${hexOpacity(`#${color}`, 0.25)}` : undefined,
 				color: color ? `#${color}` : undefined,
@@ -34,7 +34,7 @@ const RoleMention = ({ roleId }: { roleId: string }) => {
 };
 
 export const roleMention = {
-	order: defaultRules.paragraph.order,
+	order: SimpleMarkdown.defaultRules.paragraph.order,
 	match: (source: string) => /^<@&(\d+)>|^@(everyone|here)/.exec(source),
 	parse: ([enh, id]: [unknown, string]) => ({ id: id ?? enh }),
 	react: ({ id }: { id: string }, _: unknown, state: { key: string }) => <RoleMention roleId={id} key={state.key} />,
