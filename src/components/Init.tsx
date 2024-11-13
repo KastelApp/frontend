@@ -148,7 +148,7 @@ const Init = ({ children }: { children?: React.ReactNode; shouldHaveLayout?: boo
 				router.push(Routes.login());
 			}
 		});
-	}, []);
+	}, [router.pathname]);
 
 	if (router.pathname.startsWith("/app") && !currentUser) {
 		return <Loading />;
