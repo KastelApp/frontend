@@ -430,8 +430,6 @@ const TextBasedChannel = () => {
 
 				if (msg.replyingTo) shouldGroup = false;
 
-				console.log("AA", msg.replyingTo, msg.replyingTo !== null)
-
 				finishedMsgs.push({
 					inHub: !!hubId || false,
 					mentionsUser: msg.mentions.users.includes(currentUser.id),

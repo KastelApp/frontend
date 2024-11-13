@@ -17,11 +17,14 @@ const ImageEmbed = ({ embed }: { embed: Embed }) => {
 				alt={firstFile.name ?? "Image"}
 				thumbHash={firstFile.thumbHash ?? undefined}
 				style={{
-					minWidth: "400px",
-					minHeight: "215px",
+					minWidth: "full",
+					minHeight: "full",
 					maxWidth: "400px",
 					maxHeight: "215px",
 				}}
+				width={firstFile.width}
+				height={firstFile.height}
+				linkTo={firstFile.rawUrl}
 			/>
 		</div>
 	);

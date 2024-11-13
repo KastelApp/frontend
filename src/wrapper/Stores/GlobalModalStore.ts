@@ -48,7 +48,7 @@ export interface GlobalModal {
 	hideCloseButton?: boolean;
 
 	props?: {
-		modalSize?: "xs" | "sm" | "md" | "lg" | "xl" | "2xl" | "3xl" | "4xl" | "5xl" | "full";
+		modalSize?: "xs" | "sm" | "md" | "lg" | "xl" | "2xl" | "3xl" | "4xl" | "5xl" | "full" | "fit";
 		radius?: "sm" | "md" | "lg" | "none";
 		classNames?: {
 			modal?: string;
@@ -56,6 +56,7 @@ export interface GlobalModal {
 			body?: string;
 			footer?: string;
 			content?: string;
+			base?: string;
 		};
 	};
 }

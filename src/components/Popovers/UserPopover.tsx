@@ -51,7 +51,7 @@ const UserPopover = ({
 				/>
 			)}
 			<div className="relative z-50 flex items-end justify-between p-2">
-				<Badge content={""} placement="bottom-right" color="success" className="mb-3 mr-1 mm-hw-4">
+				<Badge content={""} placement="bottom-right" color="success" className="mb-3 mr-1 mm-hw-5">
 					<div
 						className="group relative -mt-10 cursor-pointer transition-opacity duration-300 ease-in-out"
 						onClick={onPress}

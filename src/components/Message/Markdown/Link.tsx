@@ -3,6 +3,7 @@ import { useTrustedDomainStore } from "@/wrapper/Stores/TrustedDomainStore.ts";
 import { Button, Checkbox } from "@nextui-org/react";
 import { useRef } from "react";
 import NextLink from "@/components/Link.tsx";
+import cn from "@/utils/cn.ts";
 
 const Link = (props: React.JSX.IntrinsicElements["a"] & { phishingMessage?: boolean }) => {
 	let href = props.href;
@@ -29,7 +30,7 @@ const Link = (props: React.JSX.IntrinsicElements["a"] & { phishingMessage?: bool
 	return (
 		<NextLink
 			href={href ?? ""}
-			className="text-blue-500 hover:underline"
+			className={cn("text-blue-500 hover:underline", props.className)}
 			target={href?.startsWith("http") ? "_blank" : ""}
 			onClick={(e) => {
 				if (href?.startsWith("http")) {

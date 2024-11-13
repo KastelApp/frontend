@@ -62,7 +62,6 @@ const Init = ({ children }: { children?: React.ReactNode; shouldHaveLayout?: boo
 	}, [channels]);
 
 	useEffect(() => {
-		console.log(router.pathname);
 		if (blacklistedTokenPaths.some((path) => router.pathname.match(path) || path === router.pathname) && token) {
 			router.push(Routes.app());
 

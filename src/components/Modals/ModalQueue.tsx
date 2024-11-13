@@ -23,7 +23,7 @@ const ModalQueue = memo(() => {
 					}}
 					isDismissable={item.closable ?? true}
 					isKeyboardDismissDisabled={!(item.closable ?? true)}
-					size={item.props?.modalSize}
+					size={item.props?.modalSize === "fit" ? undefined : item.props?.modalSize}
 					className={item.props?.classNames?.modal}
 					hideCloseButton={item.hideCloseButton ?? (item.allowCloseByButton !== true && !(item.closable ?? true))}
 					backdrop={"blur"}
@@ -32,6 +32,7 @@ const ModalQueue = memo(() => {
 						body: cn(item.props?.classNames?.body, "bg-darkAccent"),
 						header: cn(item.props?.classNames?.header, "bg-darkAccent"),
 						footer: cn(item.props?.classNames?.footer, "bg-darkAccent"),
+						base: cn(item.props?.classNames?.base, item.props?.modalSize === "fit" ? "max-w-full" : ""),
 					}}
 					radius={item.props?.radius}
 				>

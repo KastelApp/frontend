@@ -1,16 +1,8 @@
-import ImageGrid from "@/components/ImageGrid.tsx";
-import { snowflake } from "@/data/constants.ts";
+import ImageGrid, { type Image } from "@/components/ImageGrid.tsx";
+import Link from "@/components/Message/Markdown/Link.tsx";
 import { modalStore } from "@/wrapper/Stores/GlobalModalStore.ts";
-import { Link } from "@nextui-org/react";
 import { UnLazyImage } from "@unlazy/react";
-import { useState } from "react";
 
-interface Image {
-	url: string;
-	thumbHash?: string | null;
-	name?: string;
-	alt?: string;
-}
 
 interface PopUpImageProps {
 	url?: string;
@@ -25,6 +17,9 @@ interface PopUpImageProps {
 	};
 	style?: React.CSSProperties;
 	alt?: string;
+	width?: number;
+	height?: number;
+	linkTo?: string;
 }
 
 const repairUrl = (url: string) => {
@@ -42,49 +37,47 @@ const PopUpImage = ({
 	name,
 	thumbHash,
 	url,
+	width = 768,
+	height = 1024,
+	linkTo,
+	style
 }: PopUpImageProps) => {
-	const [currentImage] = useState<number>(0); // ? the index
-
 	if (!images && url) {
-		images = [{ url, thumbHash, name }];
+		images = [{ url, thumbHash, name, width, height, linkTo }];
 	}
 
-	console.log(thumbHash, images)
-
 	return (
-		<ImageGrid images={images ?? []} onPress={() => {
-			console.log(images, snowflake)
+		<ImageGrid style={style} images={images ?? []} onPress={(image) => {
 			modalStore.getState().createModal({
 				id: `image-${name ?? "image"}`,
 				title: name || "Image",
 				body: (
-					<div className="flex flex-col items-center justify-center">
-						<div className=" h-[95%] w-[95%] flex flex-col items-center justify-center">
-							<UnLazyImage
-								// src={repairUrl(images?.[currentImage].url ?? "")}
-								alt={images?.[currentImage].alt ?? "Image"}
-								thumbhash={images?.[currentImage].thumbHash ?? undefined}
-								className="max-h-[80vh] max-w-[80vw]"
-								style={{
-									width: "auto",
-									height: "auto",
-								}}
-								width={"200px"}
-								height={"200px"}
-								sizes="90px"
-							/>
-						</div>
+					<div className="flex flex-col">
+						<UnLazyImage
+							src={repairUrl(image.url ?? "")}
+							alt={image.alt ?? "Image"}
+							thumbhash={image.thumbHash ?? undefined}
+							className="max-h-[70vh] max-w-[75vw] rounded-md"
+							style={{
+								width: "auto",
+								height: "auto",
+							}}
+						/>
+						<Link
+							href={repairUrl((image.linkTo ?? image.url) ?? "")}
+							target="_blank"
+							className="mr-auto"
+						>
+							Open in browser
+						</Link>
 					</div>
 				),
-				footer: (
-					<Link
-						href={repairUrl(images?.[currentImage].url ?? "")}
-						target="_blank"
-						className="mr-auto"
-					>
-						Open in browser
-					</Link>
-				)
+				props: {
+					classNames: {
+						base: "max-h-[80vh] max-w-[75vw]",
+						footer: "p-0"
+					}
+				}
 			});
 		}} />
 	);
