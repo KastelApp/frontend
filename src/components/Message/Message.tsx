@@ -239,7 +239,7 @@ const Message = ({
 										<UserTag>{message.author.user.isBot ? t("tags.bot") : t("tags.system")}</UserTag>
 									)}
 									<Tooltip content={formatDate(message.creationDate, "dayTime")} placement="top" delay={500}>
-										<span className="ml-1 mt-1 select-none text-2xs text-gray-400">
+										<span className="ml-1 mt-1.5 select-none text-2xs text-gray-400">
 											<LiveDate date={message.creationDate} format="relative" />
 										</span>
 									</Tooltip>

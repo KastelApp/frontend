@@ -13,12 +13,7 @@ const ImageEmbed = ({ embed }: { embed: Embed }) => {
 	return (
 		<div className="inline-block w-auto rounded-md">
 			<PopUpImage
-				url={fixedUrl.toString()}
-				alt={firstFile.name ?? "Image"}
-				thumbHash={firstFile.thumbHash ?? undefined}
-				width={firstFile.width}
-				height={firstFile.height}
-				linkTo={firstFile.rawUrl}
+				images={embed.files}
 			/>
 		</div>
 	);

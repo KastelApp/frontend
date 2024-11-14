@@ -108,11 +108,7 @@ const RichEmbed = ({ embed }: { embed: Embed }) => {
 				</div>
 				{embed.files && (
 					<ImageGrid
-						images={embed.files.map((file) => ({
-							url: file.url,
-							name: file.name,
-							thumbHash: file.thumbHash,
-						}))}
+						files={embed.files}
 					/>
 				)}
 			</div>

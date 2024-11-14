@@ -69,7 +69,7 @@ export const Channel = ({
 		);
 
 	return (
-		<div className="group first:mt-2" {...props}>
+		<div className="group " {...props}>
 			<LinkMaybe>
 				<>
 					<div

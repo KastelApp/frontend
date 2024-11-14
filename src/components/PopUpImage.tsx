@@ -1,23 +1,17 @@
-import ImageGrid, { type Image } from "@/components/ImageGrid.tsx";
+import ImageGrid, { } from "@/components/ImageGrid.tsx";
 import Link from "@/components/Message/Markdown/Link.tsx";
+import { EmbedFiles } from "@/types/embed.ts";
 import { modalStore } from "@/wrapper/Stores/GlobalModalStore.ts";
 import { UnLazyImage } from "@unlazy/react";
 
 interface PopUpImageProps {
-	url?: string;
-	thumbHash?: string | null;
-	name?: string;
 	className?: string;
-	images?: Image[];
+	images?: EmbedFiles[];
 	classNames?: {
 		image?: string;
 		container?: string;
 		modal?: string;
 	};
-	alt?: string;
-	width?: number;
-	height?: number;
-	linkTo?: string;
 }
 
 const repairUrl = (url: string) => {
@@ -32,54 +26,47 @@ const repairUrl = (url: string) => {
 
 const PopUpImage = ({
 	images,
-	name,
-	thumbHash,
-	url,
-	width = 768,
-	height = 1024,
-	linkTo,
 }: PopUpImageProps) => {
-	if (!images && url) {
-		images = [{ url, thumbHash, name, width, height, linkTo }];
-	}
-
 	return (
-		<ImageGrid images={images ?? []} onPress={(image) => {
-			modalStore.getState().createModal({
-				id: `image-${name ?? "image"}`,
-				title: name || "Image",
-				body: (
-					<div className="flex flex-col items-center space-y-4">
-						<UnLazyImage
-							src={repairUrl(image.url ?? "")}
-							alt={image.alt ?? "Image"}
-							thumbhash={image.thumbHash ?? undefined}
-							className="max-h-[75vh] max-w-[75vw] w-auto h-auto rounded-md"
-							style={{
-								width: "100%",
-								height: "100%",
-								objectFit: "contain",
-							}}
-						/>
-						<div className="w-full text-center mt-2">
-							<Link
-								href={repairUrl((image.linkTo ?? image.url) ?? "")}
-								target="_blank"
-								className="mr-auto"
-							>
-								Open in browser
-							</Link>
+		<ImageGrid files={images ?? []}
+			onPress={(image) => {
+				if (image.type !== "Image") return;
+
+				modalStore.getState().createModal({
+					id: `image-${image.name ?? "image"}`,
+					title: image.name || "Image",
+					body: (
+						<div className="flex flex-col items-center space-y-4">
+							<UnLazyImage
+								src={repairUrl(image.url ?? "")}
+								thumbhash={image.thumbHash ?? undefined}
+								className="max-h-[75vh] max-w-[75vw] w-auto h-auto rounded-md"
+								style={{
+									width: "100%",
+									height: "100%",
+									objectFit: "contain",
+								}}
+							/>
+							<div className="w-full text-center mt-2">
+								<Link
+									href={repairUrl((image.rawUrl ?? image.url) ?? "")}
+									target="_blank"
+									className="mr-auto"
+								>
+									Open in browser
+								</Link>
+							</div>
 						</div>
-					</div>
-				),
-				props: {
-					classNames: {
-						base: "max-w-[80vw] w-fit",
-						footer: "p-0"
+					),
+					props: {
+						classNames: {
+							base: "max-w-[80vw] w-fit",
+							footer: "p-0"
+						}
 					}
-				}
-			});
-		}} />
+				});
+			}}
+		/>
 	);
 };
 

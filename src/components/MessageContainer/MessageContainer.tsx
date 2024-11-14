@@ -83,7 +83,7 @@ const MessageContainer = ({
 	onResize?: (height: number) => void;
 }) => {
 	const { t } = useTranslationStore();
-	const [files, setFiles] = useState<{ name: string; type: "image" | "file"; file: File; id: string }[]>([]);
+	const [files, setFiles] = useState<{ name: string; type: "image" | "file"; file: File; id: string; }[]>([]);
 	const [state, setState] = useState<("replying" | "mentioning")[]>([]);
 	const getPerChannel = usePerChannelStore((state) => state.getChannel);
 	const updatePerChannel = usePerChannelStore((state) => state.updateChannel);
@@ -92,7 +92,7 @@ const MessageContainer = ({
 	const [replyingAuthor, setReplyingAuthor] = useState<{
 		user: User | null;
 		member: Member | null;
-		roleColor: { color: string | null; id: string } | null;
+		roleColor: { color: string | null; id: string; } | null;
 	}>({
 		member: null,
 		user: null,
@@ -102,8 +102,8 @@ const MessageContainer = ({
 	const [content, setContent] = useState("");
 
 	const { sendUserIsTyping, sentTypingEvent, shouldSendTypingEvent } = useTypingIndicator({
-		onTypingStart: () => {},
-		onTypingStop: () => {},
+		onTypingStart: () => { },
+		onTypingStop: () => { },
 	});
 
 	// useEffect(() => {
@@ -203,7 +203,7 @@ const MessageContainer = ({
 			const fetchedAuthor = useUserStore.getState().getUser(foundReply.authorId);
 			const fetchedMember = hubId ? (useMemberStore.getState().getMember(hubId, foundReply.authorId) ?? null) : null;
 
-			let roleData: { color: string; id: string } | null = null;
+			let roleData: { color: string; id: string; } | null = null;
 
 			if (fetchedMember) {
 				const roles = useRoleStore.getState().getRoles(hubId ?? "");
@@ -227,7 +227,7 @@ const MessageContainer = ({
 		}
 	}, [channelId, hubId, signal]);
 
-	const [mentionTypes] = useState<{ type: string; name: string; color: number; id: string; avatar?: string }[]>([
+	const [mentionTypes] = useState<{ type: string; name: string; color: number; id: string; avatar?: string; }[]>([
 		// 	{
 		// 	type: "role",
 		// 	name: "test",
@@ -266,7 +266,7 @@ const MessageContainer = ({
 			className="flex h-screen flex-col overflow-x-hidden"
 			style={{
 				// maxHeight: navBarLocation === NavBarLocation.Bottom ? "calc(100vh - 6rem)" : "calc(100vh - 4rem)",
-				maxHeight: "calc(100vh - 4rem)",
+				maxHeight: "calc(100vh - 3rem)",
 			}}
 		>
 			{children}
@@ -344,99 +344,97 @@ const MessageContainer = ({
 
 				<div
 					className={cn(
-						"ml-1 max-h-96 w-full overflow-y-auto overflow-x-hidden rounded-md bg-gray-800 px-4 py-1",
+						"ml-1 max-h-96 w-full overflow-y-auto overflow-x-hidden rounded-md bg-gray-800 p-2",
 						state.includes("replying") ? "rounded-t-none" : "",
 					)}
 				>
-					<div className="mb-3 mt-2">
-						{files.length > 0 && (
-							<div className="mb-4 flex flex-wrap justify-start gap-2">
-								{files.map((file, index) => (
-									<FileComponent
-										key={index}
-										fileName={file.name}
-										type={file.type}
-										file={file.file}
-										onDelete={() => {
-											setFiles((old) => old.filter((f) => f.id !== file.id));
-										}}
-										onEdit={() => {}}
-									/>
-								))}
-								<Divider className="mt-2" />
-							</div>
-						)}
-						<div className={cn("flex justify-center align-middle", isReadOnly ? "cursor-not-allowed opacity-45" : "")}>
-							<div className="relative mr-4 cursor-pointer">
-								<CirclePlus
-									size={22}
-									color="#acaebf"
-									className={cn(isReadOnly ? "" : "cursor-pointer")}
-									onClick={() => {
-										if (isReadOnly) return;
-
-										fileRef.current?.click();
+					{files.length > 0 && (
+						<div className="mb-3 flex flex-wrap justify-start gap-2">
+							{files.map((file, index) => (
+								<FileComponent
+									key={index}
+									fileName={file.name}
+									type={file.type}
+									file={file.file}
+									onDelete={() => {
+										setFiles((old) => old.filter((f) => f.id !== file.id));
 									}}
+									onEdit={() => { }}
 								/>
-								<input
-									type="file"
-									title="Files"
-									className="absolute bottom-0 right-0 opacity-0 mm-hw-0"
-									multiple
-									ref={fileRef}
-									onChange={(e) => {
-										for (const file of (e?.target?.files ?? []) as File[]) {
-											console.log(file.name, file.size);
-
-											setFiles((old) => [
-												...old,
-												{
-													name: file.name,
-													type: file.type.startsWith("image") ? "image" : "file",
-													file,
-													id: snowflake.generate(),
-													url: file.type.startsWith("image") ? URL.createObjectURL(file) : null,
-												},
-											]);
-										}
-									}}
-								/>
-							</div>
-							<SlateEditor
-								sendMessage={(msg) => {
-									sendMessage(msg);
-
-									setMsgContent(channelId, "");
-								}}
-								placeholder={placeholder}
-								isReadOnly={isReadOnly}
-								// initialText={content}
-								readOnlyMessage={t("messageContainer.readOnly")}
-								onType={(text) => {
+							))}
+							<Divider />
+						</div>
+					)}
+					<div className={cn("flex ", isReadOnly ? "cursor-not-allowed opacity-45" : "")}>
+						<div className="relative mr-4 cursor-pointer">
+							<CirclePlus
+								size={22}
+								color="#acaebf"
+								className={cn(isReadOnly ? "" : "cursor-pointer")}
+								onClick={() => {
 									if (isReadOnly) return;
 
-									setContent(text);
-									setMsgContent(channelId, text);
-
-									sendUserIsTyping(text);
+									fileRef.current?.click();
 								}}
-								onResize={onResize}
 							/>
-							<div className="ml-4 flex gap-2">
-								<SmilePlus size={22} color="#acaebf" className={cn(isReadOnly ? "" : "cursor-pointer")} />
-								<SendHorizontal
-									size={22}
-									color="#008da5"
-									className={cn("opacity-75", isReadOnly ? "" : "cursor-pointer")}
-									onClick={async () => {
-										if (isReadOnly) return;
+							<input
+								type="file"
+								title="Files"
+								className="absolute bottom-0 right-0 opacity-0 mm-hw-0"
+								multiple
+								ref={fileRef}
+								onChange={(e) => {
+									for (const file of (e?.target?.files ?? []) as File[]) {
+										console.log(file.name, file.size);
 
-										sendMessage(content);
-										setContent("");
-										setMsgContent(channelId, "");
-									}}
-								/>
-							</div>
+										setFiles((old) => [
+											...old,
+											{
+												name: file.name,
+												type: file.type.startsWith("image") ? "image" : "file",
+												file,
+												id: snowflake.generate(),
+												url: file.type.startsWith("image") ? URL.createObjectURL(file) : null,
+											},
+										]);
+									}
+								}}
+							/>
+						</div>
+						<SlateEditor
+							sendMessage={(msg) => {
+								sendMessage(msg);
+
+								setMsgContent(channelId, "");
+							}}
+							placeholder={placeholder}
+							isReadOnly={isReadOnly}
+							// initialText={content}
+							readOnlyMessage={t("messageContainer.readOnly")}
+							onType={(text) => {
+								if (isReadOnly) return;
+
+								setContent(text);
+								setMsgContent(channelId, text);
+
+								sendUserIsTyping(text);
+							}}
+							onResize={onResize}
+						/>
+						<div className="ml-4 flex gap-2">
+							<SmilePlus size={22} color="#acaebf" className={cn(isReadOnly ? "" : "cursor-pointer")} />
+							<SendHorizontal
+								size={22}
+								color="#008da5"
+								className={cn("opacity-75", isReadOnly ? "" : "cursor-pointer")}
+								onClick={async () => {
+									if (isReadOnly) return;
+
+									sendMessage(content);
+									setContent("");
+									setMsgContent(channelId, "");
+								}}
+							/>
 						</div>
 					</div>
 				</div>
@@ -451,13 +449,13 @@ const MessageContainer = ({
 									? t("messageContainer.typing.singular", { user: typingUsers[0] })
 									: typingUsers.length === 2
 										? t("messageContainer.typing.double", {
-												user1: typingUsers[0],
-												user2: typingUsers[1],
-											})
+											user1: typingUsers[0],
+											user2: typingUsers[1],
+										})
 										: t("messageContainer.typing.multiple", {
-												users: typingUsers.slice(0, 2).join(", "),
-												count: typingUsers.length - 2,
-											})}
+											users: typingUsers.slice(0, 2).join(", "),
+											count: typingUsers.length - 2,
+										})}
 							</span>
 						</>
 					)}

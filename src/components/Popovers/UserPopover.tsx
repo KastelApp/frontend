@@ -91,7 +91,7 @@ const UserPopover = ({
 						<div className="mt-2 flex flex-col">
 							<span className="font-bold text-white">About Me</span>
 							<span className="mt-2 overflow-hidden whitespace-pre-line break-words text-gray-300">
-								<MessageMarkDown disabledRules={["code", "heading", "list"]}>{member.user.shortBio}</MessageMarkDown>
+								<MessageMarkDown disabledRules={["codeBlock", "heading", "list"]}>{member.user.shortBio}</MessageMarkDown>
 							</span>
 						</div>
 					)}

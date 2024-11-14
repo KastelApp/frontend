@@ -9,8 +9,11 @@ import MessageMarkDown from "@/components/Message/Markdown/MarkDown.tsx";
 import cn from "@/utils/cn.ts";
 import { useEffect, useState } from "react";
 import { useRelationshipsStore } from "@/wrapper/Stores/RelationshipsStore.ts";
+import { useHubStore } from "@/wrapper/Stores/HubStore.ts";
+import Link from "@/components/Link.tsx";
+import { Routes } from "@/utils/Routes.ts";
 
-const UserModal = ({ user, member }: { user: User; member?: Member }) => {
+const UserModal = ({ user, member }: { user: User; member?: Member; }) => {
 	const hasBanner = true;
 
 	const { t } = useTranslationStore();
@@ -20,6 +23,7 @@ const UserModal = ({ user, member }: { user: User; member?: Member }) => {
 	const relationships = useRelationshipsStore((s) => s.getFriendRelationships());
 	const [loading, setLoading] = useState(!user.metaData.bioless);
 	const foundFriend = relationships.find((r) => r.userId === user.id);
+	const getHub = useHubStore((s) => s.getHub);
 
 	useEffect(() => {
 		if (loading) {
@@ -105,8 +109,10 @@ const UserModal = ({ user, member }: { user: User; member?: Member }) => {
 				radius="sm"
 				className="mt-2 flex items-center justify-center align-middle"
 			>
-				<Tab title="Profile" className="overflow-hidden whitespace-pre-wrap break-words text-sm text-white">
-					<MessageMarkDown disabledRules={["heading"]}>{user.bio ?? "No bio set."}</MessageMarkDown>
+				<Tab title="Profile">
+					<span className="ml-2 overflow-hidden whitespace-pre-wrap break-words text-sm text-white">
+						<MessageMarkDown disabledRules={["heading"]}>{user.bio ?? "No bio set."}</MessageMarkDown>
+					</span>
 				</Tab>
 				{!user.isClient && (
 					<Tab
@@ -119,8 +125,24 @@ const UserModal = ({ user, member }: { user: User; member?: Member }) => {
 					<Tab
 						title={`Mutual Hubs ${user.mutualHubs && user.mutualHubs.length > 0 ? `(${user.mutualHubs.length})` : ""}`}
 					>
-						{JSON.stringify(user.mutualHubs)}
+						<div className="flex flex-col items-start px-2">
+							{user.mutualHubs?.map((hubId) => {
+								const foundHub = getHub(hubId);
+
+								return (
+									<Link href={Routes.hubChannels(hubId)} key={hubId} className="active:scale-[0.98] transition-[transform,colors] cursor-pointer flex items-center space-x-2 rounded-md hover:bg-charcoal-600 w-full p-1 duration-300 ease-in-out">
+										<Avatar
+											src={"/icon.png"}
+											alt={foundHub?.name}
+											className="rounded-full border-2 border-transparent w-9 h-9"
+										/>
+										<p className="text-white font-medium">{foundHub?.name}</p>
+									</Link>
+								);
+							})}
+						</div>
 					</Tab>
+
 				)}
 				<Tab title="Connections" isDisabled>
 					hi4
