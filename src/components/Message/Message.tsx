@@ -26,14 +26,14 @@ import LiveDate from "@/components/LiveDate.tsx";
 export type CustomizedMessage = Omit<MessageType, "invites"> & {
 	invites: (
 		| (Invite & {
-				hub: Hub | null;
-		  })
+			hub: Hub | null;
+		})
 		| null
 	)[];
 	author: {
 		user: User;
-		member: (Omit<Member, "roles"> & { roles: Role[] }) | null;
-		roleColor: { color: string | null; id: string } | null;
+		member: (Omit<Member, "roles"> & { roles: Role[]; }) | null;
+		roleColor: { color: string | null; id: string; } | null;
 	};
 };
 
@@ -47,8 +47,8 @@ export interface MessageProps {
 	replyMessage: {
 		user: User;
 		message: MessageType;
-		member: (Omit<Member, "roles"> & { roles: Role[] }) | null;
-		roleColor: { color: string | null; id: string } | null;
+		member: (Omit<Member, "roles"> & { roles: Role[]; }) | null;
+		roleColor: { color: string | null; id: string; } | null;
 	} | null;
 	inHub: boolean;
 	isDeleteable?: boolean;
@@ -142,6 +142,7 @@ const Message = ({
 										}
 										alt="User Avatar"
 										className="h-4 w-4 cursor-pointer rounded-full"
+										imgProps={{ className: "transition-none" }}
 									/>
 									<span
 										className="ml-1 text-xs text-white"
@@ -164,16 +165,20 @@ const Message = ({
 									</span>
 								</div>
 							</PopOverData>
-							<p
-								className="ml-2 w-full max-w-[calc(100%-16rem)] cursor-pointer select-none truncate text-2xs text-white"
+
+							<span
+								className="ml-1 mt-0.5 cursor-pointer select-none truncate max-w-[calc(100%-16rem)] overflow-hidden whitespace-nowrap text-white text-2xs align-middle justify-center items-center"
 								onClick={() => {
 									if (jumpToMessage) {
 										jumpToMessage(replyMessage.message.id);
 									}
 								}}
 							>
-								{replyMessage.message.content}
-							</p>
+								<MessageMarkDown disabledRules={["codeBlock", "blockQuote"]} classNames={{
+									inlineCode: "text-2xs p-0 rounded-sm",
+									link: "text-2xs pointer-events-none",
+								}}>{replyMessage.message.content}</MessageMarkDown>
+							</span>
 						</div>
 					)}
 					{(hadRepliedMessage && !replyMessage) && (
@@ -190,8 +195,7 @@ const Message = ({
 							<p className="ml-2 w-full max-w-[calc(100%-16rem)] cursor-pointer select-none truncate text-2xs text-white italic">
 								{t("messages.replyingToDeletedMessage")}
 							</p>
-
-							</div>
+						</div>
 					)}
 					<div className="flex w-full max-w-full">
 						{!isGrouped && (

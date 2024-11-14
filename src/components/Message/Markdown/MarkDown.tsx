@@ -12,6 +12,7 @@ import Codeblock from "@/components/Message/Markdown/Codeblock.tsx";
 import { Code } from "@nextui-org/react";
 import type { CustomizedMessage } from "@/components/Message/Message.tsx";
 import Constants from "@/data/constants.ts";
+import cn from "@/utils/cn.ts";
 
 const parseFor = (rules: ReactRules, returnAst = false) => {
 	const parser = SimpleMarkdown.parserFor(rules);
@@ -38,7 +39,17 @@ const parseFor = (rules: ReactRules, returnAst = false) => {
 	);
 };
 
-const createRules = (rule: ReactRules, message?: CustomizedMessage): ReactRules => {
+const createRules = (rule: ReactRules, message?: CustomizedMessage, props?: {
+	classNames?: {
+		heading?: string;
+		link?: string;
+		blockQuote?: string;
+		list?: string;
+		codeBlock?: string;
+		inlineCode?: string;
+		paragraph?: string;
+	};
+}): ReactRules => {
 	const { paragraph, link, codeBlock, inlineCode, blockQuote, heading } = rule;
 
 	return {
@@ -47,9 +58,9 @@ const createRules = (rule: ReactRules, message?: CustomizedMessage): ReactRules 
 		heading: {
 			...heading,
 			react: (
-				node: ReactNodeOutput & { level: number },
+				node: ReactNodeOutput & { level: number; },
 				recurseOutput: (content: unknown, state: unknown) => React.ReactElement,
-				state: { key: string },
+				state: { key: string; },
 			) => {
 				const sizes = {
 					"1": H1Heading,
@@ -59,18 +70,22 @@ const createRules = (rule: ReactRules, message?: CustomizedMessage): ReactRules 
 
 				const Heading = sizes[node.level.toString() as keyof typeof sizes] || H3Heading;
 
-				return <Heading key={state.key}>{recurseOutput((node as unknown as { content: unknown }).content, state)}</Heading>;
+				return (
+					<Heading key={state.key} className={props?.classNames?.heading}>
+						{recurseOutput((node as unknown as { content: unknown; }).content, state)}
+					</Heading>
+				);
 			},
 		},
 		link: {
 			...link,
 			react: (
-				node: SimpleMarkdown.RefNode & { target: string },
+				node: SimpleMarkdown.RefNode & { target: string; },
 				recurseOutput: (content: unknown, state: unknown) => React.ReactElement,
-				state: { key: string },
+				state: { key: string; },
 			) => (
 				<Link
-					title={node.title || astToString((node as unknown as { content: SimpleMarkdown.RefNode }).content)}
+					title={node.title || astToString((node as unknown as { content: SimpleMarkdown.RefNode; }).content)}
 					href={SimpleMarkdown.sanitizeUrl(node.target)!}
 					target="_blank"
 					rel="noreferrer"
@@ -78,6 +93,7 @@ const createRules = (rule: ReactRules, message?: CustomizedMessage): ReactRules 
 					phishingMessage={
 						message && (message.flags & Constants.messageFlags.Phishing) === Constants.messageFlags.Phishing
 					}
+					className={props?.classNames?.link}
 				>
 					{recurseOutput(node.content, state)}
 				</Link>
@@ -88,9 +104,9 @@ const createRules = (rule: ReactRules, message?: CustomizedMessage): ReactRules 
 			react: (
 				node: SimpleMarkdown.RefNode,
 				recurseOutput: (content: unknown, state: unknown) => React.ReactElement,
-				state: { key: string },
+				state: { key: string; },
 			) => (
-				<blockquote key={state.key} className="border-l-4 border-gray-400 pl-2">
+				<blockquote key={state.key} className={cn("border-l-4 border-gray-400 pl-2", props?.classNames?.blockQuote)}>
 					{recurseOutput(node.content, state)}
 				</blockquote>
 			),
@@ -98,16 +114,16 @@ const createRules = (rule: ReactRules, message?: CustomizedMessage): ReactRules 
 		list: {
 			...SimpleMarkdown.defaultRules.list,
 			react: (
-				node: SimpleMarkdown.RefNode & { ordered: boolean; items: unknown[] },
+				node: SimpleMarkdown.RefNode & { ordered: boolean; items: unknown[]; },
 				recurseOutput: (content: unknown, state: unknown) => React.ReactElement,
-				state: { key: string },
+				state: { key: string; },
 			) => {
 				const Tag = node.ordered ? OrderedList : UnOrderedList;
 
 				const mapped = recurseOutput(node.items, state) as unknown as string[];
 
 				return (
-					<Tag key={state.key}>
+					<Tag key={state.key} className={props?.classNames?.list}>
 						{mapped.map((item, index) => (
 							<ListItem key={index}>{item}</ListItem>
 						))}
@@ -118,9 +134,9 @@ const createRules = (rule: ReactRules, message?: CustomizedMessage): ReactRules 
 		codeBlock: {
 			...codeBlock,
 			react: (
-				node: SimpleMarkdown.RefNode & { lang: string },
+				node: SimpleMarkdown.RefNode & { lang: string; },
 				_: (content: unknown, state: unknown) => React.ReactElement,
-				state: { key: string },
+				state: { key: string; },
 			) => {
 				return <Codeblock language={node.lang} code={(node.content as unknown as string) ?? ""} key={state.key} />;
 			},
@@ -130,9 +146,9 @@ const createRules = (rule: ReactRules, message?: CustomizedMessage): ReactRules 
 			react: (
 				node: SimpleMarkdown.RefNode,
 				_: (content: unknown, state: unknown) => React.ReactElement,
-				state: { key: string },
+				state: { key: string; },
 			) => (
-				<Code key={state.key} className="text-gray-300">
+				<Code key={state.key} className={cn("text-gray-300 text-base", props?.classNames?.inlineCode)}>
 					{node.content as unknown as string}
 				</Code>
 			),
@@ -142,9 +158,9 @@ const createRules = (rule: ReactRules, message?: CustomizedMessage): ReactRules 
 			react: (
 				node: SimpleMarkdown.RefNode,
 				recurseOutput: (content: unknown, state: unknown) => React.ReactElement,
-				state: { key: string },
+				state: { key: string; },
 			) => {
-				return <p key={state.key}>{recurseOutput(node.content, state)}</p>;
+				return <p key={state.key} className={props?.classNames?.paragraph}>{recurseOutput(node.content, state)}</p>;
 			},
 		},
 	} as unknown as ReactRules;
@@ -154,25 +170,35 @@ const MessageMarkDown = ({
 	children,
 	message,
 	disabledRules,
+	classNames
 }: {
 	children: string;
 	message?: CustomizedMessage;
 	disabledRules?: (
-		| "link"
-		| "autolink"
-		| "url"
-		| "code"
-		| "blockquote"
+		| "all"
 		| "heading"
+		| "link"
+		| "blockQuote"
 		| "list"
+		| "codeBlock"
 		| "inlineCode"
 		| "paragraph"
-		| "all"
 	)[];
+	classNames?: {
+		heading?: string;
+		link?: string;
+		blockQuote?: string;
+		list?: string;
+		codeBlock?: string;
+		inlineCode?: string;
+		paragraph?: string;
+	};
 }) => {
 	if (children === null) return null;
 
-	const createdRules = createRules(customRules as never, message);
+	const createdRules = createRules(customRules as never, message, {
+		classNames: classNames,
+	});
 
 	for (const rule of disabledRules ?? []) {
 		if (rule === "all") {
