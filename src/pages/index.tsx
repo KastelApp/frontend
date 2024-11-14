@@ -110,7 +110,7 @@ const HomePage = () => {
 		<HomeLayout disableBackgroundImage>
 			<div className="py-20 text-center">
 				<motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}>
-					<h1 className="mb-6 text-5xl font-bold md:text-7xl">
+					<h1 className="mb-6 text-5xl font-bold md:text-7xl text-white">
 						Connect, collaborate,
 						<br />
 						<span className="bg-gradient-to-r from-branding-100 to-primary bg-clip-text text-transparent">
@@ -176,7 +176,7 @@ const HomePage = () => {
 			</div>
 
 			<div className="py-20 text-center">
-				<h2 className="mb-8 text-4xl font-bold">Ready to elevate your chat experience?</h2>
+				<h2 className="mb-8 text-4xl font-bold text-white">Ready to elevate your chat experience?</h2>
 				<Button
 					size="lg"
 					variant="flat"

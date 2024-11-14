@@ -193,13 +193,13 @@ const OverView = () => {
 								<CardBody className="flex max-h-[85vh] flex-col overflow-y-auto">
 									<div className="mb-4 flex items-center justify-between">
 										<div>
-											<p className="text-lg font-semibold">Global Nickname</p>
+											<p className="text-lg font-semibold text-white">Global Nickname</p>
 											<p className="text-md">{user?.globalNickname || "N/A"}</p>
 										</div>
 									</div>
 									<div className="mb-4 flex items-center justify-between">
 										<div>
-											<p className="text-lg font-semibold">Username</p>
+											<p className="text-lg font-semibold text-white">Username</p>
 											<span className="flex">
 												<p className="text-md">{user?.username}</p>
 												<p className="text-md ml-0.5 text-gray-400">#{user?.tag}</p>
@@ -208,25 +208,25 @@ const OverView = () => {
 									</div>
 									<div className="mb-4 flex items-center justify-between">
 										<div>
-											<p className="text-lg font-semibold">Email</p>
-											<p className="text-md blur-sm transition-all duration-300 hover:blur-0">{user?.email}</p>
+											<p className="text-lg font-semibold text-white">Email</p>
+											<p className="text-md blur-sm transition-all duration-300 hover:blur-0 text-white">{user?.email}</p>
 										</div>
 									</div>
 									<div className="mb-4 flex items-center justify-between">
 										<div>
-											<p className="text-lg font-semibold">Phone Number</p>
+											<p className="text-lg font-semibold text-white">Phone Number</p>
 											<p className="text-md">{user?.phoneNumber ?? "N/A"}</p>
 										</div>
 									</div>
 									<div className="mb-4 flex items-center justify-between">
 										<div>
-											<p className="text-lg font-semibold">About Me</p>
+											<p className="text-lg font-semibold text-white">About Me</p>
 											<p className="text-md overflow-hidden whitespace-pre-line break-words">{user?.bio || "N/A"}</p>
 										</div>
 									</div>
 									<div className="mb-4 flex items-center justify-between">
 										<div>
-											<p className="text-lg font-semibold">Short About Me</p>
+											<p className="text-lg font-semibold text-white">Short About Me</p>
 											<p className="text-md overflow-hidden whitespace-pre-line break-words">
 												{user?.shortBio || "N/A"}
 											</p>
@@ -240,7 +240,7 @@ const OverView = () => {
 			</Card>
 			<Divider className="mb-6 mt-6" />
 			<div className="ml-2">
-				<p className="mb-2 text-xl font-semibold">Account & Security</p>
+				<p className="mb-2 text-xl font-semibold text-white">Account & Security</p>
 				{/* 
                 // todo: finish
                 <div>
@@ -262,7 +262,7 @@ const OverView = () => {
 					</p>
 					<Card>
 						<CardBody className="mt-4 select-none bg-lightAccent dark:bg-darkAccent">
-							<p className="mb-2 mt-2 text-lg">Before:</p>
+							<p className="mb-2 mt-2 text-lg text-white">Before:</p>
 							<div className="flex items-center rounded-lg bg-charcoal-700">
 								<div className="mt-2 w-full">
 									<Message
@@ -304,7 +304,7 @@ const OverView = () => {
 									/>
 								</div>
 							</div>
-							<p className="mb-2 mt-2 text-lg">After:</p>
+							<p className="mb-2 mt-2 text-lg text-white">After:</p>
 							<div className="flex items-center rounded-lg bg-charcoal-700">
 								<div className="mt-2 w-full">
 									<Message

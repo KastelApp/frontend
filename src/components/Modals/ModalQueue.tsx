@@ -35,6 +35,7 @@ const ModalQueue = memo(() => {
 						base: cn(item.props?.classNames?.base, item.props?.modalSize === "fit" ? "max-w-full" : ""),
 					}}
 					radius={item.props?.radius}
+					placement={"center"}
 				>
 					<ModalContent className={item.props?.classNames?.content}>
 						{item.title && <ModalHeader className={item.props?.classNames?.header}>{item.title}</ModalHeader>}

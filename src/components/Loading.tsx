@@ -87,8 +87,8 @@ const Loading = () => {
 					<Logo size={128} bgColor="transparent" />
 				</div>
 				<div className="mt-4 text-center">
-					<p className="text-2xl font-bold">{Mappings[quote.type]}</p>
-					<p className="mt-2 max-h-40 overflow-auto text-lg">{quote.quote}</p>
+					<p className="text-2xl font-bold text-white">{Mappings[quote.type]}</p>
+					<p className="mt-2 max-h-40 overflow-auto text-lg text-white">{quote.quote}</p>
 				</div>
 			</div>
 		</div>

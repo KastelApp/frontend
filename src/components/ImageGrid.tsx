@@ -1,5 +1,5 @@
-import cn from "@/utils/cn.ts";
 import { UnLazyImage } from "@unlazy/react";
+import cn from "@/utils/cn.ts";
 
 export interface Image {
 	url: string;
@@ -11,100 +11,82 @@ export interface Image {
 	linkTo?: string;
 }
 
-const ImageGrid = ({
-	images,
-	onPress,
-}: {
+interface ImageGridProps {
 	images: Image[];
 	onPress?: (image: Image) => void;
-	style?: React.CSSProperties;
-}) => {
-	return (
-		<div className="mb-2 grid gap-2">
-			{images.length === 1 && (
-				<div className={"flex max-h-56 max-w-[25rem] justify-center"}>
-					<UnLazyImage
-						src={images[0].url}
-						alt="Image"
-						thumbhash={images[0].thumbHash ?? undefined}
-						className={cn("max-h-56 max-w-[25rem] rounded-none", onPress && "cursor-pointer")}
-						onClick={() => onPress && onPress(images[0])}
-						style={{
-							minWidth: images[0].width ? Math.min(images[0].width, 400) : "full",
-							minHeight: images[0].height ? Math.min(images[0].height, 224) : "full",
-						}}
-					/>
-				</div>
-			)}
+}
 
-			{images.length === 2 && (
-				<div className="flex gap-2">
+const ImageGrid = ({ images, onPress }: ImageGridProps) => {
+	const imageCount = images.length;
+
+	if (imageCount === 0) return null;
+
+	return (
+		<div className="grid gap-1 max-w-[400px]">
+			{imageCount === 1 && (
+				<SingleImage image={images[0]} onPress={onPress} />
+			)}
+			{imageCount === 2 && (
+				<div className="grid grid-cols-2 gap-1">
 					{images.map((img, index) => (
-						<div key={index} className={"max-h-56 max-w-[25rem] flex-shrink-0"}>
-							<UnLazyImage
-								src={img.url}
-								alt={`Image ${index + 1}`}
-								className={cn("rounded-none", onPress && "cursor-pointer")}
-								thumbhash={img.thumbHash ?? undefined}
-								onClick={() => onPress && onPress(img)}
-								style={{
-									minWidth: img.width ? Math.min(img.width, 400) : "full",
-									minHeight: img.height ? Math.min(img.height, 224) : "full",
-								}}
-							/>
-						</div>
+						<SingleImage key={index} image={img} onPress={onPress} maxWidth={198} maxHeight={224} />
 					))}
 				</div>
 			)}
-
-			{images.length === 3 && (
-				<div className="flex h-full">
-					<div className={"max-h-full max-w-52 flex-1"}>
-						<UnLazyImage
-							src={images[0].url}
-							alt="Large Image"
-							className={cn("h-full rounded-none", onPress && "cursor-pointer")}
-						/>
-					</div>
-					<div className="ml-1 flex flex-col justify-between gap-y-1">
-						{images.slice(1).map((img, index) => (
-							<UnLazyImage
-								src={img.url}
-								alt={`Small Image ${index + 1}`}
-								key={index}
-								className={cn("max-h-24 max-w-60 rounded-none", onPress && "cursor-pointer")}
-								thumbhash={img.thumbHash ?? undefined}
-								onClick={() => onPress && onPress(img)}
-								style={{
-									minWidth: img.width ? Math.min(img.width, 320) : "full",
-									minHeight: img.height ? Math.min(img.height, 144) : "full",
-								}}
-							/>
+			{imageCount === 3 && (
+				<div className="grid grid-cols-2 gap-1">
+					<div className="grid gap-1">
+						{images.slice(0, 2).map((img, index) => (
+							<SingleImage key={index} image={img} onPress={onPress} maxWidth={198} maxHeight={111} />
 						))}
 					</div>
+					<SingleImage image={images[2]} onPress={onPress} maxWidth={198} maxHeight={224} />
 				</div>
 			)}
-
-			{images.length === 4 && (
-				<div className="grid grid-cols-2 gap-y-2">
+			{imageCount === 4 && (
+				<div className="grid grid-cols-2 gap-1">
 					{images.map((img, index) => (
-						<div key={index} className={"max-h-48 max-w-[25rem]"}>
-							<UnLazyImage
-								src={img.url}
-								alt={`Image ${index + 1}`}
-								className={cn("rounded-none", onPress && "cursor-pointer")}
-								onClick={() => onPress && onPress(img)}
-								style={{
-									minWidth: img.width ? Math.min(img.width, 400) : "full",
-									minHeight: img.height ? Math.min(img.height, 224) : "full",
-								}}
-							/>
-						</div>
+						<SingleImage key={index} image={img} onPress={onPress} maxWidth={198} maxHeight={111} />
 					))}
 				</div>
 			)}
 		</div>
 	);
-};
+}
+
+interface SingleImageProps {
+	image: Image;
+	onPress?: (image: Image) => void;
+	maxWidth?: number;
+	maxHeight?: number;
+}
+
+const SingleImage = ({ image, onPress, maxWidth = 400, maxHeight = 224 }: SingleImageProps) => {
+	return (
+		<div
+			className={cn(
+				"overflow-hidden",
+				onPress && "cursor-pointer"
+			)}
+			style={{
+				maxWidth: `${maxWidth}px`,
+				maxHeight: `${maxHeight}px`,
+			}}
+		>
+			<UnLazyImage
+				src={image.url}
+				alt={image.alt || "Image"}
+				thumbhash={image.thumbHash ?? undefined}
+				className="w-full h-full object-cover"
+				onClick={() => onPress && onPress(image)}
+				style={{
+					aspectRatio: image.width && image.height ? `${image.width} / ${image.height}` : undefined,
+				}}
+			/>
+		</div>
+	);
+}
 
 export default ImageGrid;
+
+export { SingleImage };

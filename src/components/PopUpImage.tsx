@@ -3,7 +3,6 @@ import Link from "@/components/Message/Markdown/Link.tsx";
 import { modalStore } from "@/wrapper/Stores/GlobalModalStore.ts";
 import { UnLazyImage } from "@unlazy/react";
 
-
 interface PopUpImageProps {
 	url?: string;
 	thumbHash?: string | null;
@@ -15,7 +14,6 @@ interface PopUpImageProps {
 		container?: string;
 		modal?: string;
 	};
-	style?: React.CSSProperties;
 	alt?: string;
 	width?: number;
 	height?: number;
@@ -40,41 +38,43 @@ const PopUpImage = ({
 	width = 768,
 	height = 1024,
 	linkTo,
-	style
 }: PopUpImageProps) => {
 	if (!images && url) {
 		images = [{ url, thumbHash, name, width, height, linkTo }];
 	}
 
 	return (
-		<ImageGrid style={style} images={images ?? []} onPress={(image) => {
+		<ImageGrid images={images ?? []} onPress={(image) => {
 			modalStore.getState().createModal({
 				id: `image-${name ?? "image"}`,
 				title: name || "Image",
 				body: (
-					<div className="flex flex-col">
+					<div className="flex flex-col items-center space-y-4">
 						<UnLazyImage
 							src={repairUrl(image.url ?? "")}
 							alt={image.alt ?? "Image"}
 							thumbhash={image.thumbHash ?? undefined}
-							className="max-h-[70vh] max-w-[75vw] rounded-md"
+							className="max-h-[75vh] max-w-[75vw] w-auto h-auto rounded-md"
 							style={{
-								width: "auto",
-								height: "auto",
+								width: "100%",
+								height: "100%",
+								objectFit: "contain",
 							}}
 						/>
-						<Link
-							href={repairUrl((image.linkTo ?? image.url) ?? "")}
-							target="_blank"
-							className="mr-auto"
-						>
-							Open in browser
-						</Link>
+						<div className="w-full text-center mt-2">
+							<Link
+								href={repairUrl((image.linkTo ?? image.url) ?? "")}
+								target="_blank"
+								className="mr-auto"
+							>
+								Open in browser
+							</Link>
+						</div>
 					</div>
 				),
 				props: {
 					classNames: {
-						base: "max-h-[80vh] max-w-[75vw]",
+						base: "max-w-[80vw] w-fit",
 						footer: "p-0"
 					}
 				}

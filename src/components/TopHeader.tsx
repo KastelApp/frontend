@@ -51,7 +51,7 @@ const TopHeader = () => {
 			<NavbarContent>
 				<NavbarMenuToggle aria-label={isMenuOpen ? "Close menu" : "Open menu"} className="text-white sm:hidden" />
 				<NavbarBrand>
-					<Link className="font-bold text-inherit" href="/">
+					<Link className="font-bold text-inherit text-white" href="/">
 						Kastel
 					</Link>
 				</NavbarBrand>
@@ -59,22 +59,22 @@ const TopHeader = () => {
 
 			<NavbarContent className="hidden gap-4 sm:flex" justify="center">
 				<NavbarItem>
-					<Link href="https://kastel.dev" color="foreground" target="_blank">
+					<Link href="https://kastel.dev" className="text-white" color="foreground" target="_blank">
 						{t("home.navbar.docs")}
 					</Link>
 				</NavbarItem>
 				<NavbarItem>
-					<Link href="https://github.com/KastelApp" color="foreground" target="_blank">
+					<Link href="https://github.com/KastelApp" className="text-white" color="foreground" target="_blank">
 						GitHub
 					</Link>
 				</NavbarItem>
 				<NavbarItem>
-					<Link color="foreground" href="/blog" isDisabled>
+					<Link color="foreground" href="/blog" className="text-white" isDisabled>
 						{t("home.navbar.blog")}
 					</Link>
 				</NavbarItem>
 				<NavbarItem>
-					<Link color="foreground" href="#" isDisabled>
+					<Link color="foreground" href="#" className="text-white" isDisabled>
 						{t("home.navbar.support")}
 					</Link>
 				</NavbarItem>
