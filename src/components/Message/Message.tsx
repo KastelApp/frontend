@@ -174,7 +174,7 @@ const Message = ({
 									}
 								}}
 							>
-								<MessageMarkDown disabledRules={["codeBlock", "blockQuote"]} classNames={{
+								<MessageMarkDown disabledRules={["codeBlock", "blockQuote", "heading", "list"]} classNames={{
 									inlineCode: "text-2xs p-0 rounded-sm",
 									link: "text-2xs pointer-events-none",
 								}}>{replyMessage.message.content}</MessageMarkDown>
