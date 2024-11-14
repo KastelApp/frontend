@@ -7,6 +7,7 @@ import { Image, Button } from "@nextui-org/react";
 import { useIsReady, useTokenStore } from "@/wrapper/Stores.tsx";
 import { Routes } from "@/utils/Routes.ts";
 import Link from "@/components/Link.tsx";
+import cn from "@/utils/cn.ts";
 
 const FeatureSection = ({
 	title,
@@ -16,6 +17,9 @@ const FeatureSection = ({
 	reverse = false,
 	learnMore,
 	id,
+	titleClassnames,
+	buttonClassnames,
+	buttonTextClassnames
 }: {
 	title: string;
 	description: string;
@@ -27,6 +31,9 @@ const FeatureSection = ({
 		link?: string;
 	};
 	id?: string;
+	titleClassnames?: string;
+	buttonClassnames?: string;
+	buttonTextClassnames?: string;
 }) => {
 	const controls = useAnimation();
 	const [ref, inView] = useInView({
@@ -58,17 +65,23 @@ const FeatureSection = ({
 			>
 				<div className="w-full md:w-1/2">
 					<div className="mb-4 text-primary">{icon}</div>
-					<Link className="mb-4 text-3xl font-bold" href={`#${fixedId}`}>
-						<h2>{title}</h2>
+					<Link className={cn("mb-4 text-3xl font-bold", titleClassnames)} href={`#${fixedId}`}>
+						{title}
 					</Link>
 					<p className="mb-6 text-gray-400">{description}</p>
 					{learnMore && (
-						<Button variant="flat" as={Link} href={learnMore.link}>
-							{learnMore.text || "Learn more"} <ArrowRight className="ml-2 h-4 w-4" />
+						<Button variant="flat" as={Link} href={learnMore.link} className={buttonClassnames}>
+							<span className={cn("flex justify-center items-center", buttonTextClassnames)}>
+								{learnMore.text || "Learn more"} <ArrowRight className={"ml-2 h-4 w-4 text-primary"} />
+							</span>
 						</Button>
 					)}
 				</div>
-				<Image src={imageUrl} alt={title} className="max-h-96 max-w-[900px] rounded-lg shadow-lg" />
+				<Image
+					src={imageUrl}
+					alt={title}
+					className="w-full max-w-full md:max-h-96 md:max-w-[900px] rounded-lg shadow-lg object-cover"
+				/>
 			</motion.div>
 		</div>
 	);
@@ -122,7 +135,7 @@ const HomePage = () => {
 							{token ? "Open App" : "Start chatting for free"}
 						</Button>
 						<Button size="lg" variant="flat" isDisabled>
-							Download for {deviceType} <ArrowRight className="ml-2 h-4 w-4" />
+							Download for {deviceType} <ArrowRight className={"ml-2 h-4 w-4"} />
 						</Button>
 					</div>
 				</motion.div>
@@ -139,6 +152,9 @@ const HomePage = () => {
 						link: "#permissions",
 					}}
 					id="permissions"
+					titleClassnames="bg-gradient-to-r from-branding-100 to-primary bg-clip-text text-transparent"
+					buttonClassnames="bg-gradient-to-r from-branding-100/20 to-primary/20"
+					buttonTextClassnames="bg-gradient-to-l from-branding-100 to-primary bg-clip-text text-transparent"
 				/>
 				{/* 
 				For now I cba to add more featured sections, but you can add more like this:
