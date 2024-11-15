@@ -41,14 +41,6 @@ const EditUser = ({
 		bio: currentUser.bio,
 		shortBio: currentUser.shortBio,
 		save: async (opts) => {
-			console.log({
-				bio: opts.bio,
-				globalNickname: opts.globalNickname,
-				shortBio: opts.shortBio,
-				tag: opts.tag,
-				username: opts.username,
-			});
-
 			const dataToUpdate = {
 				bio: opts.bio === currentUser.bio ? undefined : opts.bio,
 				globalNickname: opts.globalNickname === currentUser.globalNickname ? undefined : opts.globalNickname,

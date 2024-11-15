@@ -10,6 +10,7 @@ import { Avatar, Badge, Button, Card, CardBody, Divider, Tooltip, useDisclosure 
 import { Pencil, TriangleAlert, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import mime from "mime";
+import UserModal from "@/components/Modals/UserModal.tsx";
 
 const OverView = () => {
 	const { getCurrentUser, getUser, getAvatarUrl, patchUser } = useUserStore();
@@ -151,6 +152,20 @@ const OverView = () => {
 									variant="flat"
 									className="max-h-8 min-h-8 min-w-28 max-w-28 rounded-md"
 									radius="none"
+									onClick={() => {
+										modalStore.getState().createModal({
+											id: `user-modal-${user.id}`,
+											body: <UserModal user={user} />,
+											hideCloseButton: true,
+											props: {
+												modalSize: "lg",
+												radius: "none",
+												classNames: {
+													body: "p-0",
+												},
+											},
+										});
+									}}
 								>
 									View Profile
 								</Button>
