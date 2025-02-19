@@ -24,11 +24,11 @@ const SaveChanges = ({
 				<div className="flex w-full items-center justify-between px-4">
 					<p className="text-md font-semibold text-white">Be careful, you have unsaved changes.</p>
 					<div className="flex gap-2">
-						<Button onClick={onCancel} radius="none" variant="flat" color="danger" className="h-8 rounded-md">
+						<Button onPress={onCancel} radius="none" variant="flat" color="danger" className="h-8 rounded-md">
 							Cancel
 						</Button>
 						<Button
-							onClick={() => {
+							onPress={() => {
 								if (isLoading) return;
 
 								onSave();

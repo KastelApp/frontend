@@ -35,17 +35,17 @@ const Home = () => {
 		{
 			title: "New Channel Type",
 			releaseDate: "3/9/2024",
-			shortDescription: "We've added a announcement channel type! You can now make announcements in your guild!",
+			shortDescription: "We've added a announcement channel type! You can now make announcements in your hub!",
 		},
 	];
 
-	const guildAnnouncements = [
+	const hubAnnouncements = [
 		{
-			guildName: "DarkerInk - Kastel Development",
+			hubName: "DarkerInk - Kastel Development",
 			announcement: "@everyone The release of Kastel Beta is finally here! Please reload and check the changelogs :p",
 		},
 		{
-			guildName: "Lightning - Lightnings Server",
+			hubName: "Lightning - Lightnings Server",
 			announcement: "@everyone hi friends",
 		},
 	];
@@ -132,14 +132,14 @@ const Home = () => {
 			</div>
 			<div className="grid h-[32rem] grid-cols-1 gap-4 md:grid-cols-2">
 				<div className="rounded-lg bg-gray-800 p-4 shadow">
-					<h2 className="text-xl font-semibold">Guild Announcements</h2>
+					<h2 className="text-xl font-semibold">Hub Announcements</h2>
 					<ul className="mt-2">
-						{guildAnnouncements.map((announcement, index) => (
+						{hubAnnouncements.map((announcement, index) => (
 							<li key={index} className="mb-2 flex items-center justify-between">
 								<div className="flex items-center">
 									<Avatar src={"/icon-1.png"} size="sm" imgProps={{ className: "transition-none" }} />
 									<div className="ml-2 flex flex-col">
-										<p className="text-sm text-white">{announcement.guildName}</p>
+										<p className="text-sm text-white">{announcement.hubName}</p>
 										<p className="text-xs text-gray-500">{announcement.announcement}</p>
 									</div>
 								</div>

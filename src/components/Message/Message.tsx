@@ -1,37 +1,39 @@
-import { Avatar, Chip, Tooltip } from "@nextui-org/react";
-import { memo, useState } from "react";
+import { Avatar, Tooltip } from "@nextui-org/react";
+import { useState } from "react";
 import { Pen, Reply, Trash2, Ellipsis } from "lucide-react";
 import InviteEmbed from "./Embeds/InviteEmbed.tsx";
 import { MessageStates, Message as MessageType, useMessageStore } from "@/wrapper/Stores/MessageStore.ts";
 import { User, useUserStore } from "@/wrapper/Stores/UserStore.ts";
-import fastDeepEqual from "fast-deep-equal";
 import { Member } from "@/wrapper/Stores/Members.ts";
 import { usePerChannelStore } from "@/wrapper/Stores/ChannelStore.ts";
-import { useTranslationStore } from "@/wrapper/Stores.ts";
+import { useTranslationStore } from "@/wrapper/Stores.tsx";
 import formatDate from "@/utils/formatDate.ts";
 import { Invite } from "@/wrapper/Stores/InviteStore.ts";
-import { Guild } from "@/wrapper/Stores/GuildStore.ts";
+import { Hub } from "@/wrapper/Stores/HubStore.ts";
 import { Role } from "@/wrapper/Stores/RoleStore.ts";
 import RichEmbed from "@/components/Message/Embeds/RichEmbed.tsx";
 import IFrameEmbed from "@/components/Message/Embeds/IFrameEmbed.tsx";
 import MessageMarkDown from "@/components/Message/Markdown/MarkDown.tsx";
-import Constants from "@/utils/Constants.ts";
+import Constants from "@/data/constants.ts";
 import cn from "@/utils/cn.ts";
 import ImageEmbed from "@/components/Message/Embeds/Image.tsx";
 import VideoEmbed from "@/components/Message/Embeds/Video.tsx";
 import PopOverData from "@/components/Popovers/PopoverData.tsx";
+// import ReactionBox from "@/components/Message/Reaction.tsx";
+import UserTag from "@/components/UserTag.tsx";
+import LiveDate from "@/components/LiveDate.tsx";
 
 export type CustomizedMessage = Omit<MessageType, "invites"> & {
 	invites: (
 		| (Invite & {
-				guild: Guild | null;
-		  })
+			hub: Hub | null;
+		})
 		| null
 	)[];
 	author: {
 		user: User;
-		member: (Omit<Member, "roles"> & { roles: Role[] }) | null;
-		roleColor: { color: string | null; id: string } | null;
+		member: (Omit<Member, "roles"> & { roles: Role[]; }) | null;
+		roleColor: { color: string | null; id: string; } | null;
 	};
 };
 
@@ -45,16 +47,17 @@ export interface MessageProps {
 	replyMessage: {
 		user: User;
 		message: MessageType;
-		member: Member | null;
-		roleColor: { color: string | null; id: string } | null;
+		member: (Omit<Member, "roles"> & { roles: Role[]; }) | null;
+		roleColor: { color: string | null; id: string; } | null;
 	} | null;
-	inGuild: boolean;
+	inHub: boolean;
 	isDeleteable?: boolean;
 	isReplyable?: boolean;
 	isEditable?: boolean;
 	jumpToMessage?: (msgId: string) => void;
 	isGrouped?: boolean;
 	isParent?: boolean;
+	hadRepliedMessage?: boolean;
 }
 
 const Message = ({
@@ -65,18 +68,21 @@ const Message = ({
 	isHighlighted: highlighted,
 	mentionsUser,
 	replyMessage,
-	inGuild,
+	inHub,
 	isDeleteable = false,
 	isEditable = false,
 	isReplyable = false,
 	jumpToMessage,
 	isGrouped = false,
 	isParent = false,
+	hadRepliedMessage = false
 }: MessageProps) => {
 	const { t } = useTranslationStore();
-	const formattedDate = formatDate(message.creationDate);
 	const phishing = (message.flags & Constants.messageFlags.Phishing) === Constants.messageFlags.Phishing;
 	const [open, setOpen] = useState(false);
+
+	const getAvatarUrl = useUserStore((s) => s.getAvatarUrl);
+	const getDefaultAvatar = useUserStore((s) => s.getDefaultAvatar);
 
 	return (
 		<>
@@ -103,7 +109,7 @@ const Message = ({
 			{(!phishing || open) && (
 				<div
 					className={cn(
-						"group relative w-full max-w-full transition-all duration-300 ease-in hover:bg-msg-hover",
+						"group relative w-full max-w-full pl-2 outline-none transition-colors duration-300 ease-in hover:bg-msg-hover",
 						className,
 						isParent && "mt-2",
 						mentionsUser && "bg-mention hover:bg-mention-hover",
@@ -125,17 +131,18 @@ const Message = ({
 									transform: "rotate(180deg) scale(1, -1)",
 								}}
 							/>
-							<PopOverData user={message.author.user} member={message.author.member} onlyChildren={isButtonDisabled}>
+							<PopOverData user={replyMessage.user} member={replyMessage.member} onlyChildren={isButtonDisabled}>
 								<div className="flex cursor-pointer items-center">
 									<Avatar
 										src={
-											useUserStore.getState().getAvatarUrl(replyMessage.user.id, replyMessage.user.avatar, {
+											getAvatarUrl(replyMessage.user.id, replyMessage.user.avatar, {
 												format: "webp",
 												size: 32,
-											}) ?? useUserStore.getState().getDefaultAvatar(replyMessage.user.id ?? "")
+											}) ?? getDefaultAvatar(replyMessage.user.id ?? "")
 										}
 										alt="User Avatar"
 										className="h-4 w-4 cursor-pointer rounded-full"
+										imgProps={{ className: "transition-none" }}
 									/>
 									<span
 										className="ml-1 text-xs text-white"
@@ -144,7 +151,7 @@ const Message = ({
 											// ? If the user is not in the server anymore then the color should be gray
 											// ? BUT if we are not in a server at all, then the color should be white
 											// ? white = CFDBFF
-											color: inGuild
+											color: inHub
 												? replyMessage.member
 													? replyMessage.roleColor?.color
 														? `#${replyMessage.roleColor.color}`
@@ -158,15 +165,35 @@ const Message = ({
 									</span>
 								</div>
 							</PopOverData>
-							<p
-								className="ml-2 w-full max-w-[calc(100%-16rem)] cursor-pointer select-none truncate text-2xs text-white"
+
+							<span
+								className="ml-1 mt-0.5 cursor-pointer select-none truncate max-w-[calc(100%-16rem)] overflow-hidden whitespace-nowrap text-white text-2xs align-middle justify-center items-center"
 								onClick={() => {
 									if (jumpToMessage) {
 										jumpToMessage(replyMessage.message.id);
 									}
 								}}
 							>
-								{replyMessage.message.content}
+								<MessageMarkDown disabledRules={["codeBlock", "blockQuote", "heading", "list"]} classNames={{
+									inlineCode: "text-2xs p-0 rounded-sm",
+									link: "text-2xs pointer-events-none",
+								}}>{replyMessage.message.content}</MessageMarkDown>
+							</span>
+						</div>
+					)}
+					{(hadRepliedMessage && !replyMessage) && (
+						// similar to above but just mock data that says "Replying to deleted message" etc
+						<div className="mb-1 ml-4 flex items-center">
+							<Reply
+								size={22}
+								color="#acaebf"
+								className="cursor-pointer"
+								style={{
+									transform: "rotate(180deg) scale(1, -1)",
+								}}
+							/>
+							<p className="ml-2 w-full max-w-[calc(100%-16rem)] cursor-pointer select-none truncate text-2xs text-white italic">
+								{t("messages.replyingToDeletedMessage")}
 							</p>
 						</div>
 					)}
@@ -175,8 +202,8 @@ const Message = ({
 							<PopOverData user={message.author.user} member={message.author.member} onlyChildren={isButtonDisabled}>
 								<Avatar
 									src={
-										useUserStore.getState().getAvatarUrl(message.authorId, message.author.user.avatar) ??
-										useUserStore.getState().getDefaultAvatar(message.author.user.id ?? "")
+										getAvatarUrl(message.authorId, message.author.user.avatar) ??
+										getDefaultAvatar(message.author.user.id ?? "")
 									}
 									alt="User Avatar"
 									className="ml-2 mt-1 max-h-9 min-h-9 min-w-9 max-w-9 cursor-pointer rounded-full"
@@ -184,9 +211,9 @@ const Message = ({
 								/>
 							</PopOverData>
 						)}
-						<div className="relative ml-2 flex w-full flex-col">
+						<div className={cn("relative ml-2 flex w-full flex-col", isGrouped && "pl-6")}>
 							{!isGrouped && (
-								<div>
+								<div className="flex">
 									<PopOverData
 										user={message.author.user}
 										member={message.author.member}
@@ -196,7 +223,7 @@ const Message = ({
 											className="inline cursor-pointer text-white"
 											style={{
 												// ? same as above
-												color: inGuild
+												color: inHub
 													? message.author.member
 														? message.author.roleColor?.color
 															? `#${message.author.roleColor.color}`
@@ -209,53 +236,49 @@ const Message = ({
 										</span>
 									</PopOverData>
 									{message.author.user && (message.author.user.isBot || message.author.user.isSystem) && (
-										<Chip
-											color="success"
-											variant="flat"
-											className="ml-1 h-4 w-1 rounded-sm p-0 text-[10px]"
-											radius="none"
-										>
-											{message.author.user.isBot ? t("tags.bot") : t("tags.system")}
-										</Chip>
+										<UserTag>{message.author.user.isBot ? t("tags.bot") : t("tags.system")}</UserTag>
 									)}
-									<Tooltip content={formatDate(message.creationDate, false, true)} placement="top" delay={500}>
-										<span className="ml-1 mt-1 select-none text-2xs text-gray-400">{formattedDate}</span>
+									<Tooltip content={formatDate(message.creationDate, "dayTime")} placement="top" delay={500}>
+										<span className="ml-1 mt-1.5 select-none text-2xs text-gray-400">
+											<LiveDate date={message.creationDate} format="relative" />
+										</span>
 									</Tooltip>
 								</div>
 							)}
-							<div className="flex">
+							<div className="relative flex">
 								{isGrouped && (
-									<Tooltip content={formatDate(message.creationDate, false, true)} placement="top" delay={500}>
-										<div className="mr-2 flex min-w-9 max-w-9 select-none text-3xs text-gray-400 transition-opacity opacity-0 duration-300 ease-in-out group-hover:opacity-100">
-											{formatDate(message.creationDate, true)}
+									<Tooltip content={formatDate(message.creationDate, "dayTime")} placement="top" delay={500}>
+										<div className="absolute -ml-8 flex select-none text-3xs text-gray-400 opacity-0 transition-opacity duration-300 ease-in-out group-hover:opacity-100">
+											{formatDate(message.creationDate, "short")}
 										</div>
 									</Tooltip>
 								)}
 								<div
 									className={cn(
-										"flex max-w-[calc(100%-5rem)] overflow-hidden whitespace-pre-wrap break-words text-white",
+										"max-w-[calc(100%-5rem)] overflow-hidden whitespace-pre-wrap break-words text-white",
 										message.state === MessageStates.Failed || message.state === MessageStates.Unknown
 											? "text-red-500"
 											: "",
 										message.state === MessageStates.Sending ? "text-gray-400" : "",
+										isGrouped && "ml-5",
 									)}
 								>
 									<MessageMarkDown message={message}>{message.content}</MessageMarkDown>
 								</div>
 							</div>
-							<div className={cn("flex flex-col", isGrouped && "pl-11")}>
+							<div className={cn("flex flex-col", isGrouped && "pl-5")}>
 								{message.invites.map((invite, index) => {
 									if (!invite) {
 										return (
 											<div key={index} className="mt-2 inline-block max-w-full overflow-hidden">
-												<InviteEmbed invite={null} skeleton />
+												<InviteEmbed invite={null} skeleton userId={message.author.user.id} />
 											</div>
 										);
 									}
 
 									return (
 										<div key={index} className="mt-2 inline-block max-w-full overflow-hidden">
-											<InviteEmbed invite={invite} />
+											<InviteEmbed invite={invite} userId={message.author.user.id} />
 										</div>
 									);
 								})}
@@ -271,11 +294,24 @@ const Message = ({
 											{embed.type === "Video" && <VideoEmbed embed={embed} />}
 										</div>
 									))}
+
+								{/* <div className="flex space-x-1">
+									<ReactionBox icon="👍" count={15} />
+									<ReactionBox icon="👍" count={15} />
+									<ReactionBox icon="👍" count={15} />
+									<ReactionBox icon="👍" count={15} />
+									<ReactionBox icon="👍" count={15} />
+									<ReactionBox icon="👍" count={15} />
+									<ReactionBox icon="👍" count={15} />
+									<ReactionBox icon="👍" count={15} />
+									<ReactionBox icon="👍" count={15} />
+									<ReactionBox icon="👍" count={15} />
+								</div> */}
 							</div>
 						</div>
 					</div>
 					{!isButtonDisabled && (
-						<div className="absolute right-0 top-[-1rem] z-10 mr-2 hidden items-center gap-2 rounded-md bg-gray-800 p-1 group-hover:flex hover:flex">
+						<div className="absolute right-0 top-[-1rem] mr-2 hidden items-center gap-2 rounded-md bg-gray-800 p-1 group-hover:flex hover:flex">
 							<Tooltip content="Reply">
 								<Reply
 									size={18}
@@ -315,9 +351,13 @@ const Message = ({
 	);
 };
 
-export default memo(Message, (prev, next) => {
-	const prevFunctionless = Object.fromEntries(Object.entries(prev).filter(([, value]) => typeof value !== "function"));
-	const nextFunctionless = Object.fromEntries(Object.entries(next).filter(([, value]) => typeof value !== "function"));
+export default Message;
 
-	return fastDeepEqual(prevFunctionless, nextFunctionless);
-});
+// ! Leaving the code behind for future refrence, in development you will defo have issues i.e it being slow etc, but in production it will be fine
+// ! due to react 19's new compiler
+// export default memo(Message, (prev, next) => {
+// 	const prevFunctionless = Object.fromEntries(Object.entries(prev).filter(([, value]) => typeof value !== "function"));
+// 	const nextFunctionless = Object.fromEntries(Object.entries(next).filter(([, value]) => typeof value !== "function"));
+
+// 	return fastDeepEqual(prevFunctionless, nextFunctionless);
+// });

@@ -1,4 +1,4 @@
-import { permissionOverrideTypes } from "@/utils/Constants.ts";
+import { permissionOverrideTypes } from "@/data/constants.ts";
 import Permissions, { PermissionKey } from "./Permissions.ts";
 import { Channel } from "./Stores/ChannelStore.ts";
 import { Role } from "./Stores/RoleStore.ts";
@@ -24,10 +24,10 @@ class PermissionHandler {
 		}[];
 	}[];
 
-	public guildMemberId: string;
+	public hubMemberId: string;
 
-	public constructor(guildMemberId: string, owner: boolean, memberRoles: Role[], channels?: Channel[]) {
-		this.guildMemberId = guildMemberId;
+	public constructor(hubMemberId: string, owner: boolean, memberRoles: Role[], channels?: Channel[]) {
+		this.hubMemberId = hubMemberId;
 
 		this.owner = owner;
 
@@ -97,7 +97,7 @@ class PermissionHandler {
 		if (this.owner) return true;
 
 		const overrides = channel.overrides.filter(
-			(Override) => Override.id === this.guildMemberId || this.memberRoles.some((Role) => Role.id === Override.id),
+			(Override) => Override.id === this.hubMemberId || this.memberRoles.some((Role) => Role.id === Override.id),
 		);
 
 		if (overrides.length === 0) {

@@ -1,3 +1,4 @@
+import cn from "@/utils/cn.ts";
 import { modalStore } from "@/wrapper/Stores/GlobalModalStore.ts";
 import { Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from "@nextui-org/react";
 import { memo } from "react";
@@ -9,15 +10,12 @@ const ModalQueue = memo(() => {
 
 	return (
 		<>
-			{sortedModalQueue.length > 0 && (
-				<div className="fixed inset-0 z-[100] h-screen w-screen bg-overlay/50 backdrop-opacity-disabled" />
-			)}
 			{sortedModalQueue.map((item) => (
 				<Modal
 					key={item.id}
 					isOpen
 					onClose={() => {
-						if (item.closable !== undefined && !item.closable) return;
+						if (item.allowCloseByButton !== true && !(item.closable ?? true)) return;
 
 						item.onClose?.();
 
@@ -25,13 +23,19 @@ const ModalQueue = memo(() => {
 					}}
 					isDismissable={item.closable ?? true}
 					isKeyboardDismissDisabled={!(item.closable ?? true)}
-					size={item.props?.modalSize}
+					size={item.props?.modalSize === "fit" ? undefined : item.props?.modalSize}
 					className={item.props?.classNames?.modal}
-					hideCloseButton={!(item.closable ?? true)}
-					backdrop={"transparent"}
+					hideCloseButton={item.hideCloseButton ?? (item.allowCloseByButton !== true && !(item.closable ?? true))}
+					backdrop={"blur"}
 					classNames={{
-						wrapper: "z-[101]",
+						...item.props?.classNames,
+						body: cn(item.props?.classNames?.body, "bg-darkAccent"),
+						header: cn(item.props?.classNames?.header, "bg-darkAccent"),
+						footer: cn(item.props?.classNames?.footer, "bg-darkAccent"),
+						base: cn(item.props?.classNames?.base, item.props?.modalSize === "fit" ? "max-w-full" : ""),
 					}}
+					radius={item.props?.radius}
+					placement={"center"}
 				>
 					<ModalContent className={item.props?.classNames?.content}>
 						{item.title && <ModalHeader className={item.props?.classNames?.header}>{item.title}</ModalHeader>}

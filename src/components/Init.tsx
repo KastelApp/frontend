@@ -1,8 +1,6 @@
-import { useAPIStore, useClientStore, useIsReady, useStoredSettingsStore, useTokenStore } from "@/wrapper/Stores.ts";
-import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { useAPIStore, useClientStore, useIsReady, useStoredSettingsStore, useTokenStore } from "@/wrapper/Stores.tsx";
+import { useEffect } from "react";
 import Loading from "./Loading.tsx";
-import AppLayout from "@/layouts/AppLayout.tsx";
 import { useRelationshipsStore, Relationship as RelationshipState } from "@/wrapper/Stores/RelationshipsStore.ts";
 import Logger from "@/utils/Logger.ts";
 import { Relationship } from "@/types/http/user/relationships.ts";
@@ -10,54 +8,35 @@ import { useUserStore } from "@/wrapper/Stores/UserStore.ts";
 import { usePerChannelStore } from "@/wrapper/Stores/ChannelStore.ts";
 import { Button } from "@nextui-org/react";
 import ModalQueue from "@/components/Modals/ModalQueue.tsx";
+import { WebSocketErrorCodes } from "@/data/constants.ts";
+import Client from "@/wrapper/Client.ts";
+import { Routes } from "@/utils/Routes.ts";
+import { useRouter } from "@/hooks/useRouter.ts";
 
-const Init = ({
-	children,
-	shouldHaveLayout = false,
-}: {
-	children?: React.ReactElement | React.ReactElement[];
-	shouldHaveLayout?: boolean;
-}) => {
-	const { token } = useTokenStore();
-	const { client } = useClientStore();
+const Init = ({ children }: { children?: React.ReactNode; shouldHaveLayout?: boolean }) => {
+	const { token, setToken } = useTokenStore();
+	const { client, setClient } = useClientStore();
 	const { api } = useAPIStore();
 	const router = useRouter();
 	const { setIsReady, isReady } = useIsReady();
 	const { addRelationship } = useRelationshipsStore();
 	const { channels } = usePerChannelStore();
-	const { mobilePopupIgnored, setMobilePopupIgnored } = useStoredSettingsStore();
-	const [isMobile, setIsMobile] = useState(false);
+	const { mobilePopupIgnored, setMobilePopupIgnored, isMobile } = useStoredSettingsStore();
+	const currentUser = useUserStore((s) => s.getCurrentUser());
 
 	useEffect(() => {
+		// eslint-disable-next-line react-compiler/react-compiler -- This is fine only because its a class.
 		api.token = token;
 
 		setIsReady(false);
 	}, [token]);
 
 	const whitelistedPaths: (string | RegExp)[] = [/^\/app(\/.*)?/];
-
 	const blacklistedTokenPaths: (string | RegExp)[] = ["/login", "/register"];
 
 	useEffect(() => {
-		// ? We have a few methods of detecting if the user is on a mobile device
-		// ? First is if the user agent is a mobile device
-		// ? Second is if the screen width is less than 768
-
+		// @ts-expect-error -- For now exposing the forceReady to global so I can mess with stuff
 		globalThis.forceReady = () => setIsReady(true);
-
-		if (navigator.userAgent.includes("Android") || navigator.userAgent.includes("iPhone")) {
-			setIsMobile(true);
-
-			return;
-		}
-
-		if (window.innerWidth < 768) {
-			setIsMobile(true);
-
-			return;
-		}
-
-		setIsMobile(false);
 	}, []);
 
 	useEffect(() => {
@@ -84,7 +63,7 @@ const Init = ({
 
 	useEffect(() => {
 		if (blacklistedTokenPaths.some((path) => router.pathname.match(path) || path === router.pathname) && token) {
-			router.push("/app");
+			router.push(Routes.app());
 
 			setIsReady(false);
 
@@ -98,7 +77,7 @@ const Init = ({
 		}
 
 		if (!token) {
-			router.push("/login");
+			router.push(Routes.login());
 
 			return;
 		}
@@ -154,12 +133,26 @@ const Init = ({
 			setIsReady(true);
 		});
 
-		client.on("close", () => {
+		client.on("close", (code) => {
 			setIsReady(false);
 
 			client.isConnected = false;
+
+			if (code === WebSocketErrorCodes.InvalidToken) {
+				setToken(null);
+
+				client.websocket?.stopReconnect();
+
+				setClient(new Client());
+
+				router.push(Routes.login());
+			}
 		});
 	}, [router.pathname]);
+
+	if (router.pathname.startsWith("/app") && !currentUser) {
+		return <Loading />;
+	}
 
 	return (
 		<>
@@ -169,12 +162,12 @@ const Init = ({
 						You're on a mobile device, this site is not optimized for mobile yet. Please use a desktop device or
 						download our mobile app.
 					</p>
-					<Button size="sm" variant="bordered" color="primary" onClick={() => setMobilePopupIgnored(true)}>
+					<Button size="sm" variant="bordered" color="primary" onPress={() => setMobilePopupIgnored(true)}>
 						I understand
 					</Button>
 				</div>
 			)}
-			{!isReady ? <Loading /> : <>{shouldHaveLayout ? <AppLayout>{children}</AppLayout> : children}</>}
+			{!isReady ? <Loading /> : children}
 			<ModalQueue />
 		</>
 	);

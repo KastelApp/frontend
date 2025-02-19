@@ -5,7 +5,7 @@ const ThemeButton = ({
 	children,
 	className,
 	endContent,
-	onClick,
+	onPress,
 	startContent,
 	color,
 	variant,
@@ -13,7 +13,7 @@ const ThemeButton = ({
 }: {
 	startContent?: React.ReactNode;
 	endContent?: React.ReactNode;
-	onClick?: () => void;
+	onPress?: () => void;
 	children: React.ReactNode;
 	className?: string;
 	color?: "primary" | "secondary" | "success" | "warning" | "danger";
@@ -37,7 +37,7 @@ const ThemeButton = ({
 					mixVariant,
 					colors,
 				)}
-				onClick={onClick}
+				onClick={onPress}
 			>
 				{startContent}
 				{children}
@@ -54,7 +54,7 @@ const Appearance = () => {
 			<div className="mx-auto flex w-full max-w-[25vw] flex-col gap-4">
 				<ThemeButton
 					startContent={<Sun size={22} />}
-					onClick={() => {
+					onPress={() => {
 						console.log("click");
 					}}
 					hexColor=""
@@ -65,7 +65,7 @@ const Appearance = () => {
 				</ThemeButton>
 				<ThemeButton
 					startContent={<Moon size={22} />}
-					onClick={() => {
+					onPress={() => {
 						console.log("click");
 					}}
 					color="primary"
@@ -79,7 +79,7 @@ const Appearance = () => {
 			<div className="mx-auto flex w-full max-w-[50vw] flex-wrap justify-center gap-4">
 				{/*// todo: show actual emojis*/}
 				<ThemeButton
-					onClick={() => {
+					onPress={() => {
 						console.log("click");
 					}}
 					variant="outlined"
@@ -88,7 +88,7 @@ const Appearance = () => {
 					Twemoji
 				</ThemeButton>
 				<ThemeButton
-					onClick={() => {
+					onPress={() => {
 						console.log("click");
 					}}
 					color="secondary"
@@ -98,7 +98,7 @@ const Appearance = () => {
 					Noto (Google)
 				</ThemeButton>
 				<ThemeButton
-					onClick={() => {
+					onPress={() => {
 						console.log("click");
 					}}
 					color="success"
@@ -108,7 +108,7 @@ const Appearance = () => {
 					Fluent (Microsoft)
 				</ThemeButton>
 				<ThemeButton
-					onClick={() => {
+					onPress={() => {
 						console.log("click");
 					}}
 					color="warning"

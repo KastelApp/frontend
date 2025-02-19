@@ -1,4 +1,4 @@
-import { useTranslationStore } from "@/wrapper/Stores.ts";
+import { useTranslationStore } from "@/wrapper/Stores.tsx";
 import { Button, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from "@nextui-org/react";
 import { useEffect, useState } from "react";
 
@@ -46,22 +46,22 @@ const ConfirmDelete = ({
 			key={"confirm-delete-modal"}
 		>
 			<ModalContent>
-				<ModalHeader className="flex flex-col gap-1">{t("guilds.delete.header")}</ModalHeader>
+				<ModalHeader className="flex flex-col gap-1">{t("hubs.delete.header")}</ModalHeader>
 				<ModalBody>
-					<p className="text-lg">{t("guilds.delete.loose")}</p>
+					<p className="text-lg">{t("hubs.delete.loose")}</p>
 					<ul className="ml-6 list-disc">
-						<li>{t("guilds.delete.messages")}</li>
-						<li>{t("guilds.delete.channels")}</li>
-						<li>{t("guilds.delete.roles")}</li>
-						<li>{t("guilds.delete.members")}</li>
-						<li>{t("guilds.delete.banned")}</li>
+						<li>{t("hubs.delete.messages")}</li>
+						<li>{t("hubs.delete.channels")}</li>
+						<li>{t("hubs.delete.roles")}</li>
+						<li>{t("hubs.delete.members")}</li>
+						<li>{t("hubs.delete.banned")}</li>
 					</ul>
 					<p>
 						{timer > 0
-							? t("guilds.delete.sureWait", {
+							? t("hubs.delete.sureWait", {
 									time: timer,
 								})
-							: t("guilds.delete.sureReady")}
+							: t("hubs.delete.sureReady")}
 					</p>
 				</ModalBody>
 				<ModalFooter>
@@ -71,7 +71,7 @@ const ConfirmDelete = ({
 					<Button color="danger" variant="flat" onPress={onClose}>
 						{timer <= 0
 							? t("common.delete")
-							: t("guilds.delete.delete", {
+							: t("hubs.delete.delete", {
 									time: timer,
 								})}
 					</Button>

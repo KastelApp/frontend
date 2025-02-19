@@ -7,11 +7,13 @@ import CustomStatus from "../Modals/CustomStatus.tsx";
 import OverView from "../Settings/User/Overview.tsx";
 import BaseSettings from "../Modals/BaseSettings.tsx";
 import { Section } from "@/types/settings.ts";
-import { useRouter } from "next/router";
-import { useTokenStore, useTranslationStore } from "@/wrapper/Stores.ts";
+import { useTokenStore, useTranslationStore } from "@/wrapper/Stores.tsx";
 import { useUserStore } from "@/wrapper/Stores/UserStore.ts";
 import DifferentTesting from "../Settings/User/DifferentTesting.tsx";
-import getClientVersion from "@/utils/getClientVersion.ts";
+import Appearance from "@/components/Settings/User/Appearance.tsx";
+import Language from "@/components/Settings/User/Language.tsx";
+import { Routes } from "@/utils/Routes.ts";
+import { useRouter } from "@/hooks/useRouter.ts";
 
 const UserOptions = ({
 	children,
@@ -62,7 +64,7 @@ const UserOptions = ({
 			case "logout": {
 				setToken(null);
 
-				router.push("/login");
+				router.push(Routes.login());
 
 				// todo: handle better cleanup
 
@@ -89,6 +91,124 @@ const UserOptions = ({
 					section: <OverView />,
 					disabled: false,
 				},
+				{
+					title: "Sessions",
+					id: "sessions",
+					disabled: true,
+					section: <div>Sessions</div>,
+					endContent: (
+						<Chip color="primary" size="sm" variant="bordered" className="mr-2" radius="sm">
+							Coming Soon
+						</Chip>
+					),
+				},
+				{
+					title: "Account Status", // ? i.e if they got any warnings or bans etc
+					id: "accountStatus",
+					disabled: true,
+					section: <div>Account Status</div>,
+					endContent: (
+						<Chip color="primary" size="sm" variant="bordered" className="mr-2" radius="sm">
+							Coming Soon
+						</Chip>
+					),
+				},
+				{
+					title: "Privacy & Safety",
+					id: "privacySafety",
+					disabled: true,
+					section: <div>Privacy & Safety</div>,
+					endContent: (
+						<Chip color="primary" size="sm" variant="bordered" className="mr-2" radius="sm">
+							Coming Soon
+						</Chip>
+					),
+				},
+			],
+		},
+		{
+			title: "Billing",
+			id: "billing",
+			children: [
+				{
+					title: "Subscriptions",
+					id: "subscriptions",
+					section: <div>subscriptions</div>,
+					disabled: true,
+					endContent: (
+						<Chip color="primary" size="sm" variant="bordered" className="mr-2" radius="sm">
+							Coming Soon
+						</Chip>
+					),
+				},
+				{
+					title: "Gifts",
+					id: "gifts",
+					section: <div>gifts</div>,
+					disabled: true,
+					endContent: (
+						<Chip color="primary" size="sm" variant="bordered" className="mr-2" radius="sm">
+							Coming Soon
+						</Chip>
+					),
+				},
+				{
+					title: "Payment",
+					id: "payment",
+					section: <div>payment</div>,
+					disabled: true,
+					endContent: (
+						<Chip color="primary" size="sm" variant="bordered" className="mr-2" radius="sm">
+							Coming Soon
+						</Chip>
+					),
+				},
+			],
+		},
+		{
+			title: "General",
+			id: "general",
+			children: [
+				{
+					title: "Appearance",
+					id: "appearance",
+					section: <Appearance />,
+					disabled: false,
+				},
+				{
+					title: "Language",
+					id: "language",
+					section: <Language />,
+					disabled: false,
+				},
+				{
+					title: "Notifications",
+					id: "notifications",
+					section: <div>Notifications</div>,
+					disabled: true,
+					endContent: (
+						<Chip color="primary" size="sm" variant="bordered" className="mr-2" radius="sm">
+							Coming Soon
+						</Chip>
+					),
+				},
+			],
+		},
+		{
+			title: "Advanced",
+			id: "advanced",
+			children: [
+				{
+					title: "Public Experiments",
+					id: "publicExperiments",
+					section: <div>Public Experiments</div>,
+					disabled: true,
+					endContent: (
+						<Chip color="primary" size="sm" variant="bordered" className="mr-2" radius="sm">
+							Coming Soon
+						</Chip>
+					),
+				},
 			],
 		},
 	]);
@@ -104,9 +224,6 @@ const UserOptions = ({
 				{
 					title: t("settings.developer.experiments"),
 					id: "experiments",
-					// t! Users should have access to "public" experiments, but not "private" ones
-					// t! private ones are something that are still in the works but may break or may need access for a certian api endpoint
-					// t! which we haven't finalized yet (or if we just want a low roll outs)
 					section: <div>Experiments</div>,
 					disabled: false,
 				},
@@ -134,7 +251,9 @@ const UserOptions = ({
 		});
 	}, []);
 
-	const { channel, version, hash } = getClientVersion();
+	const channel = import.meta.env.VITE_GIT_BRANCH;
+	const version = import.meta.env.VITE_WRAPPER_VERSION;
+	const hash = import.meta.env.VITE_GIT_COMMIT;
 
 	return (
 		<>
@@ -153,125 +272,134 @@ const UserOptions = ({
 					</div>
 				}
 			/>
-			<div
-				// ? yeah yeah, it add's useless code but I do not care
-				onContextMenu={(e) => {
-					if (type !== "context") return;
 
-					e.preventDefault();
+			<CustomStatus isOpen={isOpen} onOpenChange={onOpenChange} onClose={onClose} />
+			<Dropdown
+				placement={orientation === "vertical" ? "right" : "top"}
+				closeOnSelect={false}
+				onOpenChange={(isOpen) => {
+					if (type === "normal") {
+						setDropdownOpen(isOpen);
+					}
 
-					setDropdownOpen(!dropdownOpen);
-
-					if (!dropdownOpen) {
+					if (!isOpen) {
+						setDropdownOpen(false);
 						setStatusOpen(false);
 					}
 				}}
+				isOpen={dropdownOpen}
+				className="bg-darkAccent"
 			>
-				<CustomStatus isOpen={isOpen} onOpenChange={onOpenChange} onClose={onClose} />
-				<Dropdown
-					placement={orientation === "vertical" ? "right" : "top"}
-					closeOnSelect={false}
-					onOpenChange={(isOpen) => {
-						if (type === "normal") {
-							setDropdownOpen(isOpen);
+				<DropdownTrigger>{children}</DropdownTrigger>
+				<DropdownMenu aria-label="Static Actions" onAction={handleAction}>
+					<DropdownItem
+						closeOnSelect={false}
+						key="changeStatus"
+						variant="flat"
+						endContent={
+							<ArrowRight
+								size={20}
+								className={cn("transition-transform duration-300", statusOpen ? "rotate-90" : "")}
+							/>
 						}
-
-						if (!isOpen) {
-							setDropdownOpen(false);
-							setStatusOpen(false);
-						}
-					}}
-					isOpen={dropdownOpen}
-				>
-					<DropdownTrigger>
-						<button className="outline-none">{children}</button>
-					</DropdownTrigger>
-					<DropdownMenu aria-label="Static Actions" onAction={handleAction}>
-						<DropdownItem
-							closeOnSelect={false}
-							key="changeStatus"
-							variant="flat"
-							endContent={
-								<ArrowRight
-									size={20}
-									className={cn("transition-transform duration-300", statusOpen ? "rotate-90" : "")}
-								/>
-							}
+						className="transition-colors duration-300 ease-in-out hover:bg-charcoal-700"
+					>
+						<p>Status</p>
+						<p
+							className={cn(
+								"mt-1 text-xs",
+								status === "Online"
+									? "text-success"
+									: status === "Idle"
+										? "text-warning"
+										: status === "DND"
+											? "text-danger"
+											: "text-gray-500",
+							)}
 						>
-							<p>Status</p>
-							<p className={cn("mt-1 text-xs", status === "Online" ? "text-success" : status === "Idle" ? "text-warning" : status === "DND" ? "text-danger" : "text-gray-500")}>{status}</p>
-							<motion.div
-								className="mt-2 grid grid-cols-[repeat(2,minmax(0px,1fr))] items-center"
-								initial="collapsed"
-								animate={statusOpen ? "expanded" : "collapsed"}
-								variants={{
-									collapsed: { height: 0, opacity: 0 },
-									expanded: { height: "auto", opacity: 1 },
-								}}
-								transition={{ duration: 0.3, delay: 0.05 }}
+							{status}
+						</p>
+						<motion.div
+							className="mt-2 grid grid-cols-[repeat(2,minmax(0px,1fr))] items-center"
+							initial="collapsed"
+							animate={statusOpen ? "expanded" : "collapsed"}
+							variants={{
+								collapsed: { height: 0, opacity: 0 },
+								expanded: { height: "auto", opacity: 1 },
+							}}
+							transition={{ duration: 0.3, delay: 0.05 }}
+						>
+							<Chip
+								onClick={() => handleStatus("Online")}
+								variant="flat"
+								className="mb-2 min-w-[60px]"
+								radius="sm"
+								size="sm"
+								color="success"
 							>
-								<Chip
-									onClick={() => handleStatus("Online")}
-									variant="flat"
-									className="mb-2 min-w-[60px]"
-									radius="sm"
-									size="sm"
-									color="success"
-								>
-									{t("statusTypes.offline")}
-								</Chip>
-								<Chip
-									onClick={() => handleStatus("Idle")}
-									variant="flat"
-									className="right-2 mb-2 min-w-[60px]"
-									radius="sm"
-									size="sm"
-									color="warning"
-								>
-									{t("statusTypes.idle")}
-								</Chip>
-								<Chip
-									onClick={() => handleStatus("DND")}
-									variant="flat"
-									className="mb-2 min-w-[60px]"
-									radius="sm"
-									size="sm"
-									color="danger"
-								>
-									{t("statusTypes.dnd")}
-								</Chip>
-								<Chip
-									onClick={() => handleStatus("Invisible")}
-									variant="flat"
-									className="right-2 mb-2 min-w-[60px]"
-									radius="sm"
-									size="sm"
-									color="default"
-								>
-									{t("statusTypes.invisible")}
-								</Chip>
-							</motion.div>
-						</DropdownItem>
+								{t("statusTypes.online")}
+							</Chip>
+							<Chip
+								onClick={() => handleStatus("Idle")}
+								variant="flat"
+								className="right-2 mb-2 min-w-[60px]"
+								radius="sm"
+								size="sm"
+								color="warning"
+							>
+								{t("statusTypes.idle")}
+							</Chip>
+							<Chip
+								onClick={() => handleStatus("DND")}
+								variant="flat"
+								className="mb-2 min-w-[60px]"
+								radius="sm"
+								size="sm"
+								color="danger"
+							>
+								{t("statusTypes.dnd")}
+							</Chip>
+							<Chip
+								onClick={() => handleStatus("Invisible")}
+								variant="flat"
+								className="right-2 mb-2 min-w-[60px]"
+								radius="sm"
+								size="sm"
+								color="default"
+							>
+								{t("statusTypes.invisible")}
+							</Chip>
+						</motion.div>
+					</DropdownItem>
 
-						<DropdownItem closeOnSelect={true} key="customStatus" variant="flat">
-							<p>{t("customStatus")}</p>
-							<p className="text-xs text-gray-500">My Custom Status</p>
-						</DropdownItem>
-						<DropdownItem key="settings" variant="flat" endContent={<Settings size={20} />}>
-							{t("settings.settings")}
-						</DropdownItem>
-						<DropdownItem
-							key="logout"
-							variant="flat"
-							className="text-danger"
-							color="danger"
-							endContent={<LogOut size={20} />}
-						>
-							{t("logout")}
-						</DropdownItem>
-					</DropdownMenu>
-				</Dropdown>
-			</div>
+					<DropdownItem
+						closeOnSelect={true}
+						key="customStatus"
+						variant="flat"
+						className="transition-colors duration-300 ease-in-out hover:bg-charcoal-700"
+					>
+						<p>{t("customStatus")}</p>
+						<p className="text-xs text-gray-500">My Custom Status</p>
+					</DropdownItem>
+					<DropdownItem
+						key="settings"
+						variant="flat"
+						endContent={<Settings size={20} />}
+						className="transition-colors duration-300 ease-in-out hover:bg-charcoal-700"
+					>
+						{t("settings.settings")}
+					</DropdownItem>
+					<DropdownItem
+						key="logout"
+						variant="flat"
+						className="text-danger transition-colors duration-300 ease-in-out"
+						color="danger"
+						endContent={<LogOut size={20} />}
+					>
+						{t("logout")}
+					</DropdownItem>
+				</DropdownMenu>
+			</Dropdown>
 		</>
 	);
 };

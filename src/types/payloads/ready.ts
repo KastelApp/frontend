@@ -1,6 +1,6 @@
 export interface ReadyPayload {
 	user: UserPayload;
-	guilds: Guild[];
+	hubs: Hub[];
 	settings: Settings;
 	presence: Presence[];
 }
@@ -21,7 +21,7 @@ export interface UserPayload {
 	bio: string | null;
 }
 
-export interface Guild {
+export interface Hub {
 	name: string;
 	description: string | null;
 	features: string[];
@@ -106,8 +106,8 @@ export interface Settings {
 	language: string;
 	privacy: number;
 	theme: "dark" | "light" | "system";
-	guildOrder: {
-		guildId: string;
+	hubOrder: {
+		hubId: string;
 		position: number;
 	}[];
 	navBarLocation: "bottom" | "left";
@@ -144,4 +144,5 @@ export interface ChannelProperty {
 	channelId: string;
 	lastMessageAckId: string | null;
 	timedoutUntil: string | null;
+	mentions: { messageId: string }[];
 }

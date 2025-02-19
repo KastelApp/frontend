@@ -1,8 +1,9 @@
 import { modalStore } from "@/wrapper/Stores/GlobalModalStore.ts";
 import { useTrustedDomainStore } from "@/wrapper/Stores/TrustedDomainStore.ts";
 import { Button, Checkbox } from "@nextui-org/react";
-import NextLink from "next/link";
 import { useRef } from "react";
+import NextLink from "@/components/Link.tsx";
+import cn from "@/utils/cn.ts";
 
 const Link = (props: React.JSX.IntrinsicElements["a"] & { phishingMessage?: boolean }) => {
 	let href = props.href;
@@ -29,8 +30,7 @@ const Link = (props: React.JSX.IntrinsicElements["a"] & { phishingMessage?: bool
 	return (
 		<NextLink
 			href={href ?? ""}
-			passHref
-			className="text-blue-500 hover:underline"
+			className={cn("text-blue-500 hover:underline", props.className)}
 			target={href?.startsWith("http") ? "_blank" : ""}
 			onClick={(e) => {
 				if (href?.startsWith("http")) {
@@ -70,7 +70,7 @@ const Link = (props: React.JSX.IntrinsicElements["a"] & { phishingMessage?: bool
 								<>
 									<Button
 										variant="flat"
-										onClick={() => {
+										onPress={() => {
 											modalStore.getState().closeModal(`nontrusted-link-${href}`);
 										}}
 									>
@@ -80,7 +80,7 @@ const Link = (props: React.JSX.IntrinsicElements["a"] & { phishingMessage?: bool
 										<Button
 											color="primary"
 											variant="flat"
-											onClick={() => {
+											onPress={() => {
 												if (checkboxRef.current?.checked) {
 													useTrustedDomainStore.getState().addTrustedDomain(href);
 												}

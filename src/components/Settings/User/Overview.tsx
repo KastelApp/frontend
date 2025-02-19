@@ -2,15 +2,15 @@ import AllBadges from "@/badges/AllBadges.tsx";
 import Message from "@/components/Message/Message.tsx";
 import EditUser from "@/components/Modals/EditUser.tsx";
 import SaveChanges from "@/components/SaveChanges.tsx";
-import Tooltip from "@/components/Tooltip.tsx";
-import Constants from "@/utils/Constants.ts";
+import Constants from "@/data/constants.ts";
 import { modalStore } from "@/wrapper/Stores/GlobalModalStore.ts";
-import { MessageStates } from "@/wrapper/Stores/MessageStore.ts";
+import { MessageContext, MessageStates } from "@/wrapper/Stores/MessageStore.ts";
 import { useUserStore } from "@/wrapper/Stores/UserStore.ts";
-import { Avatar, Badge, Button, Card, CardBody, Divider, useDisclosure } from "@nextui-org/react";
+import { Avatar, Badge, Button, Card, CardBody, Divider, Tooltip, useDisclosure } from "@nextui-org/react";
 import { Pencil, TriangleAlert, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import mime from "mime";
+import UserModal from "@/components/Modals/UserModal.tsx";
 
 const OverView = () => {
 	const { getCurrentUser, getUser, getAvatarUrl, patchUser } = useUserStore();
@@ -45,7 +45,7 @@ const OverView = () => {
 							<Button
 								color="primary"
 								className="mt-4"
-								onClick={() => {
+								onPress={() => {
 									modalStore.getState().closeModal("avatar-too-large");
 								}}
 							>
@@ -72,7 +72,7 @@ const OverView = () => {
 							<Button
 								color="primary"
 								className="mt-4"
-								onClick={() => {
+								onPress={() => {
 									modalStore.getState().closeModal("avatar-invalid-type");
 								}}
 							>
@@ -152,6 +152,20 @@ const OverView = () => {
 									variant="flat"
 									className="max-h-8 min-h-8 min-w-28 max-w-28 rounded-md"
 									radius="none"
+									onClick={() => {
+										modalStore.getState().createModal({
+											id: `user-modal-${user.id}`,
+											body: <UserModal user={user} />,
+											hideCloseButton: true,
+											props: {
+												modalSize: "lg",
+												radius: "none",
+												classNames: {
+													body: "p-0",
+												},
+											},
+										});
+									}}
 								>
 									View Profile
 								</Button>
@@ -160,7 +174,7 @@ const OverView = () => {
 									variant="flat"
 									className="max-h-8 min-h-8 min-w-16 max-w-16 rounded-md"
 									radius="none"
-									onClick={() => {
+									onPress={() => {
 										onOpenChange();
 									}}
 								>
@@ -194,13 +208,13 @@ const OverView = () => {
 								<CardBody className="flex max-h-[85vh] flex-col overflow-y-auto">
 									<div className="mb-4 flex items-center justify-between">
 										<div>
-											<p className="text-lg font-semibold">Global Nickname</p>
+											<p className="text-lg font-semibold text-white">Global Nickname</p>
 											<p className="text-md">{user?.globalNickname || "N/A"}</p>
 										</div>
 									</div>
 									<div className="mb-4 flex items-center justify-between">
 										<div>
-											<p className="text-lg font-semibold">Username</p>
+											<p className="text-lg font-semibold text-white">Username</p>
 											<span className="flex">
 												<p className="text-md">{user?.username}</p>
 												<p className="text-md ml-0.5 text-gray-400">#{user?.tag}</p>
@@ -209,20 +223,28 @@ const OverView = () => {
 									</div>
 									<div className="mb-4 flex items-center justify-between">
 										<div>
-											<p className="text-lg font-semibold">Email</p>
-											<p className="text-md blur-sm transition-all duration-300 hover:blur-0">{user?.email}</p>
+											<p className="text-lg font-semibold text-white">Email</p>
+											<p className="text-md blur-sm transition-all duration-300 hover:blur-0 text-white">{user?.email}</p>
 										</div>
 									</div>
 									<div className="mb-4 flex items-center justify-between">
 										<div>
-											<p className="text-lg font-semibold">Phone Number</p>
+											<p className="text-lg font-semibold text-white">Phone Number</p>
 											<p className="text-md">{user?.phoneNumber ?? "N/A"}</p>
 										</div>
 									</div>
 									<div className="mb-4 flex items-center justify-between">
 										<div>
-											<p className="text-lg font-semibold">About Me</p>
+											<p className="text-lg font-semibold text-white">About Me</p>
 											<p className="text-md overflow-hidden whitespace-pre-line break-words">{user?.bio || "N/A"}</p>
+										</div>
+									</div>
+									<div className="mb-4 flex items-center justify-between">
+										<div>
+											<p className="text-lg font-semibold text-white">Short About Me</p>
+											<p className="text-md overflow-hidden whitespace-pre-line break-words">
+												{user?.shortBio || "N/A"}
+											</p>
 										</div>
 									</div>
 								</CardBody>
@@ -233,7 +255,7 @@ const OverView = () => {
 			</Card>
 			<Divider className="mb-6 mt-6" />
 			<div className="ml-2">
-				<p className="mb-2 text-xl font-semibold">Account & Security</p>
+				<p className="mb-2 text-xl font-semibold text-white">Account & Security</p>
 				{/* 
                 // todo: finish
                 <div>
@@ -255,7 +277,7 @@ const OverView = () => {
 					</p>
 					<Card>
 						<CardBody className="mt-4 select-none bg-lightAccent dark:bg-darkAccent">
-							<p className="mb-2 mt-2 text-lg">Before:</p>
+							<p className="mb-2 mt-2 text-lg text-white">Before:</p>
 							<div className="flex items-center rounded-lg bg-charcoal-700">
 								<div className="mt-2 w-full">
 									<Message
@@ -287,16 +309,17 @@ const OverView = () => {
 												member: null,
 												roleColor: null,
 											},
+											context: MessageContext.Unknown,
 										}}
 										isHighlighted={false}
-										inGuild={false}
+										inHub={false}
 										mentionsUser={false}
 										replyMessage={null}
 										isButtonDisabled
 									/>
 								</div>
 							</div>
-							<p className="mb-2 mt-2 text-lg">After:</p>
+							<p className="mb-2 mt-2 text-lg text-white">After:</p>
 							<div className="flex items-center rounded-lg bg-charcoal-700">
 								<div className="mt-2 w-full">
 									<Message
@@ -328,10 +351,11 @@ const OverView = () => {
 												member: null,
 												roleColor: null,
 											},
+											context: MessageContext.Unknown,
 										}}
 										isButtonDisabled
 										isHighlighted={false}
-										inGuild={false}
+										inHub={false}
 										mentionsUser={false}
 										replyMessage={null}
 									/>
@@ -372,7 +396,7 @@ const OverView = () => {
 									<Button
 										color="primary"
 										className="mt-4"
-										onClick={() => {
+										onPress={() => {
 											modalStore.getState().closeModal("avatar-failed");
 										}}
 									>

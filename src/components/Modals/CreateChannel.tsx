@@ -1,8 +1,8 @@
-import Constants from "@/utils/Constants.ts";
+import Constants from "@/data/constants.ts";
 import { Button, Input, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Textarea } from "@nextui-org/react";
 import { useState } from "react";
 import { RadioGroup, Radio, cn, RadioProps } from "@nextui-org/react";
-import { useTranslationStore } from "@/wrapper/Stores.ts";
+import { useTranslationStore } from "@/wrapper/Stores.tsx";
 
 export const CustomRadio = (props: RadioProps) => {
 	const { children, ...otherProps } = props;
@@ -35,33 +35,33 @@ const CreateChannelModal = ({
 	const { t } = useTranslationStore();
 
 	const mappings = {
-		[Constants.channelTypes.GuildCategory]: {
-			name: t("channelTypes.guildCategory.name"),
-			description: t("channelTypes.guildCategory.description"),
+		[Constants.channelTypes.HubCategory]: {
+			name: t("channelTypes.hubCategory.name"),
+			description: t("channelTypes.hubCategory.description"),
 		},
-		[Constants.channelTypes.GuildText]: {
-			name: t("channelTypes.guildText.name"),
-			description: t("channelTypes.guildText.description"),
+		[Constants.channelTypes.HubText]: {
+			name: t("channelTypes.hubText.name"),
+			description: t("channelTypes.hubText.description"),
 		},
-		[Constants.channelTypes.GuildVoice]: {
-			name: t("channelTypes.guildVoice.name"),
-			description: t("channelTypes.guildVoice.description"),
+		[Constants.channelTypes.HubVoice]: {
+			name: t("channelTypes.hubVoice.name"),
+			description: t("channelTypes.hubVoice.description"),
 		},
-		[Constants.channelTypes.GuildNews]: {
-			name: t("channelTypes.guildNews.name"),
-			description: t("channelTypes.guildNews.description"),
+		[Constants.channelTypes.HubNews]: {
+			name: t("channelTypes.hubNews.name"),
+			description: t("channelTypes.hubNews.description"),
 		},
-		[Constants.channelTypes.GuildNewMember]: {
-			name: t("channelTypes.guildNewMember.name"),
-			description: t("channelTypes.guildNewMember.description"),
+		[Constants.channelTypes.HubNewMember]: {
+			name: t("channelTypes.hubNewMember.name"),
+			description: t("channelTypes.hubNewMember.description"),
 		},
-		[Constants.channelTypes.GuildMarkdown]: {
-			name: t("channelTypes.guildMarkdown.name"),
-			description: t("channelTypes.guildMarkdown.description"),
+		[Constants.channelTypes.HubMarkdown]: {
+			name: t("channelTypes.hubMarkdown.name"),
+			description: t("channelTypes.hubMarkdown.description"),
 		},
-		[Constants.channelTypes.GuildRules]: {
-			name: t("channelTypes.guildRules.name"),
-			description: t("channelTypes.guildRules.description"),
+		[Constants.channelTypes.HubRules]: {
+			name: t("channelTypes.hubRules.name"),
+			description: t("channelTypes.hubRules.description"),
 		},
 	};
 
@@ -163,7 +163,7 @@ const CreateChannelModal = ({
 					<Button
 						color="danger"
 						variant="flat"
-						onClick={() => {
+						onPress={() => {
 							if (tab === 0) {
 								onOpenChange();
 							} else {
@@ -176,7 +176,7 @@ const CreateChannelModal = ({
 					<Button
 						color="success"
 						variant="flat"
-						onClick={() => {
+						onPress={() => {
 							if (tab === 0) {
 								setTab(1);
 							} else {

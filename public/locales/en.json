@@ -11,7 +11,8 @@
 	},
 	"_debug": {
 		"title": "This is always translated",
-		"test": "{{lorempsum.words:25}}"
+		"test": "{{lorempsum.words:25}}",
+		"markdown": "HELLO **WORLD** how are *you* today?\n\nGreat! <#123>"
 	},
 	"error": {
 		"forohfor": {
@@ -144,31 +145,31 @@
 		"server": "Server"
 	},
 	"channelTypes": {
-		"guildCategory": {
+		"hubCategory": {
 			"name": "Category",
 			"description": "A category that contains channels."
 		},
-		"guildText": {
+		"hubText": {
 			"name": "Text Channel",
 			"description": "A channel for text messages."
 		},
-		"guildNews": {
+		"hubNews": {
 			"name": "Announcement Channel",
 			"description": "A channel for announcements."
 		},
-		"guildRules": {
+		"hubRules": {
 			"name": "Rules Channel",
 			"description": "A channel for rules."
 		},
-		"guildVoice": {
+		"hubVoice": {
 			"name": "Voice Channel",
 			"description": "A channel for voice communication."
 		},
-		"guildNewMember": {
+		"hubNewMember": {
 			"name": "New Member Channel",
 			"description": "A channel that shows for recently joined members"
 		},
-		"guildMarkdown": {
+		"hubMarkdown": {
 			"name": "Markdown Channel",
 			"description": "A channel that is a single markdown document"
 		}
@@ -214,7 +215,8 @@
 	"messages": {
 		"phishing": "Phishing likely",
 		"showMessage": "Show Message",
-		"hideMessage": "Hide Message"
+		"hideMessage": "Hide Message",
+		"replyingToDeletedMessage": "Original message was deleted."
 	},
 	"statusTypes": {
 		"online": "Online",
@@ -236,21 +238,22 @@
 	},
 	"customStatus": "Custom Status",
 	"logout": "Logout",
-	"guilds": {
+	"hubs": {
 		"members": "Members",
 		"online": "Online",
 		"invites": {
 			"join": "Join",
-			"validInvite": "You recived an invite to join a guild!",
-			"invalidInvite": "The invite you tried to use is invalid or expired."
+			"validInvite": "You recived an invite to join a hub!",
+			"invalidInvite": "This invite is invalid.",
+			"invalid": "Ask for a new one?"
 		},
 		"nickname": {
 			"header": "Change Your Nickname",
 			"description": "Max of {{max}} characters - {{remaining}} remaining"
 		},
 		"delete": {
-			"header": "Are you sure you want to delete your guild?",
-			"loose": "If you delete your guild you will loose these:",
+			"header": "Are you sure you want to delete your hub?",
+			"loose": "If you delete your hub you will loose these:",
 			"messages": "Messages",
 			"channels": "Channels",
 			"roles": "Roles",

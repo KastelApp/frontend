@@ -1,6 +1,6 @@
 export interface PresencesUpdatePayload {
 	user: User;
-	guildId: string;
+	hubId: string;
 	presences: Presence[];
 }
 

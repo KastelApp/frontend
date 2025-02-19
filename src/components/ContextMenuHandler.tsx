@@ -17,10 +17,11 @@ export interface ContextMenuProps {
 	label: React.ReactNode;
 	subValues?: Omit<ContextMenuProps, "subValues">[];
 	divider?: boolean;
-	onClick?: (e: Event) => void;
+	onPress?: (e: Event) => void;
 	checkBox?: boolean;
 	checked?: boolean;
 	preventCloseOnClick?: boolean;
+	inverse?: boolean; // ? for right click
 }
 
 const ContextItemHandler = ({
@@ -28,24 +29,24 @@ const ContextItemHandler = ({
 	isCheckBox,
 	isChecked,
 	className,
-	onClick,
+	onPress,
 }: {
 	isCheckBox?: boolean;
 	isChecked?: boolean;
 	children: React.ReactNode;
 	className?: string;
-	onClick?: (e: Event) => void;
+	onPress?: (e: Event) => void;
 }) => {
 	if (isCheckBox) {
 		return (
-			<ContextMenuCheckboxItem checked={isChecked} className={cn("text-white", className)} onSelect={onClick}>
+			<ContextMenuCheckboxItem checked={isChecked} className={cn("text-white", className)} onSelect={onPress}>
 				{children}
 			</ContextMenuCheckboxItem>
 		);
 	}
 
 	return (
-		<ContextMenuItem className={className} onSelect={onClick}>
+		<ContextMenuItem className={className} onSelect={onPress}>
 			{children}
 		</ContextMenuItem>
 	);
@@ -55,17 +56,19 @@ const ContextMenuHandler = ({
 	children,
 	items,
 	className,
+	identifier,
 }: {
 	children: React.ReactNode;
 	items?: ContextMenuProps[];
 	className?: string;
+	identifier?: string;
 }): React.ReactNode => {
 	if (!items || items.length === 0) return children;
 
 	return (
 		<ContextMenu>
 			<ContextMenuTrigger>{children}</ContextMenuTrigger>
-			<ContextMenuContent className={className}>
+			<ContextMenuContent className={className} data-identifier={identifier}>
 				{items.map((item, index) => {
 					if (!item.subValues || item.subValues.length === 0) {
 						return (
@@ -74,17 +77,19 @@ const ContextMenuHandler = ({
 									isCheckBox={item.checkBox}
 									isChecked={item.checked}
 									key={index}
-									onClick={(event) => {
+									onPress={(event) => {
 										if (item.preventCloseOnClick) {
 											event.preventDefault();
 										}
 
-										item.onClick?.(event);
+										item.onPress?.(event);
 									}}
 									className="flex cursor-pointer"
 								>
 									{item.startContent}
-									<p className="text-white">{item.label}</p>
+									<span data-identifier={identifier} className="text-white">
+										{item.label}
+									</span>
 									<div className="ml-auto">{item.endContent}</div>
 								</ContextItemHandler>
 								{item.divider && <Divider className="mb-1 mt-1" />}
@@ -96,24 +101,26 @@ const ContextMenuHandler = ({
 						<>
 							<ContextMenuSub key={index}>
 								<ContextMenuSubTrigger className="text-white">{item.label}</ContextMenuSubTrigger>
-								<ContextMenuSubContent>
+								<ContextMenuSubContent data-identifier={identifier}>
 									{item.subValues.map((subItem, subIndex) => (
 										<>
 											<ContextItemHandler
 												isCheckBox={subItem.checkBox}
 												isChecked={subItem.checked}
 												key={subIndex}
-												onClick={(event) => {
+												onPress={(event) => {
 													if (subItem.preventCloseOnClick) {
 														event.preventDefault();
 													}
 
-													subItem.onClick?.(event);
+													subItem.onPress?.(event);
 												}}
 												className="flex cursor-pointer"
 											>
 												{subItem.startContent}
-												<p>{subItem.label}</p>
+												<span data-identifier={identifier} className="text-white">
+													{item.label}
+												</span>
 												<div className="ml-auto">{subItem.endContent}</div>
 											</ContextItemHandler>
 											{subItem.divider && <Divider className="mb-1 mt-1" />}

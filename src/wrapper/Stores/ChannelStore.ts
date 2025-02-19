@@ -1,12 +1,13 @@
 import { create } from "zustand";
-import { useAPIStore } from "../Stores.ts";
+import { useAPIStore } from "../Stores.tsx";
 import { useUserStore } from "./UserStore.ts";
 import { useMemberStore } from "./Members.ts";
 import { useRoleStore } from "./RoleStore.ts";
 import PermissionHandler from "../PermissionHandler.ts";
 import Logger from "@/utils/Logger.ts";
-import { channelTypes } from "@/utils/Constants.ts";
+import { channelTypes } from "@/data/constants.ts";
 import { persist } from "zustand/middleware";
+import deepMerge from "@/utils/deepMerge.ts";
 
 export interface PermissionOverrides {
 	[key: string]: PermissionOverride;
@@ -20,7 +21,7 @@ export interface PermissionOverride {
 }
 
 export interface Channel {
-	guildId: string;
+	hubId: string;
 	name: string;
 	description: string | null;
 	id: string;
@@ -44,12 +45,13 @@ export interface ChannelStore {
 	removeChannel(id: string): void;
 	fetchChannel(id: string): Promise<Channel | undefined>;
 	getChannel(id: string): Channel | undefined;
-	getChannels(guildId: string): Channel[];
-	getChannelsWithValidPermissions(guildId: string): Channel[];
-	getTopChannel(guildId: string): Channel | undefined;
-	getSortedChannels(guildId: string, permissionCheck?: boolean): Channel[];
-	sendTyping(guildId: string, channelId: string): void;
-	getGuildId(channelId: string): string | undefined;
+	getChannels(hubId: string): Channel[];
+	getChannelsWithValidPermissions(hubId: string): Channel[];
+	getTopChannel(hubId: string): Channel | undefined;
+	getSortedChannels(hubId: string, permissionCheck?: boolean): Channel[];
+	sendTyping(hubId: string, channelId: string): void;
+	getHubId(channelId: string): string | undefined;
+	editChannel(channelId: string, data: Partial<Channel>): void;
 }
 
 export interface PerChannel {
@@ -85,18 +87,33 @@ export interface PerChannel {
 	 * When the user started typing
 	 */
 	typingStarted: number;
-	/**
-	 * If there's more messages before (i.e on the top)
-	 */
-	hasMoreBefore: boolean;
-	/**
-	 * If there's more messages after (i.e on the bottom)
-	 */
-	hasMoreAfter: boolean;
-	/**
-	 * If something went wrong fetching the messages
-	 */
-	fetchingError: boolean;
+
+	fetchingInfo: {
+		/**
+		 * If there's more on top
+		 */
+		hasMoreAfter: boolean;
+		/**
+		 * If there's more on bottom
+		 */
+		hasMoreBefore: boolean;
+		/**
+		 * If there was an error fetching data
+		 */
+		fetchingError: boolean;
+		/**
+		 * If we've already fetched the initial data.
+		 */
+		fetchedInitial: boolean;
+
+		/**
+		 * The id's
+		 */
+		renderedItems: string[];
+
+		scrollPosition: number;
+	};
+
 	/**
 	 * The user's who are currently typing
 	 */
@@ -106,6 +123,10 @@ export interface PerChannel {
 	}[];
 }
 
+export type RecursivePartial<T> = {
+	[P in keyof T]?: RecursivePartial<T[P]>;
+};
+
 export interface PerChannelStore {
 	channels: {
 		[key: string]: PerChannel;
@@ -113,7 +134,7 @@ export interface PerChannelStore {
 	getChannel(channelId: string): PerChannel;
 	addChannel(channelId: string): void;
 	removeChannel(channelId: string): void;
-	updateChannel(channelId: string, data: Partial<PerChannel>): void;
+	updateChannel(channelId: string, data: RecursivePartial<PerChannel>): void;
 }
 
 export interface ContentStore {
@@ -166,8 +187,8 @@ export const useChannelStore = create<ChannelStore>((set, get) => ({
 
 		console.log("FETCH", api);
 	},
-	getChannels: (guildId) => get().channels.filter((channel) => channel.guildId === guildId),
-	getChannelsWithValidPermissions: (guildId) => {
+	getChannels: (hubId) => get().channels.filter((channel) => channel.hubId === hubId),
+	getChannelsWithValidPermissions: (hubId) => {
 		const clientUser = useUserStore.getState().getCurrentUser();
 
 		if (!clientUser) {
@@ -176,49 +197,51 @@ export const useChannelStore = create<ChannelStore>((set, get) => ({
 			return [];
 		}
 
-		const guildMember = useMemberStore.getState().getMember(guildId, clientUser.id);
-		const roles = useRoleStore.getState().getRoles(guildId);
-		const channels = get().channels.filter((channel) => channel.guildId === guildId);
+		const hubMember = useMemberStore.getState().getMember(hubId, clientUser.id);
+		const roles = useRoleStore.getState().getRoles(hubId);
+		const channels = get().channels.filter((channel) => channel.hubId === hubId);
 
-		if (!guildMember || !roles) {
-			Logger.warn("No guild member or roles found", "ChannelStore | getChannelsWithValidPermissions");
+		// console.log(hubMember, new Error())
+
+		if (!hubMember || !roles) {
+			Logger.warn("No hub member or roles found", "ChannelStore | getChannelsWithValidPermissions");
 
 			return [];
 		}
 
 		const permissionHandler = new PermissionHandler(
 			clientUser.id,
-			guildMember.owner,
-			guildMember.roles.map((roleId) => roles.find((role) => role.id === roleId)!).filter(Boolean),
+			hubMember.owner,
+			hubMember.roles.map((roleId) => roles.find((role) => role.id === roleId)!).filter(Boolean),
 			channels,
 		);
 
 		return channels.filter((channel) => permissionHandler.hasChannelPermission(channel.id, ["ViewMessageHistory"]));
 	},
-	getTopChannel: (guildId) => {
-		const channels = get().getChannelsWithValidPermissions(guildId);
+	getTopChannel: (hubId) => {
+		const channels = get().getChannelsWithValidPermissions(hubId);
 
 		const topChannel = channels
 			.filter((channel) =>
 				[
-					channelTypes.GuildMarkdown,
-					channelTypes.GuildNewMember,
-					channelTypes.GuildNews,
-					channelTypes.GuildRules,
-					channelTypes.GuildText,
+					channelTypes.HubMarkdown,
+					channelTypes.HubNewMember,
+					channelTypes.HubNews,
+					channelTypes.HubRules,
+					channelTypes.HubText,
 				].includes(channel.type),
 			)
 			.sort((a, b) => a.position - b.position)[0];
 
 		return topChannel;
 	},
-	getSortedChannels: (guildId, permissionCheck) => {
-		const baseChannels = permissionCheck ? get().getChannelsWithValidPermissions(guildId) : get().getChannels(guildId);
+	getSortedChannels: (hubId, permissionCheck) => {
+		const baseChannels = permissionCheck ? get().getChannelsWithValidPermissions(hubId) : get().getChannels(hubId);
 
 		const rawSortedChannels: CustomChannel[] = [];
 
 		const parentlessChannels = baseChannels.filter(
-			(channel) => !channel.parentId && channel.type !== channelTypes.GuildCategory,
+			(channel) => !channel.parentId && channel.type !== channelTypes.HubCategory,
 		);
 
 		for (const channel of parentlessChannels) {
@@ -228,7 +251,7 @@ export const useChannelStore = create<ChannelStore>((set, get) => ({
 			});
 		}
 
-		const categoryChannels = baseChannels.filter((channel) => channel.type === channelTypes.GuildCategory);
+		const categoryChannels = baseChannels.filter((channel) => channel.type === channelTypes.HubCategory);
 
 		for (const category of categoryChannels) {
 			const categoryChannels = baseChannels.filter((channel) => channel.parentId === category.id);
@@ -240,11 +263,11 @@ export const useChannelStore = create<ChannelStore>((set, get) => ({
 		}
 
 		const parentsOnly = rawSortedChannels
-			.filter((channel) => channel.type === channelTypes.GuildCategory)
+			.filter((channel) => channel.type === channelTypes.HubCategory)
 			.sort((a, b) => a.position - b.position);
 
 		const sortedParentlessChannels = rawSortedChannels
-			.filter((channel) => !channel.parentId && channel.type !== channelTypes.GuildCategory)
+			.filter((channel) => !channel.parentId && channel.type !== channelTypes.HubCategory)
 			.sort((a, b) => a.position - b.position);
 
 		// ? now we sort it back to a single array. That is: [parentless, parentless, parent, child, child, parent, parent, child, child]
@@ -263,11 +286,11 @@ export const useChannelStore = create<ChannelStore>((set, get) => ({
 
 		return sortedChannels;
 	},
-	sendTyping: (guildId, channelId) => {
+	sendTyping: (hubId, channelId) => {
 		// ? We use `getChannelsWithValidPermissions` just so we don't have to check permissions our self
 		// ? Since if the channel does not exist we don't even make a API call
 		const channel = get()
-			.getChannelsWithValidPermissions(guildId)
+			.getChannelsWithValidPermissions(hubId)
 			.find((channel) => channel.id === channelId);
 
 		if (!channel) return;
@@ -280,12 +303,25 @@ export const useChannelStore = create<ChannelStore>((set, get) => ({
 
 		usePerChannelStore.getState().updateChannel(channelId, { lastTypingSent: Date.now() });
 	},
-	getGuildId: (channelId) => {
+	getHubId: (channelId) => {
 		const channel = get().channels.find((channel) => channel.id === channelId);
 
-		return channel?.guildId;
+		return channel?.hubId;
 	},
 	getChannel: (id) => get().channels.find((channel) => channel.id === id),
+	editChannel: (channelId, data) => {
+		const currentChannels = get().channels;
+
+		const channel = currentChannels.find((channel) => channel.id === channelId);
+
+		if (!channel) return;
+
+		const editedChannel = deepMerge({ ...channel }, { ...data });
+
+		set({
+			channels: [...currentChannels.filter((channel) => channel.id !== channelId), editedChannel],
+		});
+	},
 }));
 
 export const usePerChannelStore = create<PerChannelStore>((set, get) => ({
@@ -297,14 +333,19 @@ export const usePerChannelStore = create<PerChannelStore>((set, get) => ({
 				lastTyped: 0,
 				lastTypingSent: 0,
 				scrollPosition: 0,
-				fetchingError: false,
-				hasMoreAfter: true,
-				hasMoreBefore: true,
 				editingStateId: null,
 				replyingStateId: null,
 				typingUsers: [],
 				jumpingStateId: null,
 				typingStarted: 0,
+				fetchingInfo: {
+					fetchedInitial: false,
+					fetchingError: false,
+					hasMoreAfter: false,
+					hasMoreBefore: false,
+					renderedItems: [],
+					scrollPosition: 0,
+				},
 			} satisfies PerChannel),
 			...get().channels[channelId],
 		};
@@ -318,9 +359,14 @@ export const usePerChannelStore = create<PerChannelStore>((set, get) => ({
 					scrollPosition: 0,
 					lastTyped: 0,
 					lastTypingSent: 0,
-					fetchingError: false,
-					hasMoreAfter: true,
-					hasMoreBefore: true,
+					fetchingInfo: {
+						fetchedInitial: false,
+						fetchingError: false,
+						hasMoreAfter: false,
+						hasMoreBefore: false,
+						renderedItems: [],
+						scrollPosition: 0,
+					},
 					editingStateId: null,
 					replyingStateId: null,
 					typingUsers: [],
@@ -343,9 +389,14 @@ export const usePerChannelStore = create<PerChannelStore>((set, get) => ({
 			lastTyped: 0,
 			lastTypingSent: 0,
 			scrollPosition: 0,
-			fetchingError: false,
-			hasMoreAfter: true,
-			hasMoreBefore: true,
+			fetchingInfo: {
+				fetchedInitial: false,
+				fetchingError: false,
+				hasMoreAfter: false,
+				hasMoreBefore: false,
+				renderedItems: [],
+				scrollPosition: 0,
+			},
 			editingStateId: null,
 			replyingStateId: null,
 			typingUsers: [],
@@ -355,20 +406,22 @@ export const usePerChannelStore = create<PerChannelStore>((set, get) => ({
 
 		const channel = get().getChannel(channelId) ?? base;
 
-		// ? de-dupe the states (because im lazy)
+		// ? de-dupe the states
 		const currentStates = data.currentStates
 			? Array.from(new Set([...data.currentStates]))
 			: Array.from(new Set([...channel.currentStates]));
+
+		// Deep merge the data object with the existing channel state
+		const mergedData = deepMerge({ ...channel }, { ...data });
 
 		set({
 			channels: {
 				...get().channels,
 				[channelId]: {
 					...base,
-					...channel,
-					...data,
+					...mergedData,
 					currentStates,
-				},
+				} as PerChannel,
 			},
 		});
 	},

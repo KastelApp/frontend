@@ -1,9 +1,10 @@
 import UserModal from "@/components/Modals/UserModal.tsx";
 import UserPopover from "@/components/Popovers/UserPopover.tsx";
+import { modalStore } from "@/wrapper/Stores/GlobalModalStore.ts";
 import { Member } from "@/wrapper/Stores/Members.ts";
 import { Role } from "@/wrapper/Stores/RoleStore.ts";
 import { User } from "@/wrapper/Stores/UserStore.ts";
-import { Popover, PopoverContent, PopoverTrigger, useDisclosure } from "@nextui-org/react";
+import { Popover, PopoverContent, PopoverTrigger } from "@nextui-org/react";
 import { useState } from "react";
 
 const PopOverData = ({
@@ -23,31 +24,64 @@ const PopOverData = ({
 }) => {
 	const [isOpen, setIsOpen] = useState(false);
 
-	const { isOpen: isModalOpen, onOpen, onClose } = useDisclosure();
-
 	if (onlyChildren) return <>{children}</>;
 
 	return (
 		<>
-			<UserModal isOpen={isModalOpen} onClose={onClose} user={user} />
 			<Popover
 				placement="right"
 				isOpen={isOpen}
 				onOpenChange={setIsOpen}
-				shouldCloseOnInteractOutside={() => {
+				shouldCloseOnInteractOutside={(e) => {
+					const identifier = e.getAttribute("data-identifier");
+
+					if (identifier === "role") {
+						return false;
+					}
+
+					// ? get its parent if it has one and check
+					const parent = e.parentElement;
+
+					if (!parent) {
+						setIsOpen(false);
+
+						return false;
+					}
+
+					const parentIdentifier = parent.getAttribute("data-identifier");
+
+					if (parentIdentifier === "role") {
+						return false;
+					}
+
 					setIsOpen(false);
+
 					return false;
+				}}
+				classNames={{
+					trigger: "z-0",
 				}}
 			>
 				<PopoverTrigger>{children}</PopoverTrigger>
-				<PopoverContent>
+				<PopoverContent className="z-50 rounded-lg border-3 border-charcoal-700 bg-darkAccent px-0 py-0">
 					<UserPopover
 						member={{
 							user: user,
 							member: member ?? null,
 						}}
-						onClick={() => {
-							onOpen();
+						onPress={() => {
+							modalStore.getState().createModal({
+								id: `user-modal-${user.id}`,
+								body: <UserModal user={user} />,
+								hideCloseButton: true,
+								props: {
+									modalSize: "lg",
+									radius: "none",
+									classNames: {
+										body: "p-0",
+									},
+								},
+							});
 							setIsOpen(false);
 						}}
 					/>

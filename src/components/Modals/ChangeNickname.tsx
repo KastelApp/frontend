@@ -1,4 +1,4 @@
-import { useTranslationStore } from "@/wrapper/Stores.ts";
+import { useTranslationStore } from "@/wrapper/Stores.tsx";
 import { Button, Input, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from "@nextui-org/react";
 import { useState } from "react";
 
@@ -17,7 +17,7 @@ const ChangeNickname = ({
 	return (
 		<Modal isOpen={isOpen} onOpenChange={onOpenChange} placement="top-center" size="lg">
 			<ModalContent>
-				<ModalHeader className="flex flex-col gap-1">{t("guilds.nickname.header")}</ModalHeader>
+				<ModalHeader className="flex flex-col gap-1">{t("hubs.nickname.header")}</ModalHeader>
 				<ModalBody>
 					<Input
 						autoFocus
@@ -25,7 +25,7 @@ const ChangeNickname = ({
 						variant="bordered"
 						maxLength={32}
 						className="w-full min-w-64"
-						description={t("guilds.nickname.description", { remaining: 32 - nickname.length, max: 32 })}
+						description={t("hubs.nickname.description", { remaining: 32 - nickname.length, max: 32 })}
 						value={nickname}
 						onChange={(e) => setNickname(e.target.value)}
 					/>

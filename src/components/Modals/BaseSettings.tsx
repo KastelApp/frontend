@@ -27,8 +27,8 @@ const Section = ({
 						child.danger ? "bg-danger/20 text-danger hover:bg-danger/15 focus:bg-danger/20" : "text-white",
 					)}
 					onClick={() => {
-						if (child.onClick) {
-							child.onClick();
+						if (child.onPress) {
+							child.onPress();
 						}
 
 						if (!child.disabled && child.section) {
@@ -48,7 +48,7 @@ const Section = ({
 };
 
 /**
- * This is a helper made to make creating setting modals easier, only two spots using this right now are user and guild settings
+ * This is a helper made to make creating setting modals easier, only two spots using this right now are user and hub settings
  */
 const BaseSettings = ({
 	isOpen,
@@ -102,7 +102,6 @@ const BaseSettings = ({
 										<Section
 											title={section.title}
 											key={section.title}
-											// eslint-disable-next-line react/no-children-prop
 											children={section.children}
 											setSection={setSelectedSection}
 										/>

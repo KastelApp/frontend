@@ -1,5 +1,5 @@
 import FlagUtils from "./FlagUtils.ts";
-import { privateFlags, publicFlags } from "./Constants.ts";
+import { privateFlags, publicFlags } from "@/data/constants.ts";
 
 const publicPrivateFlags: (keyof typeof privateFlags)[] = ["Ghost", "VerifiedBot", "Bot"];
 

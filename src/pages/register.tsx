@@ -13,11 +13,10 @@ import {
 import { useEffect, useState } from "react";
 import { EyeIcon, EyeOffIcon, LoaderCircle } from "lucide-react";
 import confetti from "canvas-confetti";
-import SEO from "@/components/SEO.tsx";
-import NextLink from "next/link";
-import { useClientStore, useTokenStore, useTranslationStore } from "@/wrapper/Stores.ts";
-import { useRouter } from "next/router";
-import onEnter from "@/utils/onEnter.ts";
+import { useClientStore, useIsReady, useTokenStore, useTranslationStore } from "@/wrapper/Stores.tsx";
+import { Routes } from "@/utils/Routes.ts";
+import { useRouter } from "@/hooks/useRouter.ts";
+import NextLink from "@/components/Link.tsx";
 
 const Register = () => {
 	const [isVisible, setIsVisible] = useState(false);
@@ -25,6 +24,7 @@ const Register = () => {
 	const toggleVisibility = () => setIsVisible(!isVisible);
 	const toggleConfirmVisibility = () => setIsConfirmVisible(!isConfirmVisible);
 
+	const { setIsReady } = useIsReady();
 	const { client } = useClientStore();
 	const { t } = useTranslationStore();
 	const { setToken } = useTokenStore();
@@ -170,145 +170,143 @@ const Register = () => {
 		});
 
 		setToken(attemptRegister.token);
+		setIsReady(false);
 
 		setTimeout(() => {
-			router.push("/app");
+			router.push(Routes.app());
 		}, 1000);
 	};
 
 	return (
-		<>
-			<SEO title={"Register"} />
-			<HomeLayout>
-				<div className="flex items-center justify-center">
-					<Card className="mt-32 flex w-full max-w-md items-center justify-center bg-lightAccent p-8 dark:bg-darkAccent">
-						<div className="w-full max-w-md">
-							<div className="text-center">
-								<h1 className="text-3xl font-bold">{t("register.title")}</h1>
-								<p className="mt-4 text-medium">{t("register.subtitle")}</p>
-							</div>
-							<div className="text-error-500 pb-0 pl-4 pt-3 text-center text-sm text-danger">{error || "\u00A0"}</div>
-							<form className="mt-4">
-								<div className="flex flex-col items-center space-y-4">
-									<Input
-										isClearable
-										type="text"
-										label={t("register.username.label")}
-										variant="bordered"
-										placeholder={t("register.username.placeholder")}
-										onClear={() => setUsername("")}
-										className="max-w-xs"
-										description={t("register.username.description")}
-										onValueChange={setUsername}
-										value={username}
-										isRequired
-										errorMessage={usernameError || t("register.username.error")}
-										isInvalid={!!usernameError}
-										minLength={3}
-										tabIndex={1}
-									/>
-									<Input
-										isClearable
-										type="email"
-										label={t("register.email.label")}
-										variant="bordered"
-										placeholder={t("register.email.placeholder")}
-										onClear={() => setEmail("")}
-										className="max-w-xs"
-										description={t("register.email.description")}
-										onValueChange={setEmail}
-										value={email}
-										isRequired
-										errorMessage={emailError || t("register.email.error")}
-										isInvalid={!!emailError}
-										tabIndex={2}
-									/>
-									<Input
-										label={t("register.password.label")}
-										variant="bordered"
-										placeholder={t("register.password.placeholder")}
-										endContent={
-											<button className="focus:outline-none" type="button" onClick={toggleVisibility} tabIndex={-1}>
-												{isVisible ? (
-													<EyeIcon className="pointer-events-none text-2xl text-default-400" />
-												) : (
-													<EyeOffIcon className="pointer-events-none text-2xl text-default-400" />
-												)}
-											</button>
-										}
-										type={isVisible ? "text" : "password"}
-										className="max-w-xs"
-										description={t("register.password.description")}
-										onValueChange={setPassword}
-										value={password}
-										isRequired
-										errorMessage={passwordError || t("register.password.error")}
-										minLength={4}
-										maxLength={72}
-										isInvalid={!!passwordError}
-										tabIndex={3}
-									/>
-									<Input
-										label={t("register.password.confirm.label")}
-										variant="bordered"
-										placeholder={t("register.password.confirm.placeholder")}
-										endContent={
-											<button
-												className="focus:outline-none"
-												type="button"
-												onClick={toggleConfirmVisibility}
-												tabIndex={-1}
-											>
-												{isConfirmVisible ? (
-													<EyeIcon className="pointer-events-none text-2xl text-default-400" />
-												) : (
-													<EyeOffIcon className="pointer-events-none text-2xl text-default-400" />
-												)}
-											</button>
-										}
-										type={isConfirmVisible ? "text" : "password"}
-										className="max-w-xs"
-										description={t("register.password.confirm.description")}
-										onValueChange={setPasswordConfirm}
-										value={passwordConfirm}
-										isRequired
-										errorMessage={passwordConfirmError || t("register.password.confirm.error")}
-										minLength={4}
-										maxLength={72}
-										isInvalid={!!passwordConfirmError}
-										onKeyUp={onEnter(register, true)}
-										tabIndex={4}
-									/>
-								</div>
-								<div className="mt-8">
-									<Button onClick={register} size="md" color="primary" variant="flat" className="w-full" tabIndex={5}>
-										{loading ? <LoaderCircle className="custom-animate-spin" size={24} /> : t("register.button")}
-									</Button>
-								</div>
-								<div className="mt-4 flex justify-between">
-									<Link href="/login" color="primary" className="text-sm" as={NextLink}>
-										{t("register.login")}
-									</Link>
-								</div>
-							</form>
+		<HomeLayout>
+			<div className="flex items-center justify-center">
+				<Card className="mt-32 flex w-full max-w-md items-center justify-center bg-lightAccent p-8 dark:bg-darkAccent">
+					<div className="w-full max-w-md">
+						<div className="text-center">
+							<h1 className="text-3xl font-bold">{t("register.title")}</h1>
+							<p className="mt-4 text-medium">{t("register.subtitle")}</p>
 						</div>
-					</Card>
-				</div>
-
-				<Modal isOpen={isOpenCaptcha} onOpenChange={onOpenChangeCaptcha} placement="top-center">
-					<ModalContent>
-						<ModalHeader className="flex flex-col gap-1">Beep boop boop?</ModalHeader>
-						<ModalBody>
-							<div className="flex flex-col items-center">
-								<p className="text-md text-center font-semibold">Hmm, are you really human?</p>
-								<p className="text-md text-center font-semibold">Complete the captcha below to continue</p>
+						<div className="text-error-500 pb-0 pl-4 pt-3 text-center text-sm text-danger">{error || "\u00A0"}</div>
+						<form className="mt-4">
+							<div className="flex flex-col items-center space-y-4">
+								<Input
+									isClearable
+									type="text"
+									label={t("register.username.label")}
+									variant="bordered"
+									placeholder={t("register.username.placeholder")}
+									onClear={() => setUsername("")}
+									className="max-w-xs"
+									description={t("register.username.description")}
+									onValueChange={setUsername}
+									value={username}
+									isRequired
+									errorMessage={usernameError || t("register.username.error")}
+									isInvalid={!!usernameError}
+									minLength={3}
+									tabIndex={1}
+								/>
+								<Input
+									isClearable
+									type="email"
+									label={t("register.email.label")}
+									variant="bordered"
+									placeholder={t("register.email.placeholder")}
+									onClear={() => setEmail("")}
+									className="max-w-xs"
+									description={t("register.email.description")}
+									onValueChange={setEmail}
+									value={email}
+									isRequired
+									errorMessage={emailError || t("register.email.error")}
+									isInvalid={!!emailError}
+									tabIndex={2}
+								/>
+								<Input
+									label={t("register.password.label")}
+									variant="bordered"
+									placeholder={t("register.password.placeholder")}
+									endContent={
+										<button className="focus:outline-none" type="button" onClick={toggleVisibility} tabIndex={-1}>
+											{isVisible ? (
+												<EyeIcon className="pointer-events-none text-2xl text-default-400" />
+											) : (
+												<EyeOffIcon className="pointer-events-none text-2xl text-default-400" />
+											)}
+										</button>
+									}
+									type={isVisible ? "text" : "password"}
+									className="max-w-xs"
+									description={t("register.password.description")}
+									onValueChange={setPassword}
+									value={password}
+									isRequired
+									errorMessage={passwordError || t("register.password.error")}
+									minLength={4}
+									maxLength={72}
+									isInvalid={!!passwordError}
+									tabIndex={3}
+								/>
+								<Input
+									label={t("register.password.confirm.label")}
+									variant="bordered"
+									placeholder={t("register.password.confirm.placeholder")}
+									endContent={
+										<button
+											className="focus:outline-none"
+											type="button"
+											onClick={toggleConfirmVisibility}
+											tabIndex={-1}
+										>
+											{isConfirmVisible ? (
+												<EyeIcon className="pointer-events-none text-2xl text-default-400" />
+											) : (
+												<EyeOffIcon className="pointer-events-none text-2xl text-default-400" />
+											)}
+										</button>
+									}
+									type={isConfirmVisible ? "text" : "password"}
+									className="max-w-xs"
+									description={t("register.password.confirm.description")}
+									onValueChange={setPasswordConfirm}
+									value={passwordConfirm}
+									isRequired
+									errorMessage={passwordConfirmError || t("register.password.confirm.error")}
+									minLength={4}
+									maxLength={72}
+									isInvalid={!!passwordConfirmError}
+									// onKeyUp={onEnter(register, true)}
+									tabIndex={4}
+								/>
 							</div>
-							{/* todo: show captcha */}
-						</ModalBody>
-					</ModalContent>
-				</Modal>
-			</HomeLayout>
-		</>
+							<div className="mt-8">
+								<Button onClick={register} size="md" color="primary" variant="flat" className="w-full" tabIndex={5}>
+									{loading ? <LoaderCircle className="custom-animate-spin" size={24} /> : t("register.button")}
+								</Button>
+							</div>
+							<div className="mt-4 flex justify-between">
+								<Link href={Routes.login()} color="primary" className="text-sm" as={NextLink}>
+									{t("register.login")}
+								</Link>
+							</div>
+						</form>
+					</div>
+				</Card>
+			</div>
+
+			<Modal isOpen={isOpenCaptcha} onOpenChange={onOpenChangeCaptcha} placement="top-center">
+				<ModalContent>
+					<ModalHeader className="flex flex-col gap-1">Beep boop boop?</ModalHeader>
+					<ModalBody>
+						<div className="flex flex-col items-center">
+							<p className="text-md text-center font-semibold">Hmm, are you really human?</p>
+							<p className="text-md text-center font-semibold">Complete the captcha below to continue</p>
+						</div>
+						{/* todo: show captcha */}
+					</ModalBody>
+				</ModalContent>
+			</Modal>
+		</HomeLayout>
 	);
 };
 

@@ -2,8 +2,8 @@ export interface UpdateSettingsOptions {
 	customStatus?: string | null;
 	theme?: "dark" | "light" | "system";
 	language?: string;
-	guildOrder?: {
-		guildId: string;
+	hubOrder?: {
+		hubId: string;
 		position: number;
 	}[];
 	bio?: string;
@@ -13,8 +13,8 @@ export interface UpdateSettingsOptions {
 
 export interface SettingsPayload {
 	bio: string | null;
-	guildOrder: {
-		guildId: string;
+	hubOrder: {
+		hubId: string;
 		position: number;
 	}[];
 	language: "en-US";

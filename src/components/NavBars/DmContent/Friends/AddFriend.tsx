@@ -1,4 +1,3 @@
-import onEnter from "@/utils/onEnter.ts";
 import { Input, Button } from "@nextui-org/react";
 import { Search } from "lucide-react";
 import { useState } from "react";
@@ -46,7 +45,6 @@ const AddFriend = () => {
 				errorMessage={errorMessage}
 				isInvalid={errorMessage !== ""}
 				description="Enter your friend's username and tag (e.g. kiki#1750)."
-				onKeyUp={onEnter(submit)}
 			/>
 		</div>
 	);

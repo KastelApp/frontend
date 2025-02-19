@@ -1,30 +1,17 @@
-import ImageGrid from "@/components/ImageGrid.tsx";
-import cn from "@/utils/cn.ts";
-import { Link, useDisclosure } from "@nextui-org/react";
-import { Modal, ModalBody, ModalContent } from "@nextui-org/react";
+import ImageGrid, { } from "@/components/ImageGrid.tsx";
+import Link from "@/components/Message/Markdown/Link.tsx";
+import { EmbedFiles } from "@/types/embed.ts";
+import { modalStore } from "@/wrapper/Stores/GlobalModalStore.ts";
 import { UnLazyImage } from "@unlazy/react";
-import { useState } from "react";
-
-interface Image {
-	url: string;
-	thumbHash?: string | null;
-	name?: string;
-	alt?: string;
-}
 
 interface PopUpImageProps {
-	url?: string;
-	thumbHash?: string | null;
-	name?: string;
 	className?: string;
-	images?: Image[];
+	images?: EmbedFiles[];
 	classNames?: {
 		image?: string;
 		container?: string;
 		modal?: string;
 	};
-	style?: React.CSSProperties;
-	alt?: string;
 }
 
 const repairUrl = (url: string) => {
@@ -38,53 +25,48 @@ const repairUrl = (url: string) => {
 };
 
 const PopUpImage = ({
-	// className,
-	classNames,
 	images,
-	name,
-	thumbHash,
-	url,
 }: PopUpImageProps) => {
-	const { isOpen, onClose, onOpen } = useDisclosure();
-	const [currentImage] = useState<number>(0); // ? the index
-
-	if (!images && url) {
-		images = [{ url, thumbHash, name }];
-	}
-
 	return (
-		<>
-			<ImageGrid images={images ?? []} onClick={() => onOpen()} />
-			<Modal
-				isOpen={isOpen}
-				onOpenChange={onClose}
-				className={cn(classNames?.modal, "bg-transparent shadow-none")}
-				classNames={{
-					base: " w-auto h-auto",
-				}}
-				size="full"
-			>
-				<ModalContent>
-					<ModalBody>
-						<div className="flex h-[98%] w-[98%] flex-col items-center justify-center">
+		<ImageGrid files={images ?? []}
+			onPress={(image) => {
+				if (image.type !== "Image") return;
+
+				modalStore.getState().createModal({
+					id: `image-${image.name ?? "image"}`,
+					title: image.name || "Image",
+					body: (
+						<div className="flex flex-col items-center space-y-4">
 							<UnLazyImage
-								src={repairUrl(images?.[currentImage].url ?? "")}
-								alt={images?.[currentImage].alt ?? "Image"}
-								thumbhash={images?.[currentImage].thumbHash ?? undefined}
-								className="max-h-[80vh] max-w-[80vw]"
+								src={repairUrl(image.url ?? "")}
+								thumbhash={image.thumbHash ?? undefined}
+								className="max-h-[75vh] max-w-[75vw] w-auto h-auto rounded-md"
 								style={{
-									width: "auto",
-									height: "auto",
+									width: "100%",
+									height: "100%",
+									objectFit: "contain",
 								}}
 							/>
-							<Link href={repairUrl(images?.[currentImage].url ?? "")} target="_blank" className="mr-auto">
-								Open in browser
-							</Link>
+							<div className="w-full text-center mt-2">
+								<Link
+									href={repairUrl((image.rawUrl ?? image.url) ?? "")}
+									target="_blank"
+									className="mr-auto"
+								>
+									Open in browser
+								</Link>
+							</div>
 						</div>
-					</ModalBody>
-				</ModalContent>
-			</Modal>
-		</>
+					),
+					props: {
+						classNames: {
+							base: "max-w-[80vw] w-fit",
+							footer: "p-0"
+						}
+					}
+				});
+			}}
+		/>
 	);
 };
 

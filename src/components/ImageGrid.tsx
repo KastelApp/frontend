@@ -1,92 +1,93 @@
+import VideoPlayer from "@/components/VideoPlayer.tsx";
+import { EmbedFiles } from "@/types/embed.ts";
 import cn from "@/utils/cn.ts";
 import { UnLazyImage } from "@unlazy/react";
 
-interface Image {
-	url: string;
-	thumbHash?: string | null;
-	name?: string;
+interface MediaGridProps {
+  files: EmbedFiles[];
+  onPress?: (file: EmbedFiles) => void;
 }
 
-const ImageGrid = ({
-	images,
-	onClick,
-	style,
-}: {
-	images: Image[];
-	onClick?: () => void;
-	style?: React.CSSProperties;
-}) => {
-	return (
-		<div className="mb-2 grid gap-2">
-			{images.length === 1 && (
-				<div className={"flex max-h-56 max-w-96 justify-center"}>
-					<UnLazyImage
-						src={images[0].url}
-						alt="Image"
-						thumbhash={images[0].thumbHash ?? undefined}
-						className={cn("max-h-56 max-w-96 rounded-none", onClick && "cursor-pointer")}
-						onClick={onClick}
-						style={style} // ? only takes affect on the first one for now
-					/>
-				</div>
-			)}
+const MediaGrid = ({ files, onPress }: MediaGridProps) => {
+  const fileCount = files.length;
 
-			{images.length === 2 && (
-				<div className="flex gap-2">
-					{images.map((img, index) => (
-						<div key={index} className={"max-h-56 max-w-48 flex-shrink-0"}>
-							<UnLazyImage
-								src={img.url}
-								alt={`Image ${index + 1}`}
-								className={cn("rounded-none", onClick && "cursor-pointer")}
-								thumbhash={img.thumbHash ?? undefined}
-								onClick={onClick}
-							/>
-						</div>
-					))}
-				</div>
-			)}
+  if (fileCount === 0) return null;
 
-			{images.length === 3 && (
-				<div className="flex h-full">
-					<div className={"max-h-full max-w-52 flex-1"}>
-						<UnLazyImage
-							src={images[0].url}
-							alt="Large Image"
-							className={cn("h-full rounded-none", onClick && "cursor-pointer")}
-						/>
-					</div>
-					<div className="ml-1 flex flex-col justify-between gap-y-1">
-						{images.slice(1).map((img, index) => (
-							<UnLazyImage
-								src={img.url}
-								alt={`Small Image ${index + 1}`}
-								key={index}
-								className={cn("max-h-24 max-w-60 rounded-none", onClick && "cursor-pointer")}
-								thumbhash={img.thumbHash ?? undefined}
-								onClick={onClick}
-							/>
-						))}
-					</div>
-				</div>
-			)}
-
-			{images.length === 4 && (
-				<div className="grid grid-cols-2 gap-y-2">
-					{images.map((img, index) => (
-						<div key={index} className={"max-h-48 max-w-48"}>
-							<UnLazyImage
-								src={img.url}
-								alt={`Image ${index + 1}`}
-								className={cn("rounded-none", onClick && "cursor-pointer")}
-								onClick={onClick}
-							/>
-						</div>
-					))}
-				</div>
-			)}
-		</div>
-	);
+  return (
+    <div className="grid gap-1 max-w-[400px]">
+      {fileCount === 1 && (
+        <SingleMedia file={files[0]} onPress={onPress} />
+      )}
+      {fileCount === 2 && (
+        <div className="grid grid-cols-2 gap-1">
+          {files.map((file, index) => (
+            <SingleMedia key={index} file={file} onPress={onPress} maxWidth={198} maxHeight={224} />
+          ))}
+        </div>
+      )}
+      {fileCount === 3 && (
+        <div className="grid grid-cols-2 gap-1">
+          <div className="grid gap-1">
+            {files.slice(0, 2).map((file, index) => (
+              <SingleMedia key={index} file={file} onPress={onPress} maxWidth={198} maxHeight={111} />
+            ))}
+          </div>
+          <SingleMedia file={files[2]} onPress={onPress} maxWidth={198} maxHeight={224} />
+        </div>
+      )}
+      {fileCount >= 4 && (
+        <div className="grid grid-cols-2 gap-1">
+          {files.slice(0, 4).map((file, index) => (
+            <SingleMedia key={index} file={file} onPress={onPress} maxWidth={198} maxHeight={111} />
+          ))}
+        </div>
+      )}
+    </div>
+  );
 };
 
-export default ImageGrid;
+interface SingleMediaProps {
+  file: EmbedFiles;
+  onPress?: (file: EmbedFiles) => void;
+  maxWidth?: number;
+  maxHeight?: number;
+}
+
+const SingleMedia = ({ file, onPress, maxWidth = 400, maxHeight = 224 }: SingleMediaProps) => {
+  return (
+    <div
+      className={cn(
+        "relative overflow-hidden",
+        onPress && "cursor-pointer"
+      )}
+      style={{
+        maxWidth: `${maxWidth}px`,
+        maxHeight: `${maxHeight}px`,
+      }}
+      onClick={() => onPress && onPress(file)}
+    >
+      {file.type === "Image" ? (
+        <UnLazyImage
+          src={file.url}
+          alt={file.name || "Image"}
+          thumbhash={file.thumbHash ?? undefined}
+          className="w-full h-full object-cover"
+          style={{
+            aspectRatio: file.width && file.height ? `${file.width} / ${file.height}` : undefined,
+          }}
+        />
+      ) : (
+        <VideoPlayer
+          src={file.url}
+          poster={"https://placeholder.co/480x480"} // todo: add new embed file field to add poster
+          className="w-full h-full object-cover"
+          style={{
+            aspectRatio: file.width && file.height ? `${file.width} / ${file.height}` : undefined,
+          }}
+        />
+      )}
+    </div>
+  );
+};
+
+export default MediaGrid;

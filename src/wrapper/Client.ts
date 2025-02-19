@@ -1,23 +1,32 @@
 import { LoginOptions, RegisterAccountOptions, RegisterLoginResponse } from "@/types/client/RegisterAndLogin.ts";
 import API from "./API.ts";
-import { useAPIStore } from "./Stores.ts";
+import { useAPIStore } from "./Stores.tsx";
 import Websocket from "./gateway/Websocket.ts";
 import { ApiLoginOptions, LoginResponse } from "@/types/http/auth/login.ts";
 import { isErrorResponse } from "@/types/http/error.ts";
 import { ApiRegisterOptions, RegisterResponse } from "@/types/http/auth/register.ts";
+import EventEmitter from "@/wrapper/EventEmitter.ts";
 
-class Client {
+interface Client {
+	on(event: "ready", listener: () => void): this;
+	on(event: "close", listener: (code: number, reason: string) => void): this;
+
+	emit(event: "ready"): boolean;
+	emit(event: "close", code: number, reason: string): boolean;
+}
+
+class Client extends EventEmitter {
 	public api: API;
 
 	public websocket: Websocket | null = null;
 
 	#token: string | null;
 
-	#listeners = new Map<string, ((...args: unknown[]) => void)[]>();
-
 	public isConnected = false;
 
 	public constructor() {
+		super();
+
 		this.api = useAPIStore.getState().api;
 
 		this.#token = null;
@@ -25,26 +34,6 @@ class Client {
 
 	public get token() {
 		return this.#token;
-	}
-
-	public on(event: string, listener: () => void) {
-		const current = this.#listeners.get(event) || [];
-
-		current.push(listener);
-
-		this.#listeners.set(event, current);
-	}
-
-	public off(event: string) {
-		this.#listeners.delete(event);
-	}
-
-	public emit(event: string, ...args: unknown[]) {
-		const listeners = this.#listeners.get(event);
-
-		if (!listeners) return;
-
-		listeners.forEach((listener) => listener(...args));
 	}
 
 	public set token(token: string | null) {
@@ -209,8 +198,8 @@ class Client {
 			this.emit("ready");
 		});
 
-		this.websocket.on("close", () => {
-			this.emit("close");
+		this.websocket.on("close", (code, reason) => {
+			this.emit("close", code, reason);
 		});
 	}
 }

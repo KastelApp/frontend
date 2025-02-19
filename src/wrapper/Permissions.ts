@@ -8,7 +8,7 @@
  * ? PermissionOverrides still will have "allow" and "deny" properties, but they now will be an array of arrays of strings (BigInts)
  */
 
-import { permissions } from "@/utils/Constants.ts";
+import { permissions } from "@/data/constants.ts";
 import FlagUtils from "@/utils/FlagUtils.ts";
 
 type hasType = "all" | "some";
@@ -33,9 +33,8 @@ class Permissions {
 	}
 
 	public has<T extends PermissionKey, HT extends hasType>(perms: T[], ignoreAdmin?: boolean, type?: HT): boolean {
-		// @ts-expect-error idc
-		if (perms.includes("Administrator") && !ignoreAdmin) {
-			if (this.bits.find(([bits]) => BigInt(bits) === permissions.Administrator.int)) return true;
+		if (!ignoreAdmin && this.bits.some(([bits]) => BigInt(bits) === permissions.Administrator.int)) {
+			return true;
 		}
 
 		for (const perm of perms) {

@@ -1,5 +1,5 @@
-import { Embed } from "@/components/Message/Embeds/RichEmbed.tsx";
 import PopUpImage from "@/components/PopUpImage.tsx";
+import { Embed } from "@/types/embed.ts";
 
 const ImageEmbed = ({ embed }: { embed: Embed }) => {
 	const firstFile = embed.files?.[0];
@@ -13,15 +13,7 @@ const ImageEmbed = ({ embed }: { embed: Embed }) => {
 	return (
 		<div className="inline-block w-auto rounded-md">
 			<PopUpImage
-				url={fixedUrl.toString()}
-				alt={firstFile.name ?? "Image"}
-				thumbHash={firstFile.thumbHash ?? undefined}
-				style={{
-					minWidth: "400px",
-					minHeight: "215px",
-					maxWidth: "400px",
-					maxHeight: "215px",
-				}}
+				images={embed.files}
 			/>
 		</div>
 	);

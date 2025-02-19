@@ -1,5 +1,6 @@
+import { Embed } from "@/types/embed.ts";
 import cn from "@/utils/cn.ts";
-import type { Embed } from "../RichEmbed.tsx";
+
 const SpotifyEmbed = ({ embed }: { embed: Embed }) => {
 	const fixedUrl = new URL(embed.iframeSource?.url ?? "");
 

@@ -1,20 +1,22 @@
 import { channelMention } from "@/components/Message/Markdown/ChannelMention.tsx";
+import { emoji } from "@/components/Message/Markdown/Emoji.tsx";
+import { roleMention } from "@/components/Message/Markdown/RoleMention.tsx";
 import { userMention } from "@/components/Message/Markdown/UserMention.tsx";
-import { defaultRules, inlineRegex } from "simple-markdown";
+import SimpleMarkdown from "@kastelapp/simple-markdown";
 
 export const customRules = {
-	escape: defaultRules.escape,
-	em: defaultRules.em,
-	paragraph: defaultRules.paragraph,
-	newline: defaultRules.newline,
-	url: defaultRules.url,
-	strong: defaultRules.strong,
-	link: defaultRules.link,
-	br: defaultRules.br,
-	u: defaultRules.u,
-	inlineCode: defaultRules.inlineCode,
+	escape: SimpleMarkdown.defaultRules.escape,
+	em: SimpleMarkdown.defaultRules.em,
+	paragraph: SimpleMarkdown.defaultRules.paragraph,
+	newline: SimpleMarkdown.defaultRules.newline,
+	url: SimpleMarkdown.defaultRules.url,
+	strong: SimpleMarkdown.defaultRules.strong,
+	link: SimpleMarkdown.defaultRules.link,
+	br: SimpleMarkdown.defaultRules.br,
+	u: SimpleMarkdown.defaultRules.u,
+	inlineCode: SimpleMarkdown.defaultRules.inlineCode,
 	heading: {
-		...defaultRules.heading,
+		...SimpleMarkdown.defaultRules.heading,
 		match: (source: string, state: SimpleMarkdown.State) => {
 			const prevCaptureStr = state.prevCapture === null ? "" : state.prevCapture[0];
 			const isStartOfLineCapture = /(?:^|\n)( *)$/.exec(prevCaptureStr);
@@ -28,11 +30,11 @@ export const customRules = {
 		},
 	},
 	autolink: {
-		...defaultRules.autolink,
-		match: inlineRegex(/^<(https?:\/\/[^ >]+)>/),
+		...SimpleMarkdown.defaultRules.autolink,
+		match: SimpleMarkdown.inlineRegex(/^<(https?:\/\/[^ >]+)>/),
 	},
 	blockQuote: {
-		...defaultRules.blockQuote,
+		...SimpleMarkdown.defaultRules.blockQuote,
 		match: (source: string, { prevCapture }: { prevCapture: string }) =>
 			/^$|\n *$/.test(prevCapture ?? "")
 				? /^( *>>> +([\s\S]*))|^( *>(?!>>) +[^\n]*(\n *>(?!>>) +[^\n]*)*\n?)/.exec(source)
@@ -41,13 +43,8 @@ export const customRules = {
 			content: parse(capture[0].replace(/^ *>(?:>>)? ?/gm, ""), state),
 		}),
 	},
-	emoji: {
-		order: defaultRules.text.order,
-		match: (source: string) => /^(¯\\_\(ツ\)_\/¯)/.exec(source),
-		parse: (capture: string[]) => ({ type: "text", content: capture[1] }),
-	},
 	codeBlock: {
-		order: defaultRules.codeBlock.order,
+		order: SimpleMarkdown.defaultRules.codeBlock.order,
 		match: (source: string) => {
 			const match = /^```(([A-z0-9-]+?)\n+)?\n*([^]+?)\n*```/.exec(source);
 
@@ -68,17 +65,6 @@ export const customRules = {
 	},
 	userMention,
 	channelMention,
-	// roleMention,
-	// defaultEmoji: {
-	//   order: defaultRules.text.order,
-	//   match: (source: string) => /^(?!<):([^\s:]+?):(?![0-9]+>)/gu.exec(source),
-	//   parse: (match: string[]) => ({
-	//     content: match[1],
-	//   }),
-	//   react: (
-	//     { content }: { content: string },
-	//     _: unknown,
-	//     state: { key: string },
-	//   ) => <Emoji emoji={content} key={state.key} />,
-	// },
+	roleMention,
+	emoji,
 };

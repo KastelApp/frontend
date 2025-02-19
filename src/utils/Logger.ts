@@ -99,7 +99,7 @@ class Logger {
 	 * @param source The source of the log (optional tho can help with debugging)
 	 */
 	static debug(message: string, source?: string) {
-		if (process.env.NODE_ENV === "production") return;
+		if (import.meta.env.MODE === "production") return;
 
 		Logger.log(Logger.colors.purple(message), source);
 	}

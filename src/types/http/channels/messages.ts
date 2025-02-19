@@ -1,4 +1,4 @@
-import type { Embed } from "@/components/Message/Embeds/RichEmbed.tsx";
+import { Embed } from "@/types/embed.ts";
 
 export interface Message {
 	id: string;
@@ -17,13 +17,7 @@ export interface Message {
 	deletable: boolean;
 }
 
-export type MessageReply =
-	| Message
-	| null
-	| {
-			messageId: string;
-			channelId: string;
-	  };
+export type MessageReply = Message | null | string
 
 export interface Author {
 	id: string;

@@ -5,7 +5,7 @@ export interface Role {
 	color: number;
 	hoisted: boolean;
 	id: string;
-	guildId: string;
+	hubId: string;
 	permissions: [string, string][];
 	position: number;
 	name: string;
@@ -16,7 +16,7 @@ export interface RoleStore {
 	addRole(role: Role): void;
 	removeRole(id: string): void;
 	getRole(id: string): Role | undefined;
-	getRoles(guildId: string): Role[];
+	getRoles(hubId: string): Role[];
 }
 
 export const useRoleStore = create<RoleStore>((set, get) => ({
@@ -38,5 +38,5 @@ export const useRoleStore = create<RoleStore>((set, get) => ({
 	},
 	removeRole: (id) => set({ roles: get().roles.filter((role) => role.id !== id) }),
 	getRole: (id) => get().roles.find((role) => role.id === id),
-	getRoles: (guildId) => get().roles.filter((role) => role.guildId === guildId),
+	getRoles: (hubId) => get().roles.filter((role) => role.hubId === hubId),
 }));

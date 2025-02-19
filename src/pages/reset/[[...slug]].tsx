@@ -1,13 +1,14 @@
 import HomeLayout from "@/layouts/HomeLayout.tsx";
-import onEnter from "@/utils/onEnter.ts";
 import safePromise from "@/utils/safePromise.ts";
-import { useClientStore, useTokenStore, useTranslationStore } from "@/wrapper/Stores.ts";
+import { useClientStore, useTokenStore, useTranslationStore } from "@/wrapper/Stores.tsx";
 import { Button, Card, Input, Link } from "@nextui-org/react";
 import { EyeIcon, EyeOffIcon, LoaderCircle } from "lucide-react";
-import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import NextLink from "next/link";
 import Logger from "@/utils/Logger.ts";
+import arrayify from "@/utils/arrayify.ts";
+import { Routes } from "@/utils/Routes.ts";
+import { useRouter } from "@/hooks/useRouter.ts";
+import NextLink from "@/components/Link.tsx";
 
 const Reset = () => {
 	const router = useRouter();
@@ -16,8 +17,7 @@ const Reset = () => {
 	const { client } = useClientStore();
 	const { setToken } = useTokenStore();
 
-	const requestId = router.query.slug?.[0];
-	const token = router.query.slug?.[1];
+	const [requestId, token] = arrayify(router.params?.slug);
 
 	const [ready, setReady] = useState(false);
 	const [loading, setLoading] = useState(false);
@@ -49,13 +49,13 @@ const Reset = () => {
 		);
 
 		if (!validated || error) {
-			router.push("/login");
+			router.push(Routes.login());
 
 			return;
 		}
 
 		if (validated.status !== 204) {
-			router.push("/login");
+			router.push(Routes.login());
 
 			return;
 		}
@@ -125,7 +125,7 @@ const Reset = () => {
 
 		setToken(reset.body.token);
 
-		router.push("/app");
+		router.push(Routes.app());
 	};
 
 	const handlePasswordChange = (value: string) => {
@@ -162,7 +162,7 @@ const Reset = () => {
 		if (!router.isReady) return;
 
 		if (!requestId || !token) {
-			router.push("/login");
+			router.push(Routes.login());
 
 			return;
 		}
@@ -242,23 +242,23 @@ const Reset = () => {
 											minLength={4}
 											maxLength={72}
 											isInvalid={!!confirmPasswordError}
-											onKeyUp={onEnter(onReset)}
+											// onKeyUp={onEnter(onReset)}
 											tabIndex={2}
 										/>
 									</div>
 									<div className="mt-8">
-										<Button onClick={onReset} size="md" color="primary" variant="flat" className="w-full" tabIndex={3}>
+										<Button onPress={onReset} size="md" color="primary" variant="flat" className="w-full" tabIndex={3}>
 											{loading ? <LoaderCircle className="custom-animate-spin text-white" /> : t("reset.button")}
 										</Button>
 									</div>
 									<div className="mt-4 flex justify-between">
 										<Link
-											href="/login"
+											href={Routes.login()}
 											color="primary"
 											className="text-sm"
 											as={NextLink}
 											tabIndex={4}
-											onClick={async () => {
+											onPress={async () => {
 												const [, err] = await safePromise(
 													client.api.del<{
 														id: string;

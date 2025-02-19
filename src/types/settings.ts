@@ -9,6 +9,6 @@ export interface Section {
 		disabled?: boolean;
 		section?: React.ReactElement | React.ReactElement[];
 		danger?: boolean;
-		onClick?: () => void;
+		onPress?: () => void;
 	}[];
 }

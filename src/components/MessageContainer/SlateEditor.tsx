@@ -1,8 +1,8 @@
 // @ts-expect-error -- I don't want the types
 import Prism from "prismjs";
 import "prismjs/components/prism-markdown";
-import { useCallback, useEffect, useRef } from "react";
-import { Slate, Editable, withReact, ReactEditor } from "slate-react";
+import { useCallback, useEffect } from "react";
+import { Slate, Editable, withReact } from "slate-react";
 import { Editor, Node, Range, Text, Transforms, createEditor } from "slate";
 import { withHistory } from "slate-history";
 import Leaf from "./renderers/Leaf.tsx";
@@ -11,7 +11,8 @@ import withMentions from "./plugins/withMentions.tsx";
 import { getLength, toggleTextWithMarkdown } from "./SlateUtils.ts";
 import Element from "./renderers/Element.tsx";
 import withCustomDelete, { TypeNode } from "./plugins/withCustomDelete.tsx";
-import Constants from "@/utils/Constants.ts";
+import Constants from "@/data/constants.ts";
+import { useEditorStore } from "@/wrapper/Stores.tsx";
 
 const convertSTringToDescendantText = (text: string) => {
 	const textArray = text.split("\n");
@@ -38,6 +39,7 @@ const SlateEditor = ({
 	sendMessage,
 	onType,
 	initialText = "",
+	onResize,
 }: {
 	placeholder: string;
 	readOnlyMessage?: string;
@@ -45,6 +47,7 @@ const SlateEditor = ({
 	sendMessage?: (message: string) => void;
 	onType?: (message: string) => void;
 	initialText?: string;
+	onResize?: (height: number) => void;
 }) => {
 	const renderLeaf = useCallback((props: LeafProps) => {
 		return <Leaf {...props} />;
@@ -53,13 +56,15 @@ const SlateEditor = ({
 
 	// ? The ref is used since if you edit the text, the editor will be re-rendered, but the useMemo also gets re-rendered causing the text box's
 	// ? state to be lost causing pathing issues, the ref should not get re-rendered
-	const editorRef = useRef<ReactEditor | null>(null);
+	const { editor, setEditor } = useEditorStore();
 
-	if (!editorRef.current) {
-		editorRef.current = withCustomDelete(withMentions(withReact(withHistory(createEditor()))));
-	}
+	useEffect(() => {
+		if (editor) return;
 
-	const editor = editorRef.current;
+		setEditor(withCustomDelete(withMentions(withReact(withHistory(createEditor())))));
+	}, [editor]);
+
+	// const editor = editorRef.current;
 
 	// useEffect(() => {
 	// 	const slateEditor = document.getElementById("slate-editor");
@@ -92,6 +97,26 @@ const SlateEditor = ({
 
 	// }, []);
 
+	useEffect(() => {
+		if (!onResize) return;
+
+		const resizeObserver = new ResizeObserver((entries) => {
+			const height = entries[0].contentRect.height;
+
+			onResize(height);
+		});
+
+		const foundEditor = document.getElementById("slate-editor");
+
+		if (!foundEditor) return;
+
+		resizeObserver.observe(foundEditor);
+
+		return () => {
+			resizeObserver.disconnect();
+		};
+	}, [onResize]);
+
 	const decorate = useCallback(([node, path]: [Text, number[]]) => {
 		const ranges: {
 			[key: string]: boolean | { path: number[]; offset: number };
@@ -122,9 +147,11 @@ const SlateEditor = ({
 		return ranges;
 	}, []);
 
-	useEffect(() => {
-		editor.children = convertSTringToDescendantText(initialText);
-	}, [initialText]);
+	// useEffect(() => {
+	// 	editor.children = convertSTringToDescendantText(initialText);
+	// }, [initialText]);
+
+	if (!editor) return null;
 
 	return (
 		<Slate
@@ -140,11 +167,7 @@ const SlateEditor = ({
 						})
 						.join("\n");
 
-					if (!text.trim()) {
-						return;
-					}
-
-					onType(text);
+					onType(text.trim());
 				}
 			}}
 		>
@@ -217,17 +240,12 @@ const SlateEditor = ({
 
 						sendMessage(text);
 
-						editor.children.map(() => {
-							Transforms.delete(editor, { at: [0] });
-						});
-
-						editor.children = [
-							{
-								// @ts-expect-error -- Unsure how to fix these types
-								type: "paragraph",
-								children: [{ text: "" }],
+						Transforms.delete(editor, {
+							at: {
+								anchor: Editor.start(editor, []),
+								focus: Editor.end(editor, []),
 							},
-						];
+						});
 
 						// ? refocus
 						// note: Editor.focus(editor) does not seem to work, unsure why, this is a hack / workaround which works

@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { useAPIStore } from "../Stores.ts";
+import { useAPIStore } from "../Stores.tsx";
 import Logger from "@/utils/Logger.ts";
 import FlagFields from "@/utils/FlagFields.ts";
 import safePromise from "@/utils/safePromise.ts";
@@ -19,6 +19,7 @@ export interface User {
 	mfaEnabled: boolean;
 	mfaVerified: boolean;
 	bio: string | null;
+	shortBio: string | null;
 	isClient: boolean;
 	isSystem: boolean;
 	isGhost: boolean;
@@ -29,7 +30,13 @@ export interface User {
 		 * The user has no bio, do not make a API request (only set after initial fetch)
 		 */
 		bioless: boolean;
+		/**
+		 * The last time we fetched, every hour the cache is invalidated
+		 */
+		lastFetch?: number;
 	};
+	mutualFriends?: string[];
+	mutualHubs?: string[];
 }
 
 export interface UpdateUser {
@@ -42,6 +49,7 @@ export interface UpdateUser {
 	tag?: string;
 	password?: string;
 	newPassword?: string;
+	shortBio?: string | null;
 }
 
 interface ImageOptions {
@@ -77,6 +85,7 @@ export interface UserStore {
 	}>;
 	updateUser(user: Partial<User>): void;
 	getAvatarUrl(userId: string, hash: string | null, options?: ImageOptions): string | null;
+	fetchProfile(userId: string): Promise<void>;
 }
 
 export const useUserStore = create<UserStore>((set, get) => ({
@@ -93,6 +102,7 @@ export const useUserStore = create<UserStore>((set, get) => ({
 					...{
 						avatar: null,
 						bio: null,
+						shortBio: null,
 						email: null,
 						emailVerified: false,
 						flags: "0",
@@ -112,6 +122,8 @@ export const useUserStore = create<UserStore>((set, get) => ({
 						metaData: {
 							bioless: false,
 						},
+						mutualFriends: [],
+						mutualHubs: [],
 					},
 					...foundUser,
 					...user,
@@ -123,8 +135,7 @@ export const useUserStore = create<UserStore>((set, get) => ({
 		const foundCurrentUser = get().users.find((user) => user.isClient);
 
 		if (!foundCurrentUser) {
-			Logger.error("No current user found, dumping users", "UserStore | getCurrentUser()");
-			console.log(get().users);
+			Logger.error("No current user found. Possibly an issue.", "UserStore | getCurrentUser()");
 
 			return null;
 		}
@@ -153,7 +164,7 @@ export const useUserStore = create<UserStore>((set, get) => ({
 
 		const [request, error] = await safePromise(api.get<unknown, User>(`/users/${userId}`));
 
-		if (error || !request) {
+		if (error || !request || request.status === 500) {
 			return null;
 		}
 
@@ -186,7 +197,7 @@ export const useUserStore = create<UserStore>((set, get) => ({
 			}),
 		);
 
-		if (error || !request) {
+		if (error || !request || request.status === 500) {
 			return {
 				success: false,
 				errors: {
@@ -280,7 +291,7 @@ export const useUserStore = create<UserStore>((set, get) => ({
 		};
 	},
 	updateUser: (user) => {
-		const gotUser = get().getUser(user.id!);
+		const gotUser = get().getUser(user?.id ?? "");
 
 		if (!gotUser) {
 			Logger.error("Failed to get user", "UserStore | updateUser()");
@@ -297,5 +308,55 @@ export const useUserStore = create<UserStore>((set, get) => ({
 		});
 	},
 	getAvatarUrl: (userId, hash, options = { format: "webp", size: 256 }) =>
-		hash ? `${process.env.ICON_CDN}/avatar/${userId}/${hash}?size=${options.size}&format=${options.format}` : null,
+		hash
+			? `${import.meta.env.VITE_CDN_URL}/avatar/${userId}/${hash}?size=${options.size}&format=${options.format}`
+			: null,
+	fetchProfile: async (userId) => {
+		const user = get().getUser(userId);
+
+		if (!user) {
+			Logger.error("Failed to get user", "UserStore | fetchProfile()");
+
+			return;
+		}
+
+		if (Date.now() - (user.metaData.lastFetch ?? 0) < 3600000) {
+			// 1 hour
+			return;
+		}
+
+		const api = useAPIStore.getState().api;
+
+		const profile = await api.get<
+			unknown,
+			{
+				// TODO: Add connections (Discord, Twitter (X), Github, Steam, Spotify (Not sure if we can do this one), Reddit, Youtube, Twitch)
+				bio: string | null;
+				shortBio: string | null;
+				connections: unknown[];
+				mutualFriends: string[];
+				mutualHubs: string[];
+			}
+		>({
+			url: `/users/${userId}/profile`,
+		});
+
+		if (profile.ok && profile.status === 200) {
+			get().updateUser({
+				bio: profile.body.bio,
+				shortBio: profile.body.shortBio,
+				id: userId,
+				metaData: {
+					bioless: typeof profile.body.bio !== "string",
+					lastFetch: Date.now(),
+				},
+				mutualFriends: profile.body.mutualFriends,
+				mutualHubs: profile.body.mutualHubs,
+			});
+
+			return;
+		}
+
+		Logger.error("Failed to fetch profile", "UserStore | fetchProfile()");
+	},
 }));

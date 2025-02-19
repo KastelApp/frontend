@@ -1,6 +1,6 @@
-import { ASTNode } from "simple-markdown";
+import { SingleASTNode } from "@kastelapp/simple-markdown";
 
-export const flattenAst = (node: SimpleMarkdown.RefNode | ASTNode, parent?: SimpleMarkdown.RefNode) => {
+export const flattenAst = (node: SimpleMarkdown.RefNode | SingleASTNode, parent?: SimpleMarkdown.RefNode) => {
 	if (Array.isArray(node)) {
 		for (let n = 0; n < node.length; n++) {
 			node[n] = flattenAst(node[n], parent);
@@ -22,7 +22,7 @@ export const flattenAst = (node: SimpleMarkdown.RefNode | ASTNode, parent?: Simp
 	return node;
 };
 
-const inner = (node: SimpleMarkdown.RefNode | ASTNode, result: string[] = []) => {
+const inner = (node: SimpleMarkdown.RefNode | SingleASTNode, result: string[] = []) => {
 	if (Array.isArray(node)) {
 		node.forEach((subNode) => astToString(subNode));
 	} else if (typeof node.content === "string") {
@@ -34,7 +34,7 @@ const inner = (node: SimpleMarkdown.RefNode | ASTNode, result: string[] = []) =>
 	return result;
 };
 
-export const astToString = (node: SimpleMarkdown.RefNode | ASTNode) => {
+export const astToString = (node: SimpleMarkdown.RefNode | SingleASTNode) => {
 	return inner(node).join("");
 };
 

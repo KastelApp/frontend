@@ -1,9 +1,8 @@
 import Logger from "@/utils/Logger.ts";
-import { useAPIStore } from "../Stores.ts";
+import { useAPIStore } from "../Stores.tsx";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import safePromise from "@/utils/safePromise.ts";
-import crypto from "crypto";
 
 export interface TrustedDomainsStore {
 	trustedDomains: string[];
@@ -41,11 +40,12 @@ export const useTrustedDomainStore = create(
 					hashedPhishingDomains: fetched.body,
 				});
 			},
-			isPhishingDomain: (url) => {
-				const domain = url.replace(/https?:\/\//, "").replace(/\/.*/, "");
+			isPhishingDomain: () => {
+				// const domain = url.replace(/https?:\/\//, "").replace(/\/.*/, "");
 
 				// todo: better way of doing this (its temp)
-				return get().hashedPhishingDomains.includes(crypto.createHash("sha512").update(domain).digest("hex"));
+				return false;
+				// return get().hashedPhishingDomains.includes(crypto.createHash("sha512").update(domain).digest("hex"));
 			},
 			setTrustedDomains: (trustedDomains: string[]) => set({ trustedDomains }),
 			isTrusted: (url: string) => {

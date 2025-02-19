@@ -1,15 +1,15 @@
-import type { Embed } from "@/components/Message/Embeds/RichEmbed.tsx";
 import { create } from "zustand";
-import { useAPIStore } from "../Stores.ts";
+import { useAPIStore } from "../Stores.tsx";
 import Logger from "@/utils/Logger.ts";
 import { CreateMessageOptions, Message as MessageData } from "@/types/http/channels/messages.ts";
-import { usePerChannelStore } from "./ChannelStore.ts";
 import getInviteCodes from "@/utils/getInviteCodes.ts";
 import { useUserStore } from "./UserStore.ts";
 import fastDeepEqual from "fast-deep-equal";
-import { fakeUserIds, messageFlags, snowflake } from "@/utils/Constants.ts";
+import { allowedMentions, fakeUserIds, messageFlags, snowflake } from "@/data/constants.ts";
 import safePromise from "@/utils/safePromise.ts";
 import { isErrorResponse } from "@/types/http/error.ts";
+import { useInviteStore } from "@/wrapper/Stores/InviteStore.ts";
+import { Embed } from "@/types/embed.ts";
 
 export enum MessageStates {
 	/**
@@ -32,6 +32,12 @@ export enum MessageStates {
 	 * The message is shown as our internal system message and is closable (plus has a cool little bg color :3)
 	 */
 	SystemMessage = "SYSTEM_MESSAGE",
+}
+
+export enum MessageContext {
+	Unknown,
+	Gateway,
+	API,
 }
 
 export interface Message {
@@ -67,6 +73,8 @@ export interface Message {
 	 * The state of the message
 	 */
 	state: MessageStates;
+
+	context: MessageContext;
 }
 
 export interface MessageStore {
@@ -81,16 +89,18 @@ export interface MessageStore {
 	deleteMessage(id: string): Promise<void>;
 	createMessage(channelId: string, options: Partial<Message>): Promise<void>;
 	editMessage(messageId: string, options: Partial<Message>, noApi?: boolean): void;
-	replyToMessage(channelId: string, messageId: string, options: Partial<Message>): void;
 	fetchMessages(
 		channelId: string,
 		options?: {
 			limit: number;
 			before?: string;
 			after?: string;
-			around?: string;
+			around?: string; // ? fun fact: I forgot to implement this on the backend for awhile and was wondering why it wasn't working lol.
 		},
-	): Promise<boolean>;
+	): Promise<{
+		success: boolean;
+		messages: Message[];
+	}>;
 }
 
 export const useMessageStore = create<MessageStore>((set, get) => ({
@@ -168,7 +178,7 @@ export const useMessageStore = create<MessageStore>((set, get) => ({
 			replyingTo: null,
 			attachments: [],
 			flags: messageFlags.Normal,
-			allowedMentions: 0,
+			allowedMentions: allowedMentions.All!,
 			mentions: {
 				channels: [],
 				roles: [],
@@ -181,6 +191,7 @@ export const useMessageStore = create<MessageStore>((set, get) => ({
 			channelId,
 			...options,
 			state: MessageStates.Sending,
+			context: MessageContext.Unknown,
 		};
 
 		get().addMessage(message);
@@ -251,6 +262,7 @@ export const useMessageStore = create<MessageStore>((set, get) => ({
 						discordInvites: [],
 						channelId,
 						state: MessageStates.SystemMessage,
+						context: MessageContext.Unknown,
 					});
 
 					return;
@@ -281,6 +293,7 @@ export const useMessageStore = create<MessageStore>((set, get) => ({
 				discordInvites: [],
 				channelId,
 				state: MessageStates.SystemMessage,
+				context: MessageContext.Unknown,
 			});
 
 			return;
@@ -295,13 +308,14 @@ export const useMessageStore = create<MessageStore>((set, get) => ({
 				creationDate: new Date(res.body.creationDate),
 				editedDate: res.body.editedDate ? new Date(res.body.editedDate) : null,
 				nonce: res.body.nonce,
-				replyingTo: res.body.replyingTo
-					? "messageId" in res.body.replyingTo
-						? res.body.replyingTo.messageId
-						: "id" in res.body.replyingTo
-							? res.body.replyingTo.id
-							: null
-					: null,
+				// replyingTo: res.body.replyingTo
+				// 	? "messageId" in res.body.replyingTo
+				// 		? res.body.replyingTo.messageId
+				// 		: "id" in res.body.replyingTo
+				// 			? res.body.replyingTo.id
+				// 			: null
+				// 	: null,
+				replyingTo: res.body.replyingTo ? typeof res.body.replyingTo === "string" ? res.body.replyingTo : res.body.replyingTo.id : null,
 				attachments: res.body.attachments,
 				flags: res.body.flags,
 				allowedMentions: res.body.allowedMentions,
@@ -312,6 +326,7 @@ export const useMessageStore = create<MessageStore>((set, get) => ({
 				discordInvites: getInviteCodes(res.body.content, true),
 				pinned: res.body.pinned,
 				state: MessageStates.Sent,
+				context: MessageContext.Unknown,
 			},
 			true,
 		);
@@ -327,39 +342,56 @@ export const useMessageStore = create<MessageStore>((set, get) => ({
 			messages: get().messages.map((message) => (message.id === messageId ? { ...message, ...options } : message)),
 		});
 	},
-	replyToMessage: (channelId, messageId, options) => {
-		const message = get().messages.find((message) => message.id === messageId);
-
-		if (!message) return;
-
-		console.log("Replying to message", message, options);
-	},
 	fetchMessages: async (channelId, options) => {
 		const api = useAPIStore.getState().api;
 
 		if (!api) {
 			Logger.warn("API not ready", "MessageStore");
 
-			return false;
+			return {
+				success: false,
+				messages: [],
+			};
 		}
 
+		const newParams = new URLSearchParams();
+
+		if (options?.after) {
+			newParams.append("after", options.after);
+		}
+
+		if (options?.before) {
+			newParams.append("before", options.before);
+		}
+
+		if (options?.around) {
+			newParams.append("around", options.around);
+		}
+
+		newParams.append("limit", String(options?.limit ?? 50));
+
 		const messages = await api.get<unknown, MessageData[]>({
-			url: `/channels/${channelId}/messages?limit=${options?.limit ?? 50}`,
+			url: `/channels/${channelId}/messages?${newParams.toString()}`,
 		});
 
 		if (!messages.ok || messages.status !== 200) {
 			Logger.warn("Failed to fetch messages", "MessageStore");
 
-			return false;
+			return {
+				success: false,
+				messages: [],
+			};
 		}
 
+		const msgs: Message[] = [];
+
 		for (const message of messages.body) {
-			// ? invites are like this: https://kastelapp.com/invite/inviteCode or https://kastel.dev/invitecode (or they may not have https:// so just kastel.dev/invitecode)
+			// ? invites are like this: https://kastelapp.com/invite/inviteCode or https://kstl.app/invitecode (or they may not have https:// so just kastel.dev/invitecode)
 			// ? we need to get all the codes
 			const invites = getInviteCodes(message.content);
 			const discordInvites = getInviteCodes(message.content, true);
 
-			get().addMessage({
+			const msg: Message = {
 				id: message.id,
 				authorId: message.author.id,
 				embeds: message.embeds,
@@ -367,13 +399,14 @@ export const useMessageStore = create<MessageStore>((set, get) => ({
 				creationDate: new Date(message.creationDate),
 				editedDate: message.editedDate ? new Date(message.editedDate) : null,
 				nonce: message.nonce,
-				replyingTo: message.replyingTo
-					? "messageId" in message.replyingTo
-						? message.replyingTo.messageId
-						: "id" in message.replyingTo
-							? message.replyingTo.id
-							: null
-					: null,
+				// replyingTo: message.replyingTo
+				// 	? "messageId" in message.replyingTo
+				// 		? message.replyingTo.messageId
+				// 		: "id" in message.replyingTo
+				// 			? message.replyingTo.id
+				// 			: null
+				// 	: null,
+				replyingTo: message.replyingTo ? typeof message.replyingTo === "string" ? message.replyingTo : message.replyingTo.id : null,
 				attachments: message.attachments,
 				flags: message.flags,
 				allowedMentions: message.allowedMentions,
@@ -384,24 +417,23 @@ export const useMessageStore = create<MessageStore>((set, get) => ({
 				discordInvites,
 				pinned: message.pinned,
 				state: MessageStates.Sent,
-			});
+				context: MessageContext.API,
+			};
+
+			get().addMessage(msg);
+			msgs.push(msg);
+			useUserStore.getState().addUser(message.author);
 		}
 
-		if (messages.body.length === 0) {
-			usePerChannelStore.getState().updateChannel(channelId, {
-				...(options?.after ? { hasMoreAfter: false } : {}),
-				...(options?.before ? { hasMoreBefore: false } : {}),
-			});
+		const invites = Array.from(new Set(msgs.flatMap((msg) => msg.invites)));
+
+		for (const invite of invites) {
+			useInviteStore.getState().fetchInvite(invite);
 		}
 
-		if (messages.body.length < (options?.limit ?? 50)) {
-			usePerChannelStore.getState().updateChannel(channelId, {
-				...(options?.after ? { hasMoreAfter: false } : {}),
-				...(options?.before ? { hasMoreBefore: false } : {}),
-				...(!options?.after && !options?.before ? { hasMoreAfter: false, hasMoreBefore: false } : {}),
-			});
-		}
-
-		return true;
+		return {
+			success: true,
+			messages: msgs,
+		};
 	},
 }));

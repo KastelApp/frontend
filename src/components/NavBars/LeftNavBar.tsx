@@ -1,49 +1,53 @@
-// ? The left navbar is inspired by discord due to a ton of users wanting it since they are familiar with it.
-// ? Though the bottom bar is the one we will care about the most, the left navbar is still a good option for those who want it.
-import { useCallback } from "react";
-import { Compass } from "lucide-react";
-import cn from "@/utils/cn.ts";
-import { Avatar } from "@nextui-org/react";
-import UserOptions from "../Dropdowns/UserOptions.tsx";
-import { useGuildSettingsStore, useSettingsStore } from "@/wrapper/Stores.ts";
-import { useGuildStore } from "@/wrapper/Stores/GuildStore.ts";
+import { Button } from "@/components/ui/button";
+import { Search, MessageSquare, LayoutGrid, InboxIcon } from "lucide-react";
+import { Avatar, Badge, Divider, Tooltip } from "@nextui-org/react";
+import { useHubSettingsStore } from "@/wrapper/Stores.tsx";
+import { useHubStore } from "@/wrapper/Stores/HubStore.ts";
 import { useChannelStore } from "@/wrapper/Stores/ChannelStore.ts";
-import { useRouter } from "next/router";
-import Draggables from "../DraggableComponent.tsx";
-import { NavBarIcon } from "./NavBarIcon.tsx";
-import AddGuildButton from "../AddGuildButton.tsx";
-// import { Copy, Pen, Pin, Reply, Trash2 } from "lucide-react";
-import { Divider } from "@nextui-org/react";
-import { snowflake } from "@/utils/Constants.ts";
+import arrayify from "@/utils/arrayify.ts";
 import { useUserStore } from "@/wrapper/Stores/UserStore.ts";
+import { useCallback } from "react";
+import Draggables from "@/components/DraggableComponent.tsx";
+import { snowflake } from "@/data/constants.ts";
+import cn from "@/utils/cn.ts";
+import UserOptions from "@/components/Dropdowns/UserOptions.tsx";
+import { Routes } from "@/utils/Routes.ts";
+import { useRouter } from "@/hooks/useRouter.ts";
+import Link from "@/components/Link.tsx";
 
 const LeftNavBar = () => {
-	const { isSideBarOpen } = useSettingsStore();
-	const { guilds } = useGuildStore();
-	const { guildSettings } = useGuildSettingsStore();
+	const { hubs } = useHubStore();
+	const getHubSettings = useHubSettingsStore((s) => s.getHubSettings);
 	const { getChannelsWithValidPermissions, getTopChannel } = useChannelStore();
 	const router = useRouter();
 
-	const [guildId] = router.query.slug as string[];
+	const [hubId] = arrayify(router.params?.slug);
 	const currentUser = useUserStore((s) => s.getCurrentUser());
+	const orientation = "vertical";
+	const getAvatarUrl = useUserStore((s) => s.getAvatarUrl);
+	const getDefaultAvatar = useUserStore((s) => s.getDefaultAvatar);
 
-	const mappedGuilds = useCallback(() => {
+	const mappedHubs = useCallback(() => {
 		return (
 			<Draggables
 				disableGhostElement
-				items={guilds.filter((guild) => !guild.unavailable && !guild.partial)}
+				items={hubs.filter((hub) => !hub.unavailable && !hub.partial)}
 				onDrop={console.log}
-				render={(item, index) => {
+				render={(item, index, props) => {
 					let hasUnread = false;
+					let mentions = 0;
 
 					const gotChannels = getChannelsWithValidPermissions(item.id);
-					const foundGuildSettings = guildSettings[item.id];
+					const foundHubSettings = getHubSettings(item.id);
 
 					for (const channel of gotChannels) {
 						const foundChannel = item.channelProperties.find(
 							(channelProperty) => channelProperty.channelId === channel.id,
 						);
-						if (foundChannel?.lastMessageAckId !== channel.lastMessageId) {
+
+						mentions += foundChannel?.mentions?.length ?? 0;
+
+						if (channel.lastMessageId && foundChannel?.lastMessageAckId !== channel.lastMessageId) {
 							if (
 								foundChannel?.lastMessageAckId &&
 								channel.lastMessageId &&
@@ -61,75 +65,170 @@ const LeftNavBar = () => {
 					const topChannel = getTopChannel(item.id);
 
 					return (
-						<NavBarIcon
-							href={`/app/guilds/${item.id}${foundGuildSettings?.lastChannelId ? `/channels/${foundGuildSettings.lastChannelId}` : topChannel ? `/channels/${topChannel.id}` : ""}`}
-							badgePosition="bottom-right"
-							badgeColor="danger"
-							// badgeContent={item.mentionCount === "0" ? undefined : item.mentionCount}
+						<Link
+							className="group relative mb-3 ml-3 flex cursor-pointer items-center rounded-md transition-all duration-300 ease-in-out hover:bg-charcoal-600"
 							key={index}
-							icon={
-								<Avatar
-									name={item.name}
-									src={item.icon ?? undefined}
-									className="mt-1.5 h-10 w-10 transform rounded-3xl transition-all duration-300 ease-in-out group-hover:rounded-xl"
-									imgProps={{ className: "transition-none" }}
-								/>
+							href={
+								foundHubSettings?.lastChannelId
+									? Routes.hubChannel(item.id, foundHubSettings.lastChannelId)
+									: topChannel
+										? Routes.hubChannel(item.id, topChannel.id)
+										: Routes.hub(item.id)
 							}
-							description={item.name}
-							contextMenuItemsProps={[
-								{
-									label: "Test",
-								},
-							]}
-							hasUnReadMessages={hasUnread}
-							isActive={item.id === guildId}
-						/>
+							{...props}
+						>
+							<div
+								className={cn(
+									"absolute z-20 bg-white transition-all duration-300 ease-in-out",
+									orientation === "vertical"
+										? "-left-2 h-0 w-1 rounded-r-lg group-hover:h-4"
+										: "-bottom-2 h-1 w-0 rounded-b-lg group-hover:w-4",
+									hasUnread ? (orientation === "vertical" ? "h-2" : "w-2") : "",
+									item.id === hubId ? (orientation === "vertical" ? "!h-6" : "!w-6") : "",
+								)}
+							/>
+							<div className="flex items-center">
+								<Badge
+									content={mentions === 0 ? undefined : mentions > 9 ? "9+" : String(mentions)}
+									color="danger"
+									placement="bottom-right"
+									className={cn("mb-1", mentions === 0 ? "hidden" : "")}
+									size="sm"
+								>
+									<Tooltip content={item.name} placement={orientation === "vertical" ? "right" : "top"} delay={750}>
+										<Avatar
+											name={item.name}
+											src={item.icon ?? undefined}
+											className="h-10 w-10 transform rounded-3xl transition-all duration-300 ease-in-out group-hover:rounded-xl"
+											imgProps={{ className: "transition-none" }}
+										/>
+									</Tooltip>
+								</Badge>
+							</div>
+							<div className="ml-3 flex flex-col justify-center">
+								<div className="text-sm font-medium text-white mm-w-36">{item.name}</div>
+								<div className="text-xs text-gray-400 mm-w-36">
+									{item.memberCount} Members • {1} Online
+								</div>
+							</div>
+						</Link>
 					);
 				}}
 			/>
 		);
-	}, [guilds, guildId]);
+	}, [hubs, hubId]);
 
 	return (
-		<>
-			<div className={cn("block", isSideBarOpen ? "" : "hidden")}>
-				<div className="fixed left-0 top-0 z-[5] flex h-full w-16 flex-col overflow-y-auto overflow-x-hidden shadow-lg">
-					<UserOptions orientation="vertical" type="context">
-						<NavBarIcon
-							icon={
-								<div className="max-h-9 min-h-9 min-w-9 max-w-9">
-									<Avatar
-										src={
-											useUserStore.getState().getAvatarUrl(currentUser!.id, currentUser!.avatar) ??
-											useUserStore.getState().getDefaultAvatar(currentUser!.id)
-										}
-										className="max-h-9 min-h-9 min-w-9 max-w-9 transform transition-all duration-300 ease-in-out hover:scale-95"
-										imgProps={{ className: "transition-none" }}
-									/>
-								</div>
-							}
-							isBackgroundDisabled
-							badgeContent="9+"
-							badgePosition="bottom-right"
-							badgeColor="danger"
-							href="/app"
-							description="Right click to open context menu"
-							delay={1000}
-							isNormalIcon
-						/>
-					</UserOptions>
-					<Divider className="h-1" />
-					{mappedGuilds()}
-					<AddGuildButton />
-					<NavBarIcon
-						icon={<Compass className="mt-1.5" color="#acaebf" absoluteStrokeWidth />}
-						description="Discover a guild"
-						isDisabled
-						isNormalIcon
-					/>
+		<div className="flex h-screen flex-col overflow-hidden bg-darkAccent py-3">
+			<Link
+				href={Routes.app()}
+				className={
+					"group mb-3 ml-2 mr-2 flex cursor-pointer items-center rounded-md px-3 transition-all duration-300 ease-in-out hover:bg-charcoal-600"
+				}
+			>
+				<div className="flex items-center group-active:scale-[.98]">
+					<Button
+						variant="ghost"
+						size="icon"
+						className={
+							"-ml-2 rounded-3xl bg-gray-600 p-0 transition-all duration-300 ease-in-out mm-hw-10 group-hover:rounded-xl group-hover:bg-gray-700"
+						}
+					>
+						<MessageSquare className="text-gray-400 mm-hw-5" />
+					</Button>
+					<span className="ml-3 text-sm text-gray-300">Messages</span>
 				</div>
+				<div
+					className={cn(
+						"absolute left-0 z-10 !w-1 rounded-r-lg bg-white duration-300 ease-in-out transition-height",
+						router.pathname === Routes.app() ? "!h-6" : "h-0",
+					)}
+				/>
+			</Link>
+			<div
+				className={
+					"group mb-3 ml-2 mr-2 flex cursor-pointer items-center rounded-md px-3 transition-all duration-300 ease-in-out hover:bg-charcoal-600 active:scale-[.98]"
+				}
+			>
+				<Button
+					variant="ghost"
+					size="icon"
+					className={
+						"-ml-2 rounded-3xl bg-gray-600 p-0 transition-all duration-300 ease-in-out mm-hw-10 group-hover:rounded-xl group-hover:bg-gray-700"
+					}
+				>
+					<Search className="h-5 w-5 text-gray-400" />
+				</Button>
+				<span className="ml-3 text-sm text-gray-300">Search</span>
 			</div>
-		</>
+			{/* <div className="px-3 mb-3 flex items-center"> dm example, will be used in the future.
+                <Avatar className="mm-hw-10" src="https://placehold.co/48x48" />
+                <div className="ml-3 overflow-hidden">
+                    <div className="text-sm font-medium text-white mm-w-36">Test (DM)</div>
+                    <div className="text-xs text-gray-400 truncate">that's awesome</div>
+                </div>
+            </div> */}
+			<Divider className="my-3 bg-gray-700" />
+			<Link
+				href={Routes.hubs()}
+				className={
+					"group mb-3 ml-2 mr-2 flex cursor-pointer items-center rounded-md px-3 transition-all duration-300 ease-in-out hover:bg-charcoal-600"
+				}
+			>
+				<div className="flex items-center group-active:scale-[.98]">
+					<Button
+						variant="ghost"
+						size="icon"
+						className={
+							"-ml-2 rounded-3xl bg-gray-600 p-0 transition-all duration-300 ease-in-out mm-hw-10 group-hover:rounded-xl group-hover:bg-gray-700"
+						}
+					>
+						<LayoutGrid className="h-5 w-5 text-gray-400" />
+					</Button>
+					<span className="ml-3 text-sm text-gray-300">Hubs</span>
+				</div>
+				<div
+					className={cn(
+						"absolute left-0 z-10 !w-1 rounded-r-lg bg-white duration-300 ease-in-out transition-height",
+						router.pathname === Routes.hubs() ? "!h-6" : "h-0",
+					)}
+				/>
+			</Link>
+			<div className="w-full flex-grow pr-2">{mappedHubs()}</div>
+			<Divider className="my-3 bg-gray-700" />
+			<div
+				className={
+					"group mb-3 ml-2 mr-2 flex cursor-pointer items-center rounded-md px-3 transition-all duration-300 ease-in-out hover:bg-charcoal-600 active:scale-[.98]"
+				}
+			>
+				<Button
+					variant="ghost"
+					size="icon"
+					className={
+						"-ml-2 rounded-3xl bg-gray-600 p-0 transition-all duration-300 ease-in-out mm-hw-10 group-hover:rounded-xl group-hover:bg-gray-700"
+					}
+				>
+					<InboxIcon className="h-5 w-5 text-gray-400" />
+				</Button>
+				<span className="ml-3 text-sm text-gray-300">Inbox</span>
+			</div>
+			<UserOptions orientation="horizontal" type="normal">
+				<div className="group mb-3 ml-2 mr-2 flex cursor-pointer items-center rounded-md px-3 pb-1 pt-1 transition-all duration-300 ease-in-out hover:bg-charcoal-600 active:scale-[0.98]">
+					<div className="-ml-2 max-h-9 min-h-9 min-w-9 max-w-9">
+						<Avatar
+							src={getAvatarUrl(currentUser!.id, currentUser!.avatar) ?? getDefaultAvatar(currentUser!.id)}
+							className="max-h-9 min-h-9 min-w-9 max-w-9 transform rounded-3xl transition-all duration-300 ease-in-out group-hover:rounded-xl group-aria-expanded:rounded-xl"
+							imgProps={{ className: "transition-none" }}
+							radius="none"
+						/>
+					</div>
+					<div className="ml-3 flex-grow overflow-hidden">
+						<div className="truncate text-sm font-medium text-white">{currentUser?.username}</div>
+						<div className="truncate text-xs text-gray-400">Online</div>
+					</div>
+				</div>
+			</UserOptions>
+		</div>
 	);
 };
 
